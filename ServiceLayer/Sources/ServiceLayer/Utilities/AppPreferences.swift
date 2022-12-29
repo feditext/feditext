@@ -220,6 +220,11 @@ public extension AppPreferences {
         get { self[.useUniversalLinks] ?? true }
         set { self[.useUniversalLinks] = newValue }
     }
+
+    var hideContentWarningButton: Bool {
+        get { self[.hideContentWarningButton] ?? false }
+        set { self[.hideContentWarningButton] = newValue }
+    }
 }
 
 private extension AppPreferences {
@@ -243,6 +248,7 @@ private extension AppPreferences {
         case notificationSounds
         case openLinksInDefaultBrowser
         case useUniversalLinks
+        case hideContentWarningButton
     }
 
     subscript<T>(index: Item) -> T? {

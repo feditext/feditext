@@ -7,7 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14FC7D32292A556E00567DBC /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FC7D31292A556E00567DBC /* UIFont+Extensions.swift */; };
 		75F7B3CC291F51D300FDE7C7 /* SwipeableNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F7B3CB291F51D300FDE7C7 /* SwipeableNavigationController.swift */; };
+		94B2C8C02929617A00087955 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94B2C8BF2929617A00087955 /* UniformTypeIdentifiers.framework */; };
+		94B2C8C52929617A00087955 /* ActionExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B2C8C42929617A00087955 /* ActionExtensionViewController.swift */; };
+		94B2C8CC2929617A00087955 /* Action Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 94B2C8BE2929617A00087955 /* Action Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		94B2C926292B2D1B00087955 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 94B2C928292B2D1B00087955 /* InfoPlist.strings */; };
 		D0030982250C6C8500EACB32 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0030981250C6C8500EACB32 /* URL+Extensions.swift */; };
 		D005A1D825EF189A008B2E63 /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D005A1D725EF189A008B2E63 /* ReportViewController.swift */; };
 		D005A1E625EF3D11008B2E63 /* ReportHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D005A1E525EF3D11008B2E63 /* ReportHeaderView.swift */; };
@@ -249,6 +254,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		94B2C8CA2929617A00087955 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D047FA8024C3E21000AF17C5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 94B2C8BD2929617A00087955;
+			remoteInfo = "com.metabolist.metatext.action-extension";
+		};
 		D0666A2624C677B400F3F04B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D047FA8024C3E21000AF17C5 /* Project object */;
@@ -280,6 +292,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				D0E5362024E3EB4D00FB1CE1 /* Notification Service Extension.appex in Embed Foundation Extensions */,
+				94B2C8CC2929617A00087955 /* Action Extension.appex in Embed Foundation Extensions */,
 				D08E5276257C36CA00FA2C5F /* Share Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
@@ -288,6 +301,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		14FC7D31292A556E00567DBC /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		2805F2DF26044E8900670835 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2805F2E026044E8900670835 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		682EA140292B27D4007B0417 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = eu.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -310,7 +324,18 @@
 		68865A2F292349BF001BF177 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fr; path = fr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		68865A3029234A68001BF177 /* gd */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = gd; path = gd.lproj/Localizable.strings; sourceTree = "<group>"; };
 		68865A3129234A68001BF177 /* gd */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = gd; path = gd.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		68B0398729343604003570DD /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		68B0398829343604003570DD /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-HK"; path = "zh-HK.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		68B039892934360A003570DD /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		68B0398A2934360A003570DD /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = uk; path = uk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		75F7B3CB291F51D300FDE7C7 /* SwipeableNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeableNavigationController.swift; sourceTree = "<group>"; };
+		94B2C8BE2929617A00087955 /* Action Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Action Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		94B2C8BF2929617A00087955 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
+		94B2C8C42929617A00087955 /* ActionExtensionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionExtensionViewController.swift; sourceTree = "<group>"; };
+		94B2C8C92929617A00087955 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		94B2C8CD2929617A00087955 /* Action Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Action Extension.entitlements"; sourceTree = "<group>"; };
+		94B2C927292B2D1B00087955 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		94B2C929292B2D3F00087955 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D0030981250C6C8500EACB32 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		D005A1D725EF189A008B2E63 /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
 		D005A1E525EF3D11008B2E63 /* ReportHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportHeaderView.swift; sourceTree = "<group>"; };
@@ -522,6 +547,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		94B2C8BB2929617A00087955 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				94B2C8C02929617A00087955 /* UniformTypeIdentifiers.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D047FA8924C3E21200AF17C5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -562,6 +595,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		94B2C8C12929617A00087955 /* Action Extension */ = {
+			isa = PBXGroup;
+			children = (
+				94B2C8CD2929617A00087955 /* Action Extension.entitlements */,
+				94B2C8C42929617A00087955 /* ActionExtensionViewController.swift */,
+				94B2C8C92929617A00087955 /* Info.plist */,
+				94B2C928292B2D1B00087955 /* InfoPlist.strings */,
+			);
+			path = "Action Extension";
+			sourceTree = "<group>";
+		};
 		D021A66325C3E167008A0C0D /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -735,6 +779,7 @@
 			isa = PBXGroup;
 			children = (
 				D0477F2A25C6EB90005C5368 /* Activities */,
+				94B2C8C12929617A00087955 /* Action Extension */,
 				D0D4301925F08CE600BE5504 /* App Icons */,
 				D0C7D45224F76169001EBDBB /* Assets.xcassets */,
 				D0FE1C9625368A15003EF1EB /* Caches */,
@@ -770,6 +815,7 @@
 				D0666A2124C677B400F3F04B /* Tests.xctest */,
 				D0E5361924E3EB4D00FB1CE1 /* Notification Service Extension.appex */,
 				D08E526C257C36CA00FA2C5F /* Share Extension.appex */,
+				94B2C8BE2929617A00087955 /* Action Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -785,6 +831,7 @@
 		D0666A7924C7745A00F3F04B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				94B2C8BF2929617A00087955 /* UniformTypeIdentifiers.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -913,6 +960,7 @@
 				D0E7AD3825870B13005F5E2D /* UIVIewController+Extensions.swift */,
 				D0030981250C6C8500EACB32 /* URL+Extensions.swift */,
 				D0C7D46F24F76169001EBDBB /* View+Extensions.swift */,
+				14FC7D31292A556E00567DBC /* UIFont+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -960,6 +1008,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		94B2C8BD2929617A00087955 /* Action Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 94B2C8D02929617A00087955 /* Build configuration list for PBXNativeTarget "Action Extension" */;
+			buildPhases = (
+				94B2C8BA2929617A00087955 /* Sources */,
+				94B2C8BB2929617A00087955 /* Frameworks */,
+				94B2C8BC2929617A00087955 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Action Extension";
+			productName = "com.metabolist.metatext.action-extension";
+			productReference = 94B2C8BE2929617A00087955 /* Action Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		D047FA8B24C3E21200AF17C5 /* Metatext */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D047FAB624C3E21200AF17C5 /* Build configuration list for PBXNativeTarget "Metatext" */;
@@ -975,6 +1040,7 @@
 			dependencies = (
 				D0E5361F24E3EB4D00FB1CE1 /* PBXTargetDependency */,
 				D08E5275257C36CA00FA2C5F /* PBXTargetDependency */,
+				94B2C8CB2929617A00087955 /* PBXTargetDependency */,
 			);
 			name = Metatext;
 			packageProductDependencies = (
@@ -1056,10 +1122,13 @@
 		D047FA8024C3E21000AF17C5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1220;
+				LastSwiftUpdateCheck = 1410;
 				LastUpgradeCheck = 1410;
 				ORGANIZATIONNAME = Metabolist;
 				TargetAttributes = {
+					94B2C8BD2929617A00087955 = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					D047FA8B24C3E21200AF17C5 = {
 						CreatedOnToolsVersion = 12.0;
 					};
@@ -1100,6 +1169,8 @@
 				he,
 				"pt-BR",
 				sv,
+				"zh-HK",
+				uk,
 			);
 			mainGroup = D047FA7F24C3E21000AF17C5;
 			packageReferences = (
@@ -1114,11 +1185,20 @@
 				D0666A2024C677B400F3F04B /* Tests */,
 				D0E5361824E3EB4D00FB1CE1 /* Notification Service Extension */,
 				D08E526B257C36CA00FA2C5F /* Share Extension */,
+				94B2C8BD2929617A00087955 /* Action Extension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		94B2C8BC2929617A00087955 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				94B2C926292B2D1B00087955 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D047FA8A24C3E21200AF17C5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1188,6 +1268,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		94B2C8BA2929617A00087955 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				94B2C8C52929617A00087955 /* ActionExtensionViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D047FA8824C3E21200AF17C5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1340,6 +1428,7 @@
 				D0DDA76B25C5F20800FA0F91 /* ExploreDataSource.swift in Sources */,
 				D0477F4625C72E50005C5368 /* CapsuleLabel.swift in Sources */,
 				D035F88725B8016000DC75ED /* NavigationViewModel+Extensions.swift in Sources */,
+				14FC7D32292A556E00567DBC /* UIFont+Extensions.swift in Sources */,
 				D0C7D49B24F7616A001EBDBB /* PreferencesView.swift in Sources */,
 				D09D972225C65682007E6394 /* SeparatorConfiguredCollectionViewListCell.swift in Sources */,
 				D088406D25AFBBE200BB749B /* EmojiPickerViewController.swift in Sources */,
@@ -1430,6 +1519,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		94B2C8CB2929617A00087955 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 94B2C8BD2929617A00087955 /* Action Extension */;
+			targetProxy = 94B2C8CA2929617A00087955 /* PBXContainerItemProxy */;
+		};
 		D0666A2724C677B400F3F04B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D047FA8B24C3E21200AF17C5 /* Metatext */;
@@ -1448,6 +1542,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		94B2C928292B2D1B00087955 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				94B2C927292B2D1B00087955 /* en */,
+				94B2C929292B2D3F00087955 /* es */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		D9E6586A2601CF76007C426E /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1469,6 +1572,8 @@
 				682EA144292B2A18007B0417 /* he */,
 				682EA146292B2ABE007B0417 /* pt-BR */,
 				682EA148292B2B10007B0417 /* sv */,
+				68B0398729343604003570DD /* zh-HK */,
+				68B039892934360A003570DD /* uk */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1494,6 +1599,8 @@
 				682EA145292B2A18007B0417 /* he */,
 				682EA147292B2ABE007B0417 /* pt-BR */,
 				682EA149292B2B10007B0417 /* sv */,
+				68B0398829343604003570DD /* zh-HK */,
+				68B0398A2934360A003570DD /* uk */,
 			);
 			name = Localizable.stringsdict;
 			sourceTree = "<group>";
@@ -1501,6 +1608,69 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		94B2C8CE2929617A00087955 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = "Action Extension/Action Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 82HL67AXQ2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Action Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Open in Metatext";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Metabolist. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.6.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.metabolist.metatext.action-extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		94B2C8CF2929617A00087955 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = "Action Extension/Action Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 82HL67AXQ2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Action Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Open in Metatext";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Metabolist. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.6.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.metabolist.metatext.action-extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		D047FAB424C3E21200AF17C5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1624,7 +1794,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Supporting Files/Metatext.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 82HL67AXQ2;
 				ENABLE_PREVIEWS = YES;
@@ -1634,7 +1804,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7.0;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.metabolist.metatext;
 				PRODUCT_NAME = Metatext;
 				SDKROOT = iphoneos;
@@ -1652,7 +1822,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Supporting Files/Metatext.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 82HL67AXQ2;
 				ENABLE_PREVIEWS = YES;
@@ -1662,7 +1832,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7.0;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.metabolist.metatext;
 				PRODUCT_NAME = Metatext;
 				SDKROOT = iphoneos;
@@ -1726,7 +1896,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Share Extension/Share Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 82HL67AXQ2;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				INFOPLIST_FILE = "Share Extension/Info.plist";
@@ -1736,7 +1906,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.7.0;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.metabolist.metatext.share-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1753,7 +1923,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Share Extension/Share Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 82HL67AXQ2;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				INFOPLIST_FILE = "Share Extension/Info.plist";
@@ -1763,7 +1933,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.7.0;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.metabolist.metatext.share-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1781,7 +1951,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Notification Service Extension/Notification Service Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 82HL67AXQ2;
 				INFOPLIST_FILE = "Notification Service Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -1790,7 +1960,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.7.0;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.metabolist.metatext.notification-service-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1806,7 +1976,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "Notification Service Extension/Notification Service Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 82HL67AXQ2;
 				INFOPLIST_FILE = "Notification Service Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -1815,7 +1985,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.7.0;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.metabolist.metatext.notification-service-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1830,6 +2000,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		94B2C8D02929617A00087955 /* Build configuration list for PBXNativeTarget "Action Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				94B2C8CE2929617A00087955 /* Debug */,
+				94B2C8CF2929617A00087955 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D047FA8324C3E21000AF17C5 /* Build configuration list for PBXProject "Metatext" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

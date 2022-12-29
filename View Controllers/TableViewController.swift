@@ -23,6 +23,7 @@ class TableViewController: UITableViewController {
     private var shouldKeepPlayingVideoAfterDismissal = false
     private var newItemsViewHiddenConstraint: NSLayoutConstraint?
     private var newItemsViewVisibleConstraint: NSLayoutConstraint?
+    private var isPastInitialAppearance = false
     private let insetBottom: Bool
     private weak var parentNavigationController: UINavigationController?
 
@@ -103,7 +104,11 @@ class TableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        refreshIfAble()
+        if isPastInitialAppearance {
+            refreshIfAble()
+        }
+
+        isPastInitialAppearance = true
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -187,12 +192,12 @@ class TableViewController: UITableViewController {
             navigationItem.rightBarButtonItem = nil
         case .expand:
             navigationItem.rightBarButtonItem = UIBarButtonItem(
-                title: NSLocalizedString("status.show-more-all-button.accessibilty-label", comment: ""),
+                title: NSLocalizedString("status.show-more-all-button.accessibility-label", comment: ""),
                 image: UIImage(systemName: "eye"),
                 primaryAction: UIAction { [weak self] _ in self?.viewModel.toggleExpandAll() })
         case .collapse:
             navigationItem.rightBarButtonItem = UIBarButtonItem(
-                title: NSLocalizedString("status.show-less-all-button.accessibilty-label", comment: ""),
+                title: NSLocalizedString("status.show-less-all-button.accessibility-label", comment: ""),
                 image: UIImage(systemName: "eye.slash"),
                 primaryAction: UIAction { [weak self] _ in self?.viewModel.toggleExpandAll() })
         }
@@ -872,8 +877,8 @@ private extension TableViewController {
     func hideNewItemsView() {
         UIView.animate(withDuration: .zeroIfReduceMotion(.defaultAnimationDuration)) {
             self.newItemsView.alpha = 0
-            self.newItemsViewHiddenConstraint?.isActive = true
             self.newItemsViewVisibleConstraint?.isActive = false
+            self.newItemsViewHiddenConstraint?.isActive = true
             self.view.layoutIfNeeded()
         } completion: { _ in
             self.reloadVisibleItems()

@@ -42,7 +42,7 @@ struct PreferencesView: View {
                     Toggle("preferences.use-preferences-from-server",
                            isOn: $viewModel.preferences.useServerPostingReadingPreferences)
                     Group {
-                        Picker("preferences.posting-default-visiblility",
+                        Picker("preferences.posting-default-visibility",
                                selection: $viewModel.preferences.postingDefaultVisibility) {
                             Text("status.visibility.public").tag(Status.Visibility.public)
                             Text("status.visibility.unlisted").tag(Status.Visibility.unlisted)
@@ -143,6 +143,8 @@ struct PreferencesView: View {
                            isOn: $identityContext.appPreferences.animateCustomEmojis)
                     Toggle("preferences.media.headers.animate",
                            isOn: $identityContext.appPreferences.animateHeaders)
+                    Toggle("preferences.hide-content-warning-button",
+                           isOn: $identityContext.appPreferences.hideContentWarningButton)
                 }
                 if viewModel.identityContext.identity.authenticated
                     && !viewModel.identityContext.identity.pending {
@@ -181,9 +183,9 @@ extension AppPreferences.StatusWord {
     var localizedStringKey: LocalizedStringKey {
         switch self {
         case .toot:
-            return "toot"
+            return "toot.noun"
         case .post:
-            return "post"
+            return "post.noun"
         }
     }
 }
