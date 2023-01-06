@@ -44,7 +44,7 @@ final class StatusBodyView: UIView {
                 font: contentFont
             )
             let contentLines = contentHeight / contentFont.lineHeight
-            let hasLongContent = viewModel.identityContext.foldLongPosts && contentLines > Self.numLinesBeforeFolding
+            let hasLongContent = viewModel.identityContext.appPreferences.foldLongPosts && contentLines > Self.numLinesBeforeFolding
 
             let shouldShowContent = !hasLongContent || viewModel.shouldShowContent
 
@@ -142,12 +142,9 @@ extension StatusBodyView {
         let contentFont = UIFont.preferredFont(forTextStyle: configuration.isContextParent ? .title3 : .callout)
         var height: CGFloat = 0
 
-        var contentHeight = max(
-            status.displayStatus.content.attributed.string.height(
-                width: width,
-                font: contentFont),
-            Self.numLinesBeforeFolding * contentFont.lineHeight
-        )
+        var contentHeight = status.displayStatus.content.attributed.string.height(
+            width: width,
+            font: contentFont)
 
         if status.displayStatus.card != nil {
             contentHeight += .compactSpacing
@@ -179,6 +176,9 @@ extension StatusBodyView {
             if configuration.showContentToggled && !identityContext.identity.preferences.readingExpandSpoilers {
                 height += .compactSpacing
                 height += contentHeight
+            } else if viewModel.identityContext.appPreferences.foldLongPosts && contentHeight / contentFont.lineHeight > Self.numLinesBeforeFolding {
+                height += .compactSpacing
+                height += contentFont.lineHeight
             }
         }
 
