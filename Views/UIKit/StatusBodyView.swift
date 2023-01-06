@@ -176,7 +176,8 @@ extension StatusBodyView {
             if configuration.showContentToggled && !identityContext.identity.preferences.readingExpandSpoilers {
                 height += .compactSpacing
                 height += contentHeight
-            } else if viewModel.identityContext.appPreferences.foldLongPosts && contentHeight / contentFont.lineHeight > Self.numLinesBeforeFolding {
+            } else if identityContext.appPreferences.foldLongPosts
+                        && contentHeight / contentFont.lineHeight > Self.numLinesBeforeFolding {
                 height += .compactSpacing
                 height += contentFont.lineHeight
             }
