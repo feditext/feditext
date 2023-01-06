@@ -225,6 +225,11 @@ public extension AppPreferences {
         get { self[.hideContentWarningButton] ?? false }
         set { self[.hideContentWarningButton] = newValue }
     }
+
+    var foldLongPosts: Bool {
+        get { self[.foldLongPosts] ?? true }
+        set { self[.foldLongPosts] = newValue }
+    }
 }
 
 private extension AppPreferences {
@@ -249,6 +254,7 @@ private extension AppPreferences {
         case openLinksInDefaultBrowser
         case useUniversalLinks
         case hideContentWarningButton
+        case foldLongPosts
     }
 
     subscript<T>(index: Item) -> T? {

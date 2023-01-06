@@ -44,7 +44,7 @@ final class StatusBodyView: UIView {
                 font: contentFont
             )
             let contentLines = contentHeight / contentFont.lineHeight
-            let hasLongContent = contentLines > Self.numLinesBeforeFolding
+            let hasLongContent = viewModel.identityContext.foldLongPosts && contentLines > Self.numLinesBeforeFolding
 
             let shouldShowContent = !hasLongContent || viewModel.shouldShowContent
 
