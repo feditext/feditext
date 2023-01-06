@@ -6,11 +6,14 @@ import ViewModels
 
 final class StatusBodyView: UIView {
     let spoilerTextLabel = AnimatedAttachmentLabel()
+    let longContentPreviewLabel = AnimatedAttachmentLabel()
     let toggleShowContentButton = CapsuleButton()
     let contentTextView = TouchFallthroughTextView()
     let attachmentsView = AttachmentsView()
     let pollView = PollView()
     let cardView = CardView()
+
+    static let numLinesBeforeFolding: CGFloat = 20.0
 
     var viewModel: StatusViewModel? {
         didSet {
@@ -36,32 +39,56 @@ final class StatusBodyView: UIView {
             contentTextView.attributedText = mutableContent
             contentTextView.isHidden = contentTextView.text.isEmpty
 
-            mutableSpoilerText.insert(emojis: viewModel.contentEmojis,
-                                      view: spoilerTextLabel,
-                                      identityContext: viewModel.identityContext)
-            mutableSpoilerText.resizeAttachments(toLineHeight: spoilerTextLabel.font.lineHeight)
+            let contentHeight = viewModel.content.string.height(
+                width: frame.width,
+                font: contentFont
+            )
+            let contentLines = contentHeight / contentFont.lineHeight
+            let hasLongContent = contentLines > Self.numLinesBeforeFolding
+
+            let shouldShowContent = !hasLongContent || viewModel.shouldShowContent
+
+            if !viewModel.spoilerText.isEmpty {
+                mutableSpoilerText.insert(emojis: viewModel.contentEmojis,
+                                          view: spoilerTextLabel,
+                                          identityContext: viewModel.identityContext)
+                mutableSpoilerText.resizeAttachments(toLineHeight: spoilerTextLabel.font.lineHeight)
+            } else if hasLongContent {
+                mutableSpoilerText.mutableString.append(String.localizedStringWithFormat(
+                    NSLocalizedString("status.folded-lines-%ld", comment: ""),
+                    Int(contentLines)
+                ))
+            }
             spoilerTextLabel.font = mutableSpoilerFont
             spoilerTextLabel.attributedText = mutableSpoilerText
             spoilerTextLabel.isHidden = spoilerTextLabel.text == ""
             toggleShowContentButton.setTitle(
-                viewModel.shouldShowContent
+                shouldShowContent
                     ? NSLocalizedString("status.show-less", comment: "")
                     : NSLocalizedString("status.show-more", comment: ""),
                 for: .normal)
-            toggleShowContentButton.isHidden = viewModel.spoilerText.isEmpty
+            toggleShowContentButton.isHidden = (viewModel.spoilerText.isEmpty && !hasLongContent)
                     || !viewModel.shouldShowContentWarningButton
 
-            contentTextView.isHidden = !viewModel.shouldShowContent
+            if let firstLine = viewModel.content.string.split(whereSeparator: \.isNewline).first {
+                longContentPreviewLabel.text = String(firstLine)
+            } else {
+                longContentPreviewLabel.text = nil
+            }
+            longContentPreviewLabel.font = contentFont
+            longContentPreviewLabel.isHidden = shouldShowContent
+
+            contentTextView.isHidden = !shouldShowContent
 
             attachmentsView.isHidden = viewModel.attachmentViewModels.isEmpty
             attachmentsView.viewModel = viewModel
 
-            pollView.isHidden = viewModel.pollOptions.isEmpty || !viewModel.shouldShowContent
+            pollView.isHidden = viewModel.pollOptions.isEmpty || !shouldShowContent
             pollView.viewModel = viewModel
             pollView.isAccessibilityElement = !isContextParent || viewModel.hasVotedInPoll || viewModel.isPollExpired
 
             cardView.viewModel = viewModel.cardViewModel
-            cardView.isHidden = viewModel.cardViewModel == nil || !viewModel.shouldShowContent
+            cardView.isHidden = viewModel.cardViewModel == nil || !shouldShowContent
 
             accessibilityAttributedLabel = accessibilityAttributedLabel(forceShowContent: false)
 
@@ -115,9 +142,12 @@ extension StatusBodyView {
         let contentFont = UIFont.preferredFont(forTextStyle: configuration.isContextParent ? .title3 : .callout)
         var height: CGFloat = 0
 
-        var contentHeight = status.displayStatus.content.attributed.string.height(
-            width: width,
-            font: contentFont)
+        var contentHeight = max(
+            status.displayStatus.content.attributed.string.height(
+                width: width,
+                font: contentFont),
+            Self.numLinesBeforeFolding * contentFont.lineHeight
+        )
 
         if status.displayStatus.card != nil {
             contentHeight += .compactSpacing
@@ -224,6 +254,11 @@ private extension StatusBodyView {
             UIAction { [weak self] _ in self?.viewModel?.toggleShowContent() },
             for: .touchUpInside)
         stackView.addArrangedSubview(toggleShowContentButton)
+
+        longContentPreviewLabel.numberOfLines = 1
+        longContentPreviewLabel.lineBreakMode = .byTruncatingTail
+        longContentPreviewLabel.adjustsFontForContentSizeCategory = true
+        stackView.addArrangedSubview(longContentPreviewLabel)
 
         contentTextView.adjustsFontForContentSizeCategory = true
         contentTextView.backgroundColor = .clear

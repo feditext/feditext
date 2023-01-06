@@ -53,7 +53,7 @@ public extension StatusViewModel {
     var isMine: Bool { statusService.status.displayStatus.account.id == identityContext.identity.account?.id }
 
     var shouldShowContent: Bool {
-        guard spoilerText != "" else { return true }
+        guard spoilerText != "" else { return configuration.showContentToggled }
 
         if identityContext.identity.preferences.readingExpandSpoilers {
             return !configuration.showContentToggled
