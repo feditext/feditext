@@ -6,14 +6,17 @@ import ViewModels
 
 final class StatusBodyView: UIView {
     let spoilerTextLabel = AnimatedAttachmentLabel()
-    let longContentPreviewLabel = AnimatedAttachmentLabel()
     let toggleShowContentButton = CapsuleButton()
     let contentTextView = TouchFallthroughTextView()
     let attachmentsView = AttachmentsView()
     let pollView = PollView()
     let cardView = CardView()
 
-    static let numLinesBeforeFolding: CGFloat = 20.0
+    /// Fold posts more than this many laid-out lines long.
+    static let numLinesBeforeFolding: Int = 20
+
+    /// Show this many lines of a folded post as a preview.
+    static let numLinesFoldedPreview: Int = 2
 
     var viewModel: StatusViewModel? {
         didSet {
@@ -39,46 +42,32 @@ final class StatusBodyView: UIView {
             contentTextView.attributedText = mutableContent
             contentTextView.isHidden = contentTextView.text.isEmpty
 
-            let contentHeight = viewModel.content.string.height(
-                width: frame.width,
-                font: contentFont
-            )
-            let contentLines = contentHeight / contentFont.lineHeight
-            let hasLongContent = viewModel.identityContext.appPreferences.foldLongPosts && contentLines > Self.numLinesBeforeFolding
-
-            let shouldShowContent = !hasLongContent || viewModel.shouldShowContent
-
-            if !viewModel.spoilerText.isEmpty {
+            if viewModel.hasSpoiler {
                 mutableSpoilerText.insert(emojis: viewModel.contentEmojis,
                                           view: spoilerTextLabel,
                                           identityContext: viewModel.identityContext)
                 mutableSpoilerText.resizeAttachments(toLineHeight: spoilerTextLabel.font.lineHeight)
-            } else if hasLongContent {
-                mutableSpoilerText.mutableString.append(String.localizedStringWithFormat(
-                    NSLocalizedString("status.folded-lines-%ld", comment: ""),
-                    Int(contentLines)
-                ))
             }
             spoilerTextLabel.font = mutableSpoilerFont
             spoilerTextLabel.attributedText = mutableSpoilerText
-            spoilerTextLabel.isHidden = spoilerTextLabel.text == ""
+            spoilerTextLabel.isHidden = !viewModel.hasSpoiler
             toggleShowContentButton.setTitle(
                 shouldShowContent
                     ? NSLocalizedString("status.show-less", comment: "")
                     : NSLocalizedString("status.show-more", comment: ""),
                 for: .normal)
-            toggleShowContentButton.isHidden = (viewModel.spoilerText.isEmpty && !hasLongContent)
-                    || !viewModel.shouldShowContentWarningButton
+            toggleShowContentButton.isHidden = (!viewModel.hasSpoiler
+                    || viewModel.alwaysExpandSpoilers || 
+                    || !viewModel.shouldShowContentWarningButton)
+                && (!hasLongContent || !viewModel.foldLongContent)
 
-            if let firstLine = viewModel.content.string.split(whereSeparator: \.isNewline).first {
-                longContentPreviewLabel.text = String(firstLine)
+            contentTextView.isHidden = viewModel.shouldHideDueToSpoiler && !shouldShowContent
+            contentTextView.textContainer.lineBreakMode = .byTruncatingTail
+            if shouldShowFirstContentLineAsPreview {
+                contentTextView.textContainer.maximumNumberOfLines = Self.numLinesFoldedPreview
             } else {
-                longContentPreviewLabel.text = nil
+                contentTextView.textContainer.maximumNumberOfLines = 0
             }
-            longContentPreviewLabel.font = contentFont
-            longContentPreviewLabel.isHidden = shouldShowContent
-
-            contentTextView.isHidden = !shouldShowContent
 
             attachmentsView.isHidden = viewModel.attachmentViewModels.isEmpty
             attachmentsView.viewModel = viewModel
@@ -164,23 +153,40 @@ extension StatusBodyView {
                 configuration: configuration)
         }
 
-        if status.displayStatus.spoilerText.isEmpty {
-            height += contentHeight
-        } else {
+        // TODO: (Vyr) harmonize this with rich text patch later
+        //  This would be so much more convenient if it took a StatusViewModel…
+        //  For now, it duplicates a lot of code from non-static contexts in this class and from StatusViewModel.
+        let hasSpoiler = !status.displayStatus.spoilerText.isEmpty
+        let alwaysExpandSpoilers = identityContext.identity.preferences.readingExpandSpoilers
+        let shouldHideDueToSpoiler = hasSpoiler && !alwaysExpandSpoilers
+
+        let contentLines = contentHeight / contentFont.lineHeight
+        let hasLongContent = contentLines > CGFloat(Self.numLinesBeforeFolding)
+        let shouldHideDueToLongContent = hasLongContent && identityContext.appPreferences.foldLongPosts
+
+        let shouldShowContent = configuration.showContentToggled
+            || !(shouldHideDueToSpoiler || shouldHideDueToLongContent)
+
+        if hasSpoiler {
+            // Include spoiler text height.
             height += status.displayStatus.spoilerText.height(width: width, font: contentFont)
             height += .compactSpacing
+        }
+
+        if shouldHideDueToSpoiler || shouldHideDueToLongContent {
+            // Include Show More button height.
             height += NSLocalizedString("status.show-more", comment: "").height(
                 width: width,
                 font: .preferredFont(forTextStyle: .headline))
+            height += .compactSpacing
+        }
 
-            if configuration.showContentToggled && !identityContext.identity.preferences.readingExpandSpoilers {
-                height += .compactSpacing
-                height += contentHeight
-            } else if identityContext.appPreferences.foldLongPosts
-                        && contentHeight / contentFont.lineHeight > Self.numLinesBeforeFolding {
-                height += .compactSpacing
-                height += contentFont.lineHeight
-            }
+        if shouldShowContent {
+            // Include full height of content.
+            height += contentHeight
+        } else if !configuration.showContentToggled && !hasSpoiler && shouldHideDueToLongContent {
+            // Include first few lines of content.
+            height += contentFont.lineHeight * CGFloat(Self.numLinesFoldedPreview)
         }
 
         if !status.displayStatus.mediaAttachments.isEmpty {
@@ -200,8 +206,7 @@ extension StatusBodyView {
 
         if !spoilerTextLabel.isHidden,
            let spoilerText = spoilerTextLabel.attributedText,
-           let viewModel = viewModel,
-           !viewModel.shouldShowContent,
+           !shouldShowContent,
            !forceShowContent {
             accessibilityAttributedLabel.appendWithSeparator(
                 NSLocalizedString("status.content-warning.accessibility", comment: ""))
@@ -218,6 +223,20 @@ extension StatusBodyView {
         }
 
         return accessibilityAttributedLabel
+    }
+
+    /// Needs to be visible for accessibility info in parent view.
+    /// Cannot be handled entirely from view model since view model is not aware of view width, font, etc.
+    public var shouldShowContent: Bool {
+        guard let viewModel = viewModel else {
+            return false
+        }
+
+        guard viewModel.shouldHideDueToSpoiler || shouldHideDueToLongContent else {
+            return true
+        }
+
+        return viewModel.showContentToggled
     }
 }
 
@@ -256,11 +275,6 @@ private extension StatusBodyView {
             for: .touchUpInside)
         stackView.addArrangedSubview(toggleShowContentButton)
 
-        longContentPreviewLabel.numberOfLines = 1
-        longContentPreviewLabel.lineBreakMode = .byTruncatingTail
-        longContentPreviewLabel.adjustsFontForContentSizeCategory = true
-        stackView.addArrangedSubview(longContentPreviewLabel)
-
         contentTextView.adjustsFontForContentSizeCategory = true
         contentTextView.backgroundColor = .clear
         contentTextView.delegate = self
@@ -288,5 +302,51 @@ private extension StatusBodyView {
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+    }
+
+    private var isContextParent: Bool {
+        viewModel?.configuration.isContextParent ?? false
+    }
+
+    private var contentTextStyle: UIFont.TextStyle {
+        isContextParent ? .title3 : .callout
+    }
+
+    private var contentFont: UIFont {
+        UIFont.preferredFont(forTextStyle: contentTextStyle)
+    }
+
+    var contentLines: CGFloat {
+        guard let viewModel = viewModel else {
+            return 0.0
+        }
+
+        // TODO: (Vyr) harmonize this with rich text patch later
+        let contentHeight = viewModel.content.string.height(
+            width: frame.width,
+            font: contentFont
+        )
+        return contentHeight / contentFont.lineHeight
+    }
+
+    var hasLongContent: Bool {
+        contentLines > CGFloat(Self.numLinesBeforeFolding)
+    }
+
+    var shouldHideDueToLongContent: Bool {
+        guard let viewModel = viewModel else {
+            return false
+        }
+        guard hasLongContent else {
+            return false
+        }
+
+        return viewModel.identityContext.appPreferences.foldLongPosts
+    }
+
+    var shouldShowFirstContentLineAsPreview: Bool {
+        shouldHideDueToLongContent
+            && !(viewModel?.shouldHideDueToSpoiler ?? false)
+            && !shouldShowContent
     }
 }

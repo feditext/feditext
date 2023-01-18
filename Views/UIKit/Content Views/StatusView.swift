@@ -73,7 +73,7 @@ final class StatusView: UIView {
     }
 
     override func accessibilityActivate() -> Bool {
-        if reportSelectionSwitch.isHidden, !statusConfiguration.viewModel.shouldShowContent {
+        if reportSelectionSwitch.isHidden, !bodyView.shouldShowContent {
             statusConfiguration.viewModel.toggleShowContent()
             accessibilityAttributedLabel = accessibilityAttributedLabel(forceShowContent: true)
 

@@ -52,14 +52,28 @@ public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObj
 public extension StatusViewModel {
     var isMine: Bool { statusService.status.displayStatus.account.id == identityContext.identity.account?.id }
 
-    var shouldShowContent: Bool {
-        guard spoilerText != "" else { return configuration.showContentToggled }
+    var showContentToggled: Bool {
+        configuration.showContentToggled
+    }
 
-        if identityContext.identity.preferences.readingExpandSpoilers {
-            return !configuration.showContentToggled
-        } else {
-            return configuration.showContentToggled
+    var hasSpoiler: Bool {
+        !spoilerText.isEmpty
+    }
+
+    var alwaysExpandSpoilers: Bool {
+        identityContext.identity.preferences.readingExpandSpoilers
+    }
+
+    var shouldHideDueToSpoiler: Bool {
+        guard !alwaysExpandSpoilers else {
+            return false
         }
+
+        return hasSpoiler
+    }
+
+    var foldLongContent: Bool {
+        identityContext.appPreferences.foldLongPosts
     }
 
     var shouldShowContentWarningButton: Bool {
