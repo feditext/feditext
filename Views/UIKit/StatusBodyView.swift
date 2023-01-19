@@ -22,19 +22,15 @@ final class StatusBodyView: UIView {
         didSet {
             guard let viewModel = viewModel else { return }
 
-            let isContextParent = viewModel.configuration.isContextParent
-            let mutableContent = NSMutableAttributedString(attributedString: viewModel.content)
+            let mutableContent = Self.adaptFont(style: contentTextStyle, attributed: viewModel.content)
             let mutableSpoilerText = NSMutableAttributedString(string: viewModel.spoilerText)
-            let mutableSpoilerFont = UIFont.preferredFont(forTextStyle: isContextParent ? .title3 : .callout).bold()
+            let mutableSpoilerFont = UIFont.preferredFont(forTextStyle: contentTextStyle).bold()
             let contentFont = UIFont.preferredFont(forTextStyle: isContextParent ? .title3 : .callout)
             let contentRange = NSRange(location: 0, length: mutableContent.length)
 
             contentTextView.shouldFallthrough = !isContextParent
 
-            mutableContent.removeAttribute(.font, range: contentRange)
-            mutableContent.addAttributes(
-                [.font: contentFont, .foregroundColor: UIColor.label],
-                range: contentRange)
+            mutableContent.addAttribute(.foregroundColor, value: UIColor.label, range: contentRange)
             mutableContent.insert(emojis: viewModel.contentEmojis,
                                   view: contentTextView,
                                   identityContext: viewModel.identityContext)
@@ -348,5 +344,35 @@ private extension StatusBodyView {
         shouldHideDueToLongContent
             && !(viewModel?.shouldHideDueToSpoiler ?? false)
             && !shouldShowContent
+    }
+
+    /// Get size of body text produced by `NSAttributedString`'s HTML parser.
+    /// Default is observed height on macOS 13.
+    static let htmlBodyTextHeight: CGFloat = (NSAttributedString(html: "x")?
+        .attribute(.font, at: 0, effectiveRange: nil) as? UIFont)?
+        .pointSize
+    ?? 12.0
+
+    /// Replace HTML parser fonts with equivalent system fonts, appropriately scaled.
+    static func adaptFont(style: UIFont.TextStyle, attributed: NSAttributedString) -> NSMutableAttributedString {
+        let systemFontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style)
+        let mutable = NSMutableAttributedString(attributedString: attributed)
+        let entireString = NSRange(location: 0, length: mutable.length)
+        mutable.enumerateAttribute(.font, in: entireString) { val, range, _ in
+            guard let font = val as? UIFont else {
+                return
+            }
+            let descriptor = font.fontDescriptor
+            let size = descriptor.pointSize / htmlBodyTextHeight * systemFontDescriptor.pointSize
+            var traits = descriptor.symbolicTraits
+            traits.remove(.classMask)
+            guard let newDescriptor = systemFontDescriptor.withSize(size).withSymbolicTraits(traits) else {
+                return
+            }
+            let newFont = UIFont(descriptor: newDescriptor, size: 0.0)
+            mutable.addAttribute(.font, value: newFont, range: range)
+        }
+        mutable.fixAttributes(in: entireString)
+        return mutable
     }
 }

@@ -6,6 +6,7 @@ import UIKit
 #else
 import AppKit
 #endif
+import SwiftSoup
 
 public struct HTML: Hashable {
     public let raw: String
@@ -21,7 +22,7 @@ extension HTML: Codable {
         if let cachedAttributedString = Self.attributedStringCache.object(forKey: raw as NSString) {
             attributed = cachedAttributedString
         } else {
-            attributed = HTMLParser(string: raw).parse()
+            attributed = Self.parse(raw)
             Self.attributedStringCache.setObject(attributed, forKey: raw as NSString)
         }
     }
@@ -35,93 +36,87 @@ extension HTML: Codable {
 
 private extension HTML {
     static var attributedStringCache = NSCache<NSString, NSAttributedString>()
+
+    // https://docs.joinmastodon.org/spec/activitypub/#sanitization
+
+    // Mark the invisible span after an ellipsis span for replacement with "…".
+    // ::after pseudo-elements don't work in this context.
+    static let style: String = """
+        <style>
+            a > span.invisible {
+                display: none;
+            }
+
+            a > span.ellipsis + span.invisible {
+                display: inherit;
+                background-color: rgb(255 0 0);
+            }
+        </style>
+    """
+
+    static func parse(_ raw: String) -> NSAttributedString {
+        guard
+            let sanitized: String = try? SwiftSoup.clean(
+                raw,
+                .basic()
+                    .addTags("h1", "h2", "h3", "h4", "h5", "h6")
+                    .addTags("kbd", "samp", "tt")
+                    .addTags("s")
+                    .removeProtocols("a", "href", "ftp", "mailto")
+                    .addAttributes("span", "class")
+            ),
+            let attributed = NSMutableAttributedString(html: style.appending(sanitized))
+        else {
+            return NSAttributedString()
+        }
+
+        // Trim trailing newline added by parser, probably for p tags.
+        guard let range = attributed.string.rangeOfCharacter(from: .newlines, options: .backwards),
+              range.upperBound == attributed.string.endIndex else {
+            return attributed
+        }
+        attributed.deleteCharacters(in: NSRange(range, in: attributed.string))
+
+        // This hack uses text background color to pass class information through the HTML parser,
+        // since there's no direct mechanism for attaching CSS classes to an attributed string.
+        let entireString = NSRange(location: 0, length: attributed.length)
+        attributed.enumerateAttribute(.backgroundColor, in: entireString) { val, range, _ in
+            guard let color = val as? UIColor else {
+                return
+            }
+            var r: CGFloat = 0
+            var g: CGFloat = 0
+            var b: CGFloat = 0
+            color.getRed(&r, green: &g, blue: &b, alpha: nil)
+            attributed.removeAttribute(.backgroundColor, range: range)
+            if r == 1.0 && g == 0.0 && b == 0.0 {
+                attributed.replaceCharacters(in: range, with: "…")
+            }
+        }
+
+        attributed.fixAttributes(in: NSRange(location: 0, length: attributed.length))
+        return attributed
+    }
 }
 
-// https://docs.joinmastodon.org/spec/activitypub/#sanitization
-
-private final class HTMLParser: NSObject {
-    private struct Link: Hashable {
-        let href: URL
-        let location: Int
-        var length = 0
-    }
-
-    private let rawString: String
-    private let parser: XMLParser
-    private let parseStopColumn: Int
-    private var constructedString = ""
-    private var attributesStack = [[String: String]]()
-    private var currentLink: Link?
-    private var links = Set<Link>()
-    private static let containerTag = "com.metabolist.metatext.container-tag"
-    private static let openingContainerTag = "<\(containerTag)>"
-    private static let closingContainerTag = "</\(containerTag)>"
-
-    init(string: String) {
-        rawString = Self.openingContainerTag
-            .appending(string.replacingOccurrences(of: "<br>", with: "<br/>")
-                        .replacingOccurrences(of: "&nbsp;", with: " "))
-            .appending(Self.closingContainerTag)
-        parser = XMLParser(data: Data(rawString.utf8))
-        parseStopColumn = rawString.count - Self.closingContainerTag.count
-
-        super.init()
-
-        parser.delegate = self
-    }
-
-    func parse() -> NSAttributedString {
-        parser.parse()
-
-        let attributedString = NSMutableAttributedString(string: constructedString)
-
-        for link in links {
-            attributedString.addAttribute(.link,
-                                          value: link.href,
-                                          range: .init(location: link.location, length: link.length))
+extension NSAttributedString {
+    /// The built-in `init?(html:)` methods only exist on macOS,
+    /// and `loadFromHTML` is async and invokes WebKit,
+    /// so we roll our own convenience constructor from sanitized HTML.
+    ///
+    /// Note that this constructor should not be used for general-purpose HTML:
+    /// https://developer.apple.com/documentation/foundation/nsattributedstring/1524613-init#discussion
+    public convenience init?(html: String) {
+        guard let data = html.data(using: .utf8) else {
+            return nil
         }
-
-        return attributedString
-    }
-}
-
-extension HTMLParser: XMLParserDelegate {
-    func parser(_ parser: XMLParser,
-                didStartElement elementName: String,
-                namespaceURI: String?,
-                qualifiedName qName: String?,
-                attributes attributeDict: [String: String] = [:]) {
-        attributesStack.append(attributeDict)
-
-        if elementName == "a", let hrefString = attributeDict["href"], let href = URL(unicodeString: hrefString) {
-            currentLink = Link(href: href, location: constructedString.utf16.count)
-        } else if elementName == "br" {
-            constructedString.append("\n")
-        }
-    }
-
-    func parser(_ parser: XMLParser,
-                didEndElement elementName: String,
-                namespaceURI: String?,
-                qualifiedName qName: String?) {
-        let attributes = attributesStack.removeLast()
-
-        if attributes["class"] == "ellipsis" {
-            constructedString.append("…")
-        }
-
-        if elementName == "a", var link = currentLink {
-            link.length = constructedString.utf16.count - link.location
-            links.insert(link)
-            currentLink = nil
-        } else if elementName == "p", parser.columnNumber < parseStopColumn {
-            constructedString.append("\n\n")
-        }
-    }
-
-    func parser(_ parser: XMLParser, foundCharacters string: String) {
-        if attributesStack.last?["class"] != "invisible" {
-            constructedString.append(string)
-        }
+        try? self.init(
+            data: data,
+            options: [
+                .characterEncoding: NSUTF8StringEncoding,
+                .documentType: NSAttributedString.DocumentType.html
+            ],
+            documentAttributes: nil
+        )
     }
 }
