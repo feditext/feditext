@@ -57,7 +57,7 @@ final class StatusBodyView: UIView {
                     : NSLocalizedString("status.show-more", comment: ""),
                 for: .normal)
             toggleShowContentButton.isHidden = (!viewModel.hasSpoiler
-                    || viewModel.alwaysExpandSpoilers || 
+                    || viewModel.alwaysExpandSpoilers
                     || !viewModel.shouldShowContentWarningButton)
                 && (!hasLongContent || !viewModel.foldLongContent)
 
