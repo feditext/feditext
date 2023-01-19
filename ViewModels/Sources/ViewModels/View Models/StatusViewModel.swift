@@ -77,7 +77,7 @@ public extension StatusViewModel {
     }
 
     var shouldShowContentWarningButton: Bool {
-        if self.shouldShowContent {
+        if self.showContentToggled {
             return !identityContext.appPreferences.hideContentWarningButton
         } else {
             return true
