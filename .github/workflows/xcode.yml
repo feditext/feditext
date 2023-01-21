@@ -1,7 +1,4 @@
-name: SwiftLint
-
-# hang on
-# i forgoat there is a build event calling swiftlint already?
+name: Xcode - Build and Analyze
 
 on:
   push:
@@ -10,8 +7,8 @@ on:
     branches: [ "app-store-preflight" ]
 
 jobs:
-  lint:
-    name: Lint the Swift
+  build:
+    name: Build and analyse default scheme using xcodebuild command
     runs-on: macos-latest
 
     steps:
