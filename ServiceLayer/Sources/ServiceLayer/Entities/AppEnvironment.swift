@@ -43,7 +43,15 @@ public struct AppEnvironment {
 }
 
 public extension AppEnvironment {
-    static let appGroup = "group.com.gotgoat.metatext"
+    /// Makes it possible to change the bundle ID of the app and all of its extensions from `Identify.xcconfig`.
+    static var bundleIDBase: String {
+        // swiftlint:disable:next force_cast
+        Bundle.main.infoDictionary!["Feditext bundle ID base"] as! String
+    }
+
+    static var appGroup: String {
+        "group.\(bundleIDBase)"
+    }
 
     static func live(userNotificationCenter: UNUserNotificationCenter,
                      reduceMotion: @escaping () -> Bool,

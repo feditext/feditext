@@ -15,13 +15,19 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.gotgoat.metatext</string>
+		<string>group.$(FEDITEXT_BUNDLE_ID_BASE)</string>
 	</array>
+	<key>com.apple.security.device.audio-input</key>
+	<true/>
+	<key>com.apple.security.device.camera</key>
+	<true/>
 	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.personal-information.photos-library</key>
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.gotgoat.metatext</string>
+		<string>$(AppIdentifierPrefix)$(FEDITEXT_BUNDLE_ID_BASE)</string>
 	</array>
 </dict>
 </plist>
