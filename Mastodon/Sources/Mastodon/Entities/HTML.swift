@@ -71,11 +71,10 @@ private extension HTML {
         }
 
         // Trim trailing newline added by parser, probably for p tags.
-        guard let range = attributed.string.rangeOfCharacter(from: .newlines, options: .backwards),
-              range.upperBound == attributed.string.endIndex else {
-            return attributed
+        if let range = attributed.string.rangeOfCharacter(from: .newlines, options: .backwards),
+              range.upperBound == attributed.string.endIndex {
+            attributed.deleteCharacters(in: NSRange(range, in: attributed.string))
         }
-        attributed.deleteCharacters(in: NSRange(range, in: attributed.string))
 
         // This hack uses text background color to pass class information through the HTML parser,
         // since there's no direct mechanism for attaching CSS classes to an attributed string.
