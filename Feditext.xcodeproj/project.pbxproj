@@ -330,7 +330,6 @@
 		68B0398A2934360A003570DD /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = uk; path = uk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		75F7B3CB291F51D300FDE7C7 /* SwipeableNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeableNavigationController.swift; sourceTree = "<group>"; };
 		947873BB297E0F9000CACEFE /* Identity.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Identity.xcconfig; sourceTree = "<group>"; };
-		947873BC297E1F7B00CACEFE /* Identity.xcconfig.example.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Identity.xcconfig.example.txt; sourceTree = "<group>"; };
 		94B2C8BE2929617A00087955 /* Action Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Action Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		94B2C8BF2929617A00087955 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
 		94B2C8C42929617A00087955 /* ActionExtensionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionExtensionViewController.swift; sourceTree = "<group>"; };
@@ -785,7 +784,6 @@
 				D0666A7924C7745A00F3F04B /* Frameworks */,
 				D0BFDAF524FC7C5300C86618 /* HTTP */,
 				947873BB297E0F9000CACEFE /* Identity.xcconfig */,
-				947873BC297E1F7B00CACEFE /* Identity.xcconfig.example.txt */,
 				D0BECB952501B3DD002C1B13 /* Keychain */,
 				D0C7D45624F76169001EBDBB /* Localizations */,
 				D0E0F1E424FC49FC002C04BF /* Mastodon */,
