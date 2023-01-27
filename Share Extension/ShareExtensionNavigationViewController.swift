@@ -20,10 +20,10 @@ class ShareExtensionNavigationViewController: UINavigationController {
         try? ImageCacheConfiguration(environment: environment).configure()
 
         let viewModel = ShareExtensionNavigationViewModel(environment: environment)
-        let newStatusViewModel: NewStatusViewModel
+        let newStatusViewModel: ComposeStatusViewModel
 
         do {
-            newStatusViewModel = try viewModel.newStatusViewModel(extensionContext: extensionContext)
+            newStatusViewModel = try viewModel.composeStatusViewModel(extensionContext: extensionContext)
         } catch {
             setViewControllers([ShareErrorViewController(error: error)], animated: false)
 
@@ -31,7 +31,7 @@ class ShareExtensionNavigationViewController: UINavigationController {
         }
 
         setViewControllers(
-            [NewStatusViewController(viewModel: newStatusViewModel, rootViewModel: nil)],
+            [ComposeStatusViewController(viewModel: newStatusViewModel, rootViewModel: nil)],
             animated: false)
     }
 }

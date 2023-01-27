@@ -26,11 +26,11 @@ final class MainNavigationViewController: UITabBarController {
 
         delegate = self
 
-        viewModel.$presentedNewStatusViewModel.sink { [weak self] in
-            if let newStatusViewModel = $0 {
-                self?.presentNewStatus(newStatusViewModel: newStatusViewModel)
+        viewModel.$presentedComposeStatusViewModel.sink { [weak self] in
+            if let composeStatusViewModel = $0 {
+                self?.presentComposeStatus(composeStatusViewModel: composeStatusViewModel)
             } else {
-                self?.dismissNewStatus()
+                self?.dismissComposeStatus()
             }
         }
         .store(in: &cancellables)
@@ -106,7 +106,7 @@ extension MainNavigationViewController: NavigationHandling {
 
 private extension MainNavigationViewController {
     static let secondaryNavigationViewTag = UUID().hashValue
-    static let newStatusViewTag = UUID().hashValue
+    static let composeStatusViewTag = UUID().hashValue
     static let refreshFromBackgroundDebounceInterval: TimeInterval = 30
 
     func setupViewControllers(pending: Bool) {
@@ -149,8 +149,8 @@ private extension MainNavigationViewController {
         let newStatusButtonView = NewStatusButtonView(primaryAction: UIAction { [weak self] _ in
             guard let self = self else { return }
 
-            self.viewModel.presentedNewStatusViewModel =
-                self.rootViewModel.newStatusViewModel(identityContext: self.viewModel.identityContext)
+            self.viewModel.presentedComposeStatusViewModel =
+                self.rootViewModel.composeStatusViewModel(identityContext: self.viewModel.identityContext)
         })
 
         view.addSubview(newStatusButtonView)
@@ -209,18 +209,20 @@ private extension MainNavigationViewController {
         }
     }
 
-    func presentNewStatus(newStatusViewModel: NewStatusViewModel) {
+    func presentComposeStatus(composeStatusViewModel: ComposeStatusViewModel) {
         if let presentedViewController = presentedViewController {
-            if presentedViewController.view.tag == Self.newStatusViewTag {
+            if presentedViewController.view.tag == Self.composeStatusViewTag {
                 return
             } else {
                 dismiss(animated: true)
             }
         }
 
-        let newStatusViewController =  NewStatusViewController(viewModel: newStatusViewModel,
-                                                               rootViewModel: rootViewModel)
-        let navigationController = UINavigationController(rootViewController: newStatusViewController)
+        let composeStatusViewController = ComposeStatusViewController(
+            viewModel: composeStatusViewModel,
+            rootViewModel: rootViewModel
+        )
+        let navigationController = UINavigationController(rootViewController: composeStatusViewController)
 
         if UIDevice.current.userInterfaceIdiom == .phone {
             navigationController.modalPresentationStyle = .overFullScreen
@@ -228,13 +230,13 @@ private extension MainNavigationViewController {
             navigationController.isModalInPresentation = true
         }
 
-        navigationController.view.tag = Self.newStatusViewTag
+        navigationController.view.tag = Self.composeStatusViewTag
 
         present(navigationController, animated: true)
     }
 
-    func dismissNewStatus() {
-        if presentedViewController?.view.tag == Self.newStatusViewTag {
+    func dismissComposeStatus() {
+        if presentedViewController?.view.tag == Self.composeStatusViewTag {
             dismiss(animated: true)
         }
     }

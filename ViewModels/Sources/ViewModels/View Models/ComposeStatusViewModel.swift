@@ -5,7 +5,7 @@ import Foundation
 import Mastodon
 import ServiceLayer
 
-public final class NewStatusViewModel: ObservableObject {
+public final class ComposeStatusViewModel: ObservableObject {
     @Published public var visibility: Status.Visibility
     @Published public private(set) var compositionViewModels = [CompositionViewModel]()
     @Published public private(set) var identityContext: IdentityContext
@@ -13,6 +13,7 @@ public final class NewStatusViewModel: ObservableObject {
     @Published public var alertItem: AlertItem?
     @Published public private(set) var postingState = PostingState.composing
     public let canChangeIdentity: Bool
+    public let canChangeVisibility: Bool
     public let inReplyToViewModel: StatusViewModel?
     public let events: AnyPublisher<Event, Never>
 
@@ -21,26 +22,37 @@ public final class NewStatusViewModel: ObservableObject {
     private let eventsSubject = PassthroughSubject<Event, Never>()
     private let compositionEventsSubject = PassthroughSubject<CompositionViewModel.Event, Never>()
     private var cancellables = Set<AnyCancellable>()
+    /// If this is set, we are editing an existing post.
+    private let editID: Status.ID?
 
-    // swiftlint:disable:next function_body_length
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     public init(allIdentitiesService: AllIdentitiesService,
                 identityContext: IdentityContext,
                 environment: AppEnvironment,
                 identity: Identity?,
                 inReplyTo: StatusViewModel?,
                 redraft: Status?,
+                edit: Status?,
                 directMessageTo: AccountViewModel?,
                 extensionContext: NSExtensionContext?) {
+        assert(
+            redraft == nil || edit == nil,
+            "Will never redraft and edit at the same time"
+        )
+
         self.allIdentitiesService = allIdentitiesService
         self.identityContext = identityContext
         self.environment = environment
         inReplyToViewModel = inReplyTo
         events = eventsSubject.eraseToAnyPublisher()
         visibility = redraft?.visibility
+            ?? edit?.visibility
             ?? inReplyTo?.visibility
             ?? (identity ?? identityContext.identity).preferences.postingDefaultVisibility
 
-        if let inReplyTo = inReplyTo {
+        if edit != nil {
+            canChangeIdentity = false
+        } else if let inReplyTo = inReplyTo {
             switch inReplyTo.visibility {
             case .public, .unlisted:
                 canChangeIdentity = true
@@ -51,6 +63,9 @@ public final class NewStatusViewModel: ObservableObject {
             canChangeIdentity = true
         }
 
+        canChangeVisibility = edit == nil
+        editID = edit?.id
+
         let compositionViewModel: CompositionViewModel
 
         if let redraft = redraft {
@@ -58,17 +73,25 @@ public final class NewStatusViewModel: ObservableObject {
                 eventsSubject: compositionEventsSubject,
                 redraft: redraft,
                 identityContext: identityContext)
+        } else if let edit = edit {
+            // This currently does the same thing as a redraft.
+            compositionViewModel = CompositionViewModel(
+                eventsSubject: compositionEventsSubject,
+                redraft: edit,
+                identityContext: identityContext)
         } else if let extensionContext = extensionContext {
             compositionViewModel = CompositionViewModel(
                 eventsSubject: compositionEventsSubject,
                 extensionContext: extensionContext,
                 parentViewModel: self)
         } else {
-            compositionViewModel = CompositionViewModel(eventsSubject: compositionEventsSubject,
-                                                        maxCharacters: identityContext.identity.instance?.maxTootChars)
+            compositionViewModel = CompositionViewModel(
+                eventsSubject: compositionEventsSubject,
+                maxCharacters: identityContext.identity.instance?.maxTootChars
+            )
         }
 
-        if let inReplyTo = inReplyTo, redraft == nil {
+        if let inReplyTo = inReplyTo, redraft == nil, edit == nil {
             var mentions = Set<String>()
 
             if !inReplyTo.isMine {
@@ -116,7 +139,7 @@ public final class NewStatusViewModel: ObservableObject {
     }
 }
 
-public extension NewStatusViewModel {
+public extension ComposeStatusViewModel {
     enum Event {
         case presentMediaPicker(CompositionViewModel)
         case presentCamera(CompositionViewModel)
@@ -214,9 +237,13 @@ public extension NewStatusViewModel {
     func changeIdentity(_ identity: Identity) {
         eventsSubject.send(.changeIdentity(identity))
     }
+
+    var editing: Bool {
+        editID != nil
+    }
 }
 
-private extension NewStatusViewModel {
+private extension ComposeStatusViewModel {
     // swiftlint:disable:next force_try
     static let mentionsRegularExpression = try! NSRegularExpression(pattern: #"@\S+"#)
 
@@ -231,9 +258,27 @@ private extension NewStatusViewModel {
 
     func post(viewModel: CompositionViewModel, inReplyToId: Status.Id?) {
         postingState = .posting
-        identityContext.service.post(statusComponents: viewModel.components(
-                                        inReplyToId: inReplyToId,
-                                        visibility: visibility))
+
+        let operation: AnyPublisher<Status.ID, Error>
+
+        if let editID = editID {
+            operation = identityContext.service.put(
+                id: editID,
+                statusComponents: viewModel.components(
+                    inReplyToId: nil,
+                    visibility: nil
+                )
+            )
+        } else {
+            operation = identityContext.service.post(
+                statusComponents: viewModel.components(
+                    inReplyToId: inReplyToId,
+                    visibility: visibility
+                )
+            )
+        }
+
+        operation
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 guard let self = self else { return }

@@ -16,6 +16,7 @@ public final class Status: Codable, Identifiable {
     public let id: Status.Id
     public let uri: String
     public let createdAt: Date
+    public let editedAt: Date?
     public let account: Account
     @DecodableDefault.EmptyHTML public private(set) var content: HTML
     public let visibility: Visibility
@@ -47,6 +48,7 @@ public final class Status: Codable, Identifiable {
         id: Status.Id,
         uri: String,
         createdAt: Date,
+        editedAt: Date?,
         account: Account,
         content: HTML,
         visibility: Status.Visibility,
@@ -76,6 +78,7 @@ public final class Status: Codable, Identifiable {
         self.id = id
         self.uri = uri
         self.createdAt = createdAt
+        self.editedAt = editedAt
         self.account = account
         self.visibility = visibility
         self.sensitive = sensitive
@@ -111,6 +114,45 @@ public extension Status {
     var displayStatus: Status {
         reblog ?? self
     }
+
+    func with(source: StatusSource) -> Self {
+        assert(
+            self.id == source.id,
+            "Trying to merge source for the wrong status!"
+        )
+        return .init(
+            id: self.id,
+            uri: self.uri,
+            createdAt: self.createdAt,
+            editedAt: self.editedAt,
+            account: self.account,
+            content: self.content,
+            visibility: self.visibility,
+            sensitive: self.sensitive,
+            spoilerText: source.spoilerText,
+            mediaAttachments: self.mediaAttachments,
+            mentions: self.mentions,
+            tags: self.tags,
+            emojis: self.emojis,
+            reblogsCount: self.reblogsCount,
+            favouritesCount: self.favouritesCount,
+            repliesCount: self.repliesCount,
+            application: self.application,
+            url: self.url,
+            inReplyToId: self.inReplyToId,
+            inReplyToAccountId: self.inReplyToAccountId,
+            reblog: self.reblog,
+            poll: self.poll,
+            card: self.card,
+            language: self.language,
+            text: source.text,
+            favourited: self.favourited,
+            reblogged: self.reblogged,
+            muted: self.muted,
+            bookmarked: self.bookmarked,
+            pinned: self.pinned
+        )
+    }
 }
 
 extension Status: Hashable {
@@ -118,6 +160,7 @@ extension Status: Hashable {
         lhs.id == rhs.id
             && lhs.uri == rhs.uri
             && lhs.createdAt == rhs.createdAt
+            && lhs.editedAt == rhs.editedAt
             && lhs.account == rhs.account
             && lhs.content == rhs.content
             && lhs.visibility == rhs.visibility
@@ -150,6 +193,7 @@ extension Status: Hashable {
         hasher.combine(id)
         hasher.combine(uri)
         hasher.combine(createdAt)
+        hasher.combine(editedAt)
         hasher.combine(account)
         hasher.combine(content)
         hasher.combine(visibility)

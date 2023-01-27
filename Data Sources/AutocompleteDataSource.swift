@@ -26,7 +26,7 @@ final class AutocompleteDataSource: UICollectionViewDiffableDataSource<Autocompl
 
     init(collectionView: UICollectionView,
          queryPublisher: AnyPublisher<String?, Never>,
-         parentViewModel: NewStatusViewModel) {
+         parentViewModel: ComposeStatusViewModel) {
         searchViewModel = SearchViewModel(identityContext: parentViewModel.identityContext)
         emojiPickerViewModel = EmojiPickerViewModel(identityContext: parentViewModel.identityContext, queryOnly: true)
 

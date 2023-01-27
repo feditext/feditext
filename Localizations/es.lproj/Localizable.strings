@@ -317,6 +317,7 @@
 "status.delete-and-redraft" = "Eliminar y volver a redactar";
 "status.delete-and-redraft.confirm.post" = "¿Estás seguro de que quieres eliminar esta publicación y volverla a redactar? Tus boosts y favoritos se perderán y las respuestas a la publicación original se quedarán colgando.";
 "status.delete-and-redraft.confirm.toot" = "¿Estás seguro de que quieres eliminar este toot y volver a redactarlo? Los favoritos y los boosts se perderán y las respuestas al toot original quedarán colgando.";
+"status.edit" = "Editar";
 "status.mute" = "Silenciar conversación";
 "status.new-items.post" = "Nuevas publicaciones";
 "status.new-items.toot" = "Nuevos toots";
@@ -361,3 +362,4 @@
 "timelines.federated" = "Federado";
 "toot.action" = "Tootear";
 "toot.noun" = "Toot";
+"update.action" = "Actualizar";

@@ -20,10 +20,10 @@ final class CompositionView: UIView {
     let markAttachmentsSensitiveView: MarkAttachmentsSensitiveView
 
     private let viewModel: CompositionViewModel
-    private let parentViewModel: NewStatusViewModel
+    private let parentViewModel: ComposeStatusViewModel
     private var cancellables = Set<AnyCancellable>()
 
-    init(viewModel: CompositionViewModel, parentViewModel: NewStatusViewModel) {
+    init(viewModel: CompositionViewModel, parentViewModel: ComposeStatusViewModel) {
         self.viewModel = viewModel
         self.parentViewModel = parentViewModel
 

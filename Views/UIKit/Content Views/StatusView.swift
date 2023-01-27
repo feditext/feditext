@@ -689,6 +689,11 @@ private extension StatusView {
                     viewModel.toggleMuted()
                 },
                 UIAction(
+                    title: NSLocalizedString("status.edit", comment: ""),
+                    image: UIImage(systemName: "pencil")) { _ in
+                    viewModel.edit()
+                },
+                UIAction(
                     title: NSLocalizedString("status.delete", comment: ""),
                     image: UIImage(systemName: "trash"),
                     attributes: .destructive) { _ in

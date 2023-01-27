@@ -8,13 +8,13 @@ import ServiceLayer
 public class AttachmentUploadViewModel: ObservableObject {
     public let id = Id()
     public let progress = Progress(totalUnitCount: 1)
-    public let parentViewModel: NewStatusViewModel
+    public let parentViewModel: ComposeStatusViewModel
 
     let data: Data
     let mimeType: String
     var cancellable: AnyCancellable?
 
-    init(data: Data, mimeType: String, parentViewModel: NewStatusViewModel) {
+    init(data: Data, mimeType: String, parentViewModel: ComposeStatusViewModel) {
         self.data = data
         self.mimeType = mimeType
         self.parentViewModel = parentViewModel

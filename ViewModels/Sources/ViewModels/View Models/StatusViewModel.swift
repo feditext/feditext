@@ -346,29 +346,19 @@ public extension StatusViewModel {
     }
 
     func deleteAndRedraft() {
-        let identityContext = self.identityContext
-        let isContextParent = configuration.isContextParent
-
-        eventsSubject.send(
+        compose(
             statusService.deleteAndRedraft()
-                .map { redraft, inReplyToStatusService in
-                    let inReplyToViewModel: StatusViewModel?
+                .map { status in ComposeOperation.redraft(status) }
+                .eraseToAnyPublisher()
+        )
+    }
 
-                    if let inReplyToStatusService = inReplyToStatusService {
-                        inReplyToViewModel = Self(
-                            statusService: inReplyToStatusService,
-                            identityContext: identityContext,
-                            eventsSubject: .init())
-                        inReplyToViewModel?.configuration = CollectionItem.StatusConfiguration.default.reply()
-                    } else {
-                        inReplyToViewModel = nil
-                    }
-
-                    return .compose(inReplyTo: inReplyToViewModel,
-                                    redraft: redraft,
-                                    redraftWasContextParent: isContextParent)
-                }
-                .eraseToAnyPublisher())
+    func edit() {
+        compose(
+            statusService.withSource()
+                .map { status in ComposeOperation.edit(status) }
+                .eraseToAnyPublisher()
+        )
     }
 
     func attachmentSelected(viewModel: AttachmentViewModel) {
@@ -431,4 +421,57 @@ private extension StatusViewModel {
 
         return dateFormatter
     }()
+
+    enum ComposeOperation {
+        case redraft(Status)
+        case edit(Status)
+
+        var redraft: Status? {
+            switch self {
+            case let .redraft(status):
+                return status
+            case .edit:
+                return nil
+            }
+        }
+
+        var edit: Status? {
+            switch self {
+            case .redraft:
+                return nil
+            case let .edit(status):
+                return status
+            }
+        }
+    }
+
+    /// Common across delete-redraft and edit actions.
+    func compose(_ operationPublisher: AnyPublisher<ComposeOperation, Error>) {
+        let identityContext = identityContext
+        let isContextParent = configuration.isContextParent
+
+        let eventPublisher = operationPublisher
+            .zip(statusService.inReplyTo())
+            .map { operation, inReplyToStatusService in
+                let inReplyToViewModel = inReplyToStatusService.map { statusService in
+                    let viewModel = Self(
+                        statusService: statusService,
+                        identityContext: identityContext,
+                        eventsSubject: .init()
+                    )
+                    viewModel.configuration = CollectionItem.StatusConfiguration.default.reply()
+                    return viewModel
+                }
+
+                return CollectionItemEvent.compose(
+                    inReplyTo: inReplyToViewModel,
+                    redraft: operation.redraft,
+                    edit: operation.edit,
+                    wasContextParent: isContextParent
+                )
+            }
+            .eraseToAnyPublisher()
+
+        eventsSubject.send(eventPublisher)
+    }
 }

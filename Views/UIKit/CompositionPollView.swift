@@ -6,11 +6,11 @@ import ViewModels
 
 final class CompositionPollView: UIView {
     private let viewModel: CompositionViewModel
-    private let parentViewModel: NewStatusViewModel
+    private let parentViewModel: ComposeStatusViewModel
     private let stackView = UIStackView()
     private var cancellables = Set<AnyCancellable>()
 
-    init(viewModel: CompositionViewModel, parentViewModel: NewStatusViewModel) {
+    init(viewModel: CompositionViewModel, parentViewModel: ComposeStatusViewModel) {
         self.viewModel = viewModel
         self.parentViewModel = parentViewModel
 

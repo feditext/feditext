@@ -11,7 +11,7 @@ public final class NavigationViewModel: ObservableObject {
 
     @Published public private(set) var recentIdentities = [Identity]()
     @Published public private(set) var announcementCount: (total: Int, unread: Int) = (0, 0)
-    @Published public var presentedNewStatusViewModel: NewStatusViewModel?
+    @Published public var presentedComposeStatusViewModel: ComposeStatusViewModel?
     @Published public var presentingSecondaryNavigation = false
     @Published public var alertItem: AlertItem?
 
@@ -102,7 +102,7 @@ public extension NavigationViewModel {
 
     func navigateToProfile(id: Account.Id) {
         presentingSecondaryNavigation = false
-        presentedNewStatusViewModel = nil
+        presentedComposeStatusViewModel = nil
         navigationsSubject.send(.profile(identityContext.service.navigationService.profileService(id: id)))
     }
 
@@ -124,14 +124,14 @@ public extension NavigationViewModel {
 
     func navigate(timeline: Timeline) {
         presentingSecondaryNavigation = false
-        presentedNewStatusViewModel = nil
+        presentedComposeStatusViewModel = nil
         navigationsSubject.send(
             .collection(identityContext.service.navigationService.timelineService(timeline: timeline)))
     }
 
     func navigateToFollowerRequests() {
         presentingSecondaryNavigation = false
-        presentedNewStatusViewModel = nil
+        presentedComposeStatusViewModel = nil
         navigationsSubject.send(.collection(identityContext.service.service(
                                                 accountList: .followRequests,
                                                 titleComponents: ["follow-requests"])))
@@ -139,7 +139,7 @@ public extension NavigationViewModel {
 
     func navigateToMutedUsers() {
         presentingSecondaryNavigation = false
-        presentedNewStatusViewModel = nil
+        presentedComposeStatusViewModel = nil
         navigationsSubject.send(.collection(identityContext.service.service(
                                                 accountList: .mutes,
                                                 titleComponents: ["preferences.muted-users"])))
@@ -147,7 +147,7 @@ public extension NavigationViewModel {
 
     func navigateToBlockedUsers() {
         presentingSecondaryNavigation = false
-        presentedNewStatusViewModel = nil
+        presentedComposeStatusViewModel = nil
         navigationsSubject.send(.collection(identityContext.service.service(
                                                 accountList: .blocks,
                                                 titleComponents: ["preferences.blocked-users"])))
@@ -155,7 +155,7 @@ public extension NavigationViewModel {
 
     func navigateToURL(_ url: URL) {
         presentingSecondaryNavigation = false
-        presentedNewStatusViewModel = nil
+        presentedComposeStatusViewModel = nil
         identityContext.service.navigationService.item(url: url)
             .sink { [weak self] in self?.navigationsSubject.send($0) }
             .store(in: &cancellables)
@@ -170,7 +170,7 @@ public extension NavigationViewModel {
                 .assignErrorsToAlertItem(to: \.alertItem, on: self)
                 .sink { [weak self] in
                     self?.presentingSecondaryNavigation = false
-                    self?.presentedNewStatusViewModel = nil
+                    self?.presentedComposeStatusViewModel = nil
                     self?.navigationsSubject.send(.notification($0))
                 }
                 .store(in: &cancellables)

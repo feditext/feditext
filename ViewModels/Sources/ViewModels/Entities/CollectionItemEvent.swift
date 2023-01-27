@@ -12,11 +12,14 @@ public enum CollectionItemEvent {
     case reload(CollectionItem)
     case presentEmojiPicker(sourceViewTag: Int, selectionAction: (String) -> Void)
     case attachment(AttachmentViewModel, StatusViewModel)
-    case compose(identity: Identity? = nil,
-                 inReplyTo: StatusViewModel? = nil,
-                 redraft: Status? = nil,
-                 redraftWasContextParent: Bool = false,
-                 directMessageTo: AccountViewModel? = nil)
+    case compose(
+        identity: Identity? = nil,
+        inReplyTo: StatusViewModel? = nil,
+        redraft: Status? = nil,
+        edit: Status? = nil,
+        wasContextParent: Bool = false,
+        directMessageTo: AccountViewModel? = nil
+    )
     case confirmDelete(StatusViewModel, redraft: Bool)
     case confirmUnfollow(AccountViewModel)
     case confirmHideReblogs(AccountViewModel)

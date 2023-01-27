@@ -9,11 +9,11 @@ final class CompositionPollOptionView: UIView {
     let option: CompositionViewModel.PollOption
     let removeButton = UIButton(type: .close)
     private let viewModel: CompositionViewModel
-    private let parentViewModel: NewStatusViewModel
+    private let parentViewModel: ComposeStatusViewModel
     private var cancellables = Set<AnyCancellable>()
 
     init(viewModel: CompositionViewModel,
-         parentViewModel: NewStatusViewModel,
+         parentViewModel: ComposeStatusViewModel,
          option: CompositionViewModel.PollOption) {
         self.viewModel = viewModel
         self.parentViewModel = parentViewModel

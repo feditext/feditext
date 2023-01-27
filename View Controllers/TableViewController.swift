@@ -461,7 +461,7 @@ private extension TableViewController {
             .store(in: &cancellables)
 
         NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)
-            .merge(with: NotificationCenter.default.publisher(for: NewStatusViewController.newStatusPostedNotification))
+            .merge(with: NotificationCenter.default.publisher(for: ComposeStatusViewController.newStatusPostedNotification))
             .sink { [weak self] _ in
                 guard let self = self, self.isVisible else { return }
 
@@ -553,11 +553,12 @@ private extension TableViewController {
             presentEmojiPicker(sourceViewTag: sourceViewTag, selectionAction: selectionAction)
         case let .attachment(attachmentViewModel, statusViewModel):
             present(attachmentViewModel: attachmentViewModel, statusViewModel: statusViewModel)
-        case let .compose(identity, inReplyToViewModel, redraft, redraftWasContextParent, directMessageTo):
+        case let .compose(identity, inReplyToViewModel, redraft, edit, wasContextParent, directMessageTo):
             compose(identity: identity,
                     inReplyToViewModel: inReplyToViewModel,
                     redraft: redraft,
-                    redraftWasContextParent: redraftWasContextParent,
+                    edit: edit,
+                    wasContextParent: wasContextParent,
                     directMessageTo: directMessageTo)
         case let .confirmDelete(statusViewModel, redraft):
             confirmDelete(statusViewModel: statusViewModel, redraft: redraft)
@@ -671,21 +672,27 @@ private extension TableViewController {
         }
     }
 
-    func compose(identity: Identity?,
-                 inReplyToViewModel: StatusViewModel?,
-                 redraft: Status?,
-                 redraftWasContextParent: Bool,
-                 directMessageTo: AccountViewModel?) {
-        if redraftWasContextParent {
+    // swiftlint:disable:next function_parameter_count
+    func compose(
+        identity: Identity?,
+        inReplyToViewModel: StatusViewModel?,
+        redraft: Status?,
+        edit: Status?,
+        wasContextParent: Bool,
+        directMessageTo: AccountViewModel?
+    ) {
+        if wasContextParent {
             navigationController?.popViewController(animated: true)
         }
 
-        rootViewModel?.navigationViewModel?.presentedNewStatusViewModel = rootViewModel?.newStatusViewModel(
+        rootViewModel?.navigationViewModel?.presentedComposeStatusViewModel = rootViewModel?.composeStatusViewModel(
             identityContext: viewModel.identityContext,
             identity: identity,
             inReplyTo: inReplyToViewModel,
             redraft: redraft,
-            directMessageTo: directMessageTo)
+            edit: edit,
+            directMessageTo: directMessageTo
+        )
     }
 
     func confirmDelete(statusViewModel: StatusViewModel, redraft: Bool) {

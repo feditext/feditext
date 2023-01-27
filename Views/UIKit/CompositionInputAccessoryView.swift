@@ -11,7 +11,7 @@ final class CompositionInputAccessoryView: UIView {
     let autocompleteSelections: AnyPublisher<String, Never>
 
     private let viewModel: CompositionViewModel
-    private let parentViewModel: NewStatusViewModel
+    private let parentViewModel: ComposeStatusViewModel
     private let toolbar = UIToolbar()
     private let autocompleteCollectionView = UICollectionView(
         frame: .zero,
@@ -22,7 +22,7 @@ final class CompositionInputAccessoryView: UIView {
     private var cancellables = Set<AnyCancellable>()
 
     init(viewModel: CompositionViewModel,
-         parentViewModel: NewStatusViewModel,
+         parentViewModel: ComposeStatusViewModel,
          autocompleteQueryPublisher: AnyPublisher<String?, Never>) {
         self.viewModel = viewModel
         self.parentViewModel = parentViewModel
@@ -138,6 +138,7 @@ private extension CompositionInputAccessoryView {
         let visibilityButton = UIBarButtonItem(
             image: UIImage(systemName: parentViewModel.visibility.systemImageName),
             menu: visibilityMenu(selectedVisibility: parentViewModel.visibility))
+        visibilityButton.isEnabled = parentViewModel.canChangeVisibility
 
         let contentWarningButton = UIBarButtonItem(
             title: NSLocalizedString("status.content-warning-abbreviation", comment: ""),

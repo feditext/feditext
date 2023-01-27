@@ -8,8 +8,8 @@ import SwiftUI
 import UniformTypeIdentifiers
 import ViewModels
 
-final class NewStatusViewController: UIViewController {
-    private let viewModel: NewStatusViewModel
+final class ComposeStatusViewController: UIViewController {
+    private let viewModel: ComposeStatusViewModel
     private let rootViewModel: RootViewModel?
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
@@ -20,7 +20,7 @@ final class NewStatusViewController: UIViewController {
     private let documentPickerResults = PassthroughSubject<[URL]?, Never>()
     private var cancellables = Set<AnyCancellable>()
 
-    init(viewModel: NewStatusViewModel, rootViewModel: RootViewModel?) {
+    init(viewModel: ComposeStatusViewModel, rootViewModel: RootViewModel?) {
         self.viewModel = viewModel
         self.rootViewModel = rootViewModel
 
@@ -75,7 +75,9 @@ final class NewStatusViewController: UIViewController {
 
         let postActionTitle = self.postActionTitle(
             statusWord: viewModel.identityContext.appPreferences.statusWord,
-            visibility: viewModel.visibility)
+            visibility: viewModel.visibility,
+            editing: viewModel.editing
+        )
 
         postButton.primaryAction = UIAction(title: postActionTitle) { [weak self] _ in
             self?.viewModel.post()
@@ -97,11 +99,11 @@ final class NewStatusViewController: UIViewController {
     }
 }
 
-extension NewStatusViewController {
+extension ComposeStatusViewController {
     static let newStatusPostedNotification = Notification.Name("com.metabolist.metatext.new-status-posted-notification")
 }
 
-extension NewStatusViewController: PHPickerViewControllerDelegate {
+extension ComposeStatusViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true) {
             self.mediaSelections.send(results)
@@ -109,7 +111,7 @@ extension NewStatusViewController: PHPickerViewControllerDelegate {
     }
 }
 
-extension NewStatusViewController: UIImagePickerControllerDelegate {
+extension ComposeStatusViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         dismiss(animated: true) {
@@ -124,7 +126,7 @@ extension NewStatusViewController: UIImagePickerControllerDelegate {
     }
 }
 
-extension NewStatusViewController: UIDocumentPickerDelegate {
+extension ComposeStatusViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         documentPickerResults.send(urls)
     }
@@ -134,7 +136,7 @@ extension NewStatusViewController: UIDocumentPickerDelegate {
     }
 }
 
-extension NewStatusViewController: UIPopoverPresentationControllerDelegate {
+extension ComposeStatusViewController: UIPopoverPresentationControllerDelegate {
     func adaptivePresentationStyle(for controller: UIPresentationController,
                                    traitCollection: UITraitCollection) -> UIModalPresentationStyle {
         .none
@@ -142,10 +144,10 @@ extension NewStatusViewController: UIPopoverPresentationControllerDelegate {
 }
 
 // Required by UIImagePickerController
-extension NewStatusViewController: UINavigationControllerDelegate {}
+extension ComposeStatusViewController: UINavigationControllerDelegate {}
 
-private extension NewStatusViewController {
-    func handle(event: NewStatusViewModel.Event) {
+private extension ComposeStatusViewController {
+    func handle(event: ComposeStatusViewModel.Event) {
         switch event {
         case let .presentMediaPicker(compositionViewModel):
             presentMediaPicker(compositionViewModel: compositionViewModel)
@@ -166,7 +168,7 @@ private extension NewStatusViewController {
         }
     }
 
-    func apply(postingState: NewStatusViewModel.PostingState) {
+    func apply(postingState: ComposeStatusViewModel.PostingState) {
         switch postingState {
         case .composing:
             activityIndicatorView.stopAnimating()
@@ -235,7 +237,7 @@ private extension NewStatusViewController {
         if let extensionContext = extensionContext {
             extensionContext.completeRequest(returningItems: nil)
         } else {
-            rootViewModel?.navigationViewModel?.presentedNewStatusViewModel = nil
+            rootViewModel?.navigationViewModel?.presentedComposeStatusViewModel = nil
         }
     }
 
@@ -271,7 +273,9 @@ private extension NewStatusViewController {
 
             let postActionTitle = self.postActionTitle(
                 statusWord: self.viewModel.identityContext.appPreferences.statusWord,
-                visibility: $0)
+                visibility: $0,
+                editing: self.viewModel.editing
+            )
 
             self.postButton.primaryAction = UIAction(title: postActionTitle) { [weak self] _ in
                 self?.viewModel.post()
@@ -480,13 +484,19 @@ private extension NewStatusViewController {
         self.scrollView.verticalScrollIndicatorInsets.bottom = contentInsetBottom
     }
 
-    func postActionTitle(statusWord: AppPreferences.StatusWord, visibility: Status.Visibility) -> String {
-        switch (statusWord, visibility) {
-        case (_, .direct):
+    func postActionTitle(
+        statusWord: AppPreferences.StatusWord,
+        visibility: Status.Visibility,
+        editing: Bool
+    ) -> String {
+        switch (statusWord, visibility, editing) {
+        case (_, _, true):
+            return NSLocalizedString("update.action", comment: "")
+        case (_, .direct, _):
             return NSLocalizedString("send.action", comment: "")
-        case (.toot, _):
+        case (.toot, _, _):
             return NSLocalizedString("toot.action", comment: "")
-        case (.post, _):
+        case (.post, _, _):
             return NSLocalizedString("post.action", comment: "")
         }
     }

@@ -35,6 +35,7 @@ private extension Status {
             id: record.id,
             uri: record.uri,
             createdAt: record.createdAt,
+            editedAt: record.editedAt,
             account: account,
             content: record.content,
             visibility: record.visibility,

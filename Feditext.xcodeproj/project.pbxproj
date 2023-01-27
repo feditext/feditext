@@ -241,8 +241,8 @@
 		D0F0B12E251A97E400942152 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F0B12D251A97E400942152 /* TableViewController.swift */; };
 		D0F0B136251AA12700942152 /* CollectionItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F0B135251AA12700942152 /* CollectionItem+Extensions.swift */; };
 		D0F4362D25C10B9600E4F896 /* AddIdentityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F4362C25C10B9600E4F896 /* AddIdentityViewController.swift */; };
-		D0FCC105259C4E61000B67DF /* NewStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FCC104259C4E61000B67DF /* NewStatusViewController.swift */; };
-		D0FCC106259C4E62000B67DF /* NewStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FCC104259C4E61000B67DF /* NewStatusViewController.swift */; };
+		D0FCC105259C4E61000B67DF /* ComposeStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FCC104259C4E61000B67DF /* ComposeStatusViewController.swift */; };
+		D0FCC106259C4E62000B67DF /* ComposeStatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FCC104259C4E61000B67DF /* ComposeStatusViewController.swift */; };
 		D0FCD6AD261AB2DD00113701 /* InstancePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FCD6AC261AB2DD00113701 /* InstancePickerViewController.swift */; };
 		D0FE1C8F253686F9003EF1EB /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FE1C8E253686F9003EF1EB /* PlayerView.swift */; };
 		D0FE1C9825368A9D003EF1EB /* PlayerCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FE1C9725368A9D003EF1EB /* PlayerCache.swift */; };
@@ -534,7 +534,7 @@
 		D0F0B12D251A97E400942152 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		D0F0B135251AA12700942152 /* CollectionItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionItem+Extensions.swift"; sourceTree = "<group>"; };
 		D0F4362C25C10B9600E4F896 /* AddIdentityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddIdentityViewController.swift; sourceTree = "<group>"; };
-		D0FCC104259C4E61000B67DF /* NewStatusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewStatusViewController.swift; sourceTree = "<group>"; };
+		D0FCC104259C4E61000B67DF /* ComposeStatusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeStatusViewController.swift; sourceTree = "<group>"; };
 		D0FCD6AC261AB2DD00113701 /* InstancePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstancePickerViewController.swift; sourceTree = "<group>"; };
 		D0FCD6C2261CC84D00113701 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D0FCD6C3261CC84D00113701 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ko; path = ko.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
@@ -897,7 +897,7 @@
 				D08B8D3C253F929E00B1EBEF /* ImageViewController.swift */,
 				D0FCD6AC261AB2DD00113701 /* InstancePickerViewController.swift */,
 				D035F86825B7F2ED00DC75ED /* MainNavigationViewController.swift */,
-				D0FCC104259C4E61000B67DF /* NewStatusViewController.swift */,
+				D0FCC104259C4E61000B67DF /* ComposeStatusViewController.swift */,
 				D097F4C025BFA04C00859F2C /* NotificationsViewController.swift */,
 				D06BC5E525202AD90079541D /* ProfileViewController.swift */,
 				D005A1D725EF189A008B2E63 /* ReportViewController.swift */,
@@ -1411,7 +1411,7 @@
 				D0C7D4C424F7616A001EBDBB /* AppDelegate.swift in Sources */,
 				D0C7D49924F7616A001EBDBB /* AddIdentityView.swift in Sources */,
 				D0DDA77F25C6058300FA0F91 /* ExploreSectionHeaderView.swift in Sources */,
-				D0FCC105259C4E61000B67DF /* NewStatusViewController.swift in Sources */,
+				D0FCC105259C4E61000B67DF /* ComposeStatusViewController.swift in Sources */,
 				D087671625BAA8C0001FDD43 /* ExploreViewController.swift in Sources */,
 				D0D2AC6725BD0484003D5DF2 /* LineChartView.swift in Sources */,
 				D0C7D4C324F7616A001EBDBB /* MetatextApp.swift in Sources */,
@@ -1483,7 +1483,7 @@
 				D015B13525A812DD006D88A8 /* AttachmentsView.swift in Sources */,
 				D07EC7DD25B13DBB006DF726 /* EmojiCollectionViewCell.swift in Sources */,
 				D07EC7D025B13921006DF726 /* PickerEmoji+Extensions.swift in Sources */,
-				D0FCC106259C4E62000B67DF /* NewStatusViewController.swift in Sources */,
+				D0FCC106259C4E62000B67DF /* ComposeStatusViewController.swift in Sources */,
 				D036EBB3259FE28800EC1CFC /* UIColor+Extensions.swift in Sources */,
 				D0E39ABD25D8C046009C10F8 /* UITextInput+Extensions.swift in Sources */,
 				D088406E25AFBBE200BB749B /* EmojiPickerViewController.swift in Sources */,
