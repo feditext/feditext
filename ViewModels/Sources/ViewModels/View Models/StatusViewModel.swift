@@ -119,16 +119,26 @@ public extension StatusViewModel {
         }
     }
 
-    var time: String? { statusService.status.displayStatus.createdAt.timeAgo }
+    var time: String? { statusService.status.displayStatus.lastModified.timeAgo }
 
-    var accessibilityTime: String? { statusService.status.displayStatus.createdAt.accessibilityTimeAgo }
+    var accessibilityTime: String? { statusService.status.displayStatus.lastModified.accessibilityTimeAgo }
+
+    var edited: Bool { statusService.status.displayStatus.edited }
 
     var contextParentTime: String {
         Self.contextParentDateFormatter.string(from: statusService.status.displayStatus.createdAt)
     }
 
+    var contextParentEditedTime: String? {
+        statusService.status.displayStatus.editedAt.map { Self.contextParentDateFormatter.string(from: $0) }
+    }
+
     var accessibilityContextParentTime: String {
         Self.contextParentAccessibilityDateFormatter.string(from: statusService.status.displayStatus.createdAt)
+    }
+
+    var accessibilityContextParentEditedTime: String? {
+        statusService.status.displayStatus.editedAt.map { Self.contextParentAccessibilityDateFormatter.string(from: $0) }
     }
 
     var applicationName: String? { statusService.status.displayStatus.application?.name }

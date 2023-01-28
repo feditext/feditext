@@ -115,6 +115,14 @@ public extension Status {
         reblog ?? self
     }
 
+    var edited: Bool {
+        editedAt != nil
+    }
+
+    var lastModified: Date {
+        editedAt ?? createdAt
+    }
+
     func with(source: StatusSource) -> Self {
         assert(
             self.id == source.id,

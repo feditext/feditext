@@ -18,9 +18,12 @@ final class StatusView: UIView {
     let accountLabel = UILabel()
     let nameButton = UIButton()
     let timeLabel = UILabel()
+    let editedImageView = UIImageView()
     let bodyView = StatusBodyView()
     let showThreadIndicator = UIButton(type: .system)
     let contextParentTimeLabel = UILabel()
+    let contextParentEditedImageView = UIImageView()
+    let contextParentEditedTimeLabel = UILabel()
     let visibilityImageView = UIImageView()
     let applicationButton = UIButton(type: .system)
     let rebloggedByButton = UIButton()
@@ -40,7 +43,8 @@ final class StatusView: UIView {
     private let nameAccountContainerStackView = UIStackView()
     private let nameAccountTimeStackView = UIStackView()
     private let contextParentTimeApplicationStackView = UIStackView()
-    private let timeVisibilityDividerLabel = UILabel()
+    private let timeEditedTimeDividerLabel = UILabel()
+    private let editedTimeVisibilityDividerLabel = UILabel()
     private let visibilityApplicationDividerLabel = UILabel()
     private let contextParentTopNameAccountSpacingView = UIView()
     private let contextParentBottomNameAccountSpacingView = UIView()
@@ -216,15 +220,24 @@ private extension StatusView {
         accountLabel.font = .preferredFont(forTextStyle: .subheadline)
         accountLabel.adjustsFontForContentSizeCategory = true
         accountLabel.textColor = .secondaryLabel
-        accountLabel.setContentHuggingPriority(.required, for: .horizontal)
         accountLabel.setContentHuggingPriority(.required, for: .vertical)
         nameAccountTimeStackView.addArrangedSubview(accountLabel)
+
+        editedImageView.image = UIImage(systemName: "pencil.line")
+        editedImageView.preferredSymbolConfiguration = .init(textStyle: .subheadline)
+        editedImageView.contentMode = .scaleAspectFit
+        editedImageView.setContentHuggingPriority(.required, for: .horizontal)
+        editedImageView.tintColor = .secondaryLabel
+        editedImageView.isAccessibilityElement = true
+        editedImageView.accessibilityLabel = NSLocalizedString("status.edited", comment: "")
+        nameAccountTimeStackView.addArrangedSubview(editedImageView)
 
         timeLabel.font = .preferredFont(forTextStyle: .subheadline)
         timeLabel.adjustsFontForContentSizeCategory = true
         timeLabel.textColor = .secondaryLabel
         timeLabel.textAlignment = .right
         timeLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        timeLabel.setContentHuggingPriority(.required, for: .horizontal)
         timeLabel.setContentHuggingPriority(.required, for: .vertical)
         nameAccountTimeStackView.addArrangedSubview(timeLabel)
 
@@ -272,7 +285,11 @@ private extension StatusView {
         contextParentTimeLabel.setContentHuggingPriority(.required, for: .horizontal)
         contextParentTimeApplicationStackView.addArrangedSubview(contextParentTimeLabel)
 
-        for label in [timeVisibilityDividerLabel, visibilityApplicationDividerLabel] {
+        for label in [
+            timeEditedTimeDividerLabel,
+            editedTimeVisibilityDividerLabel,
+            visibilityApplicationDividerLabel
+        ] {
             label.font = .preferredFont(forTextStyle: .footnote)
             label.adjustsFontForContentSizeCategory = true
             label.textColor = .secondaryLabel
@@ -281,7 +298,28 @@ private extension StatusView {
             label.isAccessibilityElement = false
         }
 
-        contextParentTimeApplicationStackView.addArrangedSubview(timeVisibilityDividerLabel)
+        contextParentTimeApplicationStackView.addArrangedSubview(timeEditedTimeDividerLabel)
+
+        contextParentEditedImageView.image = UIImage(systemName: "pencil.line")
+        contextParentEditedImageView.preferredSymbolConfiguration = .init(textStyle: .subheadline)
+        contextParentEditedImageView.contentMode = .scaleAspectFit
+        contextParentEditedImageView.tintColor = .secondaryLabel
+        contextParentEditedImageView.isAccessibilityElement = true
+        contextParentEditedImageView.accessibilityLabel = NSLocalizedString("status.edited", comment: "")
+        contextParentTimeApplicationStackView.addArrangedSubview(contextParentEditedImageView)
+
+        contextParentEditedTimeLabel.font = .preferredFont(forTextStyle: .footnote)
+        contextParentEditedTimeLabel.adjustsFontForContentSizeCategory = true
+        contextParentEditedTimeLabel.textColor = .secondaryLabel
+        contextParentEditedTimeLabel.setContentHuggingPriority(.required, for: .horizontal)
+        contextParentTimeApplicationStackView.addArrangedSubview(contextParentEditedTimeLabel)
+
+        contextParentTimeApplicationStackView.addArrangedSubview(visibilityImageView)
+        visibilityImageView.contentMode = .scaleAspectFit
+        visibilityImageView.tintColor = .secondaryLabel
+        visibilityImageView.isAccessibilityElement = true
+
+        contextParentTimeApplicationStackView.addArrangedSubview(editedTimeVisibilityDividerLabel)
 
         contextParentTimeApplicationStackView.addArrangedSubview(visibilityImageView)
         visibilityImageView.contentMode = .scaleAspectFit
@@ -571,12 +609,19 @@ private extension StatusView {
         timeLabel.accessibilityLabel = viewModel.accessibilityTime
         timeLabel.isHidden = isContextParent
 
+        editedImageView.isHidden = !viewModel.edited || isContextParent
+
         bodyView.viewModel = viewModel
 
         showThreadIndicator.isHidden = !viewModel.configuration.isReplyOutOfContext
 
         contextParentTimeLabel.text = viewModel.contextParentTime
         contextParentTimeLabel.accessibilityLabel = viewModel.accessibilityContextParentTime
+        timeEditedTimeDividerLabel.isHidden = !viewModel.edited
+        contextParentEditedImageView.isHidden = !viewModel.edited
+        contextParentEditedTimeLabel.text = viewModel.contextParentEditedTime
+        contextParentEditedTimeLabel.accessibilityLabel = viewModel.accessibilityContextParentEditedTime
+        contextParentEditedTimeLabel.isHidden = !viewModel.edited
         visibilityImageView.image = UIImage(systemName: viewModel.visibility.systemImageName)
         visibilityImageView.accessibilityLabel = viewModel.visibility.title
         visibilityApplicationDividerLabel.isHidden = viewModel.applicationName == nil
