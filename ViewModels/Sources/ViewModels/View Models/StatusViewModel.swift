@@ -138,7 +138,8 @@ public extension StatusViewModel {
     }
 
     var accessibilityContextParentEditedTime: String? {
-        statusService.status.displayStatus.editedAt.map { Self.contextParentAccessibilityDateFormatter.string(from: $0) }
+        statusService.status.displayStatus.editedAt
+            .map { Self.contextParentAccessibilityDateFormatter.string(from: $0) }
     }
 
     var applicationName: String? { statusService.status.displayStatus.application?.name }
@@ -411,10 +412,29 @@ public extension StatusViewModel {
                 .map { _ in .ignorableOutput }
                 .eraseToAnyPublisher())
     }
+
+    func presentHistory() {
+        let identityContext = identityContext
+        let navigationService = statusService.navigationService
+        let eventsSubject = eventsSubject
+        eventsSubject.send(
+            statusService.history()
+                .map { history in .presentHistory(
+                        StatusHistoryViewModel(
+                            identityContext: identityContext,
+                            navigationService: navigationService,
+                            eventsSubject: eventsSubject,
+                            history: history
+                        )
+                    )
+                }
+                .eraseToAnyPublisher()
+        )
+    }
 }
 
 private extension StatusViewModel {
-    private static let contextParentDateFormatter: DateFormatter = {
+private static let contextParentDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
 
         dateFormatter.dateStyle = .short

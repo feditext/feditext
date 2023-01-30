@@ -319,6 +319,11 @@
 "status.delete-and-redraft.confirm.toot" = "¿Estás seguro de que quieres eliminar este toot y volver a redactarlo? Los favoritos y los boosts se perderán y las respuestas al toot original quedarán colgando.";
 "status.edit" = "Editar";
 "status.edited" = "Editado";
+"status.edit-history.not-available.post" = "Esta publicación ha fue editado, pero esta no tiene un historial de ediciones para ver.";
+"status.edit-history.not-available.toot" = "Esta toot ha fue editado, pero esta no tiene un historial de ediciones para ver.";
+"status.edit-history.versions" = "Versiones";
+"status.edit-history.versions.select" = "Seleccionar un edicion";
+"status.edit-history.view" = "Ver historial de ediciones";
 "status.mute" = "Silenciar conversación";
 "status.new-items.post" = "Nuevas publicaciones";
 "status.new-items.toot" = "Nuevos toots";

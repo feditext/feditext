@@ -121,6 +121,12 @@ public extension StatusService {
             .eraseToAnyPublisher()
     }
 
+    /// Retrieve the edit history.
+    func history() -> AnyPublisher<[StatusEdit], Error> {
+        // TODO: (Vyr) use DB as cache
+        mastodonAPIClient.request(StatusEditsEndpoint.history(id: status.displayStatus.id))
+    }
+
     /// Re-fetch the status being replied to, but we're okay with it failing,
     /// in which case it will succeed but return nil.
     func inReplyTo() -> AnyPublisher<Self?, Error> {

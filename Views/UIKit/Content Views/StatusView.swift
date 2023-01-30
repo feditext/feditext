@@ -720,6 +720,14 @@ private extension StatusView {
             })
         }
 
+        if viewModel.edited {
+            firstSectionItems.append(UIAction(
+                title: NSLocalizedString("status.edit-history.view", comment: ""),
+                image: UIImage(systemName: "calendar.day.timeline.left")) { _ in
+                viewModel.presentHistory()
+            })
+        }
+
         sections.append(UIMenu(options: .displayInline, children: firstSectionItems))
 
         var secondSectionItems = [UIAction]()

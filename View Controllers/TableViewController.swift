@@ -534,7 +534,7 @@ private extension TableViewController {
         }
     }
 
-    // swiftlint:disable:next cyclomatic_complexity
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func handle(event: CollectionItemEvent) {
         switch event {
         case .ignorableOutput:
@@ -584,6 +584,8 @@ private extension TableViewController {
             report(reportViewModel: reportViewModel)
         case let .accountListEdit(accountViewModel, edit):
             accountListEdit(accountViewModel: accountViewModel, edit: edit)
+        case let .presentHistory(history):
+            present(history: history)
         }
     }
 
@@ -670,6 +672,13 @@ private extension TableViewController {
         case .unknown:
             break
         }
+    }
+
+    func present(history: StatusHistoryViewModel) {
+        let hostingController = UIHostingController(
+            rootView: StatusEditHistoryView(history)
+        )
+        present(hostingController, animated: true)
     }
 
     // swiftlint:disable:next function_parameter_count

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		14FC7D32292A556E00567DBC /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FC7D31292A556E00567DBC /* UIFont+Extensions.swift */; };
 		75F7B3CC291F51D300FDE7C7 /* SwipeableNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F7B3CB291F51D300FDE7C7 /* SwipeableNavigationController.swift */; };
+		94B0BCD329859B750075E234 /* StatusEditHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B0BCD229859B750075E234 /* StatusEditHistoryView.swift */; };
 		94B2C8C02929617A00087955 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94B2C8BF2929617A00087955 /* UniformTypeIdentifiers.framework */; };
 		94B2C8C52929617A00087955 /* ActionExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B2C8C42929617A00087955 /* ActionExtensionViewController.swift */; };
 		94B2C8CC2929617A00087955 /* Action Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 94B2C8BE2929617A00087955 /* Action Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -329,6 +330,7 @@
 		68B039892934360A003570DD /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
 		68B0398A2934360A003570DD /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = uk; path = uk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		75F7B3CB291F51D300FDE7C7 /* SwipeableNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeableNavigationController.swift; sourceTree = "<group>"; };
+		94B0BCD229859B750075E234 /* StatusEditHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusEditHistoryView.swift; sourceTree = "<group>"; };
 		94B2C8BE2929617A00087955 /* Action Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Action Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		94B2C8BF2929617A00087955 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
 		94B2C8C42929617A00087955 /* ActionExtensionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionExtensionViewController.swift; sourceTree = "<group>"; };
@@ -675,6 +677,7 @@
 				D0B32F4F250B373600311912 /* RegistrationView.swift */,
 				D0C7D42724F76169001EBDBB /* RootView.swift */,
 				D0C7D42924F76169001EBDBB /* SecondaryNavigationView.swift */,
+				94B0BCD229859B750075E234 /* StatusEditHistoryView.swift */,
 				D021A66925C3E19D008A0C0D /* View Controller Representables */,
 			);
 			path = SwiftUI;
@@ -1432,6 +1435,7 @@
 				D0C7D4D724F7616A001EBDBB /* UIColor+Extensions.swift in Sources */,
 				D09D971825C64682007E6394 /* InstanceCollectionViewCell.swift in Sources */,
 				D05A0A5D26363DC700F9BCE1 /* AnnouncementReactionCollectionViewCell.swift in Sources */,
+				94B0BCD329859B750075E234 /* StatusEditHistoryView.swift in Sources */,
 				D0D2AC3925BBEC0F003D5DF2 /* CollectionSection+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -299,7 +299,6 @@ extension ContentDatabase {
         migrator.registerMigration("1.7.4-edit-history") { db in
             try db.alter(table: "statusRecord") { t in
                 t.add(column: "editedAt", .datetime)
-                t.add(column: "history", .blob)
             }
         }
 

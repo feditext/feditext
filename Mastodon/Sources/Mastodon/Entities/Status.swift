@@ -74,7 +74,8 @@ public final class Status: Codable, Identifiable {
         reblogged: Bool,
         muted: Bool,
         bookmarked: Bool,
-        pinned: Bool?) {
+        pinned: Bool?
+    ) {
         self.id = id
         self.uri = uri
         self.createdAt = createdAt

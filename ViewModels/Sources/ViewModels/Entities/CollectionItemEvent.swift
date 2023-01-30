@@ -33,6 +33,7 @@ public enum CollectionItemEvent {
     case report(ReportViewModel)
     case share(URL)
     case accountListEdit(AccountViewModel, AccountListEdit)
+    case presentHistory(StatusHistoryViewModel)
 }
 
 public extension CollectionItemEvent {

@@ -244,16 +244,6 @@ public extension ContentDatabase {
         }
     }
 
-    func update(id: Status.Id, history: [StatusEdit]?) -> AnyPublisher<Never, Error> {
-        databaseWriter.mutatingPublisher {
-            let data = try StatusRecord.databaseJSONEncoder(for: StatusRecord.Columns.history.name).encode(history)
-
-            try StatusRecord
-                .filter(StatusRecord.Columns.id == id)
-                .updateAll($0, StatusRecord.Columns.history.set(to: data))
-        }
-    }
-
     func delete(id: Status.Id) -> AnyPublisher<Never, Error> {
         databaseWriter.mutatingPublisher(updates: StatusRecord.filter(StatusRecord.Columns.id == id).deleteAll)
     }
