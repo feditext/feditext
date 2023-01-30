@@ -94,6 +94,7 @@ public extension ProfileService {
             StatusesEndpoint.accountsStatuses(
                 id: id,
                 excludeReplies: true,
+                excludeReblogs: true,
                 onlyMedia: false,
                 pinned: true))
             .flatMap { contentDatabase.insert(pinnedStatuses: $0, accountId: id) }

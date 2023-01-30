@@ -50,6 +50,8 @@
 "account.statuses.toot" = "Toots";
 "account.statuses-and-replies.post" = "Publicaciones y respuestas";
 "account.statuses-and-replies.toot" = "Toots y respuestas";
+"account.statuses-and-boosts.post" = "Publicaciones y boosts";
+"account.statuses-and-boosts.toot" = "Toots y boosts";
 "account.media" = "Multimedia";
 "account.show-reblogs" = "Mostrar boosts";
 "account.show-reblogs.confirm-%@" = "¿Mostrar boosts de %@?";

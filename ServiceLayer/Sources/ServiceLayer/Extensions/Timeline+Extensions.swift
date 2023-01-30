@@ -17,23 +17,32 @@ extension Timeline {
             return .timelinesTag(tag)
         case let .profile(accountId, profileCollection):
             let excludeReplies: Bool
+            let excludeReblogs: Bool
             let onlyMedia: Bool
 
             switch profileCollection {
             case .statuses:
                 excludeReplies = true
+                excludeReblogs = true
                 onlyMedia = false
             case .statusesAndReplies:
                 excludeReplies = false
+                excludeReblogs = true
+                onlyMedia = false
+            case .statusesAndBoosts:
+                excludeReplies = false
+                excludeReblogs = false
                 onlyMedia = false
             case .media:
                 excludeReplies = true
+                excludeReblogs = true
                 onlyMedia = true
             }
 
             return .accountsStatuses(
                 id: accountId,
                 excludeReplies: excludeReplies,
+                excludeReblogs: excludeReblogs,
                 onlyMedia: onlyMedia,
                 pinned: false)
         case .favorites:

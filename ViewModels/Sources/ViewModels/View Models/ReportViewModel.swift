@@ -18,7 +18,7 @@ public final class ReportViewModel: CollectionItemsViewModel {
 
         super.init(
             collectionService: identityContext.service.navigationService.timelineService(
-                timeline: .profile(accountId: accountService.account.id, profileCollection: .statusesAndReplies)),
+                timeline: .profile(accountId: accountService.account.id, profileCollection: .statusesAndBoosts)),
             identityContext: identityContext)
 
         if let statusId = statusId {

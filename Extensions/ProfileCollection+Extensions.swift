@@ -20,6 +20,13 @@ extension ProfileCollection {
             default:
                 return NSLocalizedString("account.statuses-and-replies.post", comment: "")
             }
+        case .statusesAndBoosts:
+            switch statusWord {
+            case .toot:
+                return NSLocalizedString("account.statuses-and-boosts.toot", comment: "")
+            default:
+                return NSLocalizedString("account.statuses-and-boosts.post", comment: "")
+            }
         case .media:
             return NSLocalizedString("account.media", comment: "")
         }

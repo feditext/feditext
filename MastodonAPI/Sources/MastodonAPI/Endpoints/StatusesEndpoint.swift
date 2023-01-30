@@ -9,7 +9,7 @@ public enum StatusesEndpoint {
     case timelinesTag(String)
     case timelinesHome
     case timelinesList(id: List.Id)
-    case accountsStatuses(id: Account.Id, excludeReplies: Bool, onlyMedia: Bool, pinned: Bool)
+    case accountsStatuses(id: Account.Id, excludeReplies: Bool, excludeReblogs: Bool, onlyMedia: Bool, pinned: Bool)
     case favourites
     case bookmarks
 }
@@ -38,7 +38,7 @@ extension StatusesEndpoint: Endpoint {
             return ["home"]
         case let .timelinesList(id):
             return ["list", id]
-        case let .accountsStatuses(id, _, _, _):
+        case let .accountsStatuses(id, _, _, _, _):
             return [id, "statuses"]
         case .favourites:
             return ["favourites"]
@@ -51,8 +51,9 @@ extension StatusesEndpoint: Endpoint {
         switch self {
         case let .timelinesPublic(local):
             return [URLQueryItem(name: "local", value: String(local))]
-        case let .accountsStatuses(_, excludeReplies, onlyMedia, pinned):
+        case let .accountsStatuses(_, excludeReplies, excludeReblogs, onlyMedia, pinned):
             return [URLQueryItem(name: "exclude_replies", value: String(excludeReplies)),
+                    URLQueryItem(name: "exclude_reblogs", value: String(excludeReblogs)),
                     URLQueryItem(name: "only_media", value: String(onlyMedia)),
                     URLQueryItem(name: "pinned", value: String(pinned))]
         default:
