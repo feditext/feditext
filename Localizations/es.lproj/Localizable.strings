@@ -241,6 +241,9 @@
 "preferences.notification-types.mention" = "Mencionar";
 "preferences.notification-types.poll" = "Encuesta";
 "preferences.notification-types.status" = "Suscripción";
+"preferences.notification-types.update" = "Editar";
+"preferences.notification-types.admin-signup" = "Enrolar";
+"preferences.notification-types.admin-report" = "Reportar";
 "preferences.notifications" = "Notificaciones";
 "preferences.notifications.include-account-name" = "Añade un nombre de cuenta";
 "preferences.notifications.include-pictures" = "Añade imágenes";

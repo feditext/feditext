@@ -37,6 +37,18 @@ struct NotificationTypesPreferencesView: View {
                 Label(MastodonNotification.NotificationType.status.localizedStringKey,
                       systemImage: MastodonNotification.NotificationType.status.systemImageName)
             }
+            Toggle(isOn: $viewModel.pushSubscriptionAlerts.update) {
+                Label(MastodonNotification.NotificationType.update.localizedStringKey,
+                      systemImage: MastodonNotification.NotificationType.update.systemImageName)
+            }
+            Toggle(isOn: $viewModel.pushSubscriptionAlerts.adminSignup) {
+                Label(MastodonNotification.NotificationType.adminSignup.localizedStringKey,
+                      systemImage: MastodonNotification.NotificationType.adminSignup.systemImageName)
+            }
+            Toggle(isOn: $viewModel.pushSubscriptionAlerts.adminReport) {
+                Label(MastodonNotification.NotificationType.adminReport.localizedStringKey,
+                      systemImage: MastodonNotification.NotificationType.adminReport.systemImageName)
+            }
         }
         .navigationTitle("preferences.notification-types")
         .alertItem($viewModel.alertItem)

@@ -25,6 +25,7 @@ public struct MastodonNotification: Codable, Hashable {
 public extension MastodonNotification {
     typealias Id = String
 
+    /// https://docs.joinmastodon.org/entities/Notification/#type
     enum NotificationType: String, Codable, Unknowable {
         case follow
         case mention
@@ -33,6 +34,9 @@ public extension MastodonNotification {
         case poll
         case followRequest = "follow_request"
         case status
+        case update
+        case adminSignup = "admin.signup"
+        case adminReport = "admin.report"
         case unknown
 
         public static var unknownCase: Self { .unknown }
