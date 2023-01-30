@@ -58,9 +58,11 @@ public struct StatusEditHistoryView: View {
                         VStack {
                             if let spoiler = version.spoiler {
                                 Text(verbatim: spoiler)
+                                    .textSelection(.enabled)
                                 Divider()
                             }
                             Text(attributedContent(version))
+                                .textSelection(.enabled)
                                 .environment(\.openURL, OpenURLAction { url in
                                     dismiss()
                                     viewModel.openURL(url)
@@ -86,7 +88,8 @@ public struct StatusEditHistoryView: View {
     private func attributedContent(_ version: StatusHistoryViewModel.Version) -> AttributedString {
         let mutable = NSMutableAttributedString(attributedString: version.content)
         mutable.adaptHtmlFonts(style: .body)
-        mutable.insert(emojis: version.emojis, identityContext: viewModel.identityContext)
+        // TODO: (Vyr) disabled for now: we need a way to re-display the content after the emojis load
+        // mutable.insert(emojis: version.emojis, identityContext: viewModel.identityContext)
         return AttributedString(mutable)
     }
 }
