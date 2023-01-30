@@ -4,7 +4,7 @@ import Foundation
 import ViewModels
 
 extension ProfileCollection {
-    func title(statusWord: AppPreferences.StatusWord) -> String {
+    func title(statusWord: AppPreferences.StatusWord, shorten: Bool) -> String {
         switch self {
         case .statuses:
             switch statusWord {
@@ -14,18 +14,22 @@ extension ProfileCollection {
                 return NSLocalizedString("account.statuses.post", comment: "")
             }
         case .statusesAndReplies:
-            switch statusWord {
-            case .toot:
+            switch (statusWord, shorten) {
+            case (.toot, false):
                 return NSLocalizedString("account.statuses-and-replies.toot", comment: "")
-            default:
+            case (.post, false):
                 return NSLocalizedString("account.statuses-and-replies.post", comment: "")
+            case (_, true):
+                return NSLocalizedString("account.statuses-and-replies.short", comment: "")
             }
         case .statusesAndBoosts:
-            switch statusWord {
-            case .toot:
+            switch (statusWord, shorten) {
+            case (.toot, false):
                 return NSLocalizedString("account.statuses-and-boosts.toot", comment: "")
-            default:
+            case (.post, false):
                 return NSLocalizedString("account.statuses-and-boosts.post", comment: "")
+            case (_, true):
+                return NSLocalizedString("account.statuses-and-boosts.short", comment: "")
             }
         case .media:
             return NSLocalizedString("account.media", comment: "")

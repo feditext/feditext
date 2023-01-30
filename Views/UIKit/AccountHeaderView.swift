@@ -1,5 +1,6 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
+import Foundation
 import SDWebImage
 import UIKit
 import ViewModels
@@ -230,6 +231,12 @@ final class AccountHeaderView: UIView {
         for button in [directMessageButton, followButton, unfollowButton, notifyButton, unnotifyButton] {
             button.layer.cornerRadius = button.bounds.height / 2
         }
+
+        setupSegmentedControl()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        setupSegmentedControl()
     }
 }
 
@@ -466,18 +473,7 @@ private extension AccountHeaderView {
             for: .touchUpInside)
         followStackView.addArrangedSubview(followersButton)
 
-        let statusWord = viewModel.identityContext.appPreferences.statusWord
-
-        for (index, collection) in ProfileCollection.allCases.enumerated() {
-            segmentedControl.insertSegment(
-                action: UIAction(title: collection.title(statusWord: statusWord)) { [weak self] _ in
-                    self?.viewModel.collection = collection
-                    self?.viewModel.request(maxId: nil, minId: nil, search: nil)
-                },
-                at: index,
-                animated: false)
-        }
-
+        setupSegmentedControl()
         segmentedControl.selectedSegmentIndex = 0
 
         baseStackView.addArrangedSubview(segmentedControl)
@@ -534,5 +530,40 @@ private extension AccountHeaderView {
             baseStackView.trailingAnchor.constraint(equalTo: readableContentGuide.trailingAnchor),
             baseStackView.bottomAnchor.constraint(equalTo: readableContentGuide.bottomAnchor)
         ])
+    }
+
+    // TODO: (Vyr) consider applying font size stuff to all tab bars in app
+    /// Change the font size when system font sizes change, since `UISegmentedControl` doesn't do that by itself.
+    /// Switch to the smaller versions of tab labels when the view is narrow.
+    /// Switch to proportional tabs if we go to large font sizes.
+    func setupSegmentedControl() {
+        let statusWord = viewModel.identityContext.appPreferences.statusWord
+        let narrowView = traitCollection.horizontalSizeClass == .compact
+        let accessibilityFontSize = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
+
+        segmentedControl.setTitleTextAttributes(
+            [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .footnote).bold()],
+            for: .normal
+        )
+
+        let index = segmentedControl.selectedSegmentIndex
+        segmentedControl.removeAllSegments()
+
+        for (index, collection) in ProfileCollection.allCases.enumerated() {
+            segmentedControl.insertSegment(
+                action: UIAction(
+                    title: collection.title(statusWord: statusWord, shorten: narrowView),
+                    discoverabilityTitle: collection.title(statusWord: statusWord, shorten: false)
+                ) { [weak self] _ in
+                    self?.viewModel.collection = collection
+                    self?.viewModel.request(maxId: nil, minId: nil, search: nil)
+                },
+                at: index,
+                animated: false)
+        }
+
+        segmentedControl.selectedSegmentIndex = index
+
+        segmentedControl.apportionsSegmentWidthsByContent = narrowView && accessibilityFontSize
     }
 }
