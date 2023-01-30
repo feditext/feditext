@@ -91,6 +91,11 @@ public struct StatusEditHistoryView: View {
     private func attributedContent(_ version: StatusHistoryViewModel.Version) -> AttributedString {
         let mutable = NSMutableAttributedString(attributedString: version.content)
         mutable.adaptHtmlFonts(style: .body)
+        mutable.addAttribute(
+            .foregroundColor,
+            value: UIColor.label,
+            range: NSRange(location: 0, length: mutable.length)
+        )
         // TODO: (Vyr) disabled for now: we need a way to re-display the content after the emojis load
         // mutable.insert(emojis: version.emojis, identityContext: viewModel.identityContext)
         return AttributedString(mutable)
