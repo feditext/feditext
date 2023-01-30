@@ -58,7 +58,3 @@ extension StatusEdit: Hashable {
         hasher.combine(poll)
     }
 }
-
-extension StatusEdit: Identifiable {
-    public var id: Date { createdAt }
-}

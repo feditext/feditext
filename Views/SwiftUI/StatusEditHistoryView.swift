@@ -7,6 +7,9 @@ import ServiceLayer
 import SwiftUI
 import ViewModels
 
+/// Display a list of previous versions of a post.
+/// Note that this re-implements `StatusBodyView` in SwiftUI,
+/// and does not yet have all the features of the original.
 public struct StatusEditHistoryView: View {
     private let viewModel: StatusHistoryViewModel
     @State private var selected: StatusHistoryViewModel.Version.ID?
@@ -109,4 +112,3 @@ struct StatusBodyViewRepresentable: UIViewRepresentable {
         statusBodyView.viewModel = viewModel
     }
 }
-
