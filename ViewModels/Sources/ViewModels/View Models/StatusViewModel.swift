@@ -434,7 +434,7 @@ public extension StatusViewModel {
 }
 
 private extension StatusViewModel {
-private static let contextParentDateFormatter: DateFormatter = {
+    private static let contextParentDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
 
         dateFormatter.dateStyle = .short
