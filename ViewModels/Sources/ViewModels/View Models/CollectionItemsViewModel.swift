@@ -294,7 +294,9 @@ extension CollectionItemsViewModel: CollectionViewModel {
                                                 .navigationService
                                                 .profileService(account: account, relationship: relationship))))
         case let .notification(notification, _):
-            if let status = notification.status {
+            if let report = notification.report {
+                send(event: .navigation(collectionService.navigationService.report(id: report.id)))
+            } else if let status = notification.status {
                 send(event: .navigation(.collection(collectionService
                                                         .navigationService
                                                         .contextService(id: status.displayStatus.id))))

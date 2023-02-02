@@ -199,6 +199,7 @@
 "notification.status-%@" = "%@ just posted";
 "notifications.all" = "All";
 "notifications.mentions" = "Mentions";
+"notifications.admin" = "Admin";
 "ok" = "OK";
 "pending.pending-confirmation" = "Your account is pending confirmation";
 "post.noun" = "Post";
@@ -295,6 +296,8 @@
 "notifications.followed-you-%@" = "%@ followed you";
 "notifications.poll-ended" = "A poll you have voted in has ended";
 "notifications.your-poll-ended" = "Your poll has ended";
+"notifications.signed-up-%@" = "%@ signed up";
+"notifications.reported-an-account-%@" = "%@ reported an account";
 "notifications.unknown-%@" = "Notification from %@";
 "remove" = "Remove";
 "report" = "Report";

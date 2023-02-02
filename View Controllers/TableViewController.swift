@@ -304,6 +304,12 @@ extension TableViewController: NavigationHandling {
         case let .url(url):
             open(url: url, identityContext: viewModel.identityContext)
             webfingerIndicatorView.stopAnimating()
+        case let .authenticatedWebView(authenticatedWebViewService, url):
+            authenticatedWebViewService
+                .authenticatedWebViewPublisher(url: url)
+                .sink { _ in } receiveValue: { _ in }
+                .store(in: &cancellables)
+            webfingerIndicatorView.stopAnimating()
         case .searchScope:
             break
         case .webfingerStart:

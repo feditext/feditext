@@ -42,7 +42,9 @@ extension NotificationView {
             + UIFont.preferredFont(forTextStyle: .headline).lineHeight
             + .compactSpacing
 
-        if let status = notification.status {
+        if notification.report != nil {
+            // TODO: (Vyr) display full report info
+        } else if let status = notification.status {
             height += StatusBodyView.estimatedHeight(
                 width: bodyWidth,
                 identityContext: identityContext,
@@ -193,10 +195,24 @@ private extension NotificationView {
         case .poll:
             typeLabel.text = NSLocalizedString(
                 viewModel.accountViewModel.isSelf
-                    ? "notifications.your-poll-ended"
-                    : "notifications.poll-ended",
+                ? "notifications.your-poll-ended"
+                : "notifications.poll-ended",
                 comment: "")
             iconImageView.tintColor = nil
+        case .adminSignup:
+            typeLabel.attributedText = "notifications.signed-up-%@".localizedBolding(
+                displayName: viewModel.accountViewModel.displayName,
+                emojis: viewModel.accountViewModel.emojis,
+                label: typeLabel,
+                identityContext: viewModel.identityContext)
+            iconImageView.tintColor = .systemOrange
+        case .adminReport:
+            typeLabel.attributedText = "notifications.reported-an-account-%@".localizedBolding(
+                displayName: viewModel.accountViewModel.displayName,
+                emojis: viewModel.accountViewModel.emojis,
+                label: typeLabel,
+                identityContext: viewModel.identityContext)
+            iconImageView.tintColor = .systemOrange
         default:
             typeLabel.attributedText = "notifications.unknown-%@".localizedBolding(
                 displayName: viewModel.accountViewModel.displayName,
@@ -206,7 +222,16 @@ private extension NotificationView {
             iconImageView.tintColor = nil
         }
 
-        if viewModel.statusViewModel == nil {
+        if viewModel.reportViewModel != nil {
+            statusBodyView.isHidden = true
+            displayNameLabel.isHidden = true
+            accountLabel.isHidden = true
+        } else if let statusViewModel = viewModel.statusViewModel {
+            statusBodyView.viewModel = statusViewModel
+            statusBodyView.isHidden = false
+            displayNameLabel.isHidden = true
+            accountLabel.isHidden = true
+        } else {
             let mutableDisplayName = NSMutableAttributedString(string: viewModel.accountViewModel.displayName)
 
             mutableDisplayName.insert(emojis: viewModel.accountViewModel.emojis,
@@ -218,11 +243,6 @@ private extension NotificationView {
             statusBodyView.isHidden = true
             displayNameLabel.isHidden = false
             accountLabel.isHidden = false
-        } else {
-            statusBodyView.viewModel = viewModel.statusViewModel
-            statusBodyView.isHidden = false
-            displayNameLabel.isHidden = true
-            accountLabel.isHidden = true
         }
 
         timeLabel.text = viewModel.time

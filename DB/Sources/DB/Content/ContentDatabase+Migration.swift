@@ -302,6 +302,18 @@ extension ContentDatabase {
             }
         }
 
+        migrator.registerMigration("1.7.4-reports-phase-1") { db in
+            try db.create(table: "reportRecord") { t in
+                t.column("id", .text).primaryKey(onConflict: .replace)
+                t.column("actionTaken", .boolean).notNull()
+            }
+
+            try db.alter(table: "notificationRecord") { t in
+                t.add(column: "reportId", .text)
+                    .references("reportRecord", onDelete: .cascade)
+            }
+        }
+
         return migrator
     }
 }

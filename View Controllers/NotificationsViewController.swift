@@ -8,7 +8,8 @@ import ViewModels
 final class NotificationsViewController: UIPageViewController {
     private let segmentedControl = UISegmentedControl(items: [
         NSLocalizedString("notifications.all", comment: ""),
-        NSLocalizedString("notifications.mentions", comment: "")
+        NSLocalizedString("notifications.mentions", comment: ""),
+        NSLocalizedString("notifications.admin", comment: "")
     ])
     private let notificationViewControllers: [TableViewController]
     private let viewModel: NavigationViewModel
@@ -20,13 +21,18 @@ final class NotificationsViewController: UIPageViewController {
         self.rootViewModel = rootViewModel
 
         var excludingAllExceptMentions = Set(MastodonNotification.NotificationType.allCasesExceptUnknown)
-
         excludingAllExceptMentions.remove(.mention)
+
+        var excludingAllExceptAdmin = Set(MastodonNotification.NotificationType.allCasesExceptUnknown)
+        excludingAllExceptAdmin.remove(.adminSignup)
+        excludingAllExceptAdmin.remove(.adminReport)
 
         notificationViewControllers = [
             TableViewController(viewModel: viewModel.notificationsViewModel(excludeTypes: []),
                                 rootViewModel: rootViewModel),
             TableViewController(viewModel: viewModel.notificationsViewModel(excludeTypes: excludingAllExceptMentions),
+                                rootViewModel: rootViewModel),
+            TableViewController(viewModel: viewModel.notificationsViewModel(excludeTypes: excludingAllExceptAdmin),
                                 rootViewModel: rootViewModel)
         ]
 

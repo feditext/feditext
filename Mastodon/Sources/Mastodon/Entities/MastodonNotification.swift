@@ -8,17 +8,22 @@ public struct MastodonNotification: Codable, Hashable {
     public let account: Account
     public let createdAt: Date
     public let status: Status?
+    public let report: Report?
 
-    public init(id: String,
-                type: MastodonNotification.NotificationType,
-                account: Account,
-                createdAt: Date,
-                status: Status?) {
+    public init(
+        id: String,
+        type: MastodonNotification.NotificationType,
+        account: Account,
+        createdAt: Date,
+        status: Status?,
+        report: Report?
+    ) {
         self.id = id
         self.type = type
         self.account = account
         self.createdAt = createdAt
         self.status = status
+        self.report = report
     }
 }
 

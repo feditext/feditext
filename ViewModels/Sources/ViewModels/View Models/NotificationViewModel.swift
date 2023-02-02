@@ -8,6 +8,7 @@ import ServiceLayer
 public final class NotificationViewModel: ObservableObject {
     public let accountViewModel: AccountViewModel
     public let statusViewModel: StatusViewModel?
+    public let reportViewModel: NotificationReportViewModel?
     public let identityContext: IdentityContext
 
     private let notificationService: NotificationService
@@ -24,6 +25,13 @@ public final class NotificationViewModel: ObservableObject {
                 account: notificationService.notification.account),
             identityContext: identityContext,
             eventsSubject: eventsSubject)
+
+        if notificationService.notification.report != nil {
+            // TODO: (Vyr) display full report info
+            reportViewModel = NotificationReportViewModel()
+        } else {
+            reportViewModel = nil
+        }
 
         if let status = notificationService.notification.status {
             statusViewModel = StatusViewModel(

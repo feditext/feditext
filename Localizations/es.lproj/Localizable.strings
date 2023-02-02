@@ -199,6 +199,7 @@
 "notification.status-%@" = "%@ acaba de publicar";
 "notifications.all" = "Todos";
 "notifications.mentions" = "Menciones";
+"notifications.admin" = "Administración";
 "ok" = "OK";
 "pending.pending-confirmation" = "Tu cuenta está pendiente de confirmación";
 "post.noun" = "Publicación";
@@ -293,6 +294,8 @@
 "notifications.followed-you-%@" = "%@ te ha seguido";
 "notifications.poll-ended" = "Una encuesta en la que votaste ha finalizado";
 "notifications.your-poll-ended" = "Tu encuesta ha finalizado";
+"notifications.signed-up-%@" = "%@ enroló";
+"notifications.reported-an-account-%@" = "%@ reportó a una cuenta";
 "notifications.unknown-%@" = "Notificación de %@";
 "remove" = "Eliminar";
 "report" = "Reportar";

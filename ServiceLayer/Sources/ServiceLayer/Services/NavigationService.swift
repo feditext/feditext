@@ -14,6 +14,7 @@ public enum Navigation {
     case searchScope(SearchScope)
     case webfingerStart
     case webfingerEnd
+    case authenticatedWebView(AuthenticatedWebViewService, URL)
 }
 
 public struct NavigationService {
@@ -124,6 +125,23 @@ public extension NavigationService {
                         environment: environment,
                         mastodonAPIClient: mastodonAPIClient,
                         contentDatabase: contentDatabase)
+    }
+
+    /// Open a report in the web interface.
+    func report(id: Report.Id) -> Navigation {
+        let reportURL: URL
+        if #available(iOS 16.0, *) {
+            reportURL = mastodonAPIClient.instanceURL.appending(components: "admin", "reports", id)
+        } else {
+            reportURL = mastodonAPIClient.instanceURL
+                .appendingPathComponent("admin")
+                .appendingPathComponent("reports")
+                .appendingPathComponent(id)
+        }
+        return .authenticatedWebView(
+            AuthenticatedWebViewService(environment: environment),
+            reportURL
+        )
     }
 }
 
