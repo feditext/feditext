@@ -20,7 +20,7 @@ final class StatusBodyView: UIView {
             guard let viewModel = viewModel else { return }
 
             let mutableContent = NSMutableAttributedString(attributedString: viewModel.content)
-            mutableContent.adaptHtmlFonts(style: contentTextStyle)
+            mutableContent.adaptHtmlAttributes(style: contentTextStyle)
             let mutableSpoilerText = NSMutableAttributedString(string: viewModel.spoilerText)
             let mutableSpoilerFont = UIFont.preferredFont(forTextStyle: contentTextStyle).bold()
             let contentFont = UIFont.preferredFont(forTextStyle: isContextParent ? .title3 : .callout)

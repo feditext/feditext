@@ -64,10 +64,14 @@ extension NSMutableAttributedString {
         .pointSize
     ?? 12.0
 
+    private var entireString: NSRange { NSRange(location: 0, length: length) }
+
+    static let blockquoteIndent: CGFloat = 12.0
+
     /// Replace HTML parser fonts with equivalent system fonts, appropriately scaled.
-    func adaptHtmlFonts(style: UIFont.TextStyle) {
+    /// Indent and decorate blockquotes.
+    func adaptHtmlAttributes(style: UIFont.TextStyle) {
         let systemFontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style)
-        let entireString = NSRange(location: 0, length: length)
         enumerateAttribute(.font, in: entireString) { val, range, _ in
             guard let font = val as? UIFont else {
                 return
@@ -82,6 +86,38 @@ extension NSMutableAttributedString {
             let newFont = UIFont(descriptor: newDescriptor, size: 0.0)
             addAttribute(.font, value: newFont, range: range)
         }
+
+        enumerateAttribute(HTML.Key.linkClass, in: entireString) { val, range, _ in
+            guard let linkClass = val as? HTML.LinkClass else {
+                return
+            }
+            switch linkClass {
+            case .leadingInvisible:
+                deleteCharacters(in: range)
+            case .trailingInvisible:
+                replaceCharacters(in: range, with: "…")
+            default:
+                break
+            }
+        }
+
+        enumerateAttribute(HTML.Key.quoteLevel, in: entireString) { val, range, _ in
+            guard let quoteLevel = val as? Int, quoteLevel != 0 else {
+                return
+            }
+
+            let indentPoints = CGFloat(quoteLevel) * Self.blockquoteIndent
+            enumerateAttribute(.paragraphStyle, in: range) { subval, subrange, _ in
+                guard let paragraphStyle = subval as? NSParagraphStyle,
+                    let mutableParagraphStyle = paragraphStyle.mutableCopy() as? NSMutableParagraphStyle else {
+                    return
+                }
+                mutableParagraphStyle.firstLineHeadIndent = indentPoints
+                mutableParagraphStyle.headIndent = indentPoints
+                addAttribute(.paragraphStyle, value: mutableParagraphStyle, range: subrange)
+            }
+        }
+
         fixAttributes(in: entireString)
     }
 }

@@ -90,12 +90,24 @@ public struct StatusEditHistoryView: View {
 
     private func attributedContent(_ version: StatusHistoryViewModel.Version) -> AttributedString {
         let mutable = NSMutableAttributedString(attributedString: version.content)
-        mutable.adaptHtmlFonts(style: .body)
+        mutable.adaptHtmlAttributes(style: .body)
+        let entireString = NSRange(location: 0, length: mutable.length)
         mutable.addAttribute(
             .foregroundColor,
             value: UIColor.label,
-            range: NSRange(location: 0, length: mutable.length)
+            range: entireString
         )
+        // TODO: (Vyr) we are a long way from rendering blockquotes in SwiftUI
+        mutable.enumerateAttribute(HTML.Key.quoteLevel, in: entireString) { val, range, _ in
+            guard let quoteLevel = val as? Int,
+                  quoteLevel > 0 else {
+                return
+            }
+            mutable.replaceCharacters(
+                in: NSRange(location: range.location, length: 0),
+                with: String(repeating: "> ", count: quoteLevel)
+            )
+        }
         // TODO: (Vyr) disabled for now: we need a way to re-display the content after the emojis load
         // mutable.insert(emojis: version.emojis, identityContext: viewModel.identityContext)
         return AttributedString(mutable)

@@ -34,22 +34,78 @@ extension HTML: Codable {
     }
 }
 
+public extension HTML {
+    enum Key {
+        /// Value expected to be a `LinkClass`.
+        public static let linkClass: NSAttributedString.Key = .init("feditextLinkClass")
+        /// Value expected to be an `Int` indicating how many levels of quote we're on.
+        public static let quoteLevel: NSAttributedString.Key = .init("feditextQuoteLevel")
+    }
+
+    enum LinkClass: Int {
+        case leadingInvisible = 1
+        case ellipsis = 2
+        case trailingInvisible = 3
+        case mention = 4
+        case hashtag = 5
+    }
+}
+
 private extension HTML {
     static var attributedStringCache = NSCache<NSString, NSAttributedString>()
 
-    // https://docs.joinmastodon.org/spec/activitypub/#sanitization
-
-    // Mark the invisible span after an ellipsis span for replacement with "…".
-    // ::after pseudo-elements don't work in this context.
+    /// This hack uses text background color to pass class information through the HTML parser,
+    /// since there's no direct mechanism for attaching CSS classes to an attributed string.
+    /// Currently `r` is for link class, `g` is for quote level, and `b` and `a` are unused.
+    /// See https://docs.joinmastodon.org/spec/activitypub/#sanitization for what we expect from vanilla instances.
     static let style: String = """
         <style>
             a > span.invisible {
-                display: none;
+                background-color: rgb(1 0 0);
+            }
+
+            a > span.ellipsis {
+                background-color: rgb(2 0 0);
             }
 
             a > span.ellipsis + span.invisible {
-                display: inherit;
-                background-color: rgb(255 0 0);
+                background-color: rgb(3 0 0);
+            }
+
+            a.mention {
+                background-color: rgb(4 0 0);
+            }
+
+            a.mention.hashtag {
+                background-color: rgb(5 0 0);
+            }
+
+            blockquote {
+                background-color: rgb(0 1 0);
+            }
+
+            blockquote blockquote {
+                background-color: rgb(0 2 0);
+            }
+
+            blockquote blockquote blockquote {
+                background-color: rgb(0 3 0);
+            }
+
+            blockquote blockquote blockquote blockquote {
+                background-color: rgb(0 4 0);
+            }
+
+            blockquote blockquote blockquote blockquote blockquote {
+                background-color: rgb(0 5 0);
+            }
+
+            blockquote blockquote blockquote blockquote blockquote blockquote {
+                background-color: rgb(0 6 0);
+            }
+
+            blockquote blockquote blockquote blockquote blockquote blockquote blockquote {
+                background-color: rgb(0 7 0);
             }
         </style>
     """
@@ -76,8 +132,6 @@ private extension HTML {
             attributed.deleteCharacters(in: NSRange(range, in: attributed.string))
         }
 
-        // This hack uses text background color to pass class information through the HTML parser,
-        // since there's no direct mechanism for attaching CSS classes to an attributed string.
         let entireString = NSRange(location: 0, length: attributed.length)
         attributed.enumerateAttribute(.backgroundColor, in: entireString) { val, range, _ in
             guard let color = val as? UIColor else {
@@ -88,12 +142,18 @@ private extension HTML {
             var b: CGFloat = 0
             color.getRed(&r, green: &g, blue: &b, alpha: nil)
             attributed.removeAttribute(.backgroundColor, range: range)
-            if r == 1.0 && g == 0.0 && b == 0.0 {
-                attributed.replaceCharacters(in: range, with: "…")
+
+            if let linkClass = Self.LinkClass(rawValue: Int((r * 255.0).rounded())) {
+                attributed.addAttribute(Self.Key.linkClass, value: linkClass, range: range)
+            }
+
+            let quoteLevel = Int((g * 255.0).rounded())
+            if quoteLevel > 0 {
+                attributed.addAttribute(Self.Key.quoteLevel, value: quoteLevel, range: range)
             }
         }
 
-        attributed.fixAttributes(in: NSRange(location: 0, length: attributed.length))
+        attributed.fixAttributes(in: entireString)
         return attributed
     }
 }
