@@ -145,7 +145,7 @@ struct PreferencesView: View {
                            isOn: $identityContext.appPreferences.animateHeaders)
                     Toggle("preferences.hide-content-warning-button",
                            isOn: $identityContext.appPreferences.hideContentWarningButton)
-                    Toggle("preferences.long-posts.fold",
+                    Toggle("preferences.long-content.fold",
                            isOn: $identityContext.appPreferences.foldLongPosts)
                 }
                 if viewModel.identityContext.identity.authenticated

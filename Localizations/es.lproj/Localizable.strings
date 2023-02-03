@@ -238,6 +238,7 @@
 "preferences.filters" = "Filtros";
 "preferences.links.open-in-default-browser" = "Abrir enlaces en el navegador predeterminado";
 "preferences.links.use-universal-links" = "Abrir enlaces en otras aplicaciones cuando estén disponibles";
+"preferences.long-content.fold" = "Doblar texto largo";
 "preferences.notification-types" = "Tipos de notificación";
 "preferences.notification-types.follow" = "Seguir";
 "preferences.notification-types.favourite" = "Favorito";

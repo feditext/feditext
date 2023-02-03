@@ -12,9 +12,6 @@ final class StatusBodyView: UIView {
     let pollView = PollView()
     let cardView = CardView()
 
-    /// Fold posts more than this many laid-out lines long.
-    static let numLinesBeforeFolding: Int = 20
-
     /// Show this many lines of a folded post as a preview.
     static let numLinesFoldedPreview: Int = 2
 
@@ -48,33 +45,34 @@ final class StatusBodyView: UIView {
             spoilerTextLabel.font = mutableSpoilerFont
             spoilerTextLabel.attributedText = mutableSpoilerText
             spoilerTextLabel.isHidden = !viewModel.hasSpoiler
+
             toggleShowContentButton.setTitle(
-                shouldShowContent
+                viewModel.shouldShowContent
                     ? NSLocalizedString("status.show-less", comment: "")
                     : NSLocalizedString("status.show-more", comment: ""),
                 for: .normal)
             toggleShowContentButton.isHidden = (!viewModel.hasSpoiler
                     || viewModel.alwaysExpandSpoilers
                     || !viewModel.shouldShowContentWarningButton)
-                && (!hasLongContent || !viewModel.foldLongContent)
+                && !viewModel.shouldHideDueToLongContent
+            toggleShowContentButton.setContentCompressionResistancePriority(.required, for: .vertical)
+            toggleShowContentButton.setContentHuggingPriority(.required, for: .vertical)
 
-            contentTextView.isHidden = viewModel.shouldHideDueToSpoiler && !shouldShowContent
+            contentTextView.isHidden = viewModel.shouldHideDueToSpoiler && !viewModel.shouldShowContent
             contentTextView.textContainer.lineBreakMode = .byTruncatingTail
-            if shouldShowFirstContentLineAsPreview {
-                contentTextView.textContainer.maximumNumberOfLines = Self.numLinesFoldedPreview
-            } else {
-                contentTextView.textContainer.maximumNumberOfLines = 0
-            }
+            contentTextView.textContainer.maximumNumberOfLines = viewModel.shouldShowContentPreview
+                ? Self.numLinesFoldedPreview
+                : 0
 
             attachmentsView.isHidden = viewModel.attachmentViewModels.isEmpty
             attachmentsView.viewModel = viewModel
 
-            pollView.isHidden = viewModel.pollOptions.isEmpty || !shouldShowContent
+            pollView.isHidden = viewModel.pollOptions.isEmpty || !viewModel.shouldShowContent
             pollView.viewModel = viewModel
             pollView.isAccessibilityElement = !isContextParent || viewModel.hasVotedInPoll || viewModel.isPollExpired
 
             cardView.viewModel = viewModel.cardViewModel
-            cardView.isHidden = viewModel.cardViewModel == nil || !shouldShowContent
+            cardView.isHidden = viewModel.cardViewModel == nil || !viewModel.shouldShowContent
 
             accessibilityAttributedLabel = accessibilityAttributedLabel(forceShowContent: false)
 
@@ -150,15 +148,20 @@ extension StatusBodyView {
                 configuration: configuration)
         }
 
-        // TODO: (Vyr) harmonize this with rich text patch later
         //  This would be so much more convenient if it took a StatusViewModel…
         //  For now, it duplicates a lot of code from non-static contexts in this class and from StatusViewModel.
         let hasSpoiler = !status.displayStatus.spoilerText.isEmpty
         let alwaysExpandSpoilers = identityContext.identity.preferences.readingExpandSpoilers
         let shouldHideDueToSpoiler = hasSpoiler && !alwaysExpandSpoilers
 
-        let contentLines = contentHeight / contentFont.lineHeight
-        let hasLongContent = contentLines > CGFloat(Self.numLinesBeforeFolding)
+        let hasLongContent: Bool
+        let plainTextContent = status.displayStatus.content.attributed.string
+        if plainTextContent.count > StatusViewModel.foldCharacterLimit {
+            hasLongContent = true
+        } else {
+            let newlineCount = plainTextContent.prefix(StatusViewModel.foldCharacterLimit).filter { $0.isNewline }.count
+            hasLongContent = newlineCount > StatusViewModel.foldNewlineLimit
+        }
         let shouldHideDueToLongContent = hasLongContent && identityContext.appPreferences.foldLongPosts
 
         let shouldShowContent = configuration.showContentToggled
@@ -203,7 +206,8 @@ extension StatusBodyView {
 
         if !spoilerTextLabel.isHidden,
            let spoilerText = spoilerTextLabel.attributedText,
-           !shouldShowContent,
+           let viewModel = viewModel,
+           !viewModel.shouldShowContent,
            !forceShowContent {
             accessibilityAttributedLabel.appendWithSeparator(
                 NSLocalizedString("status.content-warning.accessibility", comment: ""))
@@ -220,20 +224,6 @@ extension StatusBodyView {
         }
 
         return accessibilityAttributedLabel
-    }
-
-    /// Needs to be visible for accessibility info in parent view.
-    /// Cannot be handled entirely from view model since view model is not aware of view width, font, etc.
-    public var shouldShowContent: Bool {
-        guard let viewModel = viewModel else {
-            return false
-        }
-
-        guard viewModel.shouldHideDueToSpoiler || shouldHideDueToLongContent else {
-            return true
-        }
-
-        return viewModel.showContentToggled
     }
 }
 
@@ -307,43 +297,5 @@ private extension StatusBodyView {
 
     private var contentTextStyle: UIFont.TextStyle {
         isContextParent ? .title3 : .callout
-    }
-
-    private var contentFont: UIFont {
-        UIFont.preferredFont(forTextStyle: contentTextStyle)
-    }
-
-    var contentLines: CGFloat {
-        guard let viewModel = viewModel else {
-            return 0.0
-        }
-
-        // TODO: (Vyr) harmonize this with rich text patch later
-        let contentHeight = viewModel.content.string.height(
-            width: frame.width,
-            font: contentFont
-        )
-        return contentHeight / contentFont.lineHeight
-    }
-
-    var hasLongContent: Bool {
-        contentLines > CGFloat(Self.numLinesBeforeFolding)
-    }
-
-    var shouldHideDueToLongContent: Bool {
-        guard let viewModel = viewModel else {
-            return false
-        }
-        guard hasLongContent else {
-            return false
-        }
-
-        return viewModel.identityContext.appPreferences.foldLongPosts
-    }
-
-    var shouldShowFirstContentLineAsPreview: Bool {
-        shouldHideDueToLongContent
-            && !(viewModel?.shouldHideDueToSpoiler ?? false)
-            && !shouldShowContent
     }
 }

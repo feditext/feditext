@@ -47,6 +47,14 @@ public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObj
             .map { AttachmentViewModel(attachment: $0, identityContext: identityContext, status: statusService.status) }
         pollEmojis = statusService.status.displayStatus.poll?.emojis ?? []
     }
+
+    /// Fold statuses more than this many characters long.
+    /// Based on character count in parsed plain text of status.
+    public static let foldCharacterLimit: Int = 1000
+
+    /// Fold statuses with more than this many lines in the first `foldCharacterLimit` characters.
+    /// Based on newline count in parsed plain text of status.
+    public static let foldNewlineLimit: Int = 10
 }
 
 public extension StatusViewModel {
@@ -76,12 +84,39 @@ public extension StatusViewModel {
         identityContext.appPreferences.foldLongPosts
     }
 
+    var hasLongContent: Bool {
+        let plainTextContent = statusService.status.displayStatus.content.attributed.string
+        if plainTextContent.count > Self.foldCharacterLimit {
+            return true
+        }
+        let newlineCount = plainTextContent.prefix(Self.foldCharacterLimit).filter { $0.isNewline }.count
+        return newlineCount > Self.foldNewlineLimit
+    }
+
+    var shouldHideDueToLongContent: Bool {
+        foldLongContent && hasLongContent
+    }
+
     var shouldShowContentWarningButton: Bool {
         if self.showContentToggled {
             return !identityContext.appPreferences.hideContentWarningButton
         } else {
             return true
         }
+    }
+
+    var shouldShowContent: Bool {
+        guard shouldHideDueToSpoiler || shouldHideDueToLongContent else {
+            return true
+        }
+
+        return showContentToggled
+    }
+
+    var shouldShowContentPreview: Bool {
+        shouldHideDueToLongContent
+            && !shouldHideDueToSpoiler
+            && !shouldShowContent
     }
 
     var shouldShowAttachments: Bool {
