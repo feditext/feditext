@@ -69,6 +69,7 @@ public extension Identity.Preferences {
         if useServerPostingReadingPreferences {
             mutable.postingDefaultVisibility = serverPreferences.postingDefaultVisibility
             mutable.postingDefaultSensitive = serverPreferences.postingDefaultSensitive
+            mutable.postingDefaultLanguage = serverPreferences.postingDefaultLanguage
             mutable.readingExpandMedia = serverPreferences.readingExpandMedia
             mutable.readingExpandSpoilers = serverPreferences.readingExpandSpoilers
         }

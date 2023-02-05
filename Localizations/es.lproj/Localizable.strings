@@ -228,6 +228,7 @@
 "preferences.media.autoplay.wifi" = "Con Wi-Fi";
 "preferences.media.autoplay.never" = "Nunca";
 "preferences.use-preferences-from-server" = "Usar preferencias del servidor";
+"preferences.posting-default-language" = "Lingua por defecto";
 "preferences.posting-default-visiblility" = "Visibilidad por defecto";
 "preferences.posting-default-sensitive" = "Marcar contenido delicado por defecto";
 "preferences.reading-expand-media" = "Expandir multimedia";

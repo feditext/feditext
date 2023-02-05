@@ -50,6 +50,14 @@ struct PreferencesView: View {
                         }
                         Toggle("preferences.posting-default-sensitive",
                                isOn: $viewModel.preferences.postingDefaultSensitive)
+                        Picker("preferences.posting-default-language",
+                               selection: $viewModel.preferences.postingDefaultLanguage) {
+                            ForEach(Locale.languageTagsAndNames(
+                                prefsLanguageTag: viewModel.preferences.postingDefaultLanguage
+                            )) { prefsLanguage in
+                                Text(prefsLanguage.localized).tag(Optional(prefsLanguage.id))
+                            }
+                        }.pickerStyle(.menu)
                     }
                     .disabled(viewModel.preferences.useServerPostingReadingPreferences)
                 }

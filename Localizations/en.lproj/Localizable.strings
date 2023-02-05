@@ -178,6 +178,14 @@
 "identities.log-out" = "Log out";
 "identities.pending" = "Pending";
 "image-error.unable-to-load" = "Unable to load image";
+"language.extended.name.bh" = "Bihari";
+"language.extended.name.cnr" = "Montenegrin";
+"language.extended.name.kmr" = "Kurmanji";
+"language.extended.name.ldn" = "Láadan";
+"language.extended.name.tl" = "Tagalog";
+"language.extended.name.tok" = "Toki Pona";
+"language.extended.name.zba" = "Balaibalan";
+"language.bcp-47-tag-%@" = "BCP 47 tag %@";
 "lists.new-list-title" = "New List Title";
 "load-more" = "Load More";
 "load-more.above.accessibility.post" = "Load from post above";
@@ -228,6 +236,7 @@
 "preferences.media.autoplay.wifi" = "On Wi-Fi";
 "preferences.media.autoplay.never" = "Never";
 "preferences.use-preferences-from-server" = "Use preferences from server";
+"preferences.posting-default-language" = "Default language";
 "preferences.posting-default-visibility" = "Default visibility";
 "preferences.posting-default-sensitive" = "Mark content sensitive by default";
 "preferences.reading-expand-media" = "Expand media";
