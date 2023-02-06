@@ -109,7 +109,7 @@ private extension Locale {
         "ldn": NSLocalizedString("language.extended.name.ldn", comment: ""),
         "tl": NSLocalizedString("language.extended.name.tl", comment: ""),
         "tok": NSLocalizedString("language.extended.name.tok", comment: ""),
-        "zba": NSLocalizedString("language.extended.name.zba", comment: ""),
+        "zba": NSLocalizedString("language.extended.name.zba", comment: "")
     ]
 
     /// Look up the localized name for a language in the OS's list first, then ours, then use a fallback.

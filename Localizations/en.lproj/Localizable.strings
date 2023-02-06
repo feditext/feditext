@@ -237,6 +237,7 @@
 "preferences.media.autoplay.never" = "Never";
 "preferences.use-preferences-from-server" = "Use preferences from server";
 "preferences.posting-default-language" = "Default language";
+"preferences.posting-default-language.not-set" = "Not set";
 "preferences.posting-default-visibility" = "Default visibility";
 "preferences.posting-default-sensitive" = "Mark content sensitive by default";
 "preferences.reading-expand-media" = "Expand media";

@@ -52,12 +52,14 @@ struct PreferencesView: View {
                                isOn: $viewModel.preferences.postingDefaultSensitive)
                         Picker("preferences.posting-default-language",
                                selection: $viewModel.preferences.postingDefaultLanguage) {
+                            Text("preferences.posting-default-language.not-set").tag(Optional<String>.none)
                             ForEach(Locale.languageTagsAndNames(
                                 prefsLanguageTag: viewModel.preferences.postingDefaultLanguage
                             )) { prefsLanguage in
-                                Text(prefsLanguage.localized).tag(Optional(prefsLanguage.id))
+                                Text(verbatim: prefsLanguage.localized).tag(Optional(prefsLanguage.id))
                             }
-                        }.pickerStyle(.menu)
+                        }
+                        .pickerStyle(.menu)
                     }
                     .disabled(viewModel.preferences.useServerPostingReadingPreferences)
                 }
