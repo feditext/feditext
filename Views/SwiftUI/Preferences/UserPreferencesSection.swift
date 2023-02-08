@@ -67,6 +67,9 @@ struct UserPreferencesSection: View {
     }
 }
 
+#if DEBUG
+import PreviewViewModels
+
 struct UserPreferencesSection_Previews: PreviewProvider {
     struct Container: View {
         @StateObject var viewModel: PreferencesViewModel = .init(identityContext: .preview)
@@ -80,3 +83,4 @@ struct UserPreferencesSection_Previews: PreviewProvider {
         Self.Container()
     }
 }
+#endif

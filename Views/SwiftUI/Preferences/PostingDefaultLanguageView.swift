@@ -38,6 +38,7 @@ struct PostingDefaultLanguageView: View {
     }
 }
 
+#if DEBUG
 struct PostingDefaultLanguageView_Previews: PreviewProvider {
     struct Container: View {
         @State var postingDefaultLanguage: PrefsLanguage.Tag? = "en"
@@ -51,3 +52,4 @@ struct PostingDefaultLanguageView_Previews: PreviewProvider {
         Self.Container()
     }
 }
+#endif
