@@ -14,7 +14,10 @@
 		94B2C8C52929617A00087955 /* ActionExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B2C8C42929617A00087955 /* ActionExtensionViewController.swift */; };
 		94B2C8CC2929617A00087955 /* Action Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 94B2C8BE2929617A00087955 /* Action Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		94B2C926292B2D1B00087955 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 94B2C928292B2D1B00087955 /* InfoPlist.strings */; };
-		94E6C246298ED474003771D1 /* Locale+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C245298ED474003771D1 /* Locale+Extensions.swift */; };
+		94E6C2482991A235003771D1 /* PostingDefaultLanguagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C2472991A235003771D1 /* PostingDefaultLanguagePicker.swift */; };
+		94E6C24B2991A5BC003771D1 /* PostingLanguagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */; };
+		94E6C24D2991ABDF003771D1 /* UserPreferencesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C24C2991ABDF003771D1 /* UserPreferencesSection.swift */; };
+		94E6C24F2991AE99003771D1 /* AppPreferencesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C24E2991AE99003771D1 /* AppPreferencesSection.swift */; };
 		D0030982250C6C8500EACB32 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0030981250C6C8500EACB32 /* URL+Extensions.swift */; };
 		D005A1D825EF189A008B2E63 /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D005A1D725EF189A008B2E63 /* ReportViewController.swift */; };
 		D005A1E625EF3D11008B2E63 /* ReportHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D005A1E525EF3D11008B2E63 /* ReportHeaderView.swift */; };
@@ -339,7 +342,10 @@
 		94B2C8CD2929617A00087955 /* Action Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Action Extension.entitlements"; sourceTree = "<group>"; };
 		94B2C927292B2D1B00087955 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		94B2C929292B2D3F00087955 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		94E6C245298ED474003771D1 /* Locale+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Locale+Extensions.swift"; sourceTree = "<group>"; };
+		94E6C2472991A235003771D1 /* PostingDefaultLanguagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingDefaultLanguagePicker.swift; sourceTree = "<group>"; };
+		94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingLanguagesView.swift; sourceTree = "<group>"; };
+		94E6C24C2991ABDF003771D1 /* UserPreferencesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreferencesSection.swift; sourceTree = "<group>"; };
+		94E6C24E2991AE99003771D1 /* AppPreferencesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferencesSection.swift; sourceTree = "<group>"; };
 		D0030981250C6C8500EACB32 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		D005A1D725EF189A008B2E63 /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
 		D005A1E525EF3D11008B2E63 /* ReportHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportHeaderView.swift; sourceTree = "<group>"; };
@@ -611,6 +617,18 @@
 			path = "Action Extension";
 			sourceTree = "<group>";
 		};
+		94E6C2492991A23C003771D1 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				94E6C24E2991AE99003771D1 /* AppPreferencesSection.swift */,
+				94E6C2472991A235003771D1 /* PostingDefaultLanguagePicker.swift */,
+				94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */,
+				D0C7D42624F76169001EBDBB /* PreferencesView.swift */,
+				94E6C24C2991ABDF003771D1 /* UserPreferencesSection.swift */,
+			);
+			path = Preferences;
+			sourceTree = "<group>";
+		};
 		D021A66325C3E167008A0C0D /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -675,7 +693,7 @@
 				D07F4D9725D493E300F61133 /* MuteView.swift */,
 				D08B9F0F25CB8E060062D040 /* NotificationPreferencesView.swift */,
 				D0C7D42D24F76169001EBDBB /* NotificationTypesPreferencesView.swift */,
-				D0C7D42624F76169001EBDBB /* PreferencesView.swift */,
+				94E6C2492991A23C003771D1 /* Preferences */,
 				D0B32F4F250B373600311912 /* RegistrationView.swift */,
 				D0C7D42724F76169001EBDBB /* RootView.swift */,
 				D0C7D42924F76169001EBDBB /* SecondaryNavigationView.swift */,
@@ -941,7 +959,6 @@
 				D0F0B135251AA12700942152 /* CollectionItem+Extensions.swift */,
 				D0D2AC3825BBEC0F003D5DF2 /* CollectionSection+Extensions.swift */,
 				D052DBE225EAFDE800FFB628 /* HTTPError+Extensions.swift */,
-				94E6C245298ED474003771D1 /* Locale+Extensions.swift */,
 				D035F88625B8016000DC75ED /* NavigationViewModel+Extensions.swift */,
 				D0C7D46B24F76169001EBDBB /* NSMutableAttributedString+Extensions.swift */,
 				D07EC7CE25B13921006DF726 /* PickerEmoji+Extensions.swift */,
@@ -1301,6 +1318,7 @@
 				D0F0B136251AA12700942152 /* CollectionItem+Extensions.swift in Sources */,
 				D007023E25562A2800F38136 /* ConversationAvatarsView.swift in Sources */,
 				D0E39AB425D8BF88009C10F8 /* UITextInput+Extensions.swift in Sources */,
+				94E6C24B2991A5BC003771D1 /* PostingLanguagesView.swift in Sources */,
 				D0E7AD3925870B13005F5E2D /* UIVIewController+Extensions.swift in Sources */,
 				D0625E5D250F0B5C00502611 /* StatusContentConfiguration.swift in Sources */,
 				D0BEB1F324F8EE8C001B0F04 /* AttachmentView.swift in Sources */,
@@ -1310,7 +1328,6 @@
 				D0D8B03B262239B100A874A4 /* AnnouncementContentConfiguration.swift in Sources */,
 				D0BE633725F2D95E001139FA /* AVAudioSession+Extensions.swift in Sources */,
 				D0477F2C25C6EBAD005C5368 /* OpenInDefaultBrowserActivity.swift in Sources */,
-				94E6C246298ED474003771D1 /* Locale+Extensions.swift in Sources */,
 				D07F4D9825D493E300F61133 /* MuteView.swift in Sources */,
 				D02D338D25EDA593000A35CC /* CopyableLabel.swift in Sources */,
 				D097F41B25BE3E1A00859F2C /* SearchScope+Extensions.swift in Sources */,
@@ -1322,6 +1339,7 @@
 				D0CEC11025E3462B00FEF5A6 /* AnimatedAttachmentLabel.swift in Sources */,
 				D05E688525B55AE8001FB2C6 /* AVURLAsset+Extensions.swift in Sources */,
 				D0D93EC025D9C71D00C622ED /* AutocompleteItemContentConfiguration.swift in Sources */,
+				94E6C2482991A235003771D1 /* PostingDefaultLanguagePicker.swift in Sources */,
 				D005A1E625EF3D11008B2E63 /* ReportHeaderView.swift in Sources */,
 				D09D970E25C64539007E6394 /* InstanceContentConfiguration.swift in Sources */,
 				D036AA02254B6101009094DF /* NotificationTableViewCell.swift in Sources */,
@@ -1336,6 +1354,7 @@
 				D005A20025EF574F008B2E63 /* NavigationHandling.swift in Sources */,
 				D0F4362D25C10B9600E4F896 /* AddIdentityViewController.swift in Sources */,
 				D035D8F925E4338D00E597C9 /* ImageDiskCache.swift in Sources */,
+				94E6C24F2991AE99003771D1 /* AppPreferencesSection.swift in Sources */,
 				D0625E59250F092900502611 /* StatusTableViewCell.swift in Sources */,
 				D0E569DB2529319100FA1D72 /* LoadMoreView.swift in Sources */,
 				D05936FF25AA94EA00754FDF /* MarkAttachmentsSensitiveView.swift in Sources */,
@@ -1421,6 +1440,7 @@
 				D0FCC105259C4E61000B67DF /* ComposeStatusViewController.swift in Sources */,
 				D087671625BAA8C0001FDD43 /* ExploreViewController.swift in Sources */,
 				D0D2AC6725BD0484003D5DF2 /* LineChartView.swift in Sources */,
+				94E6C24D2991ABDF003771D1 /* UserPreferencesSection.swift in Sources */,
 				D0C7D4C324F7616A001EBDBB /* MetatextApp.swift in Sources */,
 				D097F4C125BFA04C00859F2C /* NotificationsViewController.swift in Sources */,
 				D02D33EF25EE04CC000A35CC /* AddRemoveFromListsView.swift in Sources */,

@@ -230,6 +230,11 @@ public extension AppPreferences {
         get { self[.foldLongPosts] ?? true }
         set { self[.foldLongPosts] = newValue }
     }
+
+    var postingLanguages: Set<PrefsLanguage.Tag> {
+        get { self[.postingLanguages] ?? Set<PrefsLanguage.Tag>(PrefsLanguage.preferredLanguageTagsAndNames(prefsLanguageTag: nil).map { $0.tag }) }
+        set { self[.postingLanguages] = newValue }
+    }
 }
 
 private extension AppPreferences {
@@ -255,6 +260,7 @@ private extension AppPreferences {
         case useUniversalLinks
         case hideContentWarningButton
         case foldLongPosts
+        case postingLanguages
     }
 
     subscript<T>(index: Item) -> T? {
