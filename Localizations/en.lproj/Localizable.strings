@@ -119,6 +119,9 @@
 "compose.content-warning-button.add" = "Add content warning";
 "compose.content-warning-button.remove" = "Remove content warning";
 "compose.emoji-button" = "Emoji picker";
+"compose.language-button.not-selected" = "??";
+"compose.language-button.accessibility-label-%@" = "Language: %@";
+"compose.language-button.accessibility-label-not-selected" = "Language not selected";
 "compose.mark-media-sensitive" = "Mark media as sensitive";
 "compose.photo-library" = "Photo Library";
 "compose.poll.accessibility.multiple-choices-allowed" = "Multiple choices allowed";
@@ -269,6 +272,11 @@
 "preferences.notifications-position-on-startup" = "Notifications position on startup";
 "preferences.position.remember-position" = "Remember position";
 "preferences.position.newest" = "Load newest";
+"preferences.posting-languages" = "Posting languages";
+"preferences.posting-languages.available" = "Available languages";
+"preferences.posting-languages.add" = "Add";
+"preferences.posting-languages.remove" = "Remove";
+"preferences.posting-languages.selected" = "Selected languages";
 "preferences.require-double-tap-to-reblog" = "Require double tap to reblog";
 "preferences.require-double-tap-to-favorite" = "Require double tap to favorite";
 "preferences.show-reblog-and-favorite-counts" = "Show boost and favorite counts";

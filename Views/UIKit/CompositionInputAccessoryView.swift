@@ -3,6 +3,7 @@
 import AVFoundation
 import Combine
 import Mastodon
+import ServiceLayer
 import UIKit
 import ViewModels
 
@@ -155,6 +156,26 @@ private extension CompositionInputAccessoryView {
         }
         .store(in: &cancellables)
 
+        let languageButton = UIBarButtonItem(
+            menu: languageMenu(selectedTag: parentViewModel.defaultLanguageTag)
+        )
+
+        viewModel.$language.sink {
+            if let tag = $0 {
+                languageButton.title = tag
+                languageButton.accessibilityHint = String.localizedStringWithFormat(
+                    NSLocalizedString("compose.language-button.accessibility-label-%@", comment: ""),
+                    PrefsLanguage(tag: tag).localized
+                )
+            } else {
+                languageButton.title =
+                    NSLocalizedString("compose.language-button.not-selected", comment: "")
+                languageButton.accessibilityHint =
+                    NSLocalizedString("compose.language-button.accessibility-label-not-selected", comment: "")
+            }
+        }
+        .store(in: &cancellables)
+
         let emojiButton = UIBarButtonItem(
             image: UIImage(systemName: "face.smiling"),
             primaryAction: UIAction { [weak self] _ in
@@ -194,6 +215,8 @@ private extension CompositionInputAccessoryView {
             visibilityButton,
             UIBarButtonItem.fixedSpace(.defaultSpacing),
             contentWarningButton,
+            UIBarButtonItem.fixedSpace(.defaultSpacing),
+            languageButton,
             UIBarButtonItem.fixedSpace(.defaultSpacing),
             emojiButton,
             UIBarButtonItem.flexibleSpace(),
@@ -338,6 +361,18 @@ private extension CompositionInputAccessoryView {
                 discoverabilityTitle: visibility.description,
                 state: visibility == selectedVisibility ? .on : .off) { [weak self] _ in
                 self?.parentViewModel.visibility = visibility
+            }
+        })
+    }
+
+    func languageMenu(selectedTag: PrefsLanguage.Tag?) -> UIMenu {
+        UIMenu(children: parentViewModel.postingLanguages.reversed().map { prefsLanguage in
+            UIAction(
+                title: prefsLanguage.localized,
+                discoverabilityTitle: prefsLanguage.localized,
+                state: prefsLanguage.tag == selectedTag ? .on : .off
+            ) { [weak self] _ in
+                self?.viewModel.language = prefsLanguage.tag
             }
         })
     }

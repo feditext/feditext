@@ -28,6 +28,7 @@ public extension StatusEndpoint {
         public let spoilerText: String
         public let mediaIds: [Attachment.Id]
         public let visibility: Status.Visibility?
+        public let language: String?
         public let sensitive: Bool
         public let pollOptions: [String]
         public let pollExpiresIn: Int
@@ -39,6 +40,7 @@ public extension StatusEndpoint {
             spoilerText: String,
             mediaIds: [Attachment.Id],
             visibility: Status.Visibility?,
+            language: String?,
             sensitive: Bool,
             pollOptions: [String],
             pollExpiresIn: Int,
@@ -49,6 +51,7 @@ public extension StatusEndpoint {
             self.spoilerText = spoilerText
             self.mediaIds = mediaIds
             self.visibility = visibility
+            self.language = language
             self.sensitive = sensitive
             self.pollOptions = pollOptions
             self.pollExpiresIn = pollExpiresIn
@@ -75,6 +78,7 @@ extension StatusEndpoint.Components {
 
         params["in_reply_to_id"] = inReplyToId
         params["visibility"] = visibility?.rawValue
+        params["language"] = language
 
         if sensitive {
             params["sensitive"] = true

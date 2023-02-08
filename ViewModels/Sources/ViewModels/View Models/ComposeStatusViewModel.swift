@@ -87,7 +87,8 @@ public final class ComposeStatusViewModel: ObservableObject {
         } else {
             compositionViewModel = CompositionViewModel(
                 eventsSubject: compositionEventsSubject,
-                maxCharacters: identityContext.identity.instance?.maxTootChars
+                maxCharacters: identityContext.identity.instance?.maxTootChars,
+                language: identityContext.identity.preferences.postingDefaultLanguage
             )
         }
 
@@ -199,7 +200,8 @@ public extension ComposeStatusViewModel {
         else { return }
 
         let newViewModel = CompositionViewModel(eventsSubject: compositionEventsSubject,
-                                                maxCharacters: identityContext.identity.instance?.maxTootChars)
+                                                maxCharacters: identityContext.identity.instance?.maxTootChars,
+                                                language: identityContext.identity.preferences.postingDefaultLanguage)
 
         newViewModel.contentWarning = after.contentWarning
         newViewModel.displayContentWarning = after.displayContentWarning
@@ -240,6 +242,15 @@ public extension ComposeStatusViewModel {
 
     var editing: Bool {
         editID != nil
+    }
+
+    var defaultLanguageTag: PrefsLanguage.Tag? {
+        identityContext.identity.preferences.postingDefaultLanguage
+    }
+
+    var postingLanguages: [PrefsLanguage] {
+        identityContext.appPreferences.postingLanguages
+            .map { PrefsLanguage(tag: $0) }
     }
 }
 

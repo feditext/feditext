@@ -231,8 +231,11 @@ public extension AppPreferences {
         set { self[.foldLongPosts] = newValue }
     }
 
-    var postingLanguages: Set<PrefsLanguage.Tag> {
-        get { self[.postingLanguages] ?? Set<PrefsLanguage.Tag>(PrefsLanguage.preferredLanguageTagsAndNames(prefsLanguageTag: nil).map { $0.tag }) }
+    var postingLanguages: [PrefsLanguage.Tag] {
+        get {
+            self[.postingLanguages]
+            ?? PrefsLanguage.preferredLanguageTagsAndNames(prefsLanguageTag: nil).map { $0.tag }
+        }
         set { self[.postingLanguages] = newValue }
     }
 }

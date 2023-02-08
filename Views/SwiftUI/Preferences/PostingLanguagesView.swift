@@ -5,10 +5,10 @@ import SwiftUI
 
 /// Pick the languages that should appear in the post composition language selector.
 struct PostingLanguagesView: View {
-    @Binding var postingLanguages: Set<PrefsLanguage.Tag>
+    @Binding var postingLanguages: [PrefsLanguage.Tag]
 
     var selectedLanguages: [PrefsLanguage] {
-        Array(postingLanguages.map { PrefsLanguage(tag: $0) }.sorted())
+        postingLanguages.map { PrefsLanguage(tag: $0) }
     }
 
     var availableLanguages: [PrefsLanguage] {
@@ -22,31 +22,31 @@ struct PostingLanguagesView: View {
                 ForEach(selectedLanguages) { prefsLanguage in
                     HStack {
                         Button { () in
-                            postingLanguages = postingLanguages.filter { $0 != prefsLanguage.tag }
+                            postingLanguages.removeAll { $0 == prefsLanguage.tag }
                         } label: {
                             Label("preferences.posting-languages.remove", systemImage: "minus.circle.fill")
                                 .labelStyle(.iconOnly)
                                 .symbolRenderingMode(.multicolor)
                         }
                         Text(verbatim: prefsLanguage.localized)
+                        Spacer()
+                        Image(systemName: "line.3.horizontal")
                     }
                 }
-                .onDelete { indices in
-                    let deletedTags = indices.map { selectedLanguages[$0].tag }
-                    postingLanguages = postingLanguages.filter { !deletedTags.contains($0) }
-                }
+                .onDelete { postingLanguages.remove(atOffsets: $0) }
+                .onMove { postingLanguages.move(fromOffsets: $0, toOffset: $1) }
             }
             Section("preferences.posting-languages.available") {
                 ForEach(availableLanguages) { prefsLanguage in
                     HStack {
                         Button { () in
-                            $postingLanguages.wrappedValue = postingLanguages.union([prefsLanguage.tag])
+                            postingLanguages.append(prefsLanguage.tag)
                         } label: {
                             Label("preferences.posting-languages.add", systemImage: "plus.circle.fill")
                                 .labelStyle(.iconOnly)
                                 .symbolRenderingMode(.multicolor)
                         }
-                        Text(verbatim: prefsLanguage.localized).tag(prefsLanguage.tag)
+                        Text(verbatim: prefsLanguage.localized)
                     }
                 }
             }
@@ -56,7 +56,7 @@ struct PostingLanguagesView: View {
 
 struct PostingLanguagesView_Previews: PreviewProvider {
     struct Container: View {
-        @State var postingLanguages: Set<PrefsLanguage.Tag> = ["en", "zxx"]
+        @State var postingLanguages: [PrefsLanguage.Tag] = ["en", "zxx"]
 
         var body: some View {
             PostingLanguagesView(postingLanguages: $postingLanguages)
