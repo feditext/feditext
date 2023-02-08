@@ -185,6 +185,7 @@
 "language.extended.name.cnr" = "Montenegrin";
 "language.extended.name.kmr" = "Kurmanji";
 "language.extended.name.ldn" = "Láadan";
+"language.extended.name.mis" = "Uncoded language";
 "language.extended.name.tl" = "Tagalog";
 "language.extended.name.tok" = "Toki Pona";
 "language.extended.name.zba" = "Balaibalan";
@@ -274,7 +275,9 @@
 "preferences.position.newest" = "Load newest";
 "preferences.posting-languages" = "Posting languages";
 "preferences.posting-languages.available" = "Available languages";
+"preferences.posting-languages.available.filter" = "Filter";
 "preferences.posting-languages.add" = "Add";
+"preferences.posting-languages.move" = "Move";
 "preferences.posting-languages.remove" = "Remove";
 "preferences.posting-languages.selected" = "Selected languages";
 "preferences.require-double-tap-to-reblog" = "Require double tap to reblog";

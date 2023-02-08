@@ -190,6 +190,8 @@ private extension PrefsLanguage {
             "cnr": NSLocalizedString("language.extended.name.cnr", comment: ""),
             "kmr": NSLocalizedString("language.extended.name.kmr", comment: ""),
             "ldn": NSLocalizedString("language.extended.name.ldn", comment: ""),
+            // This one is in the list as `.uncoded` but doesn't have a name.
+            "mis": NSLocalizedString("language.extended.name.mis", comment: ""),
             "tl": NSLocalizedString("language.extended.name.tl", comment: ""),
             "tok": NSLocalizedString("language.extended.name.tok", comment: ""),
             "zba": NSLocalizedString("language.extended.name.zba", comment: "")

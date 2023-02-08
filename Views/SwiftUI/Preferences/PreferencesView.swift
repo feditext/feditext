@@ -5,17 +5,20 @@ import Mastodon
 import SwiftUI
 import ViewModels
 
+/// All user and app preferences.
 struct PreferencesView: View {
     @StateObject var viewModel: PreferencesViewModel
+    @StateObject var identityContext: IdentityContext
 
     init(viewModel: PreferencesViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
+        _identityContext = StateObject(wrappedValue: viewModel.identityContext)
     }
 
     var body: some View {
         Form {
             UserPreferencesSection(viewModel: viewModel)
-            AppPreferencesSection(viewModel: viewModel, identityContext: viewModel.identityContext)
+            AppPreferencesSection(viewModel: viewModel, identityContext: identityContext)
         }
         .navigationTitle("preferences")
         .alertItem($viewModel.alertItem)

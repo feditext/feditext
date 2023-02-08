@@ -43,9 +43,11 @@ struct UserPreferencesSection: View {
                     }
                     Toggle("preferences.posting-default-sensitive",
                            isOn: $viewModel.preferences.postingDefaultSensitive)
-                    PostingDefaultLanguagePicker(
-                        postingDefaultLanguage: $viewModel.preferences.postingDefaultLanguage
-                    )
+                    NavigationLink("preferences.posting-default-language") {
+                        PostingDefaultLanguageView(
+                            postingDefaultLanguage: $viewModel.preferences.postingDefaultLanguage
+                        )
+                    }
                 }
                 .disabled(viewModel.preferences.useServerPostingReadingPreferences)
             }
