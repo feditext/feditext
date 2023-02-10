@@ -105,4 +105,38 @@ public extension DomainBlocksViewModel {
     static let preview = DomainBlocksViewModel(service: .init(mastodonAPIClient: .preview))
 }
 
+public extension StatusHistoryViewModel {
+    static let preview = StatusHistoryViewModel(
+        identityContext: .preview,
+        navigationService: .init(
+            environment: .preview,
+            mastodonAPIClient: .preview,
+            contentDatabase: .preview
+        ),
+        eventsSubject: .init(),
+        history: [
+            .init(
+                createdAt: .init(timeIntervalSince1970: 1676058147),
+                account: .preview,
+                content: .init(raw: "<p>first verse</p>"),
+                sensitive: false,
+                spoilerText: "",
+                mediaAttachments: [],
+                emojis: [],
+                poll: nil
+            ),
+            .init(
+                createdAt: .init(timeIntervalSince1970: 1676058194),
+                account: .preview,
+                content: .init(raw: "<p>first verse</p>\n<p>second verse</p>"),
+                sensitive: false,
+                spoilerText: "",
+                mediaAttachments: [],
+                emojis: [],
+                poll: nil
+            )
+        ]
+    )
+}
+
 // swiftlint:enable force_try

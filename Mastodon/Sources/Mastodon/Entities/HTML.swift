@@ -22,9 +22,12 @@ extension HTML: Hashable {
 extension HTML: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
+        let raw = try container.decode(String.self)
+        self.init(raw: raw)
+    }
 
-        raw = try container.decode(String.self)
-
+    public init(raw: String) {
+        self.raw = raw
         if let cachedAttributedString = Self.attributedStringCache.object(forKey: raw as NSString) {
             attributed = cachedAttributedString
         } else {

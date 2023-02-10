@@ -72,6 +72,7 @@ public struct StatusEditHistoryView: View {
                                     return .handled
                                 })
                         }
+                        .scenePadding()
                     }
                 } else {
                     Text("status.edit-history.versions.select")
@@ -79,12 +80,49 @@ public struct StatusEditHistoryView: View {
                 }
             }
         } else {
-            // TODO: (Vyr) rewrite as NavigationView
-            Text("""
-                 Vyr says: You currently need iOS 16 or higher to see a post's edit history.
-                 Support for older versions is coming!
-                 """)
-                .scenePadding()
+            NavigationView {
+                List(viewModel.versions, selection: $selected) { version in
+                    NavigationLink {
+                        ScrollView {
+                            VStack {
+                                if let spoiler = version.spoiler {
+                                    Text(verbatim: spoiler)
+                                        .textSelection(.enabled)
+                                    Divider()
+                                }
+                                Text(attributedContent(version))
+                                    .textSelection(.enabled)
+                                    .environment(\.openURL, OpenURLAction { url in
+                                        dismiss()
+                                        viewModel.openURL(url)
+                                        return .handled
+                                    })
+                            }
+                            .scenePadding()
+                        }
+                    } label: {
+                        // TODO: (Vyr) proper formatter
+                        Text(version.date, style: .date)
+                        + Text(verbatim: " ")
+                        + Text(version.date, style: .time)
+                    }
+                }
+                .navigationTitle("status.edit-history.versions")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Label("dismiss", systemImage: "xmark.circle.fill")
+                                .symbolRenderingMode(.hierarchical)
+                        }
+                        .labelStyle(.iconOnly)
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .navigationViewStyle(.columns)
         }
     }
 
@@ -129,3 +167,14 @@ struct StatusBodyViewRepresentable: UIViewRepresentable {
         statusBodyView.viewModel = viewModel
     }
 }
+
+#if DEBUG
+import PreviewViewModels
+
+// TODO: (Vyr) why does this always crash unless the HTML part is commented out?
+struct StatusEditHistoryView_Previews: PreviewProvider {
+    static var previews: some View {
+        StatusEditHistoryView(.preview)
+    }
+}
+#endif

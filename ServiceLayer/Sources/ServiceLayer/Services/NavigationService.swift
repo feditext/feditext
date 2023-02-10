@@ -23,7 +23,7 @@ public struct NavigationService {
     private let contentDatabase: ContentDatabase
     private let status: Status?
 
-    init(environment: AppEnvironment,
+    public init(environment: AppEnvironment,
          mastodonAPIClient: MastodonAPIClient,
          contentDatabase: ContentDatabase,
          status: Status? = nil) {
