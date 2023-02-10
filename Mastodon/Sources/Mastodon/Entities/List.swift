@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct List: Codable, Hashable, Identifiable {
+public struct List: Codable, Identifiable {
     public let id: Id
     public let title: String
 
@@ -14,4 +14,10 @@ public struct List: Codable, Hashable, Identifiable {
 
 public extension List {
     typealias Id = String
+}
+
+extension List: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }

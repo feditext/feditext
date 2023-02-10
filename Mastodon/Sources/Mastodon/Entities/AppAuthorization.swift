@@ -12,6 +12,12 @@ public struct AppAuthorization: Codable {
     public let vapidKey: String?
 }
 
+extension AppAuthorization: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
 public extension AppAuthorization {
     typealias Id = String
 }

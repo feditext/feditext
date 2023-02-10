@@ -8,9 +8,15 @@ import AppKit
 #endif
 import SwiftSoup
 
-public struct HTML: Hashable {
+public struct HTML {
     public let raw: String
     public let attributed: NSAttributedString
+}
+
+extension HTML: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(raw)
+    }
 }
 
 extension HTML: Codable {

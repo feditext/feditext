@@ -113,24 +113,5 @@ extension Account: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-        hasher.combine(username)
-        hasher.combine(acct)
-        hasher.combine(displayName)
-        hasher.combine(locked)
-        hasher.combine(createdAt)
-        hasher.combine(followersCount)
-        hasher.combine(followingCount)
-        hasher.combine(statusesCount)
-        hasher.combine(note)
-        hasher.combine(url)
-        hasher.combine(avatar)
-        hasher.combine(avatarStatic)
-        hasher.combine(header)
-        hasher.combine(headerStatic)
-        hasher.combine(fields)
-        hasher.combine(emojis)
-        hasher.combine(bot)
-        hasher.combine(discoverable)
-        hasher.combine(moved)
     }
 }

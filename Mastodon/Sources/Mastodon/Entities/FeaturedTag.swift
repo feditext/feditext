@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct FeaturedTag: Codable, Hashable {
+public struct FeaturedTag: Codable {
     public let id: Id
     public let name: String
     public let url: UnicodeURL
@@ -20,4 +20,10 @@ public struct FeaturedTag: Codable, Hashable {
 
 public extension FeaturedTag {
     typealias Id = String
+}
+
+extension FeaturedTag: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }

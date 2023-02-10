@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Conversation: Codable, Hashable {
+public struct Conversation: Codable {
     public let id: Id
     public let accounts: [Account]
     public let unread: Bool
@@ -18,4 +18,10 @@ public struct Conversation: Codable, Hashable {
 
 public extension Conversation {
     typealias Id = String
+}
+
+extension Conversation: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }

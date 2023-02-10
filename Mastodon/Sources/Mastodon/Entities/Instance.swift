@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Instance: Codable, Hashable {
+public struct Instance: Codable {
     public struct URLs: Codable, Hashable {
         public let streamingApi: UnicodeURL
     }
@@ -71,6 +71,12 @@ public struct Instance: Codable, Hashable {
         self.thumbnail = thumbnail
         self.contactAccount = contactAccount
         self.configuration = configuration
+    }
+}
+
+extension Instance: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(uri)
     }
 }
 

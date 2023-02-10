@@ -2,8 +2,8 @@
 
 import Foundation
 
-public struct Attachment: Codable, Hashable {
-    public enum AttachmentType: String, Codable, Hashable, Unknowable {
+public struct Attachment: Codable {
+    public enum AttachmentType: String, Codable, Equatable, Unknowable {
         case image, video, gifv, audio, unknown
 
         public static var unknownCase: Self { .unknown }
@@ -58,6 +58,12 @@ public extension Attachment {
         }
 
         return nil
+    }
+}
+
+extension Attachment: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 

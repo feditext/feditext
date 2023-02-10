@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Report: Codable, Hashable {
+public struct Report: Codable {
     public let id: Id
     public let actionTaken: Bool
 
@@ -17,4 +17,10 @@ public struct Report: Codable, Hashable {
 
 public extension Report {
     typealias Id = String
+}
+
+extension Report: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }

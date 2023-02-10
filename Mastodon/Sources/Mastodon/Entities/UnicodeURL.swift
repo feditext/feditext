@@ -2,9 +2,15 @@
 
 import Foundation
 
-public struct UnicodeURL: Hashable {
+public struct UnicodeURL {
     public let raw: String
     public let url: URL
+}
+
+extension UnicodeURL: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(raw)
+    }
 }
 
 extension UnicodeURL: Codable {

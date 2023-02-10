@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Poll: Codable, Hashable {
+public struct Poll: Codable {
     public struct Option: Codable, Hashable {
         public var title: String
         public var votesCount: Int
@@ -18,6 +18,12 @@ public struct Poll: Codable, Hashable {
     @DecodableDefault.EmptyList public private(set) var ownVotes: [Int]
     public let options: [Option]
     public let emojis: [Emoji]
+}
+
+extension Poll: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 public extension Poll {

@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Relationship: Codable, Hashable {
+public struct Relationship: Codable {
     public let id: Account.Id
     public let following: Bool
     public let requested: Bool
@@ -16,4 +16,10 @@ public struct Relationship: Codable, Hashable {
     public let domainBlocking: Bool
     @DecodableDefault.False public private(set) var blockedBy: Bool
     @DecodableDefault.EmptyString public private(set) var note: String
+}
+
+extension Relationship: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }

@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct MastodonNotification: Codable, Hashable {
+public struct MastodonNotification: Codable {
     public let id: Id
     public let type: NotificationType
     public let account: Account
@@ -24,6 +24,12 @@ public struct MastodonNotification: Codable, Hashable {
         self.createdAt = createdAt
         self.status = status
         self.report = report
+    }
+}
+
+extension MastodonNotification: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 

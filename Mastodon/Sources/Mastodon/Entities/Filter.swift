@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Filter: Codable, Hashable, Identifiable {
+public struct Filter: Codable, Identifiable {
     public enum Context: String, Codable, Unknowable {
         case home
         case notifications
@@ -32,6 +32,12 @@ public extension Filter {
                           expiresAt: nil,
                           irreversible: false,
                           wholeWord: true)
+}
+
+extension Filter: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 extension Array where Element == Filter {

@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Tag: Codable, Hashable {
+public struct Tag: Codable {
     public let name: String
     public let url: UnicodeURL
     public let history: [History]?
@@ -13,5 +13,11 @@ public extension Tag {
         public let day: String
         public let uses: String
         public let accounts: String
+    }
+}
+
+extension Tag: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
     }
 }

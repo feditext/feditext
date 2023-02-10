@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Card: Codable, Hashable {
+public struct Card: Codable, Equatable {
     public enum CardType: String, Codable, Hashable, Unknowable {
         case link, photo, video, rich, unknown
 
@@ -22,4 +22,10 @@ public struct Card: Codable, Hashable {
     public let height: Int?
     public let image: UnicodeURL?
     public let embedUrl: String?
+}
+
+extension Card: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(url)
+    }
 }

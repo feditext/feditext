@@ -29,7 +29,5 @@ extension StatusSource: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-        hasher.combine(text)
-        hasher.combine(spoilerText)
     }
 }
