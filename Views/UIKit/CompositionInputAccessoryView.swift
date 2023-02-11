@@ -14,6 +14,7 @@ final class CompositionInputAccessoryView: UIView {
     private let viewModel: CompositionViewModel
     private let parentViewModel: ComposeStatusViewModel
     private let toolbar = UIToolbar()
+    private let charactersBarItem = UIBarButtonItem()
     private let autocompleteCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: CompositionInputAccessoryView.autocompleteLayout())
@@ -206,6 +207,9 @@ private extension CompositionInputAccessoryView {
         let charactersBarItem = UIBarButtonItem()
 
         charactersBarItem.isEnabled = false
+        // We need this to use a monospaced-digits font so it doesn't wiggle.
+        // See `charactersBarItem.setTitleTextAttributes` calls elsewhere;
+        // all text attributes have to be set every time we change any of them.
 
         toolbar.items = [
             attachmentButton,
@@ -236,7 +240,10 @@ private extension CompositionInputAccessoryView {
         viewModel.$remainingCharacters.sink {
             charactersBarItem.title = String($0)
             charactersBarItem.setTitleTextAttributes(
-                [.foregroundColor: $0 < 0 ? UIColor.systemRed : UIColor.label],
+                [
+                    .foregroundColor: $0 < 0 ? UIColor.systemRed : UIColor.label,
+                    .font: UIFont.monospacedDigitSystemFont(ofSize: UIFont.labelFontSize, weight: .regular)
+                ],
                 for: .disabled)
             charactersBarItem.accessibilityHint = String.localizedStringWithFormat(
                 NSLocalizedString("compose.characters-remaining-accessibility-label-%ld", comment: ""),
@@ -268,6 +275,18 @@ private extension CompositionInputAccessoryView {
                     $0.title ?? "")
             }
             .store(in: &cancellables)
+    }
+}
+
+extension CompositionInputAccessoryView {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        charactersBarItem.setTitleTextAttributes(
+            [
+                .foregroundColor: viewModel.remainingCharacters < 0 ? UIColor.systemRed : UIColor.label,
+                .font: UIFont.monospacedDigitSystemFont(ofSize: UIFont.labelFontSize, weight: .regular)
+            ],
+            for: .disabled
+        )
     }
 }
 
