@@ -18,6 +18,7 @@
 		94E6C24B2991A5BC003771D1 /* PostingLanguagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */; };
 		94E6C24D2991ABDF003771D1 /* UserPreferencesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C24C2991ABDF003771D1 /* UserPreferencesSection.swift */; };
 		94E6C24F2991AE99003771D1 /* AppPreferencesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C24E2991AE99003771D1 /* AppPreferencesSection.swift */; };
+		94E6C2512996E9C7003771D1 /* FollowedTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C2502996E9C7003771D1 /* FollowedTagsView.swift */; };
 		D0030982250C6C8500EACB32 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0030981250C6C8500EACB32 /* URL+Extensions.swift */; };
 		D005A1D825EF189A008B2E63 /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D005A1D725EF189A008B2E63 /* ReportViewController.swift */; };
 		D005A1E625EF3D11008B2E63 /* ReportHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D005A1E525EF3D11008B2E63 /* ReportHeaderView.swift */; };
@@ -346,6 +347,7 @@
 		94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingLanguagesView.swift; sourceTree = "<group>"; };
 		94E6C24C2991ABDF003771D1 /* UserPreferencesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreferencesSection.swift; sourceTree = "<group>"; };
 		94E6C24E2991AE99003771D1 /* AppPreferencesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferencesSection.swift; sourceTree = "<group>"; };
+		94E6C2502996E9C7003771D1 /* FollowedTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowedTagsView.swift; sourceTree = "<group>"; };
 		D0030981250C6C8500EACB32 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		D005A1D725EF189A008B2E63 /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
 		D005A1E525EF3D11008B2E63 /* ReportHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportHeaderView.swift; sourceTree = "<group>"; };
@@ -689,6 +691,7 @@
 				D08E52602579D2E100FA2C5F /* DomainBlocksView.swift */,
 				D0BEB21024FA2A90001B0F04 /* EditFilterView.swift */,
 				D0BEB20424FA1107001B0F04 /* FiltersView.swift */,
+				94E6C2502996E9C7003771D1 /* FollowedTagsView.swift */,
 				D0BEB1FE24F9E5BB001B0F04 /* ListsView.swift */,
 				D07F4D9725D493E300F61133 /* MuteView.swift */,
 				D08B9F0F25CB8E060062D040 /* NotificationPreferencesView.swift */,
@@ -1457,6 +1460,7 @@
 				D08DFB0125CE228E0005DA98 /* UIScrollView+Extensions.swift in Sources */,
 				D07EC7FD25B16994006DF726 /* EmojiCategoryHeaderView.swift in Sources */,
 				D0C7D4D724F7616A001EBDBB /* UIColor+Extensions.swift in Sources */,
+				94E6C2512996E9C7003771D1 /* FollowedTagsView.swift in Sources */,
 				D09D971825C64682007E6394 /* InstanceCollectionViewCell.swift in Sources */,
 				D05A0A5D26363DC700F9BCE1 /* AnnouncementReactionCollectionViewCell.swift in Sources */,
 				94B0BCD329859B750075E234 /* StatusEditHistoryView.swift in Sources */,

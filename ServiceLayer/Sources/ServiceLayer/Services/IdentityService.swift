@@ -183,6 +183,31 @@ public extension IdentityService {
         contentDatabase.expiredFiltersPublisher()
     }
 
+    func refreshFollowedTags() -> AnyPublisher<Never, Error> {
+        mastodonAPIClient.request(TagsEndpoint.followed)
+            .map { $0.map(FollowedTag.init(_:)) }
+            .flatMap(contentDatabase.setFollowedTags(_:))
+            .eraseToAnyPublisher()
+    }
+
+    func followTag(name: Tag.Name) -> AnyPublisher<Tag, Error> {
+        mastodonAPIClient.request(TagEndpoint.follow(name: name))
+            .andAlso { contentDatabase.createFollowedTag(FollowedTag($0)) }
+    }
+
+    func unfollowTag(name: Tag.Name) -> AnyPublisher<Tag, Error> {
+        mastodonAPIClient.request(TagEndpoint.unfollow(name: name))
+            .andAlso { contentDatabase.deleteFollowedTag(FollowedTag($0)) }
+    }
+
+    func followedTagsPublisher() -> AnyPublisher<[FollowedTag], Error> {
+        contentDatabase.followedTagsPublisher()
+    }
+
+    func getTag(name: Tag.Name) -> AnyPublisher<Tag, Error> {
+        mastodonAPIClient.request(TagEndpoint.get(name: name))
+    }
+
     func announcementCountPublisher() -> AnyPublisher<(total: Int, unread: Int), Error> {
         contentDatabase.announcementCountPublisher()
     }

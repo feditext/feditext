@@ -382,6 +382,30 @@ public extension ContentDatabase {
         databaseWriter.mutatingPublisher(updates: Filter.filter(Filter.Columns.id == id).deleteAll)
     }
 
+    func setFollowedTags(_ tags: [FollowedTag]) -> AnyPublisher<Never, Error> {
+        return databaseWriter.mutatingPublisher {
+            for tag in tags {
+                try tag.save($0)
+            }
+
+            try FollowedTag
+                .filter(!tags.map(\.name).contains(FollowedTag.Columns.name))
+                .deleteAll($0)
+        }
+    }
+
+    func createFollowedTag(_ tag: FollowedTag) -> AnyPublisher<Never, Error> {
+        return databaseWriter.mutatingPublisher { try tag.save($0) }
+    }
+
+    func deleteFollowedTag(_ tag: FollowedTag) -> AnyPublisher<Never, Error> {
+        return databaseWriter.mutatingPublisher(
+            updates: FollowedTag
+                .filter(FollowedTag.Columns.name == tag.name)
+                .deleteAll
+        )
+    }
+
     func setLastReadId(_ id: String, timelineId: Timeline.Id) -> AnyPublisher<Never, Error> {
         databaseWriter.mutatingPublisher { try LastReadIdRecord(timelineId: timelineId, id: id).save($0) }
     }
@@ -515,6 +539,13 @@ public extension ContentDatabase {
 
     func expiredFiltersPublisher() -> AnyPublisher<[Filter], Error> {
         ValueObservation.tracking { try Filter.filter(Filter.Columns.expiresAt < Date()).fetchAll($0) }
+            .removeDuplicates()
+            .publisher(in: databaseWriter)
+            .eraseToAnyPublisher()
+    }
+
+    func followedTagsPublisher() -> AnyPublisher<[FollowedTag], Error> {
+        ValueObservation.tracking { try FollowedTag.fetchAll($0) }
             .removeDuplicates()
             .publisher(in: databaseWriter)
             .eraseToAnyPublisher()

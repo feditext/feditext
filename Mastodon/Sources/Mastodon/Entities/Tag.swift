@@ -3,9 +3,16 @@
 import Foundation
 
 public struct Tag: Codable {
-    public let name: String
+    /// > Warning: Two tag names that are not equal may still represent the same tag.
+    /// > Authoritative tag comparison should only be done server-side due to this… thing:
+    /// > https://github.com/mastodon/mastodon/blob/main/app/lib/hashtag_normalizer.rb
+    /// > https://github.com/mastodon/mastodon/blob/main/app/lib/ascii_folding.rb
+    public typealias Name = String
+
+    public let name: Name
     public let url: UnicodeURL
     public let history: [History]?
+    public let following: Bool?
 }
 
 public extension Tag {

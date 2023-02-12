@@ -9,7 +9,7 @@ import UniformTypeIdentifiers
 class ActionExtensionViewController: UIViewController {
     /// Extensions aren't allowed to call `UIApplication.shared
     ///  and thus don't have direct access to its `openURL` method.
-    /// `self.extensionContext?.open(<#T##URL: URL##URL#>)` only works for Today extensions.
+    /// `self.extensionContext?.open(URL: URL)` only works for Today extensions.
     /// As a workaround, we find a parent responder that has an `openURL(_:)` method.
     /// This will be `UIApplication`. It's cursed, but it uses public APIs and works.
     /// See <https://liman.io/blog/open-url-share-extension-swiftui>.

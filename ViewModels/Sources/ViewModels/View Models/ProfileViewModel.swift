@@ -147,6 +147,8 @@ extension ProfileViewModel: CollectionViewModel {
 
     public var announcesNewItems: Bool { collectionViewModel.value.canRefresh }
 
+    public var timelineActionViewModel: TimelineActionViewModel? { collectionViewModel.value.timelineActionViewModel }
+
     public func request(maxId: String?, minId: String?, search: Search?) {
         if case .statuses = collection, maxId == nil {
             profileService.fetchPinnedStatuses()

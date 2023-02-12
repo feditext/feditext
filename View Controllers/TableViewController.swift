@@ -18,6 +18,7 @@ class TableViewController: UITableViewController {
     private let newItemsView = NewItemsView()
     @Published private var loading = false
     private var visibleLoadMoreViews = Set<LoadMoreView>()
+    private var timelineActionButtonBarItem = UIBarButtonItem()
     private var cancellables = Set<AnyCancellable>()
     private var cellHeightCaches = [CGFloat: [CollectionItem: CGFloat]]()
     private var shouldKeepPlayingVideoAfterDismissal = false
@@ -186,6 +187,8 @@ class TableViewController: UITableViewController {
         sizeTableHeaderFooterViews()
     }
 
+    // TODO: (Vyr) can we subsume this into timeline actions?
+    /// Not used if `viewModel.timelineActionViewModel` exists because that takes precedence.
     func configureRightBarButtonItem(expandAllState: ExpandAllState) {
         switch expandAllState {
         case .hidden:
@@ -415,9 +418,14 @@ private extension TableViewController {
             .sink { [weak self] in self?.handle(event: $0) }
             .store(in: &cancellables)
 
-        viewModel.expandAll.receive(on: DispatchQueue.main)
-            .sink { [weak self] in self?.configureRightBarButtonItem(expandAllState: $0) }
-            .store(in: &cancellables)
+        if let timelineActionViewModel = viewModel.timelineActionViewModel {
+            setupTimelineActionBarButtonItem(timelineActionViewModel)
+            navigationItem.rightBarButtonItem = timelineActionButtonBarItem
+        } else {
+            viewModel.expandAll.receive(on: DispatchQueue.main)
+                .sink { [weak self] in self?.configureRightBarButtonItem(expandAllState: $0) }
+                .store(in: &cancellables)
+        }
 
         viewModel.loading.receive(on: DispatchQueue.main).assign(to: &$loading)
 
@@ -915,6 +923,44 @@ private extension TableViewController {
 
         snapshot.reloadItems(visibleItems)
         dataSource.apply(snapshot, animatingDifferences: false)
+    }
+
+    func setupTimelineActionBarButtonItem(_ timelineActionViewModel: TimelineActionViewModel) {
+        switch timelineActionViewModel {
+        case let .tag(tagTimelineActionViewModel):
+            tagTimelineActionViewModel.tag
+                .sink { [weak self] tag in
+                    DispatchQueue.main.async {
+                        switch tag.following {
+                        case nil:
+                            self?.navigationItem.rightBarButtonItem = nil
+                        case .some(false):
+                            self?.navigationItem.rightBarButtonItem = .init(
+                                title: NSLocalizedString(
+                                    "tag.followed.add",
+                                    comment: ""
+                                ),
+                                image: UIImage(named: "tag.followed.add"),
+                                primaryAction: .init { [weak tagTimelineActionViewModel] _ in
+                                    tagTimelineActionViewModel?.follow()
+                                }
+                            )
+                        case .some(true):
+                            self?.navigationItem.rightBarButtonItem = .init(
+                                title: NSLocalizedString(
+                                    "tag.followed.remove",
+                                    comment: ""
+                                ),
+                                image: UIImage(named: "tag.followed.remove"),
+                                primaryAction: .init { [weak tagTimelineActionViewModel] _ in
+                                    tagTimelineActionViewModel?.unfollow()
+                                }
+                            )
+                        }
+                    }
+                }
+                .store(in: &cancellables)
+        }
     }
 }
 // swiftlint:enable file_length

@@ -314,6 +314,12 @@ extension ContentDatabase {
             }
         }
 
+        migrator.registerMigration("1.7.4-followed-tags") { db in
+            try db.create(table: "followedTag") { t in
+                t.column("name", .text).primaryKey(onConflict: .replace)
+            }
+        }
+
         return migrator
     }
 }

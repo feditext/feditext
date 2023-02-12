@@ -111,13 +111,8 @@ public extension StatusService {
         // We normally won't have this from Mastodon proper, since it's only set
         // on the status returned from a delete, so we have to ask for it.
         return mastodonAPIClient.request(StatusSourceEndpoint.source(id: status.displayStatus.id))
-            .flatMap { source in
-                contentDatabase.update(id: status.displayStatus.id, source: source)
-                    // We want to keep going after storing the source in the DB,
-                    // but Combine doesn't have `andThen`: https://stackoverflow.com/a/58734595
-                    .flatMap { _ in Empty(outputType: Status.self, failureType: Error.self) }
-                    .prepend(status.displayStatus.with(source: source))
-            }
+            .andAlso { contentDatabase.update(id: status.displayStatus.id, source: $0) }
+            .map { status.displayStatus.with(source: $0) }
             .eraseToAnyPublisher()
     }
 

@@ -54,6 +54,11 @@ struct SecondaryNavigationView: View {
                                     .environmentObject(rootViewModel)) {
                         Label("secondary-navigation.lists", systemImage: "scroll")
                     }
+                    NavigationLink(
+                        destination: FollowedTagsView(viewModel: .init(identityContext: viewModel.identityContext))
+                            .environmentObject(rootViewModel)) {
+                        Label("secondary-navigation.followed-tags", systemImage: "number")
+                    }
                     ForEach([Timeline.favorites, Timeline.bookmarks]) { timeline in
                         Button {
                             viewModel.navigate(timeline: timeline)

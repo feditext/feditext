@@ -81,6 +81,9 @@ public extension NavigationViewModel {
             identityContext.service.refreshFilters()
                 .sink { _ in } receiveValue: { _ in }
                 .store(in: &cancellables)
+            identityContext.service.refreshFollowedTags()
+                .sink { _ in } receiveValue: { _ in }
+                .store(in: &cancellables)
             identityContext.service.refreshEmojis()
                 .sink { _ in } receiveValue: { _ in }
                 .store(in: &cancellables)

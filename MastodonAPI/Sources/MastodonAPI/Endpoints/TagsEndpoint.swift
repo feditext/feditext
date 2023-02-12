@@ -6,6 +6,7 @@ import Mastodon
 
 public enum TagsEndpoint {
     case trends
+    case followed
 }
 
 extension TagsEndpoint: Endpoint {
@@ -14,12 +15,13 @@ extension TagsEndpoint: Endpoint {
     public var pathComponentsInContext: [String] {
         switch self {
         case .trends: return ["trends"]
+        case .followed: return ["followed_tags"]
         }
     }
 
     public var method: HTTPMethod {
         switch self {
-        case .trends: return .get
+        case .trends, .followed: return .get
         }
     }
 }

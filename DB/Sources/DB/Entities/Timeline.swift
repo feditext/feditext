@@ -8,7 +8,7 @@ public enum Timeline: Hashable {
     case local
     case federated
     case list(List)
-    case tag(String)
+    case tag(Tag.Name)
     case profile(accountId: Account.Id, profileCollection: ProfileCollection)
     case favorites
     case bookmarks
