@@ -9,9 +9,9 @@ public final class TagTimelineActionViewModel {
     private let name: Tag.Name
     private let identityContext: IdentityContext
     private var cancellables = Set<AnyCancellable>()
-    private let tagSubject: PassthroughSubject<Tag, Never> = .init()
+    private let tagSubject: CurrentValueSubject<Tag?, Never> = .init(nil)
 
-    public var tag: AnyPublisher<Tag, Never> {
+    public var tag: AnyPublisher<Tag?, Never> {
         tagSubject.eraseToAnyPublisher()
     }
 

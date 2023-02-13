@@ -155,6 +155,7 @@
 "explore.profile-directory" = "Profile Directory";
 "error" = "Error";
 "favorites" = "Favorites";
+"followed-tags.new-tag-title" = "Hashtag (without #)";
 "follow-requests" = "Follow Requests";
 "registration.review-terms-of-use-and-privacy-policy-%@" = "Please review %@'s Terms of Use and Privacy Policy to continue";
 "registration.username" = "Username";
@@ -170,6 +171,7 @@
 "secondary-navigation.account-settings" = "Account Settings";
 "secondary-navigation.accounts" = "Accounts";
 "secondary-navigation.edit-profile" = "Edit Profile";
+"secondary-navigation.followed-tags" = "Followed Tags";
 "secondary-navigation.lists" = "Lists";
 "secondary-navigation.my-profile" = "My Profile";
 "secondary-navigation.preferences" = "Preferences";

@@ -22,3 +22,15 @@ extension FollowedTag {
         self.init(name: tag.name)
     }
 }
+
+extension FollowedTag: Comparable {
+    public static func < (lhs: FollowedTag, rhs: FollowedTag) -> Bool {
+        lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+    }
+}
+
+extension FollowedTag: Identifiable {
+    public typealias ObjectIdentifier = Tag.Name
+
+    public var id: ObjectIdentifier { name }
+}

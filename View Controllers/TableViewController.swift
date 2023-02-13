@@ -18,7 +18,6 @@ class TableViewController: UITableViewController {
     private let newItemsView = NewItemsView()
     @Published private var loading = false
     private var visibleLoadMoreViews = Set<LoadMoreView>()
-    private var timelineActionButtonBarItem = UIBarButtonItem()
     private var cancellables = Set<AnyCancellable>()
     private var cellHeightCaches = [CGFloat: [CollectionItem: CGFloat]]()
     private var shouldKeepPlayingVideoAfterDismissal = false
@@ -420,7 +419,6 @@ private extension TableViewController {
 
         if let timelineActionViewModel = viewModel.timelineActionViewModel {
             setupTimelineActionBarButtonItem(timelineActionViewModel)
-            navigationItem.rightBarButtonItem = timelineActionButtonBarItem
         } else {
             viewModel.expandAll.receive(on: DispatchQueue.main)
                 .sink { [weak self] in self?.configureRightBarButtonItem(expandAllState: $0) }
@@ -929,34 +927,33 @@ private extension TableViewController {
         switch timelineActionViewModel {
         case let .tag(tagTimelineActionViewModel):
             tagTimelineActionViewModel.tag
+                .receive(on: DispatchQueue.main)
                 .sink { [weak self] tag in
-                    DispatchQueue.main.async {
-                        switch tag.following {
-                        case nil:
-                            self?.navigationItem.rightBarButtonItem = nil
-                        case .some(false):
-                            self?.navigationItem.rightBarButtonItem = .init(
-                                title: NSLocalizedString(
-                                    "tag.followed.add",
-                                    comment: ""
-                                ),
-                                image: UIImage(named: "tag.followed.add"),
-                                primaryAction: .init { [weak tagTimelineActionViewModel] _ in
-                                    tagTimelineActionViewModel?.follow()
-                                }
-                            )
-                        case .some(true):
-                            self?.navigationItem.rightBarButtonItem = .init(
-                                title: NSLocalizedString(
-                                    "tag.followed.remove",
-                                    comment: ""
-                                ),
-                                image: UIImage(named: "tag.followed.remove"),
-                                primaryAction: .init { [weak tagTimelineActionViewModel] _ in
-                                    tagTimelineActionViewModel?.unfollow()
-                                }
-                            )
-                        }
+                    switch tag?.following {
+                    case nil:
+                        self?.navigationItem.rightBarButtonItem = nil
+                    case .some(false):
+                        self?.navigationItem.rightBarButtonItem = .init(
+                            title: NSLocalizedString(
+                                "tag.followed.add",
+                                comment: ""
+                            ),
+                            image: UIImage(named: "tag.followed.add"),
+                            primaryAction: .init { [weak tagTimelineActionViewModel] _ in
+                                tagTimelineActionViewModel?.follow()
+                            }
+                        )
+                    case .some(true):
+                        self?.navigationItem.rightBarButtonItem = .init(
+                            title: NSLocalizedString(
+                                "tag.followed.remove",
+                                comment: ""
+                            ),
+                            image: UIImage(named: "tag.followed.remove"),
+                            primaryAction: .init { [weak tagTimelineActionViewModel] _ in
+                                tagTimelineActionViewModel?.unfollow()
+                            }
+                        )
                     }
                 }
                 .store(in: &cancellables)

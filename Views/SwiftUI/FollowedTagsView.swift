@@ -4,61 +4,62 @@ import Mastodon
 import SwiftUI
 import ViewModels
 
-// TODO: (Vyr) entire class
-
 struct FollowedTagsView: View {
-    @StateObject var viewModel: ListsViewModel
+    @StateObject var viewModel: FollowedTagsViewModel
     @EnvironmentObject var rootViewModel: RootViewModel
-    @State private var newListTitle = ""
+    @State private var newName: Tag.Name = ""
 
     var body: some View {
         Form {
             Section {
-                TextField("lists.new-list-title", text: $newListTitle)
-                    .disabled(viewModel.creatingList)
-                if viewModel.creatingList {
+                TextField("followed-tags.new-tag-title", text: $newName)
+                    .disabled(viewModel.creating)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                if viewModel.creating {
                     ProgressView()
                         .frame(maxWidth: .infinity, alignment: .center)
                 } else {
                     Button {
-                        viewModel.createList(title: newListTitle)
+                        viewModel.create(name: newName.trimmingCharacters(in: .whitespacesAndNewlines))
                     } label: {
                         Label("add", systemImage: "plus.circle")
                     }
-                    .disabled(newListTitle.isEmpty)
+                    .disabled(newName.isEmpty || newName.hasPrefix("#"))
                 }
             }
             Section {
-                ForEach(viewModel.lists) { list in
+                ForEach(viewModel.tags) { tag in
                     Button {
-                        rootViewModel.navigationViewModel?.navigate(timeline: .list(list))
+                        rootViewModel.navigationViewModel?.navigate(timeline: .tag(tag.name))
                     } label: {
-                        Text(list.title)
+                        Text(tag.name)
                             .foregroundColor(.primary)
                     }
                 }
                 .onDelete {
                     guard let index = $0.first else { return }
 
-                    viewModel.delete(list: viewModel.lists[index])
+                    viewModel.delete(name: viewModel.tags[index].name)
                 }
             }
         }
-        .navigationTitle(Text("secondary-navigation.lists"))
+        .navigationTitle(Text("secondary-navigation.followed-tags"))
         .toolbar {
             ToolbarItem(placement: ToolbarItemPlacement.navigationBarTrailing) {
                 EditButton()
             }
         }
         .alertItem($viewModel.alertItem)
-        .onAppear(perform: viewModel.refreshLists)
-        .onReceive(viewModel.$creatingList) {
+        .onAppear(perform: viewModel.refresh)
+        .onReceive(viewModel.$creating) {
             if !$0 {
-                newListTitle = ""
+                newName = ""
             }
         }
     }
 }
+
 
 #if DEBUG
 import PreviewViewModels
