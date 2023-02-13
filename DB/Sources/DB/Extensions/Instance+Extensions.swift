@@ -26,16 +26,23 @@ extension Instance {
 
 private extension Instance {
     init(record: InstanceRecord, contactAccount: Account?) {
-        self.init(uri: record.uri,
-                  title: record.title,
-                  description: record.description,
-                  shortDescription: record.shortDescription,
-                  email: record.email,
-                  version: record.version,
-                  urls: record.urls,
-                  stats: record.stats,
-                  thumbnail: record.thumbnail,
-                  contactAccount: contactAccount,
-                  configuration: Configuration(statuses: Configuration.Statuses(maxCharacters: record.maxTootChars)))
+        self.init(
+            uri: record.uri,
+            title: record.title,
+            description: record.description,
+            shortDescription: record.shortDescription,
+            email: record.email,
+            version: record.version,
+            urls: record.urls,
+            stats: record.stats,
+            thumbnail: record.thumbnail,
+            contactAccount: contactAccount,
+            configuration: Configuration(
+                statuses: Configuration.Statuses(
+                    maxCharacters: record.maxTootChars
+                )
+            ),
+            rules: record.rules ?? []
+        )
     }
 }

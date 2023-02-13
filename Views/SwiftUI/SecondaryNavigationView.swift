@@ -95,10 +95,51 @@ struct SecondaryNavigationView: View {
                     Label("secondary-navigation.preferences", systemImage: "gear")
                 }
                 NavigationLink(
+                    destination: AboutInstanceLoader(
+                        exploreViewModel: viewModel.exploreViewModel(),
+                        navigationViewModel: viewModel
+                    )
+                ) {
+                    Label {
+                        Text(verbatim: aboutInstanceLocalizedTitle)
+                    } icon: {
+                        Image(systemName: "server.rack")
+                    }
+                }
+                NavigationLink(
                     destination: AboutView(viewModel: viewModel)
                         .environmentObject(rootViewModel)) {
                     Label("secondary-navigation.about", systemImage: "info.circle")
                 }
+            }
+        }
+    }
+
+    /// Return a string based on the instance's URI, or a fallback if it's not available for some reason.
+    private var aboutInstanceLocalizedTitle: String {
+        if let uri = viewModel.identityContext.identity.instance?.uri {
+            return String.localizedStringWithFormat(
+                NSLocalizedString("secondary-navigation.about-instance-%@", comment: ""),
+                uri
+            )
+        } else {
+            return NSLocalizedString("secondary-navigation.about-instance", comment: "")
+        }
+    }
+
+    /// Exists entirely to wait for the instance view model to load.
+    private struct AboutInstanceLoader: View {
+        @ObservedObject var exploreViewModel: ExploreViewModel
+        @ObservedObject var navigationViewModel: NavigationViewModel
+
+        var body: some View {
+            if let instanceViewModel = exploreViewModel.instanceViewModel {
+                AboutInstanceView(
+                    viewModel: instanceViewModel,
+                    navigationViewModel: navigationViewModel
+                )
+            } else {
+                EmptyView()
             }
         }
     }

@@ -320,6 +320,12 @@ extension ContentDatabase {
             }
         }
 
+        migrator.registerMigration("1.7.4-rules") { db in
+            try db.alter(table: "instanceRecord") { t in
+                t.add(column: "rules", .blob)
+            }
+        }
+
         return migrator
     }
 }

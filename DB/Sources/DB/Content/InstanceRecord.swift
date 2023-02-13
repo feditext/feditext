@@ -7,7 +7,7 @@ import Mastodon
 struct InstanceRecord: ContentDatabaseRecord, Hashable {
     let uri: String
     let title: String
-    let description: String
+    let description: HTML
     let shortDescription: String?
     let email: String
     let version: String
@@ -20,6 +20,7 @@ struct InstanceRecord: ContentDatabaseRecord, Hashable {
     let thumbnail: UnicodeURL?
     let contactAccountId: Account.Id?
     let maxTootChars: Int?
+    let rules: [Rule]?
 }
 
 extension InstanceRecord {
@@ -39,6 +40,7 @@ extension InstanceRecord {
         static let thumbnail = Column(CodingKeys.thumbnail)
         static let contactAccountId = Column(CodingKeys.contactAccountId)
         static let maxTootChars = Column(CodingKeys.maxTootChars)
+        static let rules = Column(CodingKeys.rules)
     }
 
     static let contactAccount = belongsTo(AccountRecord.self)
@@ -59,5 +61,6 @@ extension InstanceRecord {
         self.thumbnail = instance.thumbnail
         self.contactAccountId = instance.contactAccount?.id
         self.maxTootChars = instance.maxTootChars
+        self.rules = instance.rules
     }
 }

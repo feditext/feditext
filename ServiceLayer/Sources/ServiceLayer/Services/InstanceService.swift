@@ -10,7 +10,7 @@ public struct InstanceService {
 
     private let mastodonAPIClient: MastodonAPIClient
 
-    init(instance: Instance, mastodonAPIClient: MastodonAPIClient) {
+    public init(instance: Instance, mastodonAPIClient: MastodonAPIClient) {
         self.instance = instance
         self.mastodonAPIClient = mastodonAPIClient
     }

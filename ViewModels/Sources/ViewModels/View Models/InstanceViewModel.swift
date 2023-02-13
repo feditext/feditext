@@ -7,7 +7,7 @@ import ServiceLayer
 public final class InstanceViewModel: ObservableObject {
     private let instanceService: InstanceService
 
-    init(instanceService: InstanceService) {
+    public init(instanceService: InstanceService) {
         self.instanceService = instanceService
     }
 }

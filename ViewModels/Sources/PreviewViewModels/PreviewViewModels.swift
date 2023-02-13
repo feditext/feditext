@@ -139,4 +139,20 @@ public extension StatusHistoryViewModel {
     )
 }
 
+public extension InstanceViewModel {
+    static let preview = InstanceViewModel(
+        instanceService: .init(
+            instance: .preview,
+            mastodonAPIClient: .preview
+        )
+    )
+}
+
+public extension NavigationViewModel {
+    static let preview = NavigationViewModel(
+        identityContext: .preview,
+        environment: .preview
+    )
+}
+
 // swiftlint:enable force_try

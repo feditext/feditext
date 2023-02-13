@@ -53,5 +53,27 @@
                 "verified_at": "2019-07-15T18:29:57.191+00:00"
             }
         ]
-    }
+    },
+    "rules": [
+        {
+            "id": "1",
+            "text": "Sexually explicit or violent media must be marked as sensitive when posting"
+        },
+        {
+            "id": "2",
+            "text": "No racism, sexism, homophobia, transphobia, xenophobia, or casteism"
+        },
+        {
+            "id": "3",
+            "text": "No incitement of violence or promotion of violent ideologies"
+        },
+        {
+            "id": "4",
+            "text": "No harassment, dogpiling or doxxing of other users"
+        },
+        {
+            "id": "7",
+            "text": "Do not share intentionally false or misleading information"
+        }
+    ]
 }

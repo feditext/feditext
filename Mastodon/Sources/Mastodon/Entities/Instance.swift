@@ -32,7 +32,7 @@ public struct Instance: Codable {
 
     public let uri: String
     public let title: String
-    public let description: String
+    public let description: HTML
     public let shortDescription: String?
     public let email: String
     public let version: String
@@ -48,18 +48,22 @@ public struct Instance: Codable {
         configuration?.statuses?.maxCharacters
     }
     public let configuration: Configuration?
+    @DecodableDefault.EmptyList public private(set) var rules: [Rule]
 
-    public init(uri: String,
-                title: String,
-                description: String,
-                shortDescription: String?,
-                email: String,
-                version: String,
-                urls: Instance.URLs,
-                stats: Instance.Stats,
-                thumbnail: UnicodeURL?,
-                contactAccount: Account?,
-                configuration: Configuration?) {
+    public init(
+        uri: String,
+        title: String,
+        description: HTML,
+        shortDescription: String?,
+        email: String,
+        version: String,
+        urls: Instance.URLs,
+        stats: Instance.Stats,
+        thumbnail: UnicodeURL?,
+        contactAccount: Account?,
+        configuration: Configuration?,
+        rules: [Rule]
+    ) {
         self.uri = uri
         self.title = title
         self.description = description
@@ -71,6 +75,7 @@ public struct Instance: Codable {
         self.thumbnail = thumbnail
         self.contactAccount = contactAccount
         self.configuration = configuration
+        self.rules = rules
     }
 }
 

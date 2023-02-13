@@ -157,6 +157,16 @@
 "favorites" = "Favorites";
 "followed-tags.new-tag-title" = "Hashtag (without #)";
 "follow-requests" = "Follow Requests";
+"instance.about-instance-title-%@" = "About %@";
+"instance.registration" = "Registration";
+"instance.registration.approval-not-required" = "Registration approval required";
+"instance.registration.approval-required" = "Registration approval not required";
+"instance.registration.registration-closed" = "Open registration";
+"instance.registration.registration-open" = "Closed registration";
+"instance.registration.invites-disabled" = "Invites disabled";
+"instance.registration.invites-enabled" = "Invites enabled";
+"instance.rules" = "Rules";
+"instance.version" = "Version";
 "registration.review-terms-of-use-and-privacy-policy-%@" = "Please review %@'s Terms of Use and Privacy Policy to continue";
 "registration.username" = "Username";
 "registration.email" = "Email";
@@ -168,6 +178,8 @@
 "registration.agree-to-server-rules-and-terms-of-service" = "I agree to the server rules and terms of service";
 "registration.password-confirmation-mismatch" = "Password and password confirmation do not match";
 "secondary-navigation.about" = "About This App";
+"secondary-navigation.about-this-instance" = "About This Instance";
+"secondary-navigation.about-instance-%@" = "About %@";
 "secondary-navigation.account-settings" = "Account Settings";
 "secondary-navigation.accounts" = "Accounts";
 "secondary-navigation.edit-profile" = "Edit Profile";
