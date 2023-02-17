@@ -15,6 +15,7 @@
 		94B2C8C52929617A00087955 /* ActionExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B2C8C42929617A00087955 /* ActionExtensionViewController.swift */; };
 		94B2C8CC2929617A00087955 /* Action Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 94B2C8BE2929617A00087955 /* Action Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		94B2C926292B2D1B00087955 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 94B2C928292B2D1B00087955 /* InfoPlist.strings */; };
+		94E174AB299AEC2D00D040B3 /* Report+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E174AA299AEC2D00D040B3 /* Report+Extensions.swift */; };
 		94E6C2482991A235003771D1 /* PostingDefaultLanguageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C2472991A235003771D1 /* PostingDefaultLanguageView.swift */; };
 		94E6C24B2991A5BC003771D1 /* PostingLanguagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */; };
 		94E6C24D2991ABDF003771D1 /* UserPreferencesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C24C2991ABDF003771D1 /* UserPreferencesSection.swift */; };
@@ -345,6 +346,7 @@
 		94B2C8CD2929617A00087955 /* Action Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Action Extension.entitlements"; sourceTree = "<group>"; };
 		94B2C927292B2D1B00087955 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		94B2C929292B2D3F00087955 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		94E174AA299AEC2D00D040B3 /* Report+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Report+Extensions.swift"; sourceTree = "<group>"; };
 		94E6C2472991A235003771D1 /* PostingDefaultLanguageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingDefaultLanguageView.swift; sourceTree = "<group>"; };
 		94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingLanguagesView.swift; sourceTree = "<group>"; };
 		94E6C24C2991ABDF003771D1 /* UserPreferencesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreferencesSection.swift; sourceTree = "<group>"; };
@@ -686,6 +688,7 @@
 		D021A66425C3E170008A0C0D /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				943141D6299AADD900D90FC4 /* AboutInstanceView.swift */,
 				D021A62B25C38570008A0C0D /* AboutView.swift */,
 				D021A63525C38ADB008A0C0D /* AcknowledgmentsView.swift */,
 				D02D33EE25EE04CC000A35CC /* AddRemoveFromListsView.swift */,
@@ -704,7 +707,6 @@
 				D0C7D42924F76169001EBDBB /* SecondaryNavigationView.swift */,
 				94B0BCD229859B750075E234 /* StatusEditHistoryView.swift */,
 				D021A66925C3E19D008A0C0D /* View Controller Representables */,
-				943141D6299AADD900D90FC4 /* AboutInstanceView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -969,6 +971,7 @@
 				D0C7D46B24F76169001EBDBB /* NSMutableAttributedString+Extensions.swift */,
 				D07EC7CE25B13921006DF726 /* PickerEmoji+Extensions.swift */,
 				D0B5FE9A251583DB00478838 /* ProfileCollection+Extensions.swift */,
+				94E174AA299AEC2D00D040B3 /* Report+Extensions.swift */,
 				D097F41A25BE3E1A00859F2C /* SearchScope+Extensions.swift */,
 				D0849C7E25903C4900A5EBCC /* Status+Extensions.swift */,
 				D0C7D46A24F76169001EBDBB /* String+Extensions.swift */,
@@ -1311,6 +1314,7 @@
 				D021A5F625C34538008A0C0D /* IdentitiesViewController.swift in Sources */,
 				D07EC7DC25B13DBB006DF726 /* EmojiCollectionViewCell.swift in Sources */,
 				D0C7D49C24F7616A001EBDBB /* RootView.swift in Sources */,
+				94E174AB299AEC2D00D040B3 /* Report+Extensions.swift in Sources */,
 				D0F0B126251A90F400942152 /* AccountTableViewCell.swift in Sources */,
 				D0B32F50250B373600311912 /* RegistrationView.swift in Sources */,
 				D08B8D612540DE3B00B1EBEF /* ZoomDismissalInteractionController.swift in Sources */,

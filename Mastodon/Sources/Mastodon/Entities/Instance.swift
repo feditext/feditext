@@ -2,6 +2,8 @@
 
 import Foundation
 
+/// Result of calling the Mastodon v1 instance API, a mix of instance metadata and client configuration.
+/// See also: `DB.Identity.Instance` summary version in identity database.
 public struct Instance: Codable {
     public struct URLs: Codable, Hashable {
         public let streamingApi: UnicodeURL

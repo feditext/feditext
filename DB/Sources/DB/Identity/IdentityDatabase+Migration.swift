@@ -67,6 +67,12 @@ extension IdentityDatabase {
             try db.rename(table: "new_account", to: "account")
         }
 
+        migrator.registerMigration("1.7.4-rules") { db in
+            try db.alter(table: "instance") { t in
+                t.add(column: "rules", .blob)
+            }
+        }
+
         return migrator
     }
 }

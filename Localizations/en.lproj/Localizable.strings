@@ -337,10 +337,17 @@
 "remove" = "Remove";
 "report" = "Report";
 "report.additional-comments" = "Additional comments";
+"report.additional-comments.hint" = "Additional context or comments, if applicable:";
+"report.category" = "Category";
+"report.category.other" = "Other";
+"report.category.violation" = "Rules violation";
+"report.category.spam" = "Spam";
+"report.category.unknown" = "Unknown";
 "report.hint" = "The report will be sent to your server moderators. You can provide an explanation of why you are reporting this account below:";
 "report.target-%@" = "Report %@";
 "report.forward.hint" = "The account is from another server. Send an anonymized copy of the report there as well?";
 "report.forward-%@" = "Forward report to %@";
+"report.rules.hint" = "Select at least one applicable rule:";
 "report.select-additional.hint.post" = "Select additional posts to report:";
 "report.select-additional.hint.toot" = "Select additional toots to report:";
 "search.scope.all" = "All";

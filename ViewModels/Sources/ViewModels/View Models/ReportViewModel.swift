@@ -53,6 +53,14 @@ public extension ReportViewModel {
 
     var isLocalAccount: Bool { accountService.isLocal }
 
+    var rules: [Rule] { identityContext.identity.instance?.rules ?? [] }
+
+    var categories: [Report.Category] {
+        Report.Category.allCasesExceptUnknown
+            // Hide the rules violation category if the instance doesn't have any rules.
+            .filter { $0 != .violation || !rules.isEmpty }
+    }
+
     func report() {
         accountService.report(elements)
             .receive(on: DispatchQueue.main)
@@ -69,5 +77,15 @@ public extension ReportViewModel {
                 }
             } receiveValue: { _ in }
             .store(in: &cancellables)
+    }
+}
+
+public extension ReportElements {
+    var canSubmit: Bool {
+        if category == .violation {
+            // If reporting a rule violation, the user must pick at least one rule.
+            return !ruleIDs.isEmpty
+        }
+        return category != nil
     }
 }

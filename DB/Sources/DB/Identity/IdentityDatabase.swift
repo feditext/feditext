@@ -67,7 +67,9 @@ public extension IdentityDatabase {
                 title: instance.title,
                 thumbnail: instance.thumbnail,
                 version: instance.version,
-                maxTootChars: instance.maxTootChars)
+                maxTootChars: instance.maxTootChars,
+                rules: instance.rules
+            )
                 .save($0)
             try IdentityRecord
                 .filter(IdentityRecord.Columns.id == id)

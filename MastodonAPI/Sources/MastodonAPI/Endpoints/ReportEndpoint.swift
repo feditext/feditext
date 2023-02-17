@@ -14,6 +14,8 @@ public extension ReportEndpoint {
         public var statusIds = Set<Status.Id>()
         public var comment = ""
         public var forward = false
+        public var category: Report.Category?
+        public var ruleIDs = Set<Rule.Id>()
 
         public init(accountId: Account.Id) {
             self.accountId = accountId
@@ -47,6 +49,12 @@ extension ReportEndpoint: Endpoint {
 
             if creation.forward {
                 params["forward"] = creation.forward
+            }
+
+            params["category"] = creation.category?.rawValue
+
+            if !creation.ruleIDs.isEmpty {
+                params["rule_ids"] = Array(creation.ruleIDs)
             }
 
             return params

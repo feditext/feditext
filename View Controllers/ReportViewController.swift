@@ -2,6 +2,7 @@
 
 import Combine
 import UIKit
+import ServiceLayer
 import ViewModels
 
 final class ReportViewController: TableViewController {
@@ -38,6 +39,10 @@ final class ReportViewController: TableViewController {
 
         viewModel.$reportingState
             .sink { [weak self] in self?.apply(reportingState: $0) }
+            .store(in: &cancellables)
+
+        viewModel.$elements
+            .sink { [weak self] in self?.apply(elements: $0) }
             .store(in: &cancellables)
 
         NSLayoutConstraint.activate([
@@ -94,7 +99,7 @@ private extension ReportViewController {
         case .composing:
             activityIndicatorView.stopAnimating()
             view.isUserInteractionEnabled = true
-            reportButton.isEnabled = true
+            reportButton.isEnabled = viewModel.elements.canSubmit
             view.alpha = 1
         case .reporting:
             activityIndicatorView.startAnimating()
@@ -103,6 +108,17 @@ private extension ReportViewController {
             view.alpha = 0.5
         case .done:
             presentingViewController?.dismiss(animated: true)
+        }
+    }
+
+    func apply(elements: ReportElements) {
+        switch viewModel.reportingState {
+        case .composing:
+            reportButton.isEnabled = elements.canSubmit
+        case .reporting:
+            reportButton.isEnabled = false
+        case .done:
+            return
         }
     }
 }

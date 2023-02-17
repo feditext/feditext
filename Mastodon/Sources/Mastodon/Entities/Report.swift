@@ -3,6 +3,18 @@
 import Foundation
 
 public struct Report: Codable {
+    public enum Category: String, Codable, Unknowable, Identifiable {
+        case violation
+        case spam
+        case other
+        case unknown
+
+        public static var unknownCase: Self { .unknown }
+
+        public typealias ObjectIdentifier = Self
+        public var id: ObjectIdentifier { self }
+    }
+
     public let id: Id
     public let actionTaken: Bool
 
