@@ -60,6 +60,7 @@ Metatext uses the following third-party libraries:
 - [GRDB](https://github.com/groue/GRDB.swift)
 - [SDWebImage](https://github.com/SDWebImage/SDWebImage)
 - [SQLCipher](https://github.com/sqlcipher/sqlcipher)
+- [SwiftSoup](https://github.com/scinfu/SwiftSoup)
 
 ## Cryptography Notice
 
