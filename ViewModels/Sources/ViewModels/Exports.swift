@@ -9,6 +9,7 @@ public typealias Identity = ServiceLayer.Identity
 public typealias Navigation = ServiceLayer.Navigation
 public typealias PickerEmoji = ServiceLayer.PickerEmoji
 public typealias ProfileCollection = ServiceLayer.ProfileCollection
+public typealias ReportElements = ServiceLayer.ReportElements
 public typealias Search = ServiceLayer.Search
 public typealias SearchScope = ServiceLayer.SearchScope
 public typealias SystemEmoji = ServiceLayer.SystemEmoji

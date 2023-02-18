@@ -6,9 +6,8 @@ import ViewModels
 final class ReportHeaderView: UIView {
     private let viewModel: ReportViewModel
     private let textView = UITextView()
-    private let stackView = UIStackView()
     private var categoryButtons: [UIButton] = []
-    private var rulesHintLabel = UILabel()
+    private let rulesHintLabel = UILabel()
     private var ruleCheckboxes: [UIButton] = []
 
     init(viewModel: ReportViewModel) {
@@ -33,6 +32,8 @@ extension ReportHeaderView: UITextViewDelegate {
 private extension ReportHeaderView {
     // swiftlint:disable:next function_body_length
     func initialSetup() {
+        let stackView = UIStackView()
+
         addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
