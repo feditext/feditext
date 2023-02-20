@@ -2,7 +2,9 @@
 
 "about" = "About";
 "about.acknowledgments" = "Acknowledgments";
-"about.made-by-metabolist" = "Made by Metabolist";
+"about.made-by-metabolist" = "Based on Metatext by Metabolist";
+"about.made-by-metabolist.blurb" = "Feditext is a community continuation of Metabolist's incredible work on Metatext. Please do not send bug reports or feature requests to Metabolist, as the original Metatext is no longer maintained.";
+"about.maintained-by" = "Maintained by";
 "about.official-account" = "Official Account";
 "about.rate-the-app" = "Rate the app";
 "about.source-code-and-issue-tracker" = "Source Code & Issue Tracker";
