@@ -9,6 +9,10 @@ final class AccountView: UIView {
     let avatarImageView = SDAnimatedImageView()
     let displayNameLabel = AnimatedAttachmentLabel()
     let accountLabel = UILabel()
+    let relationshipNoteStack = UIStackView()
+    /// Displays the current user's note for this account.
+    let relationshipNotes = UILabel()
+    /// Displays the account's bio.
     let noteTextView = TouchFallthroughTextView()
     let acceptFollowRequestButton = UIButton()
     let rejectFollowRequestButton = UIButton()
@@ -35,13 +39,20 @@ final class AccountView: UIView {
 }
 
 extension AccountView {
-    static func estimatedHeight(width: CGFloat,
-                                account: Account,
-                                configuration: CollectionItem.AccountConfiguration) -> CGFloat {
+    static func estimatedHeight(
+        width: CGFloat,
+        account: Account,
+        configuration: CollectionItem.AccountConfiguration,
+        relationship: Relationship?
+    ) -> CGFloat {
         var height = CGFloat.defaultSpacing * 2
             + .compactSpacing
             + account.displayName.height(width: width, font: .preferredFont(forTextStyle: .headline))
             + account.acct.height(width: width, font: .preferredFont(forTextStyle: .subheadline))
+
+        if let relationshipNote = relationship?.note, !relationshipNote.isEmpty {
+            height += relationshipNote.height(width: width, font: .preferredFont(forTextStyle: .subheadline))
+        }
 
         if configuration == .withNote {
             height += .compactSpacing + account.note.attributed.string.height(
@@ -97,6 +108,33 @@ private extension AccountView {
         avatarImageView.layer.cornerRadius = .avatarDimension / 2
         avatarImageView.clipsToBounds = true
 
+        relationshipNoteStack.axis = .horizontal
+        relationshipNoteStack.alignment = .top
+        relationshipNoteStack.spacing = .defaultSpacing
+        relationshipNoteStack.layer.borderColor = UIColor.separator.cgColor
+        relationshipNoteStack.layer.borderWidth = .hairline
+        relationshipNoteStack.layer.cornerRadius = .defaultCornerRadius
+        relationshipNoteStack.isLayoutMarginsRelativeArrangement = true
+        relationshipNoteStack.directionalLayoutMargins = .init(
+            top: .defaultSpacing,
+            leading: .defaultSpacing,
+            bottom: .defaultSpacing,
+            trailing: .defaultSpacing
+        )
+
+        let relationshipNoteIcon = UIImageView()
+        relationshipNoteStack.addArrangedSubview(relationshipNoteIcon)
+        relationshipNoteIcon.image = .init(systemName: "note.text")
+        relationshipNoteIcon.tintColor = .secondaryLabel
+        relationshipNoteIcon.accessibilityLabel = NSLocalizedString("account.note", comment: "")
+        relationshipNoteIcon.setContentHuggingPriority(.required, for: .horizontal)
+        relationshipNoteIcon.setContentHuggingPriority(.required, for: .vertical)
+
+        relationshipNoteStack.addArrangedSubview(relationshipNotes)
+        relationshipNotes.backgroundColor = .clear
+        relationshipNotes.font = .preferredFont(forTextStyle: .subheadline)
+        relationshipNotes.textColor = .secondaryLabel
+
         let verticalStackView = UIStackView()
 
         stackView.addArrangedSubview(verticalStackView)
@@ -105,6 +143,7 @@ private extension AccountView {
         verticalStackView.spacing = .compactSpacing
         verticalStackView.addArrangedSubview(displayNameLabel)
         verticalStackView.addArrangedSubview(accountLabel)
+        verticalStackView.addArrangedSubview(relationshipNoteStack)
         verticalStackView.addArrangedSubview(noteTextView)
         displayNameLabel.numberOfLines = 0
         displayNameLabel.font = .preferredFont(forTextStyle: .headline)
@@ -213,6 +252,13 @@ private extension AccountView {
 
         accountLabel.text = viewModel.accountName
 
+        if let relationshipNote = viewModel.relationship?.note, !relationshipNote.isEmpty {
+            relationshipNoteStack.isHidden = false
+            relationshipNotes.text = relationshipNote
+        } else {
+            relationshipNoteStack.isHidden = true
+        }
+
         if viewModel.configuration == .withNote {
             let noteFont = UIFont.preferredFont(forTextStyle: .callout)
             let mutableNote = NSMutableAttributedString(attributedString: viewModel.note)
@@ -263,6 +309,10 @@ private extension AccountView {
             accessibilityAttributedLabel.appendWithSeparator(viewModel.accountName)
         } else {
             accessibilityAttributedLabel.appendWithSeparator(viewModel.accountName)
+        }
+
+        if !relationshipNotes.isHidden, let relationshipNote = relationshipNotes.attributedText {
+            accessibilityAttributedLabel.appendWithSeparator(relationshipNote)
         }
 
         if !noteTextView.isHidden, let note = noteTextView.attributedText {

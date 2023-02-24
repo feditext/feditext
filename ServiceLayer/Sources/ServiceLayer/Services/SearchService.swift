@@ -41,6 +41,13 @@ extension SearchService: CollectionService {
 
         return mastodonAPIClient.request(ResultsEndpoint.search(search))
             .flatMap { results in contentDatabase.insert(results: results).collect().map { _ in results } }
+            .flatMap { results in
+                mastodonAPIClient
+                    .request(RelationshipsEndpoint.relationships(ids: results.accounts.map { $0.id }))
+                    .flatMap(contentDatabase.insert(relationships:))
+                    .collect()
+                    .map { _ in results }
+            }
             .handleEvents(receiveOutput: { resultsSubject.send(($0, search)) })
             .ignoreOutput()
             .eraseToAnyPublisher()

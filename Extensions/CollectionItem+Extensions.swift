@@ -44,8 +44,13 @@ extension CollectionItem {
                 identityContext: identityContext,
                 status: status,
                 configuration: configuration)
-        case let .account(account, configuration, _):
-            return AccountView.estimatedHeight(width: width, account: account, configuration: configuration)
+        case let .account(account, configuration, relationship):
+            return AccountView.estimatedHeight(
+                width: width,
+                account: account,
+                configuration: configuration,
+                relationship: relationship
+            )
         case .loadMore:
             return LoadMoreView.estimatedHeight
         case let .notification(notification, configuration):

@@ -30,6 +30,10 @@ final class AccountHeaderView: UIView {
     let statusCountJoinedSeparatorLabel = UILabel()
     let joinedLabel = UILabel()
     let fieldsStackView = UIStackView()
+    let relationshipNoteStack = UIStackView()
+    /// Displays the current user's note for this account.
+    let relationshipNotes = UILabel()
+    /// Displays the account's bio.
     let noteTextView = TouchFallthroughTextView()
     let followStackView = UIStackView()
     let followingButton = UIButton()
@@ -171,6 +175,13 @@ final class AccountHeaderView: UIView {
 
                 fieldsStackView.isHidden = accountViewModel.fields.isEmpty && accountViewModel.identityProofs.isEmpty
 
+                if let relationshipNote = accountViewModel.relationship?.note, !relationshipNote.isEmpty {
+                    relationshipNoteStack.isHidden = false
+                    relationshipNotes.text = relationshipNote
+                } else {
+                    relationshipNoteStack.isHidden = true
+                }
+
                 let noteFont = UIFont.preferredFont(forTextStyle: .callout)
                 let mutableNote = NSMutableAttributedString(attributedString: accountViewModel.note)
                 let noteRange = NSRange(location: 0, length: mutableNote.length)
@@ -194,6 +205,7 @@ final class AccountHeaderView: UIView {
                     count: accountViewModel.followersCount)
                 followStackView.isHidden = false
             } else {
+                relationshipNoteStack.isHidden = true
                 noteTextView.isHidden = true
                 followStackView.isHidden = true
             }
@@ -245,7 +257,11 @@ extension AccountHeaderView: UITextViewDelegate {
         _ textView: UITextView,
         shouldInteractWith URL: URL,
         in characterRange: NSRange,
-        interaction: UITextItemInteraction) -> Bool {
+        interaction: UITextItemInteraction
+    ) -> Bool {
+        guard textView == noteTextView else {
+            return false
+        }
         switch interaction {
         case .invokeDefaultAction:
             viewModel.accountViewModel?.urlSelected(URL)
@@ -446,6 +462,34 @@ private extension AccountHeaderView {
         joinedLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
 
         statusCountJoinedStackView.addArrangedSubview(UIView())
+
+        baseStackView.addArrangedSubview(relationshipNoteStack)
+        relationshipNoteStack.axis = .horizontal
+        relationshipNoteStack.alignment = .top
+        relationshipNoteStack.spacing = .defaultSpacing
+        relationshipNoteStack.layer.borderColor = UIColor.separator.cgColor
+        relationshipNoteStack.layer.borderWidth = .hairline
+        relationshipNoteStack.layer.cornerRadius = .defaultCornerRadius
+        relationshipNoteStack.isLayoutMarginsRelativeArrangement = true
+        relationshipNoteStack.directionalLayoutMargins = .init(
+            top: .defaultSpacing,
+            leading: .defaultSpacing,
+            bottom: .defaultSpacing,
+            trailing: .defaultSpacing
+        )
+
+        let relationshipNoteIcon = UIImageView()
+        relationshipNoteStack.addArrangedSubview(relationshipNoteIcon)
+        relationshipNoteIcon.image = .init(systemName: "note.text")
+        relationshipNoteIcon.tintColor = .secondaryLabel
+        relationshipNoteIcon.accessibilityLabel = NSLocalizedString("account.note", comment: "")
+        relationshipNoteIcon.setContentHuggingPriority(.required, for: .horizontal)
+        relationshipNoteIcon.setContentHuggingPriority(.required, for: .vertical)
+
+        relationshipNoteStack.addArrangedSubview(relationshipNotes)
+        relationshipNotes.backgroundColor = .clear
+        relationshipNotes.font = .preferredFont(forTextStyle: .subheadline)
+        relationshipNotes.textColor = .secondaryLabel
 
         baseStackView.addArrangedSubview(fieldsStackView)
         fieldsStackView.axis = .vertical
