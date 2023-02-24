@@ -34,6 +34,7 @@ public enum CollectionItemEvent {
     case share(URL)
     case accountListEdit(AccountViewModel, AccountListEdit)
     case presentHistory(StatusHistoryViewModel)
+    case editNote(AccountViewModel)
 }
 
 public extension CollectionItemEvent {

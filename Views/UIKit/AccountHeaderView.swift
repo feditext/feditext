@@ -465,7 +465,8 @@ private extension AccountHeaderView {
 
         baseStackView.addArrangedSubview(relationshipNoteStack)
         relationshipNoteStack.axis = .horizontal
-        relationshipNoteStack.alignment = .top
+        // .firstBaseline makes the view infinitely large vertically for some reason.
+        relationshipNoteStack.alignment = .center
         relationshipNoteStack.spacing = .defaultSpacing
         relationshipNoteStack.layer.borderColor = UIColor.separator.cgColor
         relationshipNoteStack.layer.borderWidth = .hairline
@@ -485,11 +486,14 @@ private extension AccountHeaderView {
         relationshipNoteIcon.accessibilityLabel = NSLocalizedString("account.note", comment: "")
         relationshipNoteIcon.setContentHuggingPriority(.required, for: .horizontal)
         relationshipNoteIcon.setContentHuggingPriority(.required, for: .vertical)
+        relationshipNoteIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
 
         relationshipNoteStack.addArrangedSubview(relationshipNotes)
         relationshipNotes.backgroundColor = .clear
         relationshipNotes.font = .preferredFont(forTextStyle: .subheadline)
         relationshipNotes.textColor = .secondaryLabel
+        relationshipNotes.adjustsFontForContentSizeCategory = true
+        relationshipNotes.numberOfLines = 0
 
         baseStackView.addArrangedSubview(fieldsStackView)
         fieldsStackView.axis = .vertical

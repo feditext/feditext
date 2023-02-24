@@ -101,6 +101,20 @@ private extension ProfileViewController {
             }
         }
 
+        if relationship.note.isEmpty {
+            actions.append(UIAction(
+                title: NSLocalizedString("account.note.add", comment: ""),
+                image: UIImage(systemName: "note.text.badge.plus")) { _ in
+                accountViewModel.editNote()
+            })
+        } else {
+            actions.append(UIAction(
+                title: NSLocalizedString("account.note.edit", comment: ""),
+                image: UIImage(systemName: "note.text")) { _ in
+                accountViewModel.editNote()
+            })
+        }
+
         if relationship.muting {
             actions.append(UIAction(
                 title: NSLocalizedString("account.unmute", comment: ""),

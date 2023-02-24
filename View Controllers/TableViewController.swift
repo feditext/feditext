@@ -598,6 +598,8 @@ private extension TableViewController {
             accountListEdit(accountViewModel: accountViewModel, edit: edit)
         case let .presentHistory(history):
             present(history: history)
+        case let .editNote(accountViewModel):
+            editNote(accountViewModel: accountViewModel)
         }
     }
 
@@ -845,6 +847,16 @@ private extension TableViewController {
 
     func accountListEdit(accountViewModel: AccountViewModel, edit: CollectionItemEvent.AccountListEdit) {
         viewModel.applyAccountListEdit(viewModel: accountViewModel, edit: edit)
+    }
+
+    func editNote(accountViewModel: AccountViewModel) {
+        let hostingController = UIHostingController(
+            rootView: EditNoteView(
+                accountViewModel: accountViewModel,
+                noteViewModel: NoteViewModel(note: accountViewModel.relationship?.note ?? "")
+            )
+        )
+        present(hostingController, animated: true)
     }
 
     func share(url: URL) {

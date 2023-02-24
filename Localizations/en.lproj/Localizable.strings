@@ -46,6 +46,10 @@
 "account.muted" = "Muted";
 "account.notify" = "Turn on notifications";
 "account.note" = "Note";
+"account.note.add" = "Add note";
+"account.note.edit" = "Edit note";
+"account.note.for-%@" = "Note for %@";
+"account.note.save" = "Save";
 "account.reject-follow-request-button.accessibility-label" = "Reject follow request";
 "account.request" = "Request";
 "account.request.cancel" = "Cancel follow request";

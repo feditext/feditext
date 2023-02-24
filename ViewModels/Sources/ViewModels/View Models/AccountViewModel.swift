@@ -192,6 +192,10 @@ public extension AccountViewModel {
         ignorableOutputEvent(accountService.unpin())
     }
 
+    func editNote() {
+        eventsSubject.send(Just(.editNote(self)).setFailureType(to: Error.self).eraseToAnyPublisher())
+    }
+
     func set(note: String) {
         ignorableOutputEvent(accountService.set(note: note))
     }
