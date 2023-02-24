@@ -24,32 +24,33 @@ public struct EditNoteView: View {
     }
 
     private var editor: some View {
-        TextEditor(text: $noteViewModel.note)
-            .navigationTitle(
-                String.localizedStringWithFormat(
-                    NSLocalizedString("account.note.for-%@", comment: ""),
-                    accountViewModel.accountName
+        Form {
+            TextEditor(text: $noteViewModel.note)
+                .navigationTitle(
+                    String.localizedStringWithFormat(
+                        NSLocalizedString("account.note.for-%@", comment: ""),
+                        accountViewModel.accountName
+                    )
                 )
-            )
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Label("dismiss", systemImage: "xmark.circle.fill")
-                            .symbolRenderingMode(.hierarchical)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Label("dismiss", systemImage: "xmark.circle.fill")
+                                .symbolRenderingMode(.hierarchical)
+                        }
+                        .labelStyle(.iconOnly)
+                        .buttonStyle(.plain)
                     }
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.plain)
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("account.note.save") {
-                        accountViewModel.set(note: noteViewModel.note)
-                        dismiss()
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("account.note.save") {
+                            accountViewModel.set(note: noteViewModel.note)
+                            dismiss()
+                        }
                     }
                 }
-            }
-            .scenePadding()
+        }
     }
 }
