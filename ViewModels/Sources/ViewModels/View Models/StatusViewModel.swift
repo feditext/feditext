@@ -247,8 +247,10 @@ public extension StatusViewModel {
 
     var canBeReblogged: Bool {
         switch statusService.status.displayStatus.visibility {
-        case .direct, .private:
+        case .direct:
             return false
+        case .private:
+            return isMine
         default:
             return true
         }

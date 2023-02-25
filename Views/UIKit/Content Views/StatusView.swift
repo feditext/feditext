@@ -903,6 +903,12 @@ private extension StatusView {
             switch visibility {
             case .public, .unlisted:
                 reblogSystemImageName = "arrow.2.squarepath"
+            case .private:
+                if statusConfiguration.viewModel.isMine {
+                    reblogSystemImageName = "arrow.2.squarepath"
+                } else {
+                    reblogSystemImageName = visibility.systemImageName
+                }
             default:
                 reblogSystemImageName = visibility.systemImageName
             }
