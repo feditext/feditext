@@ -155,4 +155,17 @@ public extension NavigationViewModel {
     )
 }
 
+public extension ProfileViewModel {
+    static let preview = ProfileViewModel(
+        profileService: .init(
+            id: Account.preview.id,
+            environment: environment,
+            mastodonAPIClient: .preview,
+            contentDatabase: .preview
+        ),
+        identityContext: .preview
+        
+    )
+}
+
 // swiftlint:enable force_try
