@@ -336,14 +336,27 @@ private extension AccountHeaderView {
         addSubview(avatarBackgroundView)
         avatarBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         avatarBackgroundView.backgroundColor = .systemBackground
-        avatarBackgroundView.layer.cornerRadius = avatarBackgroundViewDimension / 2
+        
+        switch viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                avatarBackgroundView.layer.cornerRadius = avatarBackgroundViewDimension / 2
+            case .roundedRectangle:
+                avatarBackgroundView.layer.cornerRadius = 1.5
+        }
+
 
         avatarBackgroundView.addSubview(avatarImageView)
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
         avatarImageView.contentMode = .scaleAspectFill
         avatarImageView.clipsToBounds = true
         avatarImageView.isUserInteractionEnabled = true
-        avatarImageView.layer.cornerRadius = Self.avatarDimension / 2
+        
+        switch viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                avatarImageView.layer.cornerRadius = Self.avatarDimension / 2
+            case .roundedRectangle:
+            avatarImageView.layer.cornerRadius = 1.5
+        }
 
         avatarImageView.addSubview(avatarButton)
         avatarButton.translatesAutoresizingMaskIntoConstraints = false
