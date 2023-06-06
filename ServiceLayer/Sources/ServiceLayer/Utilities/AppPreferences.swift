@@ -39,6 +39,13 @@ public extension AppPreferences {
 
         public var id: String { rawValue }
     }
+    
+    enum DisplayAvatarShape: String, CaseIterable, Identifiable {
+        case circle
+        case roundedRectangle
+
+        public var id: String { rawValue }
+    }
 
     enum KeyboardType: String, CaseIterable, Identifiable {
         case twitter
@@ -96,6 +103,18 @@ public extension AppPreferences {
             return systemReduceMotion() ? .never : .everywhere
         }
         set { self[.animateAvatars] = newValue.rawValue }
+    }
+    
+    var displayAvatarShape: DisplayAvatarShape {
+        get {
+            if let rawValue = self[.displayAvatarShape] as String?,
+               let value = DisplayAvatarShape(rawValue: rawValue) {
+                return value
+            }
+
+            return .circle
+        }
+        set { self[.displayAvatarShape] = newValue.rawValue }
     }
 
     var keyboardType: KeyboardType {
@@ -252,6 +271,7 @@ private extension AppPreferences {
         case requireDoubleTapToReblog
         case requireDoubleTapToFavorite
         case animateAvatars
+        case displayAvatarShape
         case keyboardType
         case animateHeaders
         case animateCustomEmojis

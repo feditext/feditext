@@ -42,10 +42,17 @@ private extension IdentityView {
     func initialSetup() {
         addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = .avatarDimension / 2
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
-
+        
+        // Apply displayAvatarShape to avatarImageView
+        switch identityConfiguration.viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                imageView.layer.cornerRadius = .avatarDimension / 2
+            case .roundedRectangle:
+                imageView.layer.cornerRadius = .avatarDimension / 8
+        }
+        
         let stackView = UIStackView()
 
         addSubview(stackView)
@@ -86,6 +93,13 @@ private extension IdentityView {
 
         imageView.sd_setImage(with: viewModel.identity.image)
         imageView.autoPlayAnimatedImage = viewModel.identityContext.appPreferences.animateAvatars == .everywhere
+    
+        switch viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                imageView.layer.cornerRadius = .avatarDimension / 2
+            case .roundedRectangle:
+                imageView.layer.cornerRadius = .avatarDimension / 8
+        }
 
         if let displayName = viewModel.identity.account?.displayName,
            !displayName.isEmpty {
