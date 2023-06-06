@@ -140,6 +140,13 @@ private extension MainNavigationViewController {
 
         for controller in controllers {
             controller.navigationItem.leftBarButtonItem = secondaryNavigationButton
+            // Apply displayAvatarShape to avatarBackgroundView
+            switch viewModel.identityContext.appPreferences.displayAvatarShape {
+                case .circle:
+                    controller.navigationItem.leftBarButtonItem?.customView?.layer.cornerRadius = .barButtonItemDimension / 2
+                case .roundedRectangle:
+                    controller.navigationItem.leftBarButtonItem?.customView?.layer.cornerRadius = .barButtonItemDimension / 8
+            }
         }
 
         viewControllers = controllers.map(SwipeableNavigationController.init(rootViewController:))

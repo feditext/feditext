@@ -337,13 +337,13 @@ private extension AccountHeaderView {
         avatarBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         avatarBackgroundView.backgroundColor = .systemBackground
         
+        // Apply displayAvatarShape to avatarBackgroundView
         switch viewModel.identityContext.appPreferences.displayAvatarShape {
             case .circle:
                 avatarBackgroundView.layer.cornerRadius = avatarBackgroundViewDimension / 2
             case .roundedRectangle:
-                avatarBackgroundView.layer.cornerRadius = 1.5
+                avatarBackgroundView.layer.cornerRadius = avatarBackgroundViewDimension / 8
         }
-
 
         avatarBackgroundView.addSubview(avatarImageView)
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -351,11 +351,12 @@ private extension AccountHeaderView {
         avatarImageView.clipsToBounds = true
         avatarImageView.isUserInteractionEnabled = true
         
+        // Apply displayAvatarShape to avatarImageView
         switch viewModel.identityContext.appPreferences.displayAvatarShape {
             case .circle:
                 avatarImageView.layer.cornerRadius = Self.avatarDimension / 2
             case .roundedRectangle:
-            avatarImageView.layer.cornerRadius = 1.5
+                avatarImageView.layer.cornerRadius = Self.avatarDimension / 8
         }
 
         avatarImageView.addSubview(avatarButton)
