@@ -27,6 +27,7 @@ public extension Identity {
         public let thumbnail: UnicodeURL?
         public let version: String
         public let maxTootChars: Int?
+        public let rules: [Rule]?
     }
 
     struct Account: Codable, Hashable {

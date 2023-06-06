@@ -7,7 +7,7 @@ struct NotificationInfo: Codable, Hashable, FetchableRecord {
     let record: NotificationRecord
     let accountInfo: AccountInfo
     let statusInfo: StatusInfo?
-    let reportInfo: ReportInfo?
+    let reportRecord: ReportRecord?
 }
 
 extension NotificationInfo {
@@ -16,8 +16,7 @@ extension NotificationInfo {
                             .forKey(CodingKeys.accountInfo))
             .including(optional: StatusInfo.addingIncludesForNotificationInfo(NotificationRecord.status)
                         .forKey(CodingKeys.statusInfo))
-            .including(optional: ReportInfo.addingIncludesForNotificationInfo(NotificationRecord.report)
-                .forKey(CodingKeys.reportInfo))
+            .including(optional: NotificationRecord.report.forKey(CodingKeys.reportRecord))
     }
 
     static func request(_ request: QueryInterfaceRequest<NotificationRecord>) -> QueryInterfaceRequest<Self> {

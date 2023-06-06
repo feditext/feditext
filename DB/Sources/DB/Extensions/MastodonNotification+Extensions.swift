@@ -21,8 +21,8 @@ extension MastodonNotification {
         }
 
         let report: Report?
-        if let reportInfo = info.reportInfo {
-            report = .init(info: reportInfo)
+        if let reportRecord = info.reportRecord {
+            report = .init(record: reportRecord)
         } else {
             report = nil
         }

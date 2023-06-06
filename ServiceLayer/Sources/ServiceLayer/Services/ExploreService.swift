@@ -22,6 +22,12 @@ public struct ExploreService {
 }
 
 public extension ExploreService {
+    func instanceServicePublisher(uri: String) -> AnyPublisher<InstanceService, Error> {
+        contentDatabase.instancePublisher(uri: uri)
+            .map { InstanceService(instance: $0, mastodonAPIClient: mastodonAPIClient) }
+            .eraseToAnyPublisher()
+    }
+
     func fetchTrends() -> AnyPublisher<[Tag], Error> {
         mastodonAPIClient.request(TagsEndpoint.trends)
     }

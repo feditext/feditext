@@ -70,14 +70,8 @@ public extension IdentityService {
         mastodonAPIClient.request(InstanceEndpoint.instance)
             .flatMap {
                 identityDatabase.updateInstance($0, id: id)
-                    .merge(with: contentDatabase.update(instance: $0))
+                    .merge(with: contentDatabase.insert(instance: $0))
             }
-            .eraseToAnyPublisher()
-    }
-
-    func instanceServicePublisher() -> AnyPublisher<InstanceService, Error> {
-        contentDatabase.instancePublisher()
-            .map { InstanceService(instance: $0, mastodonAPIClient: mastodonAPIClient) }
             .eraseToAnyPublisher()
     }
 
@@ -89,12 +83,6 @@ public extension IdentityService {
 
     func refreshAnnouncements() -> AnyPublisher<Never, Error> {
         announcementsService().request(maxId: nil, minId: nil, search: nil)
-    }
-
-    func refreshRules() -> AnyPublisher<Never, Error> {
-        mastodonAPIClient.request(RulesEndpoint.rules)
-            .flatMap(contentDatabase.update(rules:))
-            .eraseToAnyPublisher()
     }
 
     func confirmIdentity() -> AnyPublisher<Never, Error> {
@@ -232,10 +220,6 @@ public extension IdentityService {
 
     func pickerEmojisPublisher() -> AnyPublisher<[Emoji], Error> {
         contentDatabase.pickerEmojisPublisher()
-    }
-
-    func rulesPublisher() -> AnyPublisher<[Rule], Error> {
-        contentDatabase.rulesPublisher()
     }
 
     func updatePreferences(_ preferences: Identity.Preferences, authenticated: Bool) -> AnyPublisher<Never, Error> {

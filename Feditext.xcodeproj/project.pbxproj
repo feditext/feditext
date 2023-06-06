@@ -14,7 +14,6 @@
 		941F79CE2A243446007FCC65 /* MultiNotificationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941F79CD2A243446007FCC65 /* MultiNotificationTableViewCell.swift */; };
 		941F79D02A243499007FCC65 /* MultiNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941F79CF2A243499007FCC65 /* MultiNotificationView.swift */; };
 		943141D7299AADD900D90FC4 /* AboutInstanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943141D6299AADD900D90FC4 /* AboutInstanceView.swift */; };
-		9460331F2A2D3B8E00F5757E /* NotificationReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9460331E2A2D3B8E00F5757E /* NotificationReportView.swift */; };
 		947E728F29A9618900155DD2 /* EditNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947E728E29A9618900155DD2 /* EditNoteView.swift */; };
 		94B0BCD329859B750075E234 /* StatusEditHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B0BCD229859B750075E234 /* StatusEditHistoryView.swift */; };
 		94B22F342A2A6787008C3044 /* FamiliarFollowersLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B22F332A2A6787008C3044 /* FamiliarFollowersLabel.swift */; };
@@ -354,7 +353,6 @@
 		9432DE2729A1587C0007C2BF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9432DE2829A1587C0007C2BF /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
 		9432DE2929A1587C0007C2BF /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		9460331E2A2D3B8E00F5757E /* NotificationReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationReportView.swift; sourceTree = "<group>"; };
 		947E728E29A9618900155DD2 /* EditNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditNoteView.swift; sourceTree = "<group>"; };
 		94B0BCD229859B750075E234 /* StatusEditHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusEditHistoryView.swift; sourceTree = "<group>"; };
 		94B22F332A2A6787008C3044 /* FamiliarFollowersLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamiliarFollowersLabel.swift; sourceTree = "<group>"; };
@@ -832,7 +830,6 @@
 				D036AA06254B6118009094DF /* NotificationView.swift */,
 				D00CB2EC2533ACC00080096B /* StatusView.swift */,
 				D0D2AC4625BCD289003D5DF2 /* TagView.swift */,
-				9460331E2A2D3B8E00F5757E /* NotificationReportView.swift */,
 			);
 			path = "Content Views";
 			sourceTree = "<group>";
@@ -1467,7 +1464,6 @@
 				D059373E25AB8D5200754FDF /* CompositionPollOptionView.swift in Sources */,
 				D036AA17254CA824009094DF /* StatusBodyView.swift in Sources */,
 				D035F86F25B7F30E00DC75ED /* MainNavigationView.swift in Sources */,
-				9460331F2A2D3B8E00F5757E /* NotificationReportView.swift in Sources */,
 				D0D8B04126223A1E00A874A4 /* AnnouncementView.swift in Sources */,
 				D08E512125786A6600FA2C5F /* UIButton+Extensions.swift in Sources */,
 				D0D2AC4725BCD289003D5DF2 /* TagView.swift in Sources */,

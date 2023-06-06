@@ -342,39 +342,6 @@ extension ContentDatabase {
             }
         }
 
-        migrator.registerMigration("1.7.4-reports-phase-2") { db in
-            try db.alter(table: "instanceRecord") { t in
-                t.drop(column: "rules")
-            }
-
-            try db.create(table: "rule") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("text", .text).notNull()
-            }
-
-            // Note: it's possible for a report notification to refer to statuses or rules that no longer exist,
-            // so we don't enforce a foreign key constraint on `ruleId`.
-
-            try db.create(table: "reportRuleJoin") { t in
-                t.column("reportId", .text).indexed().notNull()
-                    .references("reportRecord", onDelete: .cascade)
-                t.column("ruleId", .text).indexed().notNull()
-
-                t.primaryKey(["reportId", "ruleId"], onConflict: .replace)
-            }
-
-            try db.alter(table: "reportRecord") { t in
-                t.add(column: "actionTakenAt", .date)
-                t.add(column: "category", .text).notNull()
-                t.add(column: "comment", .text).notNull()
-                t.add(column: "forwarded", .boolean).notNull()
-                t.add(column: "createdAt", .date).notNull()
-                // We store this as a blob because we don't currently join on it: status IDs are shown only as a count.
-                t.add(column: "statusIds", .blob).notNull()
-                t.add(column: "targetAccountId").indexed().notNull().references("accountRecord", onDelete: .cascade)
-            }
-        }
-
         return migrator
     }
 }

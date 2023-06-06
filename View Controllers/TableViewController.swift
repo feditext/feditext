@@ -605,7 +605,7 @@ private extension TableViewController {
 
     func navigate(toNotification: MastodonNotification) {
         guard let item = dataSource.snapshot().itemIdentifiers.first(where: {
-            guard case let .notification(notification, _, _) = $0 else { return false }
+            guard case let .notification(notification, _) = $0 else { return false }
 
             return notification.id == toNotification.id
         }),

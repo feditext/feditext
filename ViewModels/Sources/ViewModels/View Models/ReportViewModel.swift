@@ -8,41 +8,18 @@ import ServiceLayer
 public final class ReportViewModel: CollectionItemsViewModel {
     @Published public var elements: ReportElements
     @Published public private(set) var reportingState = ReportingState.composing
-    @Published public private(set) var rules: [Rule] = []
-    @Published public private(set) var categories: [Report.Category] = ReportViewModel.categoriesFor(rules: [])
 
     private let accountService: AccountService
     private var cancellables = Set<AnyCancellable>()
 
     public init(accountService: AccountService, statusId: Status.Id? = nil, identityContext: IdentityContext) {
         self.accountService = accountService
-        self.elements = ReportElements(accountId: accountService.account.id)
+        elements = ReportElements(accountId: accountService.account.id)
 
         super.init(
             collectionService: identityContext.service.navigationService.timelineService(
-                timeline: .profile(
-                    accountId: accountService.account.id,
-                    profileCollection: .statusesAndBoosts
-                )
-            ),
-            identityContext: identityContext
-        )
-
-        identityContext.service
-            .rulesPublisher()
-            .receive(on: DispatchQueue.main)
-            .assignErrorsToAlertItem(to: \.alertItem, on: self)
-            .assign(to: &$rules)
-
-        $rules
-            .map { Self.categoriesFor(rules: $0) }
-            .assign(to: &$categories)
-
-        identityContext.service
-            .refreshRules()
-            .assignErrorsToAlertItem(to: \.alertItem, on: self)
-            .sink { _ in }
-            .store(in: &cancellables)
+                timeline: .profile(accountId: accountService.account.id, profileCollection: .statusesAndBoosts)),
+            identityContext: identityContext)
 
         if let statusId = statusId {
             elements.statusIds.insert(statusId)
@@ -57,14 +34,7 @@ public final class ReportViewModel: CollectionItemsViewModel {
             statusViewModel.selectedForReport = elements.statusIds.contains(statusViewModel.id)
         }
 
-        return viewModel as Any
-    }
-
-    private static func categoriesFor(rules: [Rule]) -> [Report.Category] {
-        Report.Category
-            .allCasesExceptUnknown
-            // Hide the rules violation category if the instance doesn't have any rules.
-            .filter { $0 != .violation || !rules.isEmpty }
+        return viewModel
     }
 }
 
@@ -82,6 +52,14 @@ public extension ReportViewModel {
     }
 
     var isLocalAccount: Bool { accountService.isLocal }
+
+    var rules: [Rule] { identityContext.identity.instance?.rules ?? [] }
+
+    var categories: [Report.Category] {
+        Report.Category.allCasesExceptUnknown
+            // Hide the rules violation category if the instance doesn't have any rules.
+            .filter { $0 != .violation || !rules.isEmpty }
+    }
 
     func report() {
         accountService.report(elements)
