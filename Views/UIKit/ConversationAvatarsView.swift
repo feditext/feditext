@@ -53,8 +53,15 @@ final class ConversationAvatarsView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-
-        layer.cornerRadius = bounds.height / 2
+        // Apply displayAvatarShape to avatarImageView
+        switch viewModel?.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                layer.cornerRadius = bounds.height / 2
+            case .roundedRectangle:
+                layer.cornerRadius = bounds.height / 8
+            case .none:
+                layer.cornerRadius = bounds.height / 2
+        }
     }
 }
 
@@ -84,5 +91,14 @@ private extension ConversationAvatarsView {
             containerStackView.topAnchor.constraint(equalTo: topAnchor),
             containerStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
+        switch viewModel?.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                layer.cornerRadius = bounds.height / 2
+            case .roundedRectangle:
+                layer.cornerRadius = bounds.height / 8
+            case .none:
+                layer.cornerRadius = bounds.height / 2
+        }
     }
 }

@@ -30,7 +30,7 @@ public struct ProfileService {
             contentDatabase: contentDatabase)
     }
 
-    init(id: Account.Id,
+    public init(id: Account.Id,
          environment: AppEnvironment,
          mastodonAPIClient: MastodonAPIClient,
          contentDatabase: ContentDatabase) {

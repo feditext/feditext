@@ -143,8 +143,16 @@ private extension AccountView {
         stackView.alignment = .top
 
         stackView.addArrangedSubview(avatarImageView)
-        avatarImageView.layer.cornerRadius = .avatarDimension / 2
+
         avatarImageView.clipsToBounds = true
+        
+        // Apply displayAvatarShape to avatarImageView
+        switch accountConfiguration.viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 2
+            case .roundedRectangle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 8
+        }
 
         accountTypeStack.axis = .horizontal
         accountTypeStack.spacing = .ultraCompactSpacing
@@ -375,6 +383,12 @@ private extension AccountView {
         let viewModel = accountConfiguration.viewModel
 
         avatarImageView.sd_setImage(with: viewModel.avatarURL(profile: false))
+        switch accountConfiguration.viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 2
+            case .roundedRectangle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 8
+        }
 
         let mutableDisplayName = NSMutableAttributedString(string: viewModel.displayName)
 

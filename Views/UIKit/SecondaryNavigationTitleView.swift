@@ -30,10 +30,17 @@ private extension SecondaryNavigationTitleView {
     func initialSetup() {
         addSubview(avatarImageView)
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-        avatarImageView.layer.cornerRadius = .barButtonItemDimension / 2
         avatarImageView.contentMode = .scaleAspectFill
         avatarImageView.clipsToBounds = true
-
+        
+        // Apply displayAvatarShape to avatarImageView
+        switch viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                avatarImageView.layer.cornerRadius = .barButtonItemDimension / 2
+            case .roundedRectangle:
+                avatarImageView.layer.cornerRadius = .barButtonItemDimension / 8
+        }
+        
         addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical

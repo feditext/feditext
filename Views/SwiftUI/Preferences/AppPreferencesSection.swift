@@ -90,6 +90,12 @@ struct AppPreferencesSection: View {
                         Text(option.localizedStringKey).tag(option)
                     }
                 }
+                Picker("preferences.media.avatars.display.shape",
+                       selection: $identityContext.appPreferences.displayAvatarShape) {
+                    ForEach(AppPreferences.DisplayAvatarShape.allCases) { option in
+                        Text(option.localizedStringKey).tag(option)
+                    }
+                }
                 Toggle("preferences.media.custom-emojis.animate",
                        isOn: $identityContext.appPreferences.animateCustomEmojis)
                 Toggle("preferences.media.headers.animate",
