@@ -102,13 +102,20 @@ private extension MultiNotificationView {
             avatarStackView.sendSubviewToBack(avatarContainerView)
             avatarContainerView.translatesAutoresizingMaskIntoConstraints = false
             avatarContainerView.backgroundColor = .systemBackground
-            avatarContainerView.layer.cornerRadius = .avatarDimension / 2
             avatarContainerView.clipsToBounds = true
 
             let avatarImageView = SDAnimatedImageView()
             avatarContainerView.addSubview(avatarImageView)
             avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-            avatarImageView.layer.cornerRadius = .avatarDimension / 2
+            
+            // Apply displayAvatarShape to avatarImageView
+            switch multiNotificationConfiguration.viewModel.identityContext.appPreferences.displayAvatarShape {
+                case .circle:
+                    avatarImageView.layer.cornerRadius = .avatarDimension / 2
+                case .roundedRectangle:
+                    avatarImageView.layer.cornerRadius = .avatarDimension / 8
+            }
+            
             avatarImageView.clipsToBounds = true
             avatarImageView.alpha = CGFloat(maxAvatarCount - i) / CGFloat(maxAvatarCount)
 
@@ -200,6 +207,14 @@ private extension MultiNotificationView {
             if i < displayedAccountViewModels.count {
                 avatarImageView.sd_setImage(with: displayedAccountViewModels[i].avatarURL())
                 avatarImageView.superview?.isHidden = false
+                
+                // Apply displayAvatarShape to avatarImageView
+                switch viewModel.identityContext.appPreferences.displayAvatarShape {
+                    case .circle:
+                        avatarImageView.layer.cornerRadius = .avatarDimension / 2
+                    case .roundedRectangle:
+                        avatarImageView.layer.cornerRadius = .avatarDimension / 8
+                }
             } else {
                 avatarImageView.sd_setImage(with: nil)
                 avatarImageView.superview?.isHidden = true

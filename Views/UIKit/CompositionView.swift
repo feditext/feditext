@@ -64,13 +64,21 @@ private extension CompositionView {
 
         addSubview(avatarImageView)
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-        avatarImageView.layer.cornerRadius = .avatarDimension / 2
         avatarImageView.clipsToBounds = true
         avatarImageView.setContentHuggingPriority(.required, for: .horizontal)
+        
+        // Apply displayAvatarShape to avatarImageView
+        switch parentViewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 2
+            case .roundedRectangle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 8
+        }
 
         changeIdentityButton.translatesAutoresizingMaskIntoConstraints = false
         avatarImageView.addSubview(changeIdentityButton)
         avatarImageView.isUserInteractionEnabled = true
+        
         changeIdentityButton.setBackgroundImage(.highlightedButtonBackground, for: .highlighted)
         changeIdentityButton.showsMenuAsPrimaryAction = true
         changeIdentityButton.menu =

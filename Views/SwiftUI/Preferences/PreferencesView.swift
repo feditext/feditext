@@ -66,6 +66,17 @@ extension AppPreferences.AnimateAvatars {
     }
 }
 
+extension AppPreferences.DisplayAvatarShape {
+    var localizedStringKey: LocalizedStringKey {
+        switch self {
+        case .circle:
+            return "preferences.media.avatars.display.shape.circle"
+        case .roundedRectangle:
+            return "preferences.media.avatars.display.shape.rounded-rectangle"
+        }
+    }
+}
+
 extension AppPreferences.KeyboardType {
     var localizedStringKey: LocalizedStringKey {
         switch self {
