@@ -274,37 +274,5 @@
 			<string>%ld people favourited your toot</string>
 		</dict>
 	</dict>
-	<key>notifications.reported-an-account-and-statuses-%@-%ld.post</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%@ reported an account and %#@posts@</string>
-		<key>posts</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>ld</string>
-			<key>one</key>
-			<string>%ld post</string>
-			<key>other</key>
-			<string>%ld posts</string>
-		</dict>
-	</dict>
-	<key>notifications.reported-an-account-and-statuses-%@-%ld.toot</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%@ reported an account and %#@toots@</string>
-		<key>toots</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>ld</string>
-			<key>one</key>
-			<string>%ld toot</string>
-			<key>other</key>
-			<string>%ld toots</string>
-		</dict>
-	</dict>
 </dict>
 </plist>

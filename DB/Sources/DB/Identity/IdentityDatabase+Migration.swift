@@ -73,12 +73,6 @@ extension IdentityDatabase {
             }
         }
 
-        migrator.registerMigration("1.7.4-reports-phase-2") { db in
-            try db.alter(table: "instance") { t in
-                t.drop(column: "rules")
-            }
-        }
-
         return migrator
     }
 }

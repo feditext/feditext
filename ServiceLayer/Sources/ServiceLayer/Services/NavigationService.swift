@@ -23,12 +23,10 @@ public struct NavigationService {
     private let contentDatabase: ContentDatabase
     private let status: Status?
 
-    public init(
-        environment: AppEnvironment,
-        mastodonAPIClient: MastodonAPIClient,
-        contentDatabase: ContentDatabase,
-        status: Status? = nil
-    ) {
+    public init(environment: AppEnvironment,
+         mastodonAPIClient: MastodonAPIClient,
+         contentDatabase: ContentDatabase,
+         status: Status? = nil) {
         self.environment = environment
         self.mastodonAPIClient = mastodonAPIClient
         self.contentDatabase = contentDatabase
@@ -73,11 +71,7 @@ public extension NavigationService {
                        contentDatabase: contentDatabase)
     }
 
-    func profileService(
-        account: Account,
-        relationship: Relationship? = nil,
-        familiarFollowers: [Account] = []
-    ) -> ProfileService {
+    func profileService(account: Account, relationship: Relationship? = nil, familiarFollowers: [Account] = []) -> ProfileService {
         ProfileService(account: account,
                        relationship: relationship,
                        familiarFollowers: familiarFollowers,

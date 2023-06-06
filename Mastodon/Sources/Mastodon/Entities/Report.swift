@@ -2,49 +2,28 @@
 
 import Foundation
 
-public struct Report: Codable, Identifiable {
-    public enum Category: String, Codable, Unknowable {
+public struct Report: Codable {
+    public enum Category: String, Codable, Unknowable, Identifiable {
         case violation
         case spam
         case other
         case unknown
 
         public static var unknownCase: Self { .unknown }
+
+        public typealias ObjectIdentifier = Self
+        public var id: ObjectIdentifier { self }
     }
 
     public let id: Id
     public let actionTaken: Bool
-    public let actionTakenAt: Date?
-    public let category: Category
-    public let comment: String
-    @DecodableDefault.False public private(set) var forwarded: Bool
-    public let createdAt: Date
-    public let statusIds: [Status.Id]?
-    public let ruleIds: [Rule.Id]?
-    public let targetAccount: Account
 
     public init(
         id: Id,
-        actionTaken: Bool,
-        actionTakenAt: Date?,
-        category: Category,
-        comment: String,
-        forwarded: Bool,
-        createdAt: Date,
-        statusIds: [Status.Id]?,
-        ruleIds: [Rule.Id]?,
-        targetAccount: Account
+        actionTaken: Bool
     ) {
         self.id = id
         self.actionTaken = actionTaken
-        self.actionTakenAt = actionTakenAt
-        self.category = category
-        self.comment = comment
-        self.createdAt = createdAt
-        self.statusIds = statusIds
-        self.ruleIds = ruleIds
-        self.targetAccount = targetAccount
-        self.forwarded = forwarded
     }
 }
 

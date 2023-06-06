@@ -24,7 +24,7 @@ extension CollectionItem {
             return AccountTableViewCell.self
         case .loadMore:
             return LoadMoreTableViewCell.self
-        case let .notification(_, _, statusConfiguration):
+        case let .notification(_, statusConfiguration):
             return statusConfiguration == nil ? NotificationTableViewCell.self : StatusTableViewCell.self
         case .multiNotification:
             return MultiNotificationTableViewCell.self
@@ -46,8 +46,7 @@ extension CollectionItem {
                 width: width,
                 identityContext: identityContext,
                 status: status,
-                configuration: configuration
-            )
+                configuration: configuration)
         case let .account(account, configuration, relationship, familiarFollowers):
             return AccountView.estimatedHeight(
                 width: width,
@@ -58,21 +57,18 @@ extension CollectionItem {
             )
         case .loadMore:
             return LoadMoreView.estimatedHeight
-        case let .notification(notification, rules, configuration):
+        case let .notification(notification, configuration):
             return NotificationView.estimatedHeight(
                 width: width,
                 identityContext: identityContext,
                 notification: notification,
-                rules: rules,
-                configuration: configuration
-            )
+                configuration: configuration)
         case let .multiNotification(notifications, _, _, status):
             return MultiNotificationView.estimatedHeight(
                 width: width,
                 identityContext: identityContext,
                 notifications: notifications,
-                status: status
-            )
+                status: status)
         case let .conversation(conversation):
             return ConversationView.estimatedHeight(
                 width: width,
@@ -93,7 +89,7 @@ extension CollectionItem {
             return status.mediaPrefetchURLs(identityContext: identityContext)
         case let .account(account, _, _, _):
             return account.mediaPrefetchURLs(identityContext: identityContext)
-        case let .notification(notification, _, _):
+        case let .notification(notification, _):
             var urls = notification.account.mediaPrefetchURLs(identityContext: identityContext)
 
             if let status = notification.status {

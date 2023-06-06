@@ -13,7 +13,6 @@ final class NotificationView: UIView {
     private let timeLabel = UILabel()
     private let displayNameLabel = AnimatedAttachmentLabel()
     private let accountLabel = UILabel()
-    private let reportView = NotificationReportView()
     private let statusBodyView = StatusBodyView()
     private var notificationConfiguration: NotificationContentConfiguration
 
@@ -33,26 +32,18 @@ final class NotificationView: UIView {
 }
 
 extension NotificationView {
-    static func estimatedHeight(
-        width: CGFloat,
-        identityContext: IdentityContext,
-        notification: MastodonNotification,
-        rules: [Rule],
-        configuration: CollectionItem.StatusConfiguration?
-    ) -> CGFloat {
+    static func estimatedHeight(width: CGFloat,
+                                identityContext: IdentityContext,
+                                notification: MastodonNotification,
+                                configuration: CollectionItem.StatusConfiguration?) -> CGFloat {
         let bodyWidth = width - .defaultSpacing - .avatarDimension
 
         var height = CGFloat.defaultSpacing * 2
             + UIFont.preferredFont(forTextStyle: .headline).lineHeight
             + .compactSpacing
 
-        if let report = notification.report {
-            height += NotificationReportView.estimatedHeight(
-                width: bodyWidth,
-                account: report.targetAccount,
-                comment: report.comment,
-                rules: rules
-            )
+        if notification.report != nil {
+            // TODO: (Vyr) display full report info
         } else if let status = notification.status {
             height += StatusBodyView.estimatedHeight(
                 width: bodyWidth,
@@ -110,7 +101,6 @@ private extension NotificationView {
         typeTimeStackView.addArrangedSubview(typeLabel)
         typeTimeStackView.addArrangedSubview(timeLabel)
         mainStackView.addArrangedSubview(typeTimeStackView)
-        mainStackView.addArrangedSubview(reportView)
         mainStackView.addArrangedSubview(statusBodyView)
         mainStackView.addArrangedSubview(displayNameLabel)
         mainStackView.addArrangedSubview(accountLabel)
@@ -246,29 +236,11 @@ private extension NotificationView {
                 identityContext: viewModel.identityContext)
             iconImageView.tintColor = .systemOrange
         case .adminReport:
-            if let statusCount = viewModel.reportViewModel?.report.statusIds?.count, statusCount > 0 {
-                let stringName: String
-                switch viewModel.identityContext.appPreferences.statusWord {
-                case .post:
-                    stringName = "notifications.reported-an-account-and-statuses-%@-%ld.post"
-                case .toot:
-                    stringName = "notifications.reported-an-account-and-statuses-%@-%ld.toot"
-                }
-                typeLabel.attributedText = stringName.localizedBolding(
-                    displayName: viewModel.accountViewModel.displayName,
-                    emojis: viewModel.accountViewModel.emojis,
-                    label: typeLabel,
-                    identityContext: viewModel.identityContext,
-                    count: statusCount
-                )
-            } else {
-                typeLabel.attributedText = "notifications.reported-an-account-%@".localizedBolding(
-                    displayName: viewModel.accountViewModel.displayName,
-                    emojis: viewModel.accountViewModel.emojis,
-                    label: typeLabel,
-                    identityContext: viewModel.identityContext
-                )
-            }
+            typeLabel.attributedText = "notifications.reported-an-account-%@".localizedBolding(
+                displayName: viewModel.accountViewModel.displayName,
+                emojis: viewModel.accountViewModel.emojis,
+                label: typeLabel,
+                identityContext: viewModel.identityContext)
             iconImageView.tintColor = .systemOrange
         default:
             typeLabel.attributedText = "notifications.unknown-%@".localizedBolding(
@@ -279,15 +251,12 @@ private extension NotificationView {
             iconImageView.tintColor = nil
         }
 
-        if let reportViewModel = viewModel.reportViewModel {
-            reportView.viewModel = reportViewModel
-            reportView.isHidden = false
+        if viewModel.reportViewModel != nil {
             statusBodyView.isHidden = true
             displayNameLabel.isHidden = true
             accountLabel.isHidden = true
         } else if let statusViewModel = viewModel.statusViewModel {
             statusBodyView.viewModel = statusViewModel
-            reportView.isHidden = true
             statusBodyView.isHidden = false
             displayNameLabel.isHidden = true
             accountLabel.isHidden = true
@@ -300,7 +269,6 @@ private extension NotificationView {
             mutableDisplayName.resizeAttachments(toLineHeight: displayNameLabel.font.lineHeight)
             displayNameLabel.attributedText = mutableDisplayName
             accountLabel.text = viewModel.accountViewModel.accountName
-            reportView.isHidden = true
             statusBodyView.isHidden = true
             displayNameLabel.isHidden = false
             accountLabel.isHidden = false
@@ -319,10 +287,7 @@ private extension NotificationView {
             accessibilityAttributedLabel.appendWithSeparator(typeText)
         }
 
-        if !reportView.isHidden,
-           let reportAccessibilityAttributedLabel = reportView.accessibilityAttributedLabel {
-            accessibilityAttributedLabel.appendWithSeparator(reportAccessibilityAttributedLabel)
-        } else if !statusBodyView.isHidden,
+        if !statusBodyView.isHidden,
            let statusBodyAccessibilityAttributedLabel = statusBodyView.accessibilityAttributedLabel {
             accessibilityAttributedLabel.appendWithSeparator(statusBodyAccessibilityAttributedLabel)
         } else if !accountLabel.isHidden, let accountText = accountLabel.text {
