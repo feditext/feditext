@@ -451,13 +451,6 @@ public extension ContentDatabase {
         }
     }
 
-    func update(instance: Instance) -> AnyPublisher<Never, Error> {
-        databaseWriter.mutatingPublisher {
-            try instance.save($0)
-            try updateRules(rules: instance.rules, db: $0)
-        }
-    }
-
     func update(emojis: [Emoji]) -> AnyPublisher<Never, Error> {
         databaseWriter.mutatingPublisher {
             for emoji in emojis {
@@ -489,20 +482,6 @@ public extension ContentDatabase {
         }
     }
 
-    func update(rules: [Rule]) -> AnyPublisher<Never, Error> {
-        databaseWriter.mutatingPublisher {
-            try updateRules(rules: rules, db: $0)
-        }
-    }
-
-    private func updateRules(rules: [Rule], db: Database) throws {
-        for rule in rules {
-            try rule.save(db)
-        }
-
-        try Rule.filter(!rules.map(\.id).contains(Rule.Columns.id)).deleteAll(db)
-    }
-
     func insert(results: Results) -> AnyPublisher<Never, Error> {
         databaseWriter.mutatingPublisher {
             for account in results.accounts {
@@ -513,6 +492,10 @@ public extension ContentDatabase {
                 try status.save($0)
             }
         }
+    }
+
+    func insert(instance: Instance) -> AnyPublisher<Never, Error> {
+        databaseWriter.mutatingPublisher(updates: instance.save)
     }
 
     func timelinePublisher(_ timeline: Timeline) -> AnyPublisher<[CollectionSection], Error> {
@@ -676,8 +659,7 @@ public extension ContentDatabase {
     }
 
     func notificationsPublisher(
-        excludeTypes: Set<MastodonNotification.NotificationType>
-    ) -> AnyPublisher<[CollectionSection], Error> {
+        excludeTypes: Set<MastodonNotification.NotificationType>) -> AnyPublisher<[CollectionSection], Error> {
         ValueObservation.tracking(
             NotificationInfo.request(
                 NotificationRecord.order(NotificationRecord.Columns.createdAt.desc)
@@ -695,9 +677,7 @@ public extension ContentDatabase {
                     configuration = nil
                 }
 
-                let rules = $0.reportInfo?.rules ?? []
-
-                return .notification(MastodonNotification(info: $0), rules, configuration)
+                return .notification(MastodonNotification(info: $0), configuration)
             })] }
             .eraseToAnyPublisher()
     }
@@ -713,14 +693,13 @@ public extension ContentDatabase {
             .eraseToAnyPublisher()
     }
 
-    func instancePublisher() -> AnyPublisher<Instance, Error> {
+    func instancePublisher(uri: String) -> AnyPublisher<Instance, Error> {
         ValueObservation.tracking(
-            InstanceInfo.request(InstanceRecord.all()).fetchOne)
+            InstanceInfo.request(InstanceRecord.filter(InstanceRecord.Columns.uri == uri)).fetchOne)
             .removeDuplicates()
             .publisher(in: databaseWriter)
             .compactMap { $0 }
-            .combineLatest(rulesPublisher())
-            .map { Instance(info: $0, rules: $1) }
+            .map(Instance.init(info:))
             .eraseToAnyPublisher()
     }
 
@@ -755,13 +734,6 @@ public extension ContentDatabase {
 
     func emojiUses(limit: Int) -> AnyPublisher<[EmojiUse], Error> {
         databaseWriter.readPublisher(value: EmojiUse.all().order(EmojiUse.Columns.count.desc).limit(limit).fetchAll)
-            .eraseToAnyPublisher()
-    }
-
-    func rulesPublisher() -> AnyPublisher<[Rule], Error> {
-        ValueObservation.tracking(Rule.fetchAll)
-            .removeDuplicates()
-            .publisher(in: databaseWriter)
             .eraseToAnyPublisher()
     }
 

@@ -24,8 +24,10 @@ public final class ExploreViewModel: ObservableObject {
         searchViewModel = SearchViewModel(identityContext: identityContext)
         events = eventsSubject.eraseToAnyPublisher()
 
-        identityContext.service
-            .instanceServicePublisher()
+        identityContext.$identity
+            .compactMap { $0.instance?.uri }
+            .removeDuplicates()
+            .flatMap { service.instanceServicePublisher(uri: $0) }
             .map { InstanceViewModel(instanceService: $0) }
             .receive(on: DispatchQueue.main)
             .assignErrorsToAlertItem(to: \.alertItem, on: self)

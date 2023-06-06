@@ -168,32 +168,27 @@ public class CollectionItemsViewModel: ObservableObject {
             viewModel.familiarFollowers = familiarFollowers
 
             return viewModel
-        case let .notification(notification, rules, statusConfiguration):
+        case let .notification(notification, statusConfiguration):
             let viewModel: Any
 
             if let cachedViewModel = cachedViewModel {
-                return cachedViewModel
-            }
-
-            if let status = notification.status, let statusConfiguration = statusConfiguration {
+                viewModel = cachedViewModel
+            } else if let status = notification.status, let statusConfiguration = statusConfiguration {
                 let statusViewModel = StatusViewModel(
                     statusService: collectionService.navigationService.statusService(status: status),
                     identityContext: identityContext,
-                    eventsSubject: eventsSubject
-                )
+                    eventsSubject: eventsSubject)
                 statusViewModel.configuration = statusConfiguration
                 viewModel = statusViewModel
+                viewModelCache[item] = viewModel
             } else {
                 viewModel = NotificationViewModel(
                     notificationService: collectionService.navigationService.notificationService(
-                        notification: notification
-                    ),
-                    rules: rules,
+                        notification: notification),
                     identityContext: identityContext,
                     eventsSubject: eventsSubject)
+                viewModelCache[item] = viewModel
             }
-
-            viewModelCache[item] = viewModel
 
             return viewModel
         case let .multiNotification(notifications, notificationType, date, status):
@@ -343,7 +338,7 @@ extension CollectionItemsViewModel: CollectionViewModel {
                     )
                 )
             )
-        case let .notification(notification, _, _):
+        case let .notification(notification, _):
             if let report = notification.report {
                 send(event: .navigation(collectionService.navigationService.report(id: report.id)))
             } else if let status = notification.status {

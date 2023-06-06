@@ -37,31 +37,14 @@ extension String {
         return attributed
     }
 
-    // TODO: (Vyr) there has to be a way to generalize this
-    func localizedBolding(
-        displayName: String,
-        emojis: [Emoji],
-        label: AnimatedAttachmentLabel,
-        identityContext: IdentityContext,
-        count: Int? = nil
-    ) -> NSAttributedString {
-        let formatString = NSLocalizedString(self, comment: "")
-
-        let string: String
-        if let count = count {
-            string = String.localizedStringWithFormat(
-                formatString,
-                displayName,
-                count
-            )
-        } else {
-            string = String.localizedStringWithFormat(
-                formatString,
-                displayName
-            )
-        }
-
-        let mutableString = NSMutableAttributedString(string: string)
+    func localizedBolding(displayName: String,
+                          emojis: [Emoji],
+                          label: AnimatedAttachmentLabel,
+                          identityContext: IdentityContext) -> NSAttributedString {
+        let mutableString = NSMutableAttributedString(
+            string: String.localizedStringWithFormat(
+                NSLocalizedString(self, comment: ""),
+                displayName))
 
         let range = (mutableString.string as NSString).range(of: displayName)
 

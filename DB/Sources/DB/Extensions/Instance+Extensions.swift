@@ -13,19 +13,19 @@ extension Instance {
         try InstanceRecord(instance: self).save(db)
     }
 
-    init(info: InstanceInfo, rules: [Rule]) {
+    init(info: InstanceInfo) {
         var contactAccount: Account?
 
         if let contactAccountInfo = info.contactAccountInfo {
             contactAccount = Account(info: contactAccountInfo)
         }
 
-        self.init(record: info.record, contactAccount: contactAccount, rules: rules)
+        self.init(record: info.record, contactAccount: contactAccount)
     }
 }
 
 private extension Instance {
-    init(record: InstanceRecord, contactAccount: Account?, rules: [Rule]) {
+    init(record: InstanceRecord, contactAccount: Account?) {
         self.init(
             uri: record.uri,
             title: record.title,
@@ -42,7 +42,7 @@ private extension Instance {
                     maxCharacters: record.maxTootChars
                 )
             ),
-            rules: rules
+            rules: record.rules ?? []
         )
     }
 }
