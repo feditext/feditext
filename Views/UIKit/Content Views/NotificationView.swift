@@ -109,8 +109,15 @@ private extension NotificationView {
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.setContentHuggingPriority(.required, for: .horizontal)
 
-        avatarImageView.layer.cornerRadius = .avatarDimension / 2
         avatarImageView.clipsToBounds = true
+        
+        // Apply displayAvatarShape to avatarImageView
+        switch notificationConfiguration.viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 2
+            case .roundedRectangle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 8
+        }
 
         let avatarHeightConstraint = avatarImageView.heightAnchor.constraint(equalToConstant: .avatarDimension)
 
@@ -169,6 +176,14 @@ private extension NotificationView {
         let viewModel = notificationConfiguration.viewModel
 
         avatarImageView.sd_setImage(with: viewModel.accountViewModel.avatarURL())
+        
+        // Apply displayAvatarShape to avatarImageView
+        switch notificationConfiguration.viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 2
+            case .roundedRectangle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 8
+        }
 
         switch viewModel.type {
         case .follow:

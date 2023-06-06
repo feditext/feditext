@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		14FC7D32292A556E00567DBC /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FC7D31292A556E00567DBC /* UIFont+Extensions.swift */; };
+		5E91C1272A2E0A95008CD718 /* AccountHeaderViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E91C1262A2E0A95008CD718 /* AccountHeaderViewRepresentable.swift */; };
 		75F7B3CC291F51D300FDE7C7 /* SwipeableNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F7B3CB291F51D300FDE7C7 /* SwipeableNavigationController.swift */; };
 		941F79CC2A243418007FCC65 /* MultiNotificationContentConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941F79CB2A243418007FCC65 /* MultiNotificationContentConfiguration.swift */; };
 		941F79CE2A243446007FCC65 /* MultiNotificationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941F79CD2A243446007FCC65 /* MultiNotificationTableViewCell.swift */; };
@@ -317,6 +318,7 @@
 		14FC7D31292A556E00567DBC /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		2805F2DF26044E8900670835 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2805F2E026044E8900670835 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5E91C1262A2E0A95008CD718 /* AccountHeaderViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountHeaderViewRepresentable.swift; sourceTree = "<group>"; };
 		682EA140292B27D4007B0417 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = eu; path = eu.lproj/Localizable.strings; sourceTree = "<group>"; };
 		682EA141292B27D4007B0417 /* eu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = eu; path = eu.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		682EA142292B29B4007B0417 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -377,7 +379,7 @@
 		D007023D25562A2800F38136 /* ConversationAvatarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAvatarsView.swift; sourceTree = "<group>"; };
 		D0070251255921B100F38136 /* AccountFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFieldView.swift; sourceTree = "<group>"; };
 		D00CB22925C92C0F008EF267 /* Attachment+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Attachment+Extensions.swift"; sourceTree = "<group>"; };
-		D00CB2EC2533ACC00080096B /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
+		D00CB2EC2533ACC00080096B /* StatusView.swift */ = {isa = PBXFileReference; indentWidth = 3; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 		D01EF22325182B1F00650C6B /* AccountHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountHeaderView.swift; sourceTree = "<group>"; };
 		D01F41D624F880C400D55A2D /* TouchFallthroughTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchFallthroughTextView.swift; sourceTree = "<group>"; };
 		D01F41E224F8889700D55A2D /* AttachmentsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentsView.swift; sourceTree = "<group>"; };
@@ -627,6 +629,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5E91C1252A2E09ED008CD718 /* View Representables */ = {
+			isa = PBXGroup;
+			children = (
+				5E91C1262A2E0A95008CD718 /* AccountHeaderViewRepresentable.swift */,
+			);
+			path = "View Representables";
+			sourceTree = "<group>";
+		};
 		9432DE2429A158460007C2BF /* Docs */ = {
 			isa = PBXGroup;
 			children = (
@@ -729,13 +739,14 @@
 				D07F4D9725D493E300F61133 /* MuteView.swift */,
 				D08B9F0F25CB8E060062D040 /* NotificationPreferencesView.swift */,
 				D0C7D42D24F76169001EBDBB /* NotificationTypesPreferencesView.swift */,
+				947E728E29A9618900155DD2 /* EditNoteView.swift */,
 				94E6C2492991A23C003771D1 /* Preferences */,
 				D0B32F4F250B373600311912 /* RegistrationView.swift */,
 				D0C7D42724F76169001EBDBB /* RootView.swift */,
 				D0C7D42924F76169001EBDBB /* SecondaryNavigationView.swift */,
 				94B0BCD229859B750075E234 /* StatusEditHistoryView.swift */,
+				5E91C1252A2E09ED008CD718 /* View Representables */,
 				D021A66925C3E19D008A0C0D /* View Controller Representables */,
-				947E728E29A9618900155DD2 /* EditNoteView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -1484,6 +1495,7 @@
 				D0D93EBA25D9C70400C622ED /* AutocompleteItemView.swift in Sources */,
 				D0C7D4C424F7616A001EBDBB /* AppDelegate.swift in Sources */,
 				D0C7D49924F7616A001EBDBB /* AddIdentityView.swift in Sources */,
+				5E91C1272A2E0A95008CD718 /* AccountHeaderViewRepresentable.swift in Sources */,
 				D0DDA77F25C6058300FA0F91 /* ExploreSectionHeaderView.swift in Sources */,
 				D0FCC105259C4E61000B67DF /* ComposeStatusViewController.swift in Sources */,
 				D087671625BAA8C0001FDD43 /* ExploreViewController.swift in Sources */,

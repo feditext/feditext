@@ -269,6 +269,9 @@
 "preferences.media.avatars.animate.everywhere" = "Everywhere";
 "preferences.media.avatars.animate.profiles" = "In profiles";
 "preferences.media.avatars.animate.never" = "Never";
+"preferences.media.avatars.display.shape" = "Display avatar shape";
+"preferences.media.avatars.display.shape.circle" = "Circle";
+"preferences.media.avatars.display.shape.rounded-rectangle" = "Rounded Rectangle";
 "preferences.media.custom-emojis.animate" = "Animate custom emoji";
 "preferences.media.headers.animate" = "Animate profile headers";
 "preferences.media.autoplay" = "Autoplay";

@@ -419,12 +419,20 @@ private extension StatusView {
 
         avatarContainerView.addSubview(avatarImageView)
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-        avatarImageView.layer.cornerRadius = .avatarDimension / 2
         avatarImageView.clipsToBounds = true
 
         avatarButton.translatesAutoresizingMaskIntoConstraints = false
         avatarImageView.addSubview(avatarButton)
         avatarImageView.isUserInteractionEnabled = true
+        
+        // Apply displayAvatarShape to avatarImageView
+        switch statusConfiguration.viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 2
+            case .roundedRectangle:
+                avatarImageView.layer.cornerRadius = .avatarDimension / 8
+        }
+        
         avatarButton.setBackgroundImage(.highlightedButtonBackground, for: .highlighted)
 
         avatarButton.addAction(
@@ -433,10 +441,18 @@ private extension StatusView {
 
         avatarContainerView.addSubview(rebloggerAvatarImageView)
         rebloggerAvatarImageView.translatesAutoresizingMaskIntoConstraints = false
-        rebloggerAvatarImageView.layer.cornerRadius = .avatarDimension / 4
         rebloggerAvatarImageView.clipsToBounds = true
         rebloggerAvatarImageView.isHidden = true
-
+        
+        // Apply displayAvatarShape to rebloggerAvatarImageView
+        switch statusConfiguration.viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                // Radius of the reblogger's avatar is half of the normal avatar
+                rebloggerAvatarImageView.layer.cornerRadius = .avatarDimension / 4
+            case .roundedRectangle:
+                rebloggerAvatarImageView.layer.cornerRadius = .avatarDimension / 16
+        }
+        
         for view in [inReplyToView, hasReplyFollowingView] {
             addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -509,9 +525,25 @@ private extension StatusView {
 
         avatarWidthConstraint.constant = avatarDimension
         avatarHeightConstraint.constant = avatarDimension
-        avatarImageView.layer.cornerRadius = avatarDimension / 2
+        
+        // Apply displayAvatarShape to avatarImageView
+        switch statusConfiguration.viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                avatarImageView.layer.cornerRadius = avatarDimension / 2
+            case .roundedRectangle:
+                avatarImageView.layer.cornerRadius = avatarDimension / 8
+        }
+        
         rebloggerAvatarImageView.isHidden = !viewModel.isReblog
         rebloggerAvatarImageView.sd_setImage(with: viewModel.isReblog ? viewModel.rebloggerAvatarURL : nil)
+        
+        // Apply displayAvatarShape to rebloggerAvatarImageView
+        switch statusConfiguration.viewModel.identityContext.appPreferences.displayAvatarShape {
+            case .circle:
+                rebloggerAvatarImageView.layer.cornerRadius = avatarDimension / 4
+            case .roundedRectangle:
+                rebloggerAvatarImageView.layer.cornerRadius = avatarDimension / 16
+        }
 
         if isContextParent, avatarContainerView.superview !== nameAccountContainerStackView {
             nameAccountContainerStackView.insertArrangedSubview(avatarContainerView, at: 0)
