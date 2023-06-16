@@ -12,7 +12,7 @@
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.metabolist.metatext</string>
+		<string>$(AppIdentifierPrefix)com.gotgoat.metatext</string>
 	</array>
 </dict>
 </plist>
