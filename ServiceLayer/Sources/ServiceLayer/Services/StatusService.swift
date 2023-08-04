@@ -21,8 +21,8 @@ public struct StatusService {
         self.navigationService = NavigationService(
             environment: environment,
             mastodonAPIClient: mastodonAPIClient,
-            contentDatabase: contentDatabase,
-            status: status.displayStatus)
+            contentDatabase: contentDatabase
+        )
         self.environment = environment
         self.mastodonAPIClient = mastodonAPIClient
         self.contentDatabase = contentDatabase

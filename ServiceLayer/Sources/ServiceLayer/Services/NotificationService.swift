@@ -20,8 +20,8 @@ public struct NotificationService {
         self.navigationService = NavigationService(
             environment: environment,
             mastodonAPIClient: mastodonAPIClient,
-            contentDatabase: contentDatabase,
-            status: nil)
+            contentDatabase: contentDatabase
+        )
         self.mastodonAPIClient = mastodonAPIClient
         self.contentDatabase = contentDatabase
     }

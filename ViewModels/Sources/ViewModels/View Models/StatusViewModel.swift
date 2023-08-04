@@ -329,25 +329,6 @@ public extension StatusViewModel {
     }
 
     func urlSelected(_ url: URL) {
-        if let appUrl = AppUrl(url: url) {
-            switch appUrl {
-            case let .tagTimeline(id):
-                 tagSelected(id)
-
-            case let .mention(userUrl):
-                eventsSubject.send(
-                    statusService.navigationService.item(url: userUrl, shouldWebfinger: true)
-                        .map { .navigation($0) }
-                        .setFailureType(to: Error.self)
-                        .eraseToAnyPublisher()
-                )
-
-            default:
-                assertionFailure("Other types of app URL should not appear in this context.")
-                return
-            }
-        }
-
         eventsSubject.send(
             statusService.navigationService.item(url: url)
                 .map { .navigation($0) }

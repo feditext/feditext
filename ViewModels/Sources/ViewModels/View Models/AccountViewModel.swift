@@ -114,37 +114,6 @@ public extension AccountViewModel {
     }
 
     func urlSelected(_ url: URL) {
-        if let appUrl = AppUrl(url: url) {
-            switch appUrl {
-            case let .tagTimeline(name):
-                 eventsSubject.send(
-                     Just(
-                         .navigation(
-                             .collection(
-                                 accountService.navigationService.timelineService(
-                                     timeline: .tag(name)
-                                 )
-                             )
-                         )
-                     )
-                         .setFailureType(to: Error.self)
-                         .eraseToAnyPublisher()
-                 )
-
-            case let .mention(userUrl):
-                eventsSubject.send(
-                    accountService.navigationService.item(url: userUrl, shouldWebfinger: true)
-                        .map { .navigation($0) }
-                        .setFailureType(to: Error.self)
-                        .eraseToAnyPublisher()
-                )
-
-            default:
-                assertionFailure("Other types of app URL should not appear in this context.")
-                return
-            }
-        }
-
         eventsSubject.send(
             accountService.navigationService.item(url: url)
                 .map { CollectionItemEvent.navigation($0) }

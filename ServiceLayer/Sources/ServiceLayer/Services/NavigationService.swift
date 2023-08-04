@@ -1,5 +1,6 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
+import AppUrls
 import Combine
 import DB
 import Foundation
@@ -21,45 +22,45 @@ public struct NavigationService {
     private let environment: AppEnvironment
     private let mastodonAPIClient: MastodonAPIClient
     private let contentDatabase: ContentDatabase
-    private let status: Status?
 
     public init(
         environment: AppEnvironment,
         mastodonAPIClient: MastodonAPIClient,
-        contentDatabase: ContentDatabase,
-        status: Status? = nil
+        contentDatabase: ContentDatabase
     ) {
         self.environment = environment
         self.mastodonAPIClient = mastodonAPIClient
         self.contentDatabase = contentDatabase
-        self.status = status
     }
 }
 
 public extension NavigationService {
-    /// Set `shouldWebfinger` to `true` when we know the URL should resolve to some activity or actor,
-    /// like when resolving a mentioned user.
-    func item(url: URL, shouldWebfinger: Bool = false) -> AnyPublisher<Navigation, Never> {
-        if let tag = tag(url: url) {
-            return Just(
-                .collection(
-                    TimelineService(
-                        timeline: .tag(tag),
-                        environment: environment,
-                        mastodonAPIClient: mastodonAPIClient,
-                        contentDatabase: contentDatabase)))
-                .eraseToAnyPublisher()
-        } else if let accountId = accountId(url: url) {
-            return Just(.profile(profileService(id: accountId))).eraseToAnyPublisher()
-        } else if mastodonAPIClient.instanceURL.host == url.host, let statusId = url.statusId {
-            return Just(.collection(contextService(id: statusId))).eraseToAnyPublisher()
+    /// Navigate to an arbitrary URL.
+    ///
+    /// If it's our URL scheme, we may already know it's for a tag, and can go directly to the tag timeline,
+    /// or we may know it's a mention and will ask the server to resolve it as an account.
+    ///
+    /// If it's a `web+ap` URL, ask the server to resolve the `https` equivalent.
+    ///
+    /// If it's any other kind of URL, ask the server to resolve it.
+    ///
+    /// If the server can't resolve it, open it in the browser.
+    func item(url: URL) -> AnyPublisher<Navigation, Never> {
+        if let appUrl = AppUrl(url: url) {
+            switch appUrl {
+            case let .tagTimeline(name):
+                return Just(.collection(timelineService(timeline: .tag(name))))
+                    .eraseToAnyPublisher()
+
+            case let .mention(userUrl):
+                return webfinger(url: userUrl, type: .accounts)
+
+            case let .search(searchUrl):
+                return webfinger(url: searchUrl, type: nil)
+            }
         }
 
-        if shouldWebfinger || url.shouldWebfinger {
-            return webfinger(url: url)
-        } else {
-            return Just(.url(url)).eraseToAnyPublisher()
-        }
+        return webfinger(url: url, type: nil)
     }
 
     func contextService(id: Status.Id) -> ContextService {
@@ -220,34 +221,14 @@ public extension NavigationService {
 }
 
 private extension NavigationService {
-    func tag(url: URL) -> String? {
-        if status?.tags.first(where: { $0.url.url?.path.lowercased() == url.path.lowercased() }) != nil {
-            return url.lastPathComponent
-        } else if
-            mastodonAPIClient.instanceURL.host == url.host {
-            return url.tag
-        }
-
-        return nil
-    }
-
-    func accountId(url: URL) -> String? {
-        if let mentionId = status?.mentions.first(where: {
-            $0.url.url?.path.lowercased() == url.path.lowercased()
-        })?.id {
-            return mentionId
-        } else if
-            mastodonAPIClient.instanceURL.host == url.host {
-            return url.accountId
-        }
-
-        return nil
-    }
-
-    func webfinger(url: URL) -> AnyPublisher<Navigation, Never> {
+    func webfinger(url: URL, type: Search.SearchType?) -> AnyPublisher<Navigation, Never> {
         let navigationSubject = PassthroughSubject<Navigation, Never>()
 
-        let request = mastodonAPIClient.request(ResultsEndpoint.search(.init(query: url.absoluteString)))
+        let request = mastodonAPIClient
+            .request(ResultsEndpoint.search(.init(
+                query: url.absoluteString,
+                type: type
+            )))
             .handleEvents(
                 receiveSubscription: { _ in navigationSubject.send(.webfingerStart) },
                 receiveCompletion: { _ in navigationSubject.send(.webfingerEnd) })
@@ -270,44 +251,5 @@ private extension NavigationService {
             .replaceError(with: .url(url))
 
         return navigationSubject.merge(with: request).eraseToAnyPublisher()
-    }
-}
-
-private extension URL {
-    var isAccountURL: Bool {
-        (pathComponents.count == 2 && pathComponents[1].starts(with: "@"))
-            || (pathComponents.count == 3 && pathComponents[0...1] == ["/", "users"])
-    }
-
-    var accountId: Account.Id? {
-        if let accountId = pathComponents.last, pathComponents == ["/", "web", "accounts", accountId] {
-            return accountId
-        }
-
-        return nil
-    }
-
-    var statusId: Status.Id? {
-        guard let statusId = pathComponents.last else { return nil }
-
-        if pathComponents.count == 3, pathComponents[1].starts(with: "@") {
-            return statusId
-        } else if pathComponents == ["/", "web", "statuses", statusId] {
-            return statusId
-        }
-
-        return nil
-    }
-
-    var tag: String? {
-        if let tag = pathComponents.last, pathComponents == ["/", "tags", tag] {
-            return tag
-        }
-
-        return nil
-    }
-
-    var shouldWebfinger: Bool {
-        isAccountURL || accountId != nil || statusId != nil || tag != nil
     }
 }
