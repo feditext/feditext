@@ -45,11 +45,14 @@ final class AttachmentsView: UIView {
                 return
             }
 
-            rightStackView.isHidden = viewModel.attachmentViewModels.count == 1
+            // TODO: (Vyr) attachments: remove temporary restriction to 4 attachments
+            let attachmentViewModels = viewModel.attachmentViewModels.prefix(4)
 
-            let viewIndexPermutation = viewIndexPermutations[viewModel.attachmentViewModels.count]
+            rightStackView.isHidden = attachmentViewModels.count == 1
+
+            let viewIndexPermutation = viewIndexPermutations[attachmentViewModels.count]
             var unusedViewIndexes = Set(0..<attachmentViews.count)
-            for (viewModelIndex, attachmentViewModel) in viewModel.attachmentViewModels.enumerated() {
+            for (viewModelIndex, attachmentViewModel) in attachmentViewModels.enumerated() {
                 let viewIndex = viewIndexPermutation[viewModelIndex]
                 unusedViewIndexes.remove(viewIndex)
 
@@ -69,8 +72,8 @@ final class AttachmentsView: UIView {
 
             let newAspectRatio: CGFloat
 
-            if viewModel.attachmentViewModels.count == 1,
-               let aspectRatio = viewModel.attachmentViewModels.first?.attachment.aspectRatio {
+            if attachmentViewModels.count == 1,
+               let aspectRatio = attachmentViewModels.first?.attachment.aspectRatio {
                 newAspectRatio = max(CGFloat(aspectRatio), 16 / 9)
             } else {
                 newAspectRatio = 16 / 9
@@ -96,17 +99,17 @@ final class AttachmentsView: UIView {
                 if viewModel.attachmentViewModels
                     .allSatisfy({ $0.attachment.type == .image || $0.attachment.type == .gifv }) {
                     type = .image
-                } else if viewModel.attachmentViewModels.allSatisfy({ $0.attachment.type == .video }) {
+                } else if attachmentViewModels.allSatisfy({ $0.attachment.type == .video }) {
                     type = .video
-                } else if viewModel.attachmentViewModels.allSatisfy({ $0.attachment.type == .audio }) {
+                } else if attachmentViewModels.allSatisfy({ $0.attachment.type == .audio }) {
                     type = .audio
                 } else {
                     type = .unknown
                 }
 
-                var accessibilityLabel = type.accessibilityNames(count: viewModel.attachmentViewModels.count)
+                var accessibilityLabel = type.accessibilityNames(count: attachmentViewModels.count)
 
-                for attachmentViewModel in viewModel.attachmentViewModels {
+                for attachmentViewModel in attachmentViewModels {
                     guard let description = attachmentViewModel.attachment.description,
                           !description.isEmpty
                     else { continue }
