@@ -7,7 +7,7 @@ import SwiftUI
 import ViewModels
 import WebKit
 
-final class AddIdentityViewController: UIViewController {
+final class AddIdentityViewController: UIViewController, UITextFieldDelegate {
     private let viewModel: AddIdentityViewModel
     private let rootViewModel: RootViewModel
     private let displayWelcome: Bool
@@ -61,6 +61,13 @@ final class AddIdentityViewController: UIViewController {
         setupViewModelBindings()
         initialDisplay()
     }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        self.viewModel.logInTapped()
+
+        return true
+    }
 }
 
 private extension AddIdentityViewController {
@@ -97,6 +104,7 @@ private extension AddIdentityViewController {
         urlTextField.addAction(
             UIAction { [weak self] _ in self?.viewModel.urlFieldText = self?.urlTextField.text ?? "" },
             for: .editingChanged)
+        urlTextField.delegate = self
 
         instanceAndButtonsStackView.spacing = .defaultSpacing
         instanceAndButtonsStackView.distribution = .fillEqually
