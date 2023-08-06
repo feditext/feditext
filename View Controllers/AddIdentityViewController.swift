@@ -7,7 +7,7 @@ import SwiftUI
 import ViewModels
 import WebKit
 
-final class AddIdentityViewController: UIViewController, UITextFieldDelegate {
+final class AddIdentityViewController: UIViewController {
     private let viewModel: AddIdentityViewModel
     private let rootViewModel: RootViewModel
     private let displayWelcome: Bool
@@ -61,7 +61,9 @@ final class AddIdentityViewController: UIViewController, UITextFieldDelegate {
         setupViewModelBindings()
         initialDisplay()
     }
+}
 
+extension AddIdentityViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         self.viewModel.logInTapped()
