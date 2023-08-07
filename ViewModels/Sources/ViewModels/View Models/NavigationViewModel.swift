@@ -161,7 +161,7 @@ public extension NavigationViewModel {
     func navigateToURL(_ url: URL) {
         presentingSecondaryNavigation = false
         presentedComposeStatusViewModel = nil
-        identityContext.service.navigationService.item(url: url)
+        identityContext.service.navigationService.lookup(url: url, identityId: identityContext.identity.id)
             .sink { [weak self] in self?.navigationsSubject.send($0) }
             .store(in: &cancellables)
     }

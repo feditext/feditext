@@ -301,6 +301,7 @@
 "preferences.app.color-scheme.system" = "System";
 "preferences.blocked-domains" = "Blocked Domains";
 "preferences.blocked-users" = "Blocked Users";
+"preferences.cache.clear.navigation" = "Clear navigation cache";
 "preferences.media" = "Media";
 "preferences.media.avatars" = "Avatars";
 "preferences.media.avatars.animate" = "Animate avatars";

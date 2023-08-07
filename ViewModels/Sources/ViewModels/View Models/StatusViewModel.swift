@@ -330,7 +330,7 @@ public extension StatusViewModel {
 
     func urlSelected(_ url: URL) {
         eventsSubject.send(
-            statusService.navigationService.item(url: url)
+            statusService.navigationService.lookup(url: url, identityId: identityContext.identity.id)
                 .map { .navigation($0) }
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher())

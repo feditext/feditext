@@ -6,6 +6,7 @@ import DB
 import Foundation
 import Mastodon
 import MastodonAPI
+import os
 
 public enum Navigation {
     case url(URL)
@@ -35,7 +36,7 @@ public struct NavigationService {
 }
 
 public extension NavigationService {
-    /// Navigate to an arbitrary URL.
+    /// Navigate to an arbitrary URL. Current identity is used as part of a cache key.
     ///
     /// If it's our URL scheme, we may already know it's for a tag, and can go directly to the tag timeline,
     /// or we may know it's a mention and will ask the server to resolve it as an account.
@@ -45,7 +46,7 @@ public extension NavigationService {
     /// If it's any other kind of URL, ask the server to resolve it.
     ///
     /// If the server can't resolve it, open it in the browser.
-    func item(url: URL) -> AnyPublisher<Navigation, Never> {
+    func lookup(url: URL, identityId: Identity.Id) -> AnyPublisher<Navigation, Never> {
         if let appUrl = AppUrl(url: url) {
             switch appUrl {
             case let .tagTimeline(name):
@@ -53,14 +54,14 @@ public extension NavigationService {
                     .eraseToAnyPublisher()
 
             case let .mention(userUrl):
-                return webfinger(url: userUrl, type: .accounts)
+                return lookup(url: userUrl, identityId: identityId, type: .accounts)
 
             case let .search(searchUrl):
-                return webfinger(url: searchUrl, type: nil)
+                return lookup(url: searchUrl, identityId: identityId, type: nil)
             }
         }
 
-        return webfinger(url: url, type: nil)
+        return lookup(url: url, identityId: identityId, type: nil)
     }
 
     func contextService(id: Status.Id) -> ContextService {
@@ -218,38 +219,196 @@ public extension NavigationService {
             url
         )
     }
+
+    /// Debugging aid: clear the cache.
+    static func clearCache() {
+        navigationCache.removeAllObjects()
+    }
 }
 
 private extension NavigationService {
-    func webfinger(url: URL, type: Search.SearchType?) -> AnyPublisher<Navigation, Never> {
+    static var navigationCache = NSCache<NavigationCacheKey, NavigationCacheValue>()
+
+    /// Look up a URL in the navigation cache, content database, and WebFinger.
+    func lookup(url: URL, identityId: Identity.Id, type: Search.SearchType?) -> AnyPublisher<Navigation, Never> {
+        let cacheKey = NavigationCacheKey(identityId: identityId, url: url)
+
+        // Check the cache.
+        if let cached = Self.navigationCache.object(forKey: cacheKey) {
+            switch cached.result {
+            case let .account(id):
+                return Just(.profile(profileService(id: id))).eraseToAnyPublisher()
+            case let .status(id):
+                return Just(.collection(contextService(id: id))).eraseToAnyPublisher()
+            case let .tag(name):
+                return Just(.collection(timelineService(timeline: .tag(name)))).eraseToAnyPublisher()
+            case .url:
+                return Just(.url(url)).eraseToAnyPublisher()
+            }
+        }
+
+        return dbLookup(url: url, type: type, cacheKey: cacheKey)
+            .catch { err in
+                Logger().warning("DB error while resolving URL, falling back to WebFinger: \(err)")
+                return Empty<Navigation, Never>()
+            }
+            .collect()
+            .flatMap { navigations in
+                assert(navigations.count <= 1)
+                if let navigation = navigations.first {
+                    return Just(navigation).eraseToAnyPublisher()
+                }
+
+                // Didn't find anything in the DB. Do a WebFinger lookup.
+                return webfinger(url: url, type: type, cacheKey: cacheKey)
+            }
+            .eraseToAnyPublisher()
+    }
+
+    /// Look up a URL in the content database.
+    /// Returns up to one value.
+    /// Caches successful lookups.
+    func dbLookup(
+        url: URL,
+        type: Search.SearchType?,
+        cacheKey: NavigationCacheKey
+    ) -> AnyPublisher<Navigation, Error> {
+        let idPublisher: AnyPublisher<URLLookupResult, Error>
+        switch type {
+        case .none:
+            idPublisher = contentDatabase.lookup(url: url)
+        case .accounts:
+            idPublisher = contentDatabase.lookup(accountURL: url)
+                .map { URLLookupResult.account($0) }
+                .eraseToAnyPublisher()
+        case .statuses:
+            idPublisher = contentDatabase.lookup(statusURL: url)
+                .map { URLLookupResult.status($0) }
+                .eraseToAnyPublisher()
+        case .hashtags:
+            // We don't currently store hashtags as a DB table so we're guaranteed not to find anything.
+            idPublisher = Empty<URLLookupResult, Error>()
+                .eraseToAnyPublisher()
+        }
+
+        return idPublisher
+            .map { urlLookupResult in
+                Self.navigationCache.setObject(.init(urlLookupResult), forKey: cacheKey)
+                switch urlLookupResult {
+                case let .account(id):
+                    return .profile(profileService(id: id))
+                case let .status(id):
+                    return .collection(contextService(id: id))
+                }
+            }
+            .eraseToAnyPublisher()
+    }
+
+    /// Asks the instance server to resolve this URL using WebFinger.
+    /// Emits multiple navigation events to start and stop the loading indicator as well as return the result.
+    /// Caches successful lookups.
+    func webfinger(
+        url: URL,
+        type: Search.SearchType?,
+        cacheKey: NavigationCacheKey
+    ) -> AnyPublisher<Navigation, Never> {
         let navigationSubject = PassthroughSubject<Navigation, Never>()
+        let urlString = url.absoluteString
 
         let request = mastodonAPIClient
             .request(ResultsEndpoint.search(.init(
-                query: url.absoluteString,
+                query: urlString,
                 type: type
             )))
             .handleEvents(
                 receiveSubscription: { _ in navigationSubject.send(.webfingerStart) },
                 receiveCompletion: { _ in navigationSubject.send(.webfingerEnd) })
             .map { results -> Navigation in
-                if let tag = results.hashtags.first {
-                    return .collection(
-                        TimelineService(
-                            timeline: .tag(tag.name),
-                            environment: environment,
-                            mastodonAPIClient: mastodonAPIClient,
-                            contentDatabase: contentDatabase))
-                } else if let account = results.accounts.first {
+                // first(where:) prevents us from accidentally caching a result that merely mentions, not is, the URL.
+                if let tag = results.hashtags.first(where: { $0.url.url == url }) {
+                    Self.navigationCache.setObject(.init(tag), forKey: cacheKey)
+                    return .collection(timelineService(timeline: .tag(tag.name)))
+                } else if let account = results.accounts.first(where: { $0.url == urlString }) {
+                    Self.navigationCache.setObject(.init(account), forKey: cacheKey)
                     return .profile(profileService(account: account))
-                } else if let status = results.statuses.first {
+                } else if let status = results.statuses.first(where: { $0.url == urlString || $0.uri == urlString }) {
+                    Self.navigationCache.setObject(.init(status), forKey: cacheKey)
                     return .collection(contextService(id: status.id))
                 } else {
+                    Self.navigationCache.setObject(.url, forKey: cacheKey)
                     return .url(url)
                 }
             }
+            // Do not cache errors.
+            // Note that GtS will throw a 500 on trying to look up an URL it can't find anything for,
+            // even though the call was successful.
+            // TODO: (Vyr) navigation cache: submit patch to GtS?
             .replaceError(with: .url(url))
 
         return navigationSubject.merge(with: request).eraseToAnyPublisher()
     }
+}
+
+/// Has to be a class to use `NSCache`.
+private final class NavigationCacheKey: NSObject {
+    let identityId: Identity.Id
+    let url: URL
+
+    init(identityId: Identity.Id, url: URL) {
+        self.identityId = identityId
+        self.url = url
+    }
+
+    // `NSCache` is an antique that ignores `Hashable`.
+    // See https://medium.com/anysuggestion/how-to-use-custom-type-as-a-key-for-nscache-9bdbee02a8f1
+
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? NavigationCacheKey else { return false }
+
+        return identityId == other.identityId && url == other.url
+    }
+
+    override var hash: Int {
+        identityId.hashValue ^ url.hashValue
+    }
+}
+
+/// Has to be a class to use `NSCache`.
+private final class NavigationCacheValue {
+    let result: WebfingerResult
+
+    init(_ account: Account) {
+        self.result = .account(account.id)
+    }
+
+    init(_ status: Status) {
+        self.result = .status(status.id)
+    }
+
+    init(_ tag: Tag) {
+        self.result = .tag(tag.name)
+    }
+
+    init(_ urlLookupResult: URLLookupResult) {
+        switch urlLookupResult {
+        case let .account(id):
+            self.result = .account(id)
+        case let .status(id):
+            self.result = .status(id)
+        }
+    }
+
+    init() {
+        self.result = .url
+    }
+
+    /// We will probably have a lot of these.
+    static let url: NavigationCacheValue = NavigationCacheValue()
+}
+
+private enum WebfingerResult {
+    case account(_ id: Account.Id)
+    case status(_ id: Status.Id)
+    case tag(_ name: Tag.Name)
+    case url
 }

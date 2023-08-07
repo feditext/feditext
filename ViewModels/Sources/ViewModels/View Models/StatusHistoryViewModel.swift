@@ -26,7 +26,7 @@ public struct StatusHistoryViewModel {
 
     public func openURL(_ url: URL) {
         eventsSubject.send(
-            navigationService.item(url: url)
+            navigationService.lookup(url: url, identityId: identityContext.identity.id)
                 .map { .navigation($0) }
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()

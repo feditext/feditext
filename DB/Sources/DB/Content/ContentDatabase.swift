@@ -820,6 +820,51 @@ public extension ContentDatabase {
                     .select(LastReadIdRecord.Columns.id))
         }
     }
+
+    /// Look up an account that might be in our database by URL.
+    /// Returns up to one ID.
+    func lookup(accountURL url: URL) -> AnyPublisher<Account.Id, Error> {
+        databaseWriter
+            .readPublisher(
+                value: AccountRecord
+                    .filter(AccountRecord.Columns.url == url.absoluteString)
+                    .select(AccountRecord.Columns.id, as: Account.Id.self)
+                    .fetchOne
+            )
+            .compactMap { $0 }
+            .eraseToAnyPublisher()
+    }
+
+    /// Look up a status that might be in our database by URL, matching on the `uri` or `url` fields.
+    /// Returns up to one ID.
+    func lookup(statusURL url: URL) -> AnyPublisher<Status.Id, Error> {
+        let urlString = url.absoluteString
+        return databaseWriter
+            .readPublisher(
+                value: StatusRecord
+                    .filter(StatusRecord.Columns.uri == urlString || StatusRecord.Columns.url == urlString)
+                    .select(StatusRecord.Columns.id, as: Status.Id.self)
+                    .fetchOne
+            )
+            .compactMap { $0 }
+            .eraseToAnyPublisher()
+    }
+
+    /// Look up an object that has an URL and might be in our database.
+    /// Returns up to one ID.
+    func lookup(url: URL) -> AnyPublisher<URLLookupResult, Error> {
+        let accountPublisher = lookup(accountURL: url).map { URLLookupResult.account($0) }
+        let statusPublisher = lookup(statusURL: url).map { URLLookupResult.status($0) }
+        return accountPublisher
+            .merge(with: statusPublisher)
+            .first()
+            .eraseToAnyPublisher()
+    }
+}
+
+public enum URLLookupResult {
+    case account(_ id: Account.Id)
+    case status(_ id: Status.Id)
 }
 
 private extension ContentDatabase {

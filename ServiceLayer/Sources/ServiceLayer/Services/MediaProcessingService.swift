@@ -129,10 +129,10 @@ private extension MediaProcessingService {
     static func UIImagePNGDataPublisher(itemProvider: NSItemProvider) -> AnyPublisher<Data, Error> {
         #if canImport(UIKit)
         return Future<Data, Error> { promise in
-            itemProvider.loadItem(forTypeIdentifier: UTType.image.identifier, options: nil) { item, error in
+            itemProvider.loadItem(forTypeIdentifier: UTType.image.identifier, options: nil) { lookup, error in
                 if let error = error {
                     promise(.failure(error))
-                } else if let image = item as? UIImage, let data = image.pngData() {
+                } else if let image = lookup as? UIImage, let data = image.pngData() {
                     promise(Result {
                         let url = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
                             .appendingPathComponent(UUID().uuidString)

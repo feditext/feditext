@@ -27,7 +27,7 @@ public extension AnnouncementViewModel {
 public extension AnnouncementViewModel {
     func urlSelected(_ url: URL) {
         eventsSubject.send(
-            announcementService.navigationService.item(url: url)
+            announcementService.navigationService.lookup(url: url, identityId: identityContext.identity.id)
                 .map { .navigation($0) }
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher())

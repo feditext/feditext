@@ -155,6 +155,7 @@ struct AppPreferencesSection: View {
                 }
             }
             .pickerStyle(.menu)
+
             Button(role: .destructive) {
                 // Force all views and API clients to update.
                 rootViewModel.identitySelected(id: nil)
@@ -168,6 +169,16 @@ struct AppPreferencesSection: View {
                 }
             }
             .disabled(!apiCompatibilityModeChanged)
+
+            Button(role: .destructive) {
+                rootViewModel.clearNavigationCache()
+            } label: {
+                Label {
+                    Text("preferences.cache.clear.navigation")
+                } icon: {
+                    Image(systemName: "trash")
+                }
+            }
         }
     }
 }

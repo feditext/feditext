@@ -410,6 +410,12 @@ extension ContentDatabase {
             }
         }
 
+        migrator.registerMigration("1.7.4-url-indexes") { db in
+            try db.create(index: "accountRecord_on_url", on: "accountRecord", columns: ["url"])
+            try db.create(index: "statusRecord_on_uri", on: "statusRecord", columns: ["uri"])
+            try db.create(index: "statusRecord_on_url", on: "statusRecord", columns: ["url"])
+        }
+
         return migrator
     }
 }

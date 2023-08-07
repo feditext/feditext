@@ -82,6 +82,11 @@ public extension RootViewModel {
             directMessageTo: directMessageTo,
             extensionContext: nil)
     }
+
+    /// Debugging aid: clear the navigation cache.
+    func clearNavigationCache() {
+        NavigationService.clearCache()
+    }
 }
 
 private extension RootViewModel {
