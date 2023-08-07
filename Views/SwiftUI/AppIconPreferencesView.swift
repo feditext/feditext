@@ -37,7 +37,7 @@ private extension AppIconPreferencesView {
                         .cornerRadius(.defaultCornerRadius)
                         .shadow(radius: .defaultShadowRadius)
                         .padding(.compactSpacing)
-                        .background(appIcon == AppIcon.current ? Color.blue : Color.clear)
+                        .background(appIcon == AppIcon.current ? Color.accentColor : Color.clear)
                         .cornerRadius(.defaultCornerRadius)
                         .padding(.top)
                 }

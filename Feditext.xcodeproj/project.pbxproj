@@ -38,6 +38,7 @@
 		94B2C926292B2D1B00087955 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 94B2C928292B2D1B00087955 /* InfoPlist.strings */; };
 		94B5C6D92A741DC40076DB01 /* ActivityPub@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 94B5C6D72A741DC40076DB01 /* ActivityPub@2x.png */; };
 		94B5C6DA2A741DC40076DB01 /* ActivityPub@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 94B5C6D82A741DC40076DB01 /* ActivityPub@3x.png */; };
+		94C282782A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C282772A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift */; };
 		94E174AB299AEC2D00D040B3 /* Report+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E174AA299AEC2D00D040B3 /* Report+Extensions.swift */; };
 		94E6C2482991A235003771D1 /* PostingDefaultLanguageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C2472991A235003771D1 /* PostingDefaultLanguageView.swift */; };
 		94E6C24B2991A5BC003771D1 /* PostingLanguagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */; };
@@ -393,6 +394,7 @@
 		94B2C929292B2D3F00087955 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		94B5C6D72A741DC40076DB01 /* ActivityPub@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ActivityPub@2x.png"; sourceTree = "<group>"; };
 		94B5C6D82A741DC40076DB01 /* ActivityPub@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ActivityPub@3x.png"; sourceTree = "<group>"; };
+		94C282772A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity.Preferences.TintColor+Extensions.swift"; sourceTree = "<group>"; };
 		94E174AA299AEC2D00D040B3 /* Report+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Report+Extensions.swift"; sourceTree = "<group>"; };
 		94E6C2472991A235003771D1 /* PostingDefaultLanguageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingDefaultLanguageView.swift; sourceTree = "<group>"; };
 		94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingLanguagesView.swift; sourceTree = "<group>"; };
@@ -1057,6 +1059,7 @@
 				D0BE97A225CF44310057E161 /* CGRect+Extensions.swift */,
 				D0F0B135251AA12700942152 /* CollectionItem+Extensions.swift */,
 				D0D2AC3825BBEC0F003D5DF2 /* CollectionSection+Extensions.swift */,
+				94C282772A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift */,
 				94E7B18A2A5A0F7000A1F1DA /* List.RepliesPolicy+Extensions.swift */,
 				94979DA32A3E37ED00542793 /* MastodonNotification.NotificationType+Extensions.swift */,
 				D035F88625B8016000DC75ED /* NavigationViewModel+Extensions.swift */,
@@ -1504,6 +1507,7 @@
 				D0D93ED025D9C9ED00C622ED /* AutocompleteItemCollectionViewCell.swift in Sources */,
 				D00CB22A25C92C0F008EF267 /* Attachment+Extensions.swift in Sources */,
 				D0D2AC5325BCD2BA003D5DF2 /* TagContentConfiguration.swift in Sources */,
+				94C282782A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift in Sources */,
 				94EE2E132A402C2E00CBB9A8 /* Suggestion.Source+Extensions.swift in Sources */,
 				D08B8D72254246E200B1EBEF /* PollView.swift in Sources */,
 				D035F8A925B9155900DC75ED /* NewStatusButtonView.swift in Sources */,

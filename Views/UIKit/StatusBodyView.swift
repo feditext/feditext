@@ -155,23 +155,22 @@ final class StatusBodyView: UIView {
     /// De-emphasize links in tag view. Disabled if high contrast mode is on.
     private static var tagsViewLinkColor: UIColor = .init { traitCollection in
         if traitCollection.accessibilityContrast == .high {
-            return .link
+            return .tintColor
         }
 
         var h1: CGFloat = 0
         var s1: CGFloat = 0
         var b1: CGFloat = 0
         var a1: CGFloat = 0
-        UIColor.link.getHue(&h1, saturation: &s1, brightness: &b1, alpha: &a1)
+        UIColor.tintColor.getHue(&h1, saturation: &s1, brightness: &b1, alpha: &a1)
 
-        var h2: CGFloat = 0
         var s2: CGFloat = 0
         var b2: CGFloat = 0
         var a2: CGFloat = 0
-        UIColor.secondaryLabel.getHue(&h2, saturation: &s2, brightness: &b2, alpha: &a2)
+        UIColor.secondaryLabel.getHue(nil, saturation: &s2, brightness: &b2, alpha: &a2)
 
         return .init(
-            hue: (h1 + h2) / 2,
+            hue: h1,
             saturation: (s1 + s2) / 2,
             brightness: (b1 + b2) / 2,
             alpha: (a1 + a2) / 2
@@ -390,7 +389,9 @@ private extension StatusBodyView {
 
     /// Drop trailing hashtags from the string.
     /// Return a list of the tag IDs that were dropped and the original text for each.
-    static func dropTrailingHashtags(_ mutableContent: NSMutableAttributedString) -> [(id: TagViewModel.ID, name: String)] {
+    static func dropTrailingHashtags(
+        _ mutableContent: NSMutableAttributedString
+    ) -> [(id: TagViewModel.ID, name: String)] {
         var tagIds = Set<TagViewModel.ID>()
         var tagPairs = [(TagViewModel.ID, String)]()
         var startOfTrailingHashtags: String.Index = mutableContent.string.endIndex
@@ -465,11 +466,9 @@ private extension StatusBodyView {
             )
         }
 
-        text.addAttributes(
-            [
-                .font: UIFont.preferredFont(forTextStyle: isContextParent ? .callout : .footnote),
-                .foregroundColor: UIColor.secondaryLabel
-            ],
+        text.addAttribute(
+            .font,
+            value: UIFont.preferredFont(forTextStyle: isContextParent ? .callout : .footnote),
             range: NSRange(location: 0, length: text.length)
         )
 

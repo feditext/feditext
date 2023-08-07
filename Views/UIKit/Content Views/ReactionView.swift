@@ -41,7 +41,7 @@ extension ReactionView: UIContentView {
 }
 
 private extension ReactionView {
-    static let meBackgroundColor = UIColor.link.withAlphaComponent(0.5)
+    static let meBackgroundColor = UIColor.tintColor.withAlphaComponent(0.5)
     static let backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.5)
     func initialSetup() {
         layer.cornerRadius = .defaultCornerRadius
@@ -64,7 +64,7 @@ private extension ReactionView {
         stackView.addArrangedSubview(countLabel)
         countLabel.adjustsFontForContentSizeCategory = true
         countLabel.font = .preferredFont(forTextStyle: .headline)
-        countLabel.textColor = .link
+        countLabel.textColor = .tintColor
 
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),

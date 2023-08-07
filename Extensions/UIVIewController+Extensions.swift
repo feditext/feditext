@@ -48,7 +48,9 @@ extension UIViewController {
             if identityContext.appPreferences.openLinksInDefaultBrowser || !url.isHTTPURL {
                 UIApplication.shared.open(url)
             } else {
-                present(SFSafariViewController(url: url), animated: true)
+                let safariVC = SFSafariViewController(url: url)
+                safariVC.preferredControlTintColor = view.tintColor
+                present(safariVC, animated: true)
             }
         }
 

@@ -22,13 +22,13 @@ final class CapsuleButton: UIButton {
 
     override var isHighlighted: Bool {
         didSet {
-            backgroundColor = isHighlighted ? Self.highlightedColor : .link
+            backgroundColor = isHighlighted ? Self.highlightedColor : .tintColor
         }
     }
 
     override var isEnabled: Bool {
         didSet {
-            backgroundColor = isEnabled ? .link : UIColor.link.withAlphaComponent(0.5)
+            backgroundColor = isEnabled ? .tintColor : UIColor.tintColor.withAlphaComponent(0.5)
         }
     }
 }
@@ -40,13 +40,13 @@ private extension CapsuleButton {
         var brightness: CGFloat = 0
         var alpha: CGFloat = 0
 
-        UIColor.link.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+        UIColor.tintColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
 
         return UIColor(hue: hue, saturation: saturation, brightness: brightness * 3 / 4, alpha: alpha)
     }()
 
     func initialSetup() {
-        backgroundColor = .link
+        backgroundColor = .tintColor
         titleLabel?.adjustsFontForContentSizeCategory = true
         titleLabel?.font = .preferredFont(forTextStyle: .headline)
         setTitleColor(.white, for: .normal)

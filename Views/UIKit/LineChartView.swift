@@ -48,7 +48,7 @@ final class LineChartView: UIView {
         }
 
         path.close()
-        UIColor.link.setStroke()
+        UIColor.tintColor.setStroke()
         path.stroke()
     }
 }

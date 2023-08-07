@@ -20,6 +20,9 @@ struct RootView: View {
                 .edgesIgnoringSafeArea(.all)
                 .onReceive(navigationViewModel.identityContext.$appPreferences.map(\.colorScheme),
                            perform: setColorScheme)
+                .tint(viewModel.tintColor?.color)
+                .onReceive(viewModel.$tintColor,
+                           perform: setTintColor)
         } else {
             NavigationView {
                 AddIdentityView(
@@ -51,6 +54,14 @@ private extension RootView {
         for scene in UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }) {
             for window in scene.windows {
                 window.overrideUserInterfaceStyle = colorScheme.uiKit
+            }
+        }
+    }
+
+    func setTintColor(_ tintColor: Identity.Preferences.TintColor?) {
+        for scene in UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }) {
+            for window in scene.windows {
+                window.tintColor = tintColor.map { UIColor($0.color) }
             }
         }
     }

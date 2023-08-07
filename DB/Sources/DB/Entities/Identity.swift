@@ -67,6 +67,26 @@ public extension Identity {
         public var postingDefaultLanguage: String?
         @DecodableDefault.ExpandMediaDefault public var readingExpandMedia: Mastodon.Preferences.ExpandMedia
         @DecodableDefault.False public var readingExpandSpoilers
+        public var tintColor: TintColor?
+
+        // swiftlint:disable:next nesting
+        public enum TintColor: String, CaseIterable, Identifiable, Codable {
+            case blue
+            case brown
+            case cyan
+            case gray
+            case green
+            case indigo
+            case mint
+            case orange
+            case pink
+            case purple
+            case red
+            case teal
+            case yellow
+
+            public var id: String { rawValue }
+        }
     }
 
     var handle: String {

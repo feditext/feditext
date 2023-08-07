@@ -8,6 +8,7 @@ import ServiceLayer
 
 public final class RootViewModel: ObservableObject {
     @Published public private(set) var navigationViewModel: NavigationViewModel?
+    @Published public private(set) var tintColor: Identity.Preferences.TintColor?
 
     @Published private var mostRecentlyUsedIdentityId: Identity.Id?
     private let environment: AppEnvironment
@@ -44,6 +45,18 @@ public final class RootViewModel: ObservableObject {
         userNotificationService.events
             .sink { [weak self] in self?.handle(event: $0) }
             .store(in: &cancellables)
+
+        $navigationViewModel
+            .flatMap { navigationViewModel in
+                guard let navigationViewModel = navigationViewModel else {
+                    return Empty<Identity.Preferences.TintColor?, Never>().eraseToAnyPublisher()
+                }
+
+                return navigationViewModel.identityContext.$identity
+                    .map(\.preferences.tintColor)
+                    .eraseToAnyPublisher()
+            }
+            .assign(to: &$tintColor)
     }
 }
 

@@ -230,8 +230,17 @@ public extension IdentityDatabase {
 private extension IdentityDatabase {
     static func writePreferences(_ preferences: Identity.Preferences, id: Identity.Id) -> (Database) throws -> Void {
         {
-            let data = try IdentityRecord.databaseJSONEncoder(
+            var data = try IdentityRecord.databaseJSONEncoder(
                 for: IdentityRecord.Columns.preferences.name).encode(preferences)
+
+            // Cursed workaround for an apparent GRDB bug: GRDB somehow produces a partially initialized struct
+            // if allowed to decode data that does not have a key-value pair for tintColor, leading to weird
+            // crashes later. Patch the JSON to include an explicit null value for tintColor.
+            var decoded = String(data: data, encoding: .utf8)!
+            if !decoded.contains("tintColor") {
+                decoded.insert(contentsOf: #""tintColor":null,"#, at: decoded.index(after: decoded.startIndex))
+                data = decoded.data(using: .utf8)!
+            }
 
             try IdentityRecord
                 .filter(IdentityRecord.Columns.id == id)

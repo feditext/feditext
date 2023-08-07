@@ -27,7 +27,7 @@ final class TouchFallthroughTextView: UITextView, EmojiInsertable {
         delaysContentTouches = false
         textContainerInset = .zero
         self.textContainer.lineFragmentPadding = 0
-        linkTextAttributes = [.foregroundColor: tintColor as Any, .underlineColor: UIColor.clear]
+        linkTextAttributes = [.foregroundColor: UIColor.tintColor as Any, .underlineColor: UIColor.clear]
 
         layer.addSublayer(blockquotesLayer)
         // Draw the decorations behind the text.

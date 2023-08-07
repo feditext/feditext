@@ -61,6 +61,7 @@ struct UserPreferencesSection: View {
                 }
                 .disabled(viewModel.preferences.useServerPostingReadingPreferences)
             }
+
             Group {
                 Picker("preferences.reading-expand-media",
                        selection: $viewModel.preferences.readingExpandMedia) {
@@ -73,6 +74,22 @@ struct UserPreferencesSection: View {
             }
             .disabled(viewModel.preferences.useServerPostingReadingPreferences
                         && viewModel.identityContext.identity.authenticated)
+
+            Group {
+                Picker("preferences.tint-color", selection: $viewModel.preferences.tintColor) {
+                    Label("preferences.tint-color.default", systemImage: "swatchpalette")
+                        .tag(Identity.Preferences.TintColor?.none)
+
+                    ForEach(Identity.Preferences.TintColor.allCases) { option in
+                        Label(option.localizedStringKey, systemImage: "swatchpalette.fill")
+                            // I have literally no idea why this works and .tint(), .foregroundColor(), etc. don't,
+                            // with or without symbol rendering mode modifiers.
+                            // See https://stackoverflow.com/a/75264198
+                            .foregroundStyle(option.color, option.color)
+                            .tag(Identity.Preferences.TintColor?.some(option))
+                    }
+                }
+            }
         }
     }
 }
