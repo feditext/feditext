@@ -98,7 +98,8 @@ extension RelationshipEndpoint: Endpoint {
         case .note:
             return .mastodonForks("3.0.0") | [
                 .pleroma: .assumeAvailable,
-                .akkoma: .assumeAvailable
+                .akkoma: .assumeAvailable,
+                .gotosocial: "0.11.0-0"
             ]
         case .accountsMute, .accountsUnmute:
             return AccountsEndpoint.mutes.requires

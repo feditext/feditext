@@ -47,7 +47,8 @@ extension MarkersEndpoint: Endpoint {
     public var requires: APICapabilityRequirements? {
         .mastodonForks("3.0.0") | [
             .pleroma: .assumeAvailable,
-            .akkoma: .assumeAvailable
+            .akkoma: .assumeAvailable,
+            .gotosocial: "0.11.0-0"
         ]
     }
 
