@@ -320,8 +320,8 @@ public extension IdentityService {
         let auth: String
 
         do {
-            publicKey = try secrets.generatePushKeyAndReturnPublicKey().base64EncodedString()
-            auth = try secrets.generatePushAuth().base64EncodedString()
+            publicKey = try secrets.generatePushKeyAndReturnPublicKey().base64EncodedString().base64ToURLSafeBase64()
+            auth = try secrets.generatePushAuth().base64EncodedString().base64ToURLSafeBase64()
         } catch {
             return Fail(error: error).eraseToAnyPublisher()
         }
