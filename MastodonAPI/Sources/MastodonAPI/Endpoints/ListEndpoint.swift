@@ -63,6 +63,7 @@ extension ListEndpoint: Endpoint {
         case .create(title: _, repliesPolicy: _, exclusive: nil),
                 .update(id: _, title: _, repliesPolicy: _, exclusive: nil):
             return .mastodonForks("3.3.0") | [
+                .fedibird: "0.1.0",
                 .gotosocial: "0.10.0-0"
             ]
         case .create(title: _, repliesPolicy: nil, exclusive: _),

@@ -180,7 +180,8 @@ extension StatusEndpoint: Endpoint {
         case .react, .unreact:
             // Glitch PR #2221 reaction support must be detected using the instance API.
             return .features(.emojiReactions) | [
-                .firefish: "1.0.4-0"
+                .firefish: "1.0.4-0",
+                .iceshrimp: "1.0.2"
             ]
         case .pleromaReact, .pleromaUnreact:
             return [

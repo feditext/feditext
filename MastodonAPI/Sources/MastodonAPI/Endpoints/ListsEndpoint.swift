@@ -37,6 +37,7 @@ extension ListsEndpoint: Endpoint {
 
     public var requires: APICapabilityRequirements? {
         .mastodonForks("2.1.0") | [
+            .fedibird: "0.1.0",
             .pleroma: .assumeAvailable,
             .akkoma: .assumeAvailable,
             .gotosocial: "0.10.0-0"

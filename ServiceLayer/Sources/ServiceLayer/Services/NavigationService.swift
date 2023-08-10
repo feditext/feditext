@@ -180,15 +180,18 @@ public extension NavigationService {
         switch mastodonAPIClient.apiCapabilities.flavor {
         case nil:
             return nil
-        case .mastodon, .glitch, .hometown:
+        case .mastodon, .glitch, .hometown, .fedibird:
             url = mastodonAPIClient.instanceURL.appendingPathComponents("settings", "profile")
         case .pleroma, .akkoma:
             // Akkoma's web UI doesn't support deep linking to settings.
             return nil
         case .gotosocial:
             url = mastodonAPIClient.instanceURL.appendingPathComponents("settings", "user", "profile")
-        case .calckey, .firefish:
+        case .calckey, .firefish, .iceshrimp:
             url = mastodonAPIClient.instanceURL.appendingPathComponents("settings", "profile")
+        case .snac:
+            // TODO: (Vyr) snac support: does snac even have a web settings UI?
+            return nil
         }
 
         return .authenticatedWebView(
@@ -203,15 +206,18 @@ public extension NavigationService {
         switch mastodonAPIClient.apiCapabilities.flavor {
         case nil:
             return nil
-        case .mastodon, .glitch, .hometown:
+        case .mastodon, .glitch, .hometown, .fedibird:
             url = mastodonAPIClient.instanceURL.appendingPathComponents("auth", "edit")
         case .pleroma, .akkoma:
             // Akkoma's web UI doesn't support deep linking to settings.
             return nil
         case .gotosocial:
             url = mastodonAPIClient.instanceURL.appendingPathComponents("settings", "user", "settings")
-        case .calckey, .firefish:
+        case .calckey, .firefish, .iceshrimp:
             url = mastodonAPIClient.instanceURL.appendingPathComponents("settings", "security")
+        case .snac:
+            // TODO: (Vyr) snac support: does snac even have a web settings UI?
+            return nil
         }
 
         return .authenticatedWebView(

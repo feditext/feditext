@@ -45,8 +45,10 @@ extension TagsEndpoint: Endpoint {
             return .mastodonForks("3.5.0")
         case .trendsLegacy:
             return .mastodonForks("3.0.0") | [
+                .fedibird: "0.1.0",
                 .calckey: "14.0.0-0",
-                .firefish: "1.0.0"
+                .firefish: "1.0.0",
+                .iceshrimp: "1.0.0"
             ]
         case .followed:
             return .mastodonForks("4.0.0")

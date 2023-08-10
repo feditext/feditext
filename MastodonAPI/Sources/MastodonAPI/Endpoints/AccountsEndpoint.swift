@@ -68,13 +68,17 @@ extension AccountsEndpoint: Endpoint {
     public var requires: APICapabilityRequirements? {
         switch self {
         case .directory:
-            return .mastodonForks("3.0.0")
+            return .mastodonForks("3.0.0") | [
+                .fedibird: "0.1.0"
+            ]
         case .mutes:
             return .mastodonForks(.assumeAvailable) | [
+                .fedibird: "0.1.0",
                 .pleroma: .assumeAvailable,
                 .akkoma: .assumeAvailable,
-                .firefish: .assumeAvailable,
-                .calckey: .assumeAvailable
+                .calckey: .assumeAvailable,
+                .firefish: "1.0.0",
+                .iceshrimp: "1.0.0"
             ]
         default:
             return nil

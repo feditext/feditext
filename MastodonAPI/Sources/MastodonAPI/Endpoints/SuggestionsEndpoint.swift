@@ -24,8 +24,10 @@ extension SuggestionsEndpoint: Endpoint {
 
     public var requires: APICapabilityRequirements? {
         .mastodonForks("3.4.0") | [
+            .fedibird: "0.1.0",
             .calckey: "14.0.0-0",
-            .firefish: "1.0.0"
+            .firefish: "1.0.0",
+            .iceshrimp: "1.0.0"
         ]
     }
 

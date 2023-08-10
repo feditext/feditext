@@ -22,10 +22,12 @@ extension AnnouncementsEndpoint: Endpoint {
 
     public var requires: APICapabilityRequirements? {
         .mastodonForks("3.1.0") | [
+            .fedibird: "0.1.0",
             .pleroma: .assumeAvailable,
             .akkoma: .assumeAvailable,
             .calckey: "14.0.0-0",
-            .firefish: "1.0.0"
+            .firefish: "1.0.0",
+            .iceshrimp: "1.0.0"
         ]
     }
 

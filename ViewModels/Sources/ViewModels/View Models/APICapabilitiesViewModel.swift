@@ -20,6 +20,8 @@ public struct APICapabilitiesViewModel {
             return "flavor.glitch.name"
         case .hometown:
             return "flavor.hometown.name"
+        case .fedibird:
+            return "flavor.fedibird.name"
         case .pleroma:
             return "flavor.pleroma.name"
         case .akkoma:
@@ -30,6 +32,10 @@ public struct APICapabilitiesViewModel {
             return "flavor.calckey.name"
         case .firefish:
             return "flavor.firefish.name"
+        case .iceshrimp:
+            return "flavor.iceshrimp.name"
+        case .snac:
+            return "flavor.snac.name"
         }
     }
 
@@ -43,6 +49,8 @@ public struct APICapabilitiesViewModel {
             return URL(string: "https://glitch-soc.github.io/docs/")
         case .hometown:
             return URL(string: "https://github.com/hometown-fork/hometown")
+        case .fedibird:
+            return URL(string: "https://fedibird.com/")
         case .pleroma:
             return URL(string: "https://pleroma.social/")
         case .akkoma:
@@ -53,6 +61,10 @@ public struct APICapabilitiesViewModel {
             return URL(string: "https://calckey.org/")
         case .firefish:
             return URL(string: "https://joinfirefish.org/")
+        case .iceshrimp:
+            return URL(string: "https://iceshrimp.dev/")
+        case .snac:
+            return URL(string: "https://codeberg.org/grunfink/snac2")
         }
     }
 

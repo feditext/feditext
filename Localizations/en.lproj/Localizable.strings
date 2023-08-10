@@ -196,11 +196,14 @@
 "flavor.mastodon.name" = "Mastodon";
 "flavor.glitch.name" = "Glitch";
 "flavor.hometown.name" = "Hometown";
+"flavor.fedibird.name" = "Fedibird";
 "flavor.pleroma.name" = "Pleroma";
 "flavor.akkoma.name" = "Akkoma";
 "flavor.gotosocial.name" = "GotoSocial";
 "flavor.calckey.name" = "Calckey";
 "flavor.firefish.name" = "Firefish";
+"flavor.iceshrimp.name" = "Iceshrimp";
+"flavor.snac.name" = "snac";
 "followed-tags.new-tag-title" = "Hashtag (without #)";
 "follow-requests" = "Follow Requests";
 "instance.about-instance-title-%@" = "About %@";

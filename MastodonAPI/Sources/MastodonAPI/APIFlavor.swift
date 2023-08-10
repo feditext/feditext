@@ -9,11 +9,12 @@ import Foundation
 /// - https://api.pleroma.social/
 /// - https://docs.akkoma.dev/stable/development/API/differences_in_mastoapi_responses/
 /// - https://docs.gotosocial.org/en/latest/api/swagger/
-/// - https://calckey.social/api-doc (not clear if this lists Mastodon-compatible API methods yet)
+/// - https://firefish.social/api-doc (Misskey API only)
 public enum APIFlavor: String, Codable, Hashable, Identifiable, CaseIterable {
     case mastodon
     case glitch
     case hometown
+    case fedibird
 
     case pleroma
     case akkoma
@@ -22,6 +23,9 @@ public enum APIFlavor: String, Codable, Hashable, Identifiable, CaseIterable {
 
     case calckey
     case firefish
+    case iceshrimp
+
+    case snac
 
     public var id: Self { self }
 }

@@ -30,6 +30,7 @@ extension StringsEndpoint: Endpoint {
         switch self {
         case .domainBlocks:
             return .mastodonForks("1.4.0") | [
+                .fedibird: "0.1.0",
                 .pleroma: .assumeAvailable,
                 .akkoma: .assumeAvailable
             ]
