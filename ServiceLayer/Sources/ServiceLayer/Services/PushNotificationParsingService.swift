@@ -29,12 +29,12 @@ public extension PushNotificationParsingService {
         guard let identityIdString = userInfo[Self.identityIdUserInfoKey] as? String,
               let identityId = Identity.Id(uuidString: identityIdString),
               let encryptedMessageBase64 = (userInfo[Self.encryptedMessageUserInfoKey] as? String)?
-                .URLSafeBase64ToBase64(),
+                .urlSafeBase64ToBase64(),
               let encryptedMessage = Data(base64Encoded: encryptedMessageBase64),
-              let saltBase64 = (userInfo[Self.saltUserInfoKey] as? String)?.URLSafeBase64ToBase64(),
+              let saltBase64 = (userInfo[Self.saltUserInfoKey] as? String)?.urlSafeBase64ToBase64(),
               let salt = Data(base64Encoded: saltBase64),
               let serverPublicKeyBase64 = (userInfo[Self.serverPublicKeyUserInfoKey] as? String)?
-                .URLSafeBase64ToBase64(),
+                .urlSafeBase64ToBase64(),
               let serverPublicKeyData = Data(base64Encoded: serverPublicKeyBase64)
         else { throw NotificationExtensionServiceError.userInfoDataAbsent }
 
@@ -171,18 +171,5 @@ private extension PushNotificationParsingService {
         let unpadded = decrypted.suffix(from: paddedByteCount)
 
         return Data(unpadded)
-    }
-}
-
-private extension String {
-    func URLSafeBase64ToBase64() -> String {
-        var base64 = replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
-        let countMod4 = count % 4
-
-        if countMod4 != 0 {
-            base64.append(String(repeating: "=", count: 4 - countMod4))
-        }
-
-        return base64
     }
 }
