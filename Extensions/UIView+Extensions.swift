@@ -15,12 +15,12 @@ extension UIView {
             let mediaProportionalHeight = mediaSize.height * bounds.width / mediaSize.width
             let maxPan = (mediaProportionalHeight - bounds.height) / (2 * mediaProportionalHeight)
 
-            origin.y = CGFloat(-focus.y) * maxPan
+            origin.y = CGFloat(-(focus.y ?? 0)) * maxPan
         } else {
             let mediaProportionalWidth = mediaSize.width * bounds.height / mediaSize.height
             let maxPan = (mediaProportionalWidth - bounds.width) / (2 * mediaProportionalWidth)
 
-            origin.x = CGFloat(focus.x) * maxPan
+            origin.x = CGFloat(focus.x ?? 0) * maxPan
         }
 
         layer.contentsRect = CGRect(origin: origin, size: Self.defaultContentsRectSize)

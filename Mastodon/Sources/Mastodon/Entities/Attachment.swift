@@ -22,8 +22,8 @@ public struct Attachment: Codable {
         }
 
         public struct Focus: Codable, Hashable {
-            public var x: Double
-            public var y: Double
+            public var x: Double?
+            public var y: Double?
         }
 
         public let original: Info?

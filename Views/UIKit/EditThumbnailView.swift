@@ -208,8 +208,8 @@ private extension EditThumbnailView {
             .sink { [weak self] in
                 guard let self = self else { return }
 
-                circleViewCenterXConstraint.constant = CGFloat($0.x) * self.bounds.width / 2
-                circleViewCenterYConstraint.constant = -CGFloat($0.y) * self.bounds.height / 2
+                circleViewCenterXConstraint.constant = CGFloat($0.x ?? 0) * self.bounds.width / 2
+                circleViewCenterYConstraint.constant = -CGFloat($0.y ?? 0) * self.bounds.height / 2
 
                 guard let mediaSize = self.previewImageView.image?.size else { return }
 
