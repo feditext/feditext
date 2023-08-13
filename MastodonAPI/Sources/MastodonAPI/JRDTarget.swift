@@ -5,21 +5,21 @@ import HTTP
 import Mastodon
 
 /// Retrieve a JRD doc.
-struct JRDTarget {
+public struct JRDTarget {
     /// Base URL of the Fedi server instance.
-    let instanceURL: URL
+    public let instanceURL: URL
 }
 
 extension JRDTarget: Target {
-    var baseURL: URL { instanceURL }
-    var pathComponents: [String] { [".well-known", "nodeinfo"] }
-    var method: HTTP.HTTPMethod { .get }
-    var queryParameters: [URLQueryItem] { [] }
-    var jsonBody: [String: Any]? { nil }
-    var multipartFormData: [String: HTTP.MultipartFormValue]? { nil }
-    var headers: [String: String]? { ["Accept": "application/json"] }
+    public var baseURL: URL { instanceURL }
+    public var pathComponents: [String] { [".well-known", "nodeinfo"] }
+    public var method: HTTP.HTTPMethod { .get }
+    public var queryParameters: [URLQueryItem] { [] }
+    public var jsonBody: [String: Any]? { nil }
+    public var multipartFormData: [String: HTTP.MultipartFormValue]? { nil }
+    public var headers: [String: String]? { ["Accept": "application/json"] }
 }
 
 extension JRDTarget: DecodableTarget {
-    typealias ResultType = JRD
+    public typealias ResultType = JRD
 }

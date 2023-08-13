@@ -18,7 +18,7 @@ public final class NodeInfoClient: HTTPClient {
     public func nodeInfo() -> AnyPublisher<NodeInfo, Error> {
         request(JRDTarget(instanceURL: instanceURL))
             .tryMap(Self.newestNodeInfoURL)
-            .flatMap { url in return self.request(NodeInfoTarget(url: url)) }
+            .flatMap { url in self.request(NodeInfoTarget(url: url)) }
             .eraseToAnyPublisher()
     }
 
