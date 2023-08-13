@@ -73,4 +73,63 @@ final class HTMLTests: XCTestCase {
 
         XCTAssertEqual(expectedLinks, actualLinks)
     }
+
+    /// Hashtags should be detected if they have the `hashtag` semantic class,
+    /// regardless of whether they also have `mention`.
+    /// Mastodon and GotoSocial both send `mention hashtag` for hashtags but others might not.
+    func testHashtagVariants() {
+        // swiftlint:disable:next line_length
+        let html = HTML(raw: #"<p><span class="h-card"><a href="https://example.org/@Feditext" class="u-url mention" rel="nofollow noreferrer noopener" target="_blank">@<span>Feditext</span></a></span> <a href="https://example.org/tags/foo" class="hashtag" rel="tag nofollow noreferrer noopener" target="_blank">#<span>foo</span></a> <a href="https://example.org/tags/bar" class="mention hashtag" rel="tag nofollow noreferrer noopener" target="_blank">#<span>bar</span></a></p>"#)
+
+        // Check that the semantic class parsing has found the mentions we expect.
+
+        let expectedHashtags: [(text: String, url: URL)] = [
+            ("#foo", URL(string: "feditext:timeline?tag=foo")!),
+            ("#bar", URL(string: "feditext:timeline?tag=bar")!)
+        ]
+
+        var actualHashtags = [(text: String, url: URL)]()
+        let entireString = NSRange(location: 0, length: html.attributed.length)
+        html.attributed.enumerateAttribute(HTML.Key.linkClass, in: entireString) { val, nsRange, _ in
+            guard let linkClass = val as? HTML.LinkClass, linkClass == .hashtag else { return }
+
+            guard let range = Range(nsRange, in: html.attributed.string) else {
+                XCTFail("Getting the substring range should always succeed")
+                return
+            }
+
+            guard let url = html.attributed.attribute(
+                .link,
+                at: nsRange.location,
+                effectiveRange: nil
+            ) as? URL else {
+                XCTFail("Getting the link for a span with a linkClass should always succeed")
+                return
+            }
+
+            let text = String(html.attributed.string[range])
+
+            actualHashtags.append((text, url))
+        }
+
+        XCTAssertEqual(
+            expectedHashtags.count,
+            actualHashtags.count,
+            "Expected to find \(expectedHashtags.count) hashtags, found \(actualHashtags.count)"
+        )
+        for i in 0..<expectedHashtags.count {
+            let expectedHashtag = expectedHashtags[i]
+            let actualHashtag = actualHashtags[i]
+            XCTAssertEqual(
+                expectedHashtag.text,
+                actualHashtag.text,
+                "Hashtag \(i): Expected hashtag text \(expectedHashtag.text), got \(actualHashtag.text)"
+            )
+            XCTAssertEqual(
+                expectedHashtag.url,
+                actualHashtag.url,
+                "Hashtag \(i): Expected hashtag URL \(expectedHashtag.url), got \(actualHashtag.url)"
+            )
+        }
+    }
 }

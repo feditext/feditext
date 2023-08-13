@@ -88,7 +88,7 @@ private extension HTML {
                 background-color: rgb(4 0 0);
             }
 
-            a.mention.hashtag {
+            a.mention.hashtag, a.hashtag {
                 background-color: rgb(5 0 0);
             }
 
