@@ -133,6 +133,21 @@ private extension HTML {
                     .addTags("kbd", "samp", "tt")
                     .addTags("s", "ins", "del")
                     .removeProtocols("a", "href", "ftp", "mailto")
+                    .addProtocols(
+                        "a",
+                        "href",
+                        "web+ap",
+                        // From here on down: see https://docs.joinmastodon.org/spec/activitypub/#sanitization
+                        "dat",
+                        "dweb",
+                        "ipfs",
+                        "ipns",
+                        "ssb",
+                        "gopher",
+                        "xmpp",
+                        "magnet",
+                        "gemini"
+                    )
                     .addAttributes("a", "class")
                     .addAttributes("span", "class")
             ),
