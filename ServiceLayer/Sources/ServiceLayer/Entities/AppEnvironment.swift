@@ -45,8 +45,17 @@ public struct AppEnvironment {
 public extension AppEnvironment {
     /// Makes it possible to change the bundle ID of the app and all of its extensions from `Identify.xcconfig`.
     static var bundleIDBase: String {
-        // swiftlint:disable:next force_cast
-        Bundle.main.infoDictionary!["Feditext bundle ID base"] as! String
+        // Normal
+        if let base = Bundle.main.infoDictionary?["Feditext bundle ID base"] as? String {
+            return base
+        }
+
+        #if canImport(XCTest)
+            // Some test bundles are built in a way that doesn't include the Feditext bundle ID base
+            return "test.example"
+        #else
+            fatalError("Feditext bundle ID base missing from bundle plist")
+        #endif
     }
 
     static var appGroup: String {

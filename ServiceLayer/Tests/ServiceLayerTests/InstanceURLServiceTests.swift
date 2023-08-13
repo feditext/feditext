@@ -12,13 +12,13 @@ final class InstanceURLServiceTests: XCTestCase {
     func testFiltering() throws {
         let sut = InstanceURLService(environment: .mock())
 
-        guard case .success = sut.url(text: "unfiltered.instance") else {
+        guard case .success = sut.url(text: "mastodon.social") else {
             XCTFail("Expected success")
 
             return
         }
 
-        guard case let .failure(error) = sut.url(text: "filtered.instance"),
+        guard case let .failure(error) = sut.url(text: "activitypub-troll.cf"),
               case InstanceURLError.instanceNotSupported = error
         else {
             XCTFail("Expected instance not supported error")
@@ -26,7 +26,7 @@ final class InstanceURLServiceTests: XCTestCase {
             return
         }
 
-        guard case .failure = sut.url(text: "subdomain.filtered.instance"),
+        guard case .failure = sut.url(text: "subdomain.activitypub-troll.cf"),
               case InstanceURLError.instanceNotSupported = error
         else {
             XCTFail("Expected instance not supported error")
