@@ -90,11 +90,13 @@ public extension Identity {
     }
 
     var handle: String {
-        if let urlString = account?.url, let url = URL(string: urlString), let host = url.host {
-            return url.lastPathComponent.appending("@").appending(host)
+        if let domain = instance?.domain {
+            if let username = account?.username {
+                return "@\(username)@\(domain)"
+            }
+            return domain
         }
-
-        return instance?.title ?? url.host ?? url.absoluteString
+        return url.host ?? url.absoluteString
     }
 
     var image: URL? { (account?.avatar ?? instance?.thumbnail)?.url }
