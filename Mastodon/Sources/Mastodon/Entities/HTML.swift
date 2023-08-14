@@ -132,6 +132,10 @@ private extension HTML {
                     .addTags("h1", "h2", "h3", "h4", "h5", "h6")
                     .addTags("kbd", "samp", "tt")
                     .addTags("s", "ins", "del")
+                    // TODO: (Vyr) rich text: <hr> probably needs its own rendering, like blockquote backgrounds
+                    .addTags("hr")
+                    .addAttributes("ol", "start", "reversed")
+                    .addAttributes("li", "value")
                     .removeProtocols("a", "href", "ftp", "mailto")
                     .addProtocols(
                         "a",
@@ -148,7 +152,8 @@ private extension HTML {
                         "magnet",
                         "gemini"
                     )
-                    .addAttributes("a", "class")
+                    .addAttributes("a", "class", "rel", "type")
+                    .removeEnforcedAttribute("a", "rel")
                     .addAttributes("span", "class")
             ),
             let attributed = NSMutableAttributedString(html: style.appending(sanitized))
