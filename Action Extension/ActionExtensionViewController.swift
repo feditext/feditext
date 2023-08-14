@@ -5,7 +5,7 @@ import MobileCoreServices
 import UIKit
 import UniformTypeIdentifiers
 
-/// Let the user open a URL that might be a Mastodon profile or post in Metatext.
+/// Let the user open a URL that might be an ActivityPub actor or activity in the app.
 /// Should activate for one or more web URLs, but will only do anything with the first..
 class ActionExtensionViewController: UIViewController {
     /// Extensions aren't allowed to call `UIApplication.shared

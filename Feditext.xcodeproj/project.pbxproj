@@ -1768,8 +1768,7 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Action Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Open in Metatext";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Metabolist. All rights reserved.";
+				INFOPLIST_KEY_CFBundleDisplayName = "Open in Feditext";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1800,8 +1799,7 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Action Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Open in Metatext";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Metabolist. All rights reserved.";
+				INFOPLIST_KEY_CFBundleDisplayName = "Open in Feditext";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

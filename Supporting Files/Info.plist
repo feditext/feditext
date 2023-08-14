@@ -136,13 +136,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Enables Metatext to take photos and videos and add them to your posts</string>
+	<string>Enables Feditext to take photos and videos and add them to your posts</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Enables Metatext to take videos and add them to your posts</string>
+	<string>Enables Feditext to take videos and add them to your posts</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Enables Metatext to add items to your Photo Library</string>
+	<string>Enables Feditext to add items to your Photo Library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Enables Metatext to access photos from your library and add them to your posts</string>
+	<string>Enables Feditext to access photos from your library and add them to your posts</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
