@@ -36,8 +36,8 @@ extension AttachmentEndpoint: Endpoint {
                 params["description"] = .string(description)
             }
 
-            if let focus = focus {
-                params["focus"] = .string("\(focus.x),\(focus.y)")
+            if let x = focus?.x, let y = focus?.y {
+                params["focus"] = .string("\(x),\(y)")
             }
 
             return params
@@ -48,8 +48,8 @@ extension AttachmentEndpoint: Endpoint {
                 params["description"] = .string(description)
             }
 
-            if let focus = focus {
-                params["focus"] = .string("\(focus.x),\(focus.y)")
+            if let x = focus?.x, let y = focus?.y {
+                params["focus"] = .string("\(x),\(y)")
             }
 
             return params
