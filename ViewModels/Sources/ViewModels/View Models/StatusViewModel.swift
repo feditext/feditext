@@ -41,7 +41,8 @@ public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObj
         content = statusService.status.displayStatus.content.attributed
         contentEmojis = statusService.status.displayStatus.emojis
         spoilerText = statusService.status.displayStatus.spoilerText
-        isReblog = statusService.status.reblog != nil
+        // Quotes also contain reblog info (at least in Firefish) but should not be displayed as reblogs.
+        isReblog = statusService.status.reblog != nil && statusService.status.quote == nil
         rebloggedByDisplayName = statusService.status.account.displayName.isEmpty
             ? statusService.status.account.username
             : statusService.status.account.displayName
@@ -61,6 +62,35 @@ public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObj
 }
 
 public extension StatusViewModel {
+    /// View model for the status that this status is quoting, if there is one.
+    var quoted: Self? {
+        guard let quotedService = statusService.quoted else { return nil }
+
+        return Self(
+            statusService: quotedService,
+            identityContext: identityContext,
+            eventsSubject: eventsSubject
+        )
+    }
+
+    /// Navigate to the displayed status.
+    /// Only makes sense if we're not the currently focused status, such as if we are a quoted status.
+    func presentDisplayStatus() {
+        eventsSubject.send(
+            Just(
+                .navigation(
+                    .collection(
+                        statusService.navigationService.contextService(
+                            id: statusService.status.displayStatus.id
+                        )
+                    )
+                )
+            )
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
+        )
+    }
+
     var isMine: Bool { statusService.status.displayStatus.account.id == identityContext.identity.account?.id }
 
     var mentionsMe: Bool {

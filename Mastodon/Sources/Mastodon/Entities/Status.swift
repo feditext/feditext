@@ -35,6 +35,11 @@ public final class Status: Codable, Identifiable {
     public let url: String?
     public let inReplyToId: Status.Id?
     public let inReplyToAccountId: Account.Id?
+    /// Used by the Treehouse fork of Glitch, Fedibird, and Firefish.
+    /// - See: https://gitea.treehouse.systems/treehouse/mastodon/src/branch/main/app/serializers/rest/status_serializer.rb
+    /// - See: https://github.com/fedibird/mastodon/blob/main/app/serializers/rest/status_serializer.rb
+    /// - See: https://git.joinfirefish.org/firefish/firefish/-/blob/develop/packages/backend/src/server/api/mastodon/converters.ts
+    public let quote: Status?
     public let reblog: Status?
     public let poll: Poll?
     public let card: Card?
@@ -79,6 +84,7 @@ public final class Status: Codable, Identifiable {
         url: String?,
         inReplyToId: Status.Id?,
         inReplyToAccountId: Account.Id?,
+        quote: Status?,
         reblog: Status?,
         poll: Poll?,
         card: Card?,
@@ -109,6 +115,7 @@ public final class Status: Codable, Identifiable {
         self.url = url
         self.inReplyToId = inReplyToId
         self.inReplyToAccountId = inReplyToAccountId
+        self.quote = quote
         self.reblog = reblog
         self.poll = poll
         self.card = card
@@ -129,7 +136,12 @@ public extension Status {
     typealias Id = String
 
     var displayStatus: Status {
-        reblog ?? self
+        if quote == nil {
+            // TODO: (Vyr) quote posts: do we need to resolve an entire reblog chain for a simple Firefish reblog?
+            return reblog ?? self
+        } else {
+            return self
+        }
     }
 
     var edited: Bool {
@@ -166,6 +178,7 @@ public extension Status {
             url: self.url,
             inReplyToId: self.inReplyToId,
             inReplyToAccountId: self.inReplyToAccountId,
+            quote: self.quote,
             reblog: self.reblog,
             poll: self.poll,
             card: self.card,
@@ -203,6 +216,7 @@ extension Status: Hashable {
             && lhs.url == rhs.url
             && lhs.inReplyToId == rhs.inReplyToId
             && lhs.inReplyToAccountId == rhs.inReplyToAccountId
+            && lhs.quote == rhs.quote
             && lhs.reblog == rhs.reblog
             && lhs.poll == rhs.poll
             && lhs.card == rhs.card

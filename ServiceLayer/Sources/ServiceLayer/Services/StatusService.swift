@@ -30,6 +30,17 @@ public struct StatusService {
 }
 
 public extension StatusService {
+    var quoted: Self? {
+        guard let quote = status.quote else { return nil }
+
+        return Self(
+            environment: environment,
+            status: quote,
+            mastodonAPIClient: mastodonAPIClient,
+            contentDatabase: contentDatabase
+        )
+    }
+
     func toggleShowContent() -> AnyPublisher<Never, Error> {
         contentDatabase.toggleShowContent(id: status.displayStatus.id)
     }

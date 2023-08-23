@@ -51,7 +51,8 @@ public extension ContentDatabase {
         databaseWriter.mutatingPublisher(updates: status.save)
     }
 
-    // swiftlint:disable:next function_body_length
+    // swiftlint:disable function_body_length
+    /// Store statuses and associate them with the given timeline.
     func insert(
         statuses: [Status],
         timeline: Timeline,
@@ -131,6 +132,7 @@ public extension ContentDatabase {
             }
         }
     }
+    // swiftlint:enable function_body_length
 
     func cleanHomeTimelinePublisher() -> AnyPublisher<Never, Error> {
         databaseWriter.mutatingPublisher {
@@ -547,6 +549,8 @@ public extension ContentDatabase {
         }
     }
 
+    /// Store accounts and statuses from search results.
+    /// Tags are currently not stored.
     func insert(results: Results) -> AnyPublisher<Never, Error> {
         databaseWriter.mutatingPublisher {
             for account in results.accounts {
@@ -559,6 +563,7 @@ public extension ContentDatabase {
         }
     }
 
+    /// Retrieve the contents of a timeline.
     func timelinePublisher(_ timeline: Timeline) -> AnyPublisher<[CollectionSection], Error> {
         ValueObservation.tracking(
             TimelineItemsInfo.request(TimelineRecord.filter(TimelineRecord.Columns.id == timeline.id),
@@ -661,6 +666,8 @@ public extension ContentDatabase {
             .eraseToAnyPublisher()
     }
 
+    /// Given search results, return a publisher that augments those search results
+    /// with account relationships and status visibility toggles.
     func publisher(results: Results, limit: Int?) -> AnyPublisher<[CollectionSection], Error> {
         let accountIds = results.accounts.map(\.id)
         let statusIds = results.statuses.map(\.id)
@@ -700,7 +707,7 @@ public extension ContentDatabase {
                     .init(info: $0),
                     .init(showContentToggled: $0.showContentToggled,
                           showAttachmentsToggled: $0.showAttachmentsToggled),
-                    $0.reblogRelationship ?? $0.relationship)
+                    $0.reblogInfo?.relationship ?? $0.relationship)
             }
 
             if let limit = limit, statuses.count >= limit {
@@ -890,13 +897,19 @@ private extension ContentDatabase {
             statusIds = Array(statusIds.prefix(index + Self.cleanAfterLastReadIdCount))
         }
 
+        let quoteStatusIds = try Status.Id.fetchSet(
+            db,
+            StatusRecord.filter(statusIds.contains(StatusRecord.Columns.id)
+                                    && StatusRecord.Columns.quoteId != nil)
+                .select(StatusRecord.Columns.quoteId))
+
         let reblogStatusIds = try Status.Id.fetchSet(
             db,
             StatusRecord.filter(statusIds.contains(StatusRecord.Columns.id)
                                     && StatusRecord.Columns.reblogId != nil)
                 .select(StatusRecord.Columns.reblogId))
 
-        let statusIdsToKeep = Set(statusIds).union(reblogStatusIds)
+        let statusIdsToKeep = Set(statusIds).union(quoteStatusIds).union(reblogStatusIds)
         let allStatusIds = try Status.Id.fetchSet(db, StatusRecord.select(StatusRecord.Columns.id))
 
         return  allStatusIds.subtracting(statusIdsToKeep)

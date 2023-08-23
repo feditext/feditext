@@ -25,6 +25,7 @@ struct StatusRecord: ContentDatabaseRecord, Hashable {
     let url: String?
     let inReplyToId: Status.Id?
     let inReplyToAccountId: Account.Id?
+    let quoteId: Status.Id?
     let reblogId: Status.Id?
     let poll: Poll?
     let card: Card?
@@ -60,6 +61,7 @@ extension StatusRecord {
         static let url = Column(CodingKeys.url)
         static let inReplyToId = Column(CodingKeys.inReplyToId)
         static let inReplyToAccountId = Column(CodingKeys.inReplyToAccountId)
+        static let quoteId = Column(CodingKeys.quoteId)
         static let reblogId = Column(CodingKeys.reblogId)
         static let poll = Column(CodingKeys.poll)
         static let card = Column(CodingKeys.card)
@@ -76,47 +78,49 @@ extension StatusRecord {
 
 extension StatusRecord {
     static let account = belongsTo(AccountRecord.self)
-    static let relationship = hasOne(Relationship.self,
-                                     through: Self.account,
-                                     using: AccountRecord.relationship)
-    static let accountMoved = hasOne(AccountRecord.self,
-                                     through: Self.account,
-                                     using: AccountRecord.moved)
-    static let reblogAccount = hasOne(AccountRecord.self,
-                                      through: Self.reblog,
-                                      using: Self.account)
-    static let reblogAccountMoved = hasOne(AccountRecord.self,
-                                           through: Self.reblogAccount,
-                                           using: AccountRecord.moved)
-    static let reblog = belongsTo(StatusRecord.self)
-    static let reblogRelationship = hasOne(
+    static let relationship = hasOne(
         Relationship.self,
-        through: Self.reblog,
-        using: Self.relationship)
+        through: Self.account,
+        using: AccountRecord.relationship
+    )
+    static let accountMoved = hasOne(
+        AccountRecord.self,
+        through: Self.account,
+        using: AccountRecord.moved
+    )
+
+    static let quote = belongsTo(
+        StatusRecord.self,
+        using: ForeignKey([Columns.quoteId])
+    )
+
+    static let reblog = belongsTo(
+        StatusRecord.self,
+        using: ForeignKey([Columns.reblogId])
+    )
+
     static let showContentToggle = hasOne(StatusShowContentToggle.self)
-    static let reblogShowContentToggle = hasOne(
-        StatusShowContentToggle.self,
-        through: Self.reblog,
-        using: Self.showContentToggle)
+
     static let showAttachmentsToggle = hasOne(StatusShowAttachmentsToggle.self)
-    static let reblogShowAttachmentsToggle = hasOne(
-        StatusShowAttachmentsToggle.self,
-        through: Self.reblog,
-        using: Self.showAttachmentsToggle)
+
     static let ancestorJoins = hasMany(
         StatusAncestorJoin.self,
-        using: ForeignKey([StatusAncestorJoin.Columns.parentId]))
-        .order(StatusAncestorJoin.Columns.order)
+        using: ForeignKey([StatusAncestorJoin.Columns.parentId])
+    ).order(StatusAncestorJoin.Columns.order)
     static let descendantJoins = hasMany(
         StatusDescendantJoin.self,
-        using: ForeignKey([StatusDescendantJoin.Columns.parentId]))
-        .order(StatusDescendantJoin.Columns.order)
-    static let ancestors = hasMany(StatusRecord.self,
-                                   through: ancestorJoins,
-                                   using: StatusAncestorJoin.status)
-    static let descendants = hasMany(StatusRecord.self,
-                                   through: descendantJoins,
-                                   using: StatusDescendantJoin.status)
+        using: ForeignKey([StatusDescendantJoin.Columns.parentId])
+    ).order(StatusDescendantJoin.Columns.order)
+    static let ancestors = hasMany(
+        StatusRecord.self,
+        through: ancestorJoins,
+        using: StatusAncestorJoin.status
+    )
+    static let descendants = hasMany(
+        StatusRecord.self,
+        through: descendantJoins,
+        using: StatusDescendantJoin.status
+    )
 
     var ancestors: QueryInterfaceRequest<StatusInfo> {
         StatusInfo.request(request(for: Self.ancestors))
@@ -126,6 +130,7 @@ extension StatusRecord {
         StatusInfo.request(request(for: Self.descendants))
     }
 
+    // TODO: (Vyr) filters: should this include attachment alt text?
     var filterableContent: [String] {
         [content.attributed.string, spoilerText] + (poll?.options.map(\.title) ?? [])
     }
@@ -151,6 +156,7 @@ extension StatusRecord {
         url = status.url
         inReplyToId = status.inReplyToId
         inReplyToAccountId = status.inReplyToAccountId
+        quoteId = status.quote?.id
         reblogId = status.reblog?.id
         poll = status.poll
         card = status.card

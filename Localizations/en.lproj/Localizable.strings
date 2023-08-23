@@ -488,6 +488,11 @@
 "status.poll.time-left-%@" = "%@ left";
 "status.poll.refresh" = "Refresh";
 "status.poll.closed" = "Closed";
+"status.quote.go-to-quoted-post" = "Go to quoted post";
+"status.quote.go-to-quoted-post-on-%@" = "Go to quoted post on %@";
+"status.quote.goes-to-quoted-post-hint" = "Goes to quoted post";
+"status.quote.quoted-post-on-%@" = "Quoted post on %@";
+"status.quote.quoted-post" = "Quoted post";
 "status.reblogged-by-%@" = "%@ boosted";
 "status.reply-button.accessibility-label" = "Reply";
 "status.reblog-button.accessibility-label" = "Boost";

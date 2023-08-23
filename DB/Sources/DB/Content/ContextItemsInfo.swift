@@ -50,7 +50,7 @@ extension ContextItemsInfo {
                               isContextParent: isContextParent,
                               isReplyInContext: isReplyInContext,
                               hasReplyFollowing: hasReplyFollowing),
-                        statusInfo.reblogRelationship ?? statusInfo.relationship)
+                        statusInfo.reblogInfo?.relationship ?? statusInfo.relationship)
                 }
         }
         .map { CollectionSection(items: $0) }

@@ -7,7 +7,7 @@ import Mastodon
 extension Account {
     func save(_ db: Database) throws {
         if let moved = moved {
-            try AccountRecord(account: moved).save(db)
+            try moved.save(db)
         }
 
         try AccountRecord(account: self).save(db)

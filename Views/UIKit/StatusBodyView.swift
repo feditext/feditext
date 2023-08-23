@@ -11,6 +11,9 @@ final class StatusBodyView: UIView {
     let contentTextView = TouchFallthroughTextView()
     let attachmentsView = AttachmentsView()
     let tagsView = TouchFallthroughTextView()
+    // TODO: (Vyr) quote posts: replace with mini status view for quoted statuses
+    private var quotedButtonConfiguration = UIButton.Configuration.plain()
+    let quotedView = UIButton()
     let pollView = PollView()
     let cardView = CardView()
 
@@ -99,6 +102,37 @@ final class StatusBodyView: UIView {
                 }
             }
 
+            var accessibilityCustomActions = [UIAccessibilityCustomAction]()
+
+            if let quotedViewModel = viewModel.quoted {
+                quotedView.isHidden = false
+                let actionName: String
+                if let domain = quotedViewModel.sharingURL?.host {
+                    quotedView.accessibilityLabel = String.localizedStringWithFormat(
+                        NSLocalizedString("status.quote.quoted-post-on-%@", comment: ""),
+                        domain
+                    )
+                    actionName = String.localizedStringWithFormat(
+                        NSLocalizedString("status.quote.go-to-quoted-post-on-%@", comment: ""),
+                        domain
+                    )
+                } else {
+                    quotedView.accessibilityLabel = NSLocalizedString("status.quote.quoted-post", comment: "")
+                    actionName = NSLocalizedString("status.quote.go-to-quoted-post", comment: "")
+                }
+                quotedButtonConfiguration.title = quotedViewModel.sharingURL?.absoluteString
+                quotedView.configuration = quotedButtonConfiguration
+
+                accessibilityCustomActions.append(.init(name: actionName) { [weak self] _ in
+                    guard let quoted = self?.viewModel?.quoted else { return false }
+
+                    quoted.presentDisplayStatus()
+                    return true
+                })
+            } else {
+                quotedView.isHidden = true
+            }
+
             attachmentsView.isHidden = viewModel.attachmentViewModels.isEmpty
             attachmentsView.viewModel = viewModel
 
@@ -110,8 +144,6 @@ final class StatusBodyView: UIView {
             cardView.isHidden = viewModel.cardViewModel == nil || !viewModel.shouldShowContent
 
             accessibilityAttributedLabel = accessibilityAttributedLabel(forceShowContent: false)
-
-            var accessibilityCustomActions = [UIAccessibilityCustomAction]()
 
             mutableContent.enumerateAttribute(
                 .link,
@@ -136,8 +168,9 @@ final class StatusBodyView: UIView {
                     })
             }
 
-            self.accessibilityCustomActions =
-                accessibilityCustomActions + attachmentsView.attachmentViewAccessibilityCustomActions
+            self.accessibilityCustomActions = accessibilityCustomActions
+                + (tagsView.accessibilityCustomActions ?? [])
+                + attachmentsView.attachmentViewAccessibilityCustomActions
         }
     }
 
@@ -278,7 +311,7 @@ extension StatusBodyView {
             accessibilityAttributedLabel.append(content)
         }
 
-        for view in [tagsView, attachmentsView, pollView, cardView] where !view.isHidden {
+        for view in [tagsView, quotedView, attachmentsView, pollView, cardView] where !view.isHidden {
             guard let viewAccessibilityLabel = view.accessibilityLabel else { continue }
 
             accessibilityAttributedLabel.appendWithSeparator(viewAccessibilityLabel)
@@ -333,6 +366,21 @@ private extension StatusBodyView {
         tagsView.delegate = self
         tagsView.linkTextAttributes[.foregroundColor] = Self.tagsViewLinkColor
         stackView.addArrangedSubview(tagsView)
+
+        // TODO: (Vyr) quote posts: replace with mini status view
+        stackView.addArrangedSubview(quotedView)
+        quotedView.accessibilityHint = NSLocalizedString("status.quote.goes-to-quoted-post-hint", comment: "")
+        quotedButtonConfiguration.buttonSize = .large
+        quotedButtonConfiguration.titleLineBreakMode = .byTruncatingTail
+        quotedButtonConfiguration.imagePadding = .defaultSpacing
+        quotedButtonConfiguration.image = .init(systemName: "text.quote")
+        quotedView.configuration = quotedButtonConfiguration
+        quotedView.addAction(
+            UIAction { [weak self] _ in
+                self?.viewModel?.quoted?.presentDisplayStatus()
+            },
+            for: .primaryActionTriggered
+        )
 
         stackView.addArrangedSubview(attachmentsView)
 

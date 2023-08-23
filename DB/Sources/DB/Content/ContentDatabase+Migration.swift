@@ -416,6 +416,12 @@ extension ContentDatabase {
             try db.create(index: "statusRecord_on_url", on: "statusRecord", columns: ["url"])
         }
 
+        migrator.registerMigration("1.7.4-quoteId") { db in
+            try db.alter(table: "statusRecord") { t in
+                t.add(column: "quoteId", .text).references("statusRecord", onDelete: .cascade)
+            }
+        }
+
         return migrator
     }
 }

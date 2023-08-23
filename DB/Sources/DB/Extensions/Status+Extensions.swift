@@ -8,29 +8,54 @@ extension Status {
     func save(_ db: Database) throws {
         try account.save(db)
 
+        // Save quotes and reblogs recursively:
+        // - Firefish may serve us an entire quote or reblog chain at once.
+        // - Mastodon and Akkoma definitely do *not* do this.
+        if let quote = quote {
+            try quote.save(db)
+        }
         if let reblog = reblog {
-            try reblog.account.save(db)
-            try StatusRecord(status: reblog).save(db)
+            try reblog.save(db)
         }
 
         try StatusRecord(status: self).save(db)
     }
 
     convenience init(info: StatusInfo) {
-        var reblog: Status?
+        // Note that we currently do not retrieve quotes or reblogs recursively.
+        // In the case of quotes, one level should always be enough.
 
-        if let reblogRecord = info.reblogRecord, let reblogAccountInfo = info.reblogAccountInfo {
-            reblog = Status(record: reblogRecord, account: Account(info: reblogAccountInfo), reblog: nil)
+        var quote: Status?
+        if let quoteInfo = info.quoteInfo {
+            quote = Status(
+                record: quoteInfo.record,
+                account: Account(info: quoteInfo.accountInfo),
+                quote: nil,
+                reblog: nil
+            )
         }
 
-        self.init(record: info.record,
-                  account: Account(info: info.accountInfo),
-                  reblog: reblog)
+        var reblog: Status?
+        if let reblogInfo = info.reblogInfo {
+            reblog = Status(
+                record: reblogInfo.record,
+                account: Account(info: reblogInfo.accountInfo),
+                quote: nil,
+                reblog: nil
+            )
+        }
+
+        self.init(
+            record: info.record,
+            account: Account(info: info.accountInfo),
+            quote: quote,
+            reblog: reblog
+        )
     }
 }
 
 private extension Status {
-    convenience init(record: StatusRecord, account: Account, reblog: Status?) {
+    convenience init(record: StatusRecord, account: Account, quote: Status?, reblog: Status?) {
         self.init(
             id: record.id,
             uri: record.uri,
@@ -52,6 +77,7 @@ private extension Status {
             url: record.url,
             inReplyToId: record.inReplyToId,
             inReplyToAccountId: record.inReplyToAccountId,
+            quote: quote,
             reblog: reblog,
             poll: record.poll,
             card: record.card,

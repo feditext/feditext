@@ -22,6 +22,8 @@ extension DatabasePool {
                 configuration.defaultTransactionKind = .immediate
                 configuration.observesSuspensionNotifications = true
                 configuration.prepareDatabase { db in
+                    db.trace { print("🤨 \($0)") }
+
                     try db.usePassphrase(passphrase())
                     try db.execute(sql: "PRAGMA cipher_plaintext_header_size = 32")
 
