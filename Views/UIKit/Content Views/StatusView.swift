@@ -381,7 +381,7 @@ private extension StatusView {
         replyButton.addAction(
             UIAction { [weak self] _ in self?.statusConfiguration.viewModel.reply() },
             for: .touchUpInside)
-        replyButton.accessibilityLabel = NSLocalizedString("status.reply-button.accessibility-label", comment: "")
+        replyButton.accessibilityLabel = Self.replyButtonAccessibilityLabel
 
         reblogButton.addAction(
             UIAction { [weak self] _ in
@@ -403,12 +403,12 @@ private extension StatusView {
                 self.favorite()
             },
             for: .touchUpInside)
-        favoriteButton.accessibilityLabel = NSLocalizedString("status.favorite-button.accessibility-label", comment: "")
         favoriteButton.addTarget(self, action: #selector(favoriteButtonDoubleTap(sender:event:)), for: .touchDownRepeat)
 
         shareButton.addAction(
             UIAction { [weak self] _ in self?.statusConfiguration.viewModel.shareStatus() },
             for: .touchUpInside)
+        shareButton.accessibilityLabel = Self.shareButtonAccessibilityLabel
 
         menuButton.showsMenuAsPrimaryAction = true
 
@@ -495,6 +495,32 @@ private extension StatusView {
         NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)
             .sink { [weak self] _ in self?.configureUserInteractionEnabledForAccessibility() }
             .store(in: &cancellables)
+    }
+
+    static let replyButtonAccessibilityLabel = NSLocalizedString(
+        "status.reply-button.accessibility-label",
+        comment: ""
+    )
+
+    static let shareButtonAccessibilityLabel = NSLocalizedString(
+        "status.share-button.accessibility-label",
+        comment: ""
+    )
+
+    static func reblogButtonAccessibilityLabel(reblogged: Bool) -> String {
+        if reblogged {
+            return NSLocalizedString("status.reblog-button.undo.accessibility-label", comment: "")
+        } else {
+            return NSLocalizedString("status.reblog-button.accessibility-label", comment: "")
+        }
+    }
+
+    static func favoriteButtonAccessibilityLabel(favorited: Bool) -> String {
+        if favorited {
+            return NSLocalizedString("status.favorite-button.undo.accessibility-label", comment: "")
+        } else {
+            return NSLocalizedString("status.favorite-button.accessibility-label", comment: "")
+        }
     }
 
     func applyStatusConfiguration() {
@@ -1045,12 +1071,16 @@ private extension StatusView {
     func reblog() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
+        let reblogged = !self.statusConfiguration.viewModel.reblogged
+
+        reblogButton.accessibilityLabel = Self.reblogButtonAccessibilityLabel(reblogged: reblogged)
+
         if !UIAccessibility.isReduceMotionEnabled {
             UIViewPropertyAnimator.runningPropertyAnimator(
                 withDuration: .defaultAnimationDuration,
                 delay: 0,
                 options: .curveLinear) {
-                self.setReblogButtonColor(reblogged: !self.statusConfiguration.viewModel.reblogged)
+                self.setReblogButtonColor(reblogged: reblogged)
                 self.reblogButton.imageView?.transform =
                     self.reblogButton.imageView?.transform.rotated(by: .pi) ?? .identity
             } completion: { _ in
@@ -1064,12 +1094,16 @@ private extension StatusView {
     func favorite() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
+        let favorited = !self.statusConfiguration.viewModel.favorited
+
+        favoriteButton.accessibilityLabel = Self.favoriteButtonAccessibilityLabel(favorited: favorited)
+
         if !UIAccessibility.isReduceMotionEnabled {
             UIViewPropertyAnimator.runningPropertyAnimator(
                 withDuration: .defaultAnimationDuration,
                 delay: 0,
                 options: .curveLinear) {
-                self.setFavoriteButtonColor(favorited: !self.statusConfiguration.viewModel.favorited)
+                self.setFavoriteButtonColor(favorited: favorited)
                 self.favoriteButton.imageView?.transform =
                     self.favoriteButton.imageView?.transform.rotated(by: .pi) ?? .identity
             } completion: { _ in
@@ -1095,7 +1129,7 @@ private extension StatusView {
 
         if replyButton.isEnabled {
             actions.append(UIAccessibilityCustomAction(
-                name: replyButton.accessibilityLabel ?? "") { _ in
+                name: Self.replyButtonAccessibilityLabel) { _ in
                     viewModel.reply()
 
                     return true
@@ -1103,8 +1137,9 @@ private extension StatusView {
         }
 
         if viewModel.canBeReblogged, reblogButton.isEnabled {
+            let reblogged = !self.statusConfiguration.viewModel.reblogged
             actions.append(UIAccessibilityCustomAction(
-                name: reblogButton.accessibilityLabel ?? "") { [weak self] _ in
+                name: Self.reblogButtonAccessibilityLabel(reblogged: reblogged)) { [weak self] _ in
                     self?.reblog()
 
                     return true
@@ -1112,8 +1147,9 @@ private extension StatusView {
         }
 
         if favoriteButton.isEnabled {
+            let favorited = !self.statusConfiguration.viewModel.favorited
             actions.append(UIAccessibilityCustomAction(
-                name: favoriteButton.accessibilityLabel ?? "") { [weak self] _ in
+                name: Self.favoriteButtonAccessibilityLabel(favorited: favorited)) { [weak self] _ in
                 self?.favorite()
 
                 return true
@@ -1122,7 +1158,7 @@ private extension StatusView {
 
         if shareButton.isEnabled {
             actions.append(UIAccessibilityCustomAction(
-                name: shareButton.accessibilityLabel ?? "") { _ in
+                name: Self.shareButtonAccessibilityLabel) { _ in
                 viewModel.shareStatus()
 
                 return true

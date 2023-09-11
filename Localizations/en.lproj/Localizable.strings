@@ -499,6 +499,7 @@
 "status.reblog-button.undo.accessibility-label" = "Unboost";
 "status.favorite-button.accessibility-label" = "Favorite";
 "status.favorite-button.undo.accessibility-label" = "Unfavorite";
+"status.share-button.accessibility-label" = "Share";
 "status.show-more" = "Show More";
 "status.show-more-all-button.accessibility-label" = "Show more for all";
 "status.show-less" = "Show Less";
