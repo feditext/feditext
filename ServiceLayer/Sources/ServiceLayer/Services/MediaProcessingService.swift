@@ -35,11 +35,11 @@ enum AltTextError: String, Error {
 public enum MediaProcessingService {}
 
 public extension MediaProcessingService {
-    static func dataAndMimeType(itemProvider: NSItemProvider) -> AnyPublisher<(data: Data, mimeType: String), Error> {
+    static func dataAndMimeType(itemProvider: NSItemProvider) -> AnyPublisher<(data: InputStream, mimeType: String), Error> {
         let registeredTypes = itemProvider.registeredTypeIdentifiers.compactMap(UTType.init)
 
         let mimeType: String
-        let dataPublisher: AnyPublisher<Data, Error>
+        let dataPublisher: AnyPublisher<InputStream, Error>
 
         if let type = registeredTypes.first(where: {
             guard let mimeType = $0.preferredMIMEType else { return false }
@@ -105,8 +105,8 @@ private extension MediaProcessingService {
     ] as [CFString: Any] as CFDictionary
 
     static func fileRepresentationDataPublisher(itemProvider: NSItemProvider,
-                                                type: UTType) -> AnyPublisher<Data, Error> {
-        Future<Data, Error> { promise in
+                                                type: UTType) -> AnyPublisher<InputStream, Error> {
+        Future<InputStream, Error> { promise in
             itemProvider.loadFileRepresentation(forTypeIdentifier: type.identifier) { url, error in
                 if let error = error {
                     promise(.failure(error))
@@ -115,7 +115,11 @@ private extension MediaProcessingService {
                         if type.conforms(to: .image) && type != .gif {
                             return try imageData(url: url, type: type)
                         } else {
-                            return try Data(contentsOf: url)
+                            guard let stream = InputStream(url: url) else { throw MediaProcessingError.fileURLNotFound }
+                            // The temporary file will be removed upon return. Opening a stream gives us a file descriptor, which allows
+                            // to hold onto the file after it has been deleted.
+                            stream.open()
+                            return stream
                         }
                     })
                 } else {
@@ -126,9 +130,9 @@ private extension MediaProcessingService {
         .eraseToAnyPublisher()
     }
 
-    static func UIImagePNGDataPublisher(itemProvider: NSItemProvider) -> AnyPublisher<Data, Error> {
+    static func UIImagePNGDataPublisher(itemProvider: NSItemProvider) -> AnyPublisher<InputStream, Error> {
         #if canImport(UIKit)
-        return Future<Data, Error> { promise in
+        return Future<InputStream, Error> { promise in
             itemProvider.loadItem(forTypeIdentifier: UTType.image.identifier, options: nil) { item, error in
                 if let error = error {
                     promise(.failure(error))
@@ -152,7 +156,7 @@ private extension MediaProcessingService {
         #endif
     }
 
-    static func imageData(url: URL, type: UTType) throws -> Data {
+    static func imageData(url: URL, type: UTType) throws -> InputStream {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, Self.imageSourceOptions) else {
             throw MediaProcessingError.unableToCreateImageSource
         }
@@ -170,7 +174,7 @@ private extension MediaProcessingService {
         CGImageDestinationAddImage(imageDestination, image, nil)
         CGImageDestinationFinalize(imageDestination)
 
-        return data as Data
+        return InputStream(data: data as Data)
     }
 
     /// Convert this `NSItemProvider` callback into a Combine `Future`.

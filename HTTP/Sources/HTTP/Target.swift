@@ -38,14 +38,11 @@ public extension Target {
             urlRequest.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         } else if let multipartFormData = multipartFormData {
             let boundary = "Boundary-\(UUID().uuidString)"
-            var httpBody = Data()
 
-            for (key, value) in multipartFormData {
-                httpBody.append(value.httpBodyComponent(boundary: boundary, key: key))
-            }
+            var httpBodyStreams = multipartFormData.flatMap { key, value in value.httpBodyComponent(boundary: boundary, key: key) }
+            httpBodyStreams.append(InputStream(data: Data("--\(boundary)--".utf8)))
 
-            httpBody.append(Data("--\(boundary)--".utf8))
-            urlRequest.httpBody = httpBody
+            urlRequest.httpBodyStream = SegmentedInputStream(segments: httpBodyStreams)
             urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         }
 

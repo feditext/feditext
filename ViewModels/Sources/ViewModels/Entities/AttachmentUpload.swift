@@ -10,13 +10,13 @@ public class AttachmentUploadViewModel: ObservableObject {
     public let progress = Progress(totalUnitCount: 1)
     public let parentViewModel: ComposeStatusViewModel
 
-    let data: Data
+    let inputStream: InputStream
     let mimeType: String
     let description: String?
     var cancellable: AnyCancellable?
 
-    init(data: Data, mimeType: String, description: String?, parentViewModel: ComposeStatusViewModel) {
-        self.data = data
+    init(inputStream: InputStream, mimeType: String, description: String?, parentViewModel: ComposeStatusViewModel) {
+        self.inputStream = inputStream
         self.mimeType = mimeType
         self.description = description
         self.parentViewModel = parentViewModel
@@ -28,7 +28,7 @@ public extension AttachmentUploadViewModel {
 
     func upload() -> AnyPublisher<Attachment, Error> {
         parentViewModel.identityContext.service.uploadAttachment(
-            data: data,
+            inputStream: inputStream,
             mimeType: mimeType,
             description: description,
             progress: progress

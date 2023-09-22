@@ -344,14 +344,14 @@ public extension IdentityService {
     }
 
     func uploadAttachment(
-        data: Data,
+        inputStream: InputStream,
         mimeType: String,
         description: String?,
         progress: Progress
     ) -> AnyPublisher<Attachment, Error> {
         mastodonAPIClient.request(
             AttachmentEndpoint.create(
-                data: data,
+                inputStream: inputStream,
                 mimeType: mimeType,
                 description: description,
                 focus: nil

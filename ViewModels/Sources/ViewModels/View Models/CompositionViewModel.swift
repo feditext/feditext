@@ -239,7 +239,7 @@ public extension CompositionViewModel {
                 .assignErrorsToAlertItem(to: \.alertItem, on: parentViewModel)
                 .map { result, description in
                     AttachmentUploadViewModel(
-                        data: result.data,
+                        inputStream: result.data,
                         mimeType: result.mimeType,
                         description: description,
                         parentViewModel: parentViewModel

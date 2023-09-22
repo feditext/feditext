@@ -5,7 +5,7 @@ import HTTP
 import Mastodon
 
 public enum AttachmentEndpoint {
-    case create(data: Data, mimeType: String, description: String?, focus: Attachment.Meta.Focus?)
+    case create(inputStream: InputStream, mimeType: String, description: String?, focus: Attachment.Meta.Focus?)
     case update(id: Attachment.Id, description: String?, focus: Attachment.Meta.Focus?)
 }
 
@@ -27,10 +27,10 @@ extension AttachmentEndpoint: Endpoint {
 
     public var multipartFormData: [String: MultipartFormValue]? {
         switch self {
-        case let .create(data, mimeType, description, focus):
+        case let .create(inputStream, mimeType, description, focus):
             var params = [String: MultipartFormValue]()
 
-            params["file"] = .data(data, filename: UUID().uuidString, mimeType: mimeType)
+            params["file"] = .inputStream(inputStream, filename: UUID().uuidString, mimeType: mimeType)
 
             if let description = description {
                 params["description"] = .string(description)
