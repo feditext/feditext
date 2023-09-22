@@ -258,6 +258,11 @@ public extension AppPreferences {
         }
         set { self[.postingLanguages] = newValue }
     }
+
+    var optimizeImagesBeforeUpload: Bool {
+        get { self[.optimizeImagesBeforeUpload] ?? true }
+        set { self[.optimizeImagesBeforeUpload] = newValue }
+    }
 }
 
 private extension AppPreferences {
@@ -288,6 +293,7 @@ private extension AppPreferences {
         case useMediaDescriptionMetadata
         case visibilityIconColors
         case postingLanguages
+        case optimizeImagesBeforeUpload
     }
 
     subscript<T>(index: Item) -> T? {

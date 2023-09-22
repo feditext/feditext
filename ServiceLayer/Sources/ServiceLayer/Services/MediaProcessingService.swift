@@ -35,7 +35,7 @@ enum AltTextError: String, Error {
 public enum MediaProcessingService {}
 
 public extension MediaProcessingService {
-    static func dataAndMimeType(itemProvider: NSItemProvider) -> AnyPublisher<(data: InputStream, mimeType: String), Error> {
+    static func dataAndMimeType(itemProvider: NSItemProvider, optimizeImages: Bool) -> AnyPublisher<(data: InputStream, mimeType: String), Error> {
         let registeredTypes = itemProvider.registeredTypeIdentifiers.compactMap(UTType.init)
 
         let mimeType: String
@@ -47,10 +47,10 @@ public extension MediaProcessingService {
             return uploadableMimeTypes.contains(mimeType)
         }), let preferredMIMEType = type.preferredMIMEType {
             mimeType = preferredMIMEType
-            dataPublisher = fileRepresentationDataPublisher(itemProvider: itemProvider, type: type)
+            dataPublisher = fileRepresentationDataPublisher(itemProvider: itemProvider, type: type, optimizeImages: optimizeImages)
         } else if registeredTypes == [UTType.image], let pngMIMEType = UTType.png.preferredMIMEType { // screenshot
             mimeType = pngMIMEType
-            dataPublisher = UIImagePNGDataPublisher(itemProvider: itemProvider)
+            dataPublisher = UIImagePNGDataPublisher(itemProvider: itemProvider, optimize: optimizeImages)
         } else {
             return Fail(error: MediaProcessingError.invalidMimeType).eraseToAnyPublisher()
         }
@@ -105,7 +105,8 @@ private extension MediaProcessingService {
     ] as [CFString: Any] as CFDictionary
 
     static func fileRepresentationDataPublisher(itemProvider: NSItemProvider,
-                                                type: UTType) -> AnyPublisher<InputStream, Error> {
+                                                type: UTType,
+                                                optimizeImages: Bool) -> AnyPublisher<InputStream, Error> {
         Future<InputStream, Error> { promise in
             itemProvider.loadFileRepresentation(forTypeIdentifier: type.identifier) { url, error in
                 if let error = error {
@@ -113,7 +114,7 @@ private extension MediaProcessingService {
                 } else if let url = url {
                     promise(Result {
                         if type.conforms(to: .image) && type != .gif {
-                            return try imageData(url: url, type: type)
+                            return try imageData(url: url, type: type, optimize: optimizeImages)
                         } else {
                             guard let stream = InputStream(url: url) else { throw MediaProcessingError.fileURLNotFound }
                             // The temporary file will be removed upon return. Opening a stream gives us a file descriptor, which allows
@@ -130,7 +131,7 @@ private extension MediaProcessingService {
         .eraseToAnyPublisher()
     }
 
-    static func UIImagePNGDataPublisher(itemProvider: NSItemProvider) -> AnyPublisher<InputStream, Error> {
+    static func UIImagePNGDataPublisher(itemProvider: NSItemProvider, optimize: Bool) -> AnyPublisher<InputStream, Error> {
         #if canImport(UIKit)
         return Future<InputStream, Error> { promise in
             itemProvider.loadItem(forTypeIdentifier: UTType.image.identifier, options: nil) { item, error in
@@ -143,7 +144,7 @@ private extension MediaProcessingService {
 
                         try data.write(to: url)
 
-                        return try imageData(url: url, type: .png)
+                        return try imageData(url: url, type: .png, optimize: optimize)
                     })
                 } else {
                     promise(.failure(MediaProcessingError.imageNotFound))
@@ -156,7 +157,11 @@ private extension MediaProcessingService {
         #endif
     }
 
-    static func imageData(url: URL, type: UTType) throws -> InputStream {
+    static func imageData(url: URL, type: UTType, optimize: Bool) throws -> InputStream {
+        if !optimize, let stream = InputStream(url: url) {
+            stream.open()
+            return stream
+        }
         guard let source = CGImageSourceCreateWithURL(url as CFURL, Self.imageSourceOptions) else {
             throw MediaProcessingError.unableToCreateImageSource
         }
