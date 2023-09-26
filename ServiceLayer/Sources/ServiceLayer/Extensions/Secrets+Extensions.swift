@@ -1,13 +1,24 @@
 // Copyright © 2023 Vyr Cossont. All rights reserved.
 
+import Foundation
 import MastodonAPI
 import os
 import Secrets
 
 extension Secrets {
+    // TODO: (Vyr) permanent fix: don't use the keychain for anything read frequently
+    private static let cache = NSCache<NSUUID, APICapabilitiesCacheValue>()
+
     func getAPICapabilities() -> APICapabilities {
+        let key = identityId as NSUUID
+
+        if let cached = Self.cache.object(forKey: key) {
+            return cached.apiCapabilities
+        }
+
+        let apiCapabilities: APICapabilities
         do {
-            return .init(
+            apiCapabilities = .init(
                 nodeinfoSoftware: .init(
                     name: try getSoftwareName(),
                     version: try getSoftwareVersion()
@@ -19,16 +30,21 @@ extension Secrets {
             // This should only happen with old versions of the secret store that predate NodeInfo detection.
             // In this case, it's okay to return a default; something will call refreshAPICapabilities soon.
             Logger().warning("API capabilities missing from Secrets, falling back to unknown capabilities")
-            return .init(
+            apiCapabilities = .init(
                 nodeinfoSoftware: .init(
                     name: "",
                     version: ""
                 )
             )
         }
+
+        Self.cache.setObject(.init(apiCapabilities: apiCapabilities), forKey: key)
+        return apiCapabilities
     }
 
     func setAPICapabilities(_ apiCapabilities: APICapabilities) throws {
+        Self.cache.removeObject(forKey: identityId as NSUUID)
+
         try setSoftwareName(apiCapabilities.flavor?.rawValue ?? "")
         try setSoftwareVersion(apiCapabilities.version?.description ?? "")
         try setAPIFeatures(apiCapabilities.features)
@@ -44,6 +60,8 @@ extension Secrets {
     }
 
     func setAPIFeatures(_ features: Set<APIFeature>) throws {
+        Self.cache.removeObject(forKey: identityId as NSUUID)
+
         try setAPIFeaturesRawValues(features.map(\.rawValue))
     }
 
@@ -56,6 +74,16 @@ extension Secrets {
     }
 
     func setAPICompatibilityMode(_ apiCompatibilityMode: APICompatibilityMode?) throws {
+        Self.cache.removeObject(forKey: identityId as NSUUID)
+
         try setAPICompatibilityModeRawValue(apiCompatibilityMode?.rawValue ?? "")
+    }
+}
+
+private class APICapabilitiesCacheValue {
+    let apiCapabilities: APICapabilities
+
+    init(apiCapabilities: APICapabilities) {
+        self.apiCapabilities = apiCapabilities
     }
 }
