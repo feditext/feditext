@@ -1,7 +1,7 @@
 @testable import MastodonAPI
 import XCTest
 
-final class MastodonAPITests: XCTestCase {
+final class APICapabilitiesTests: XCTestCase {
     /// Test that a string known to be a valid semver can be parsed into all the useful parts.
     func testStrictSemver() {
         let apiCapabilities = APICapabilities(

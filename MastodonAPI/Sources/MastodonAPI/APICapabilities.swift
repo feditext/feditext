@@ -8,29 +8,23 @@ import Semver
 public struct APICapabilities: Codable {
     public let flavor: APIFlavor?
     public let version: Semver?
-    public let features: Set<APIFeature>
-    public let compatibilityMode: APICompatibilityMode?
-    private let nodeinfoSoftware: NodeInfo.Software
+    public var features: Set<APIFeature>
+    public var compatibilityMode: APICompatibilityMode?
 
     public init(
         flavor: APIFlavor? = nil,
         version: Semver? = nil,
         features: Set<APIFeature> = Set(),
-        compatibilityMode: APICompatibilityMode? = nil,
-        nodeinfoSoftware: NodeInfo.Software
+        compatibilityMode: APICompatibilityMode? = nil
     ) {
         self.flavor = flavor
         self.version = version
         self.features = features
         self.compatibilityMode = compatibilityMode
-        self.nodeinfoSoftware = nodeinfoSoftware
     }
 
     /// Init from the mandatory software object of a NodeInfo doc.
-    public init(
-        nodeinfoSoftware: NodeInfo.Software,
-        compatibilityMode: APICompatibilityMode? = nil
-    ) {
+    public init(nodeinfoSoftware: NodeInfo.Software) {
         let version = nodeinfoSoftware.version
             .split(separator: " ", maxSplits: 1)
             .first
@@ -45,32 +39,17 @@ public struct APICapabilities: Codable {
 
         self.init(
             flavor: flavor,
-            version: version,
-            compatibilityMode: compatibilityMode,
-            nodeinfoSoftware: nodeinfoSoftware
+            version: version
         )
     }
 
     /// Init from a NodeInfo doc.
-    public init(
-        nodeInfo: NodeInfo,
-        compatibilityMode: APICompatibilityMode? = nil
-    ) {
-        self.init(
-            nodeinfoSoftware: nodeInfo.software,
-            compatibilityMode: compatibilityMode
-        )
+    public init(nodeInfo: NodeInfo) {
+        self.init(nodeinfoSoftware: nodeInfo.software)
     }
 
-    public func withDetectedFeatures(_ features: Set<APIFeature>) -> Self {
-        APICapabilities(
-            flavor: flavor,
-            version: version,
-            features: features,
-            compatibilityMode: compatibilityMode,
-            nodeinfoSoftware: nodeinfoSoftware
-        )
-    }
+    /// For a few cases where we're using something so basic that every implementation has it.
+    public static let unknown: Self = .init()
 
     /// Pull the first three numbers off the front and hope it's good enough.
     private static func relaxedSemver(_ s: Substring) -> Semver {

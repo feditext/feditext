@@ -17,30 +17,49 @@ extension APICapabilities {
     ) -> AnyPublisher<APICapabilities, Error> {
         NodeInfoClient(session: session, instanceURL: instanceURL)
             .nodeInfo()
-            .map { nodeInfo in
-                APICapabilities(
-                    nodeInfo: nodeInfo,
-                    compatibilityMode: secrets.getAPICompatibilityMode()
-                )
+            .map(APICapabilities.init(nodeInfo:))
+            .map { apiCapabilities in
+                var apiCapabilities = apiCapabilities
+                apiCapabilities.compatibilityMode = secrets.getAPICompatibilityMode()
+                return apiCapabilities
             }
             .flatMap { apiCapabilities in
-                MastodonAPIClient(
+                Self.detectFeatures(
                     session: session,
                     instanceURL: instanceURL,
                     apiCapabilities: apiCapabilities
                 )
-                .request(InstanceEndpoint.instance)
-                    .map { instance in
-                        var features = Set<APIFeature>()
-
-                        if instance.configuration?.reactions != nil {
-                            features.insert(.emojiReactions)
-                        }
-
-                        try? secrets.setAPICapabilities(apiCapabilities.withDetectedFeatures(features))
-                        return apiCapabilities
-                    }
+            }
+            .tryMap { apiCapabilities in
+                try secrets.setAPICapabilities(apiCapabilities)
+                return apiCapabilities
             }
             .eraseToAnyPublisher()
+    }
+
+    /// Add features detected from the instance API.
+    private static func detectFeatures(
+        session: URLSession,
+        instanceURL: URL,
+        apiCapabilities: APICapabilities
+    ) -> AnyPublisher<APICapabilities, Error> {
+        MastodonAPIClient(
+            session: session,
+            instanceURL: instanceURL,
+            apiCapabilities: apiCapabilities
+        )
+        .request(InstanceEndpoint.instance)
+        .map { instance in
+            var apiCapabilities = apiCapabilities
+            var features = Set<APIFeature>()
+
+            if instance.configuration?.reactions != nil {
+                features.insert(.emojiReactions)
+            }
+
+            apiCapabilities.features = features
+            return apiCapabilities
+        }
+        .eraseToAnyPublisher()
     }
 }

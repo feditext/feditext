@@ -16,16 +16,14 @@ extension Secrets {
             return cached.apiCapabilities
         }
 
-        let apiCapabilities: APICapabilities
+        var apiCapabilities: APICapabilities
         do {
             apiCapabilities = .init(
                 nodeinfoSoftware: .init(
                     name: try getSoftwareName(),
                     version: try getSoftwareVersion()
-                ),
-                compatibilityMode: getAPICompatibilityMode()
+                )
             )
-            .withDetectedFeatures(getAPIFeatures())
         } catch {
             // This should only happen with old versions of the secret store that predate NodeInfo detection.
             // In this case, it's okay to return a default; something will call refreshAPICapabilities soon.
@@ -37,6 +35,8 @@ extension Secrets {
                 )
             )
         }
+        apiCapabilities.compatibilityMode = getAPICompatibilityMode()
+        apiCapabilities.features = getAPIFeatures()
 
         Self.cache.setObject(.init(apiCapabilities: apiCapabilities), forKey: key)
         return apiCapabilities
