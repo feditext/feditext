@@ -51,6 +51,15 @@ public struct APICapabilities: Codable {
     /// For a few cases where we're using something so basic that every implementation has it.
     public static let unknown: Self = .init()
 
+    /// Detect features from a given instance.
+    public mutating func setDetectedFeatures(_ instance: Instance) {
+        features = .init()
+
+        if instance.configuration?.reactions != nil {
+            features.insert(.emojiReactions)
+        }
+    }
+
     /// Pull the first three numbers off the front and hope it's good enough.
     private static func relaxedSemver(_ s: Substring) -> Semver {
         let trimmed: Substring

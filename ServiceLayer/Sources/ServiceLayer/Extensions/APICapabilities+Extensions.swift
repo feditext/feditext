@@ -51,13 +51,7 @@ extension APICapabilities {
         .request(InstanceEndpoint.instance)
         .map { instance in
             var apiCapabilities = apiCapabilities
-            var features = Set<APIFeature>()
-
-            if instance.configuration?.reactions != nil {
-                features.insert(.emojiReactions)
-            }
-
-            apiCapabilities.features = features
+            apiCapabilities.setDetectedFeatures(instance)
             return apiCapabilities
         }
         .eraseToAnyPublisher()
