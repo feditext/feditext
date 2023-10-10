@@ -375,6 +375,7 @@
 		943CF10B2A731FC20032A0D2 /* AppIconClassic@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIconClassic@3x.png"; sourceTree = "<group>"; };
 		943CF10C2A731FC20032A0D2 /* AppIconRainbow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIconRainbow@2x.png"; sourceTree = "<group>"; };
 		943CF1152A7324620032A0D2 /* Asset Originals */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Asset Originals"; sourceTree = "<group>"; };
+		943D4FFF2AD5B89B0097C4DF /* MastodonAPI GtS integration.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MastodonAPI GtS integration.xctestplan"; sourceTree = "<group>"; };
 		9460331E2A2D3B8E00F5757E /* NotificationReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationReportView.swift; sourceTree = "<group>"; };
 		947873BB297E0F9000CACEFE /* Identity.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Identity.xcconfig; sourceTree = "<group>"; };
 		947B6CEE2A70909300630B24 /* EditDisplayFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDisplayFilterView.swift; sourceTree = "<group>"; };
@@ -603,7 +604,7 @@
 		D9E658702601CF79007C426E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		D9E658762601CF94007C426E /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D9E6587B2601CF94007C426E /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ja; path = ja.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		F168BCBF2966369200306FAF /* Feditext.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = Feditext.xctestplan; path = Feditext.xcodeproj/Feditext.xctestplan; sourceTree = "<group>"; };
+		F168BCBF2966369200306FAF /* Feditext.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Feditext.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -667,6 +668,15 @@
 				9432DE2529A1587C0007C2BF /* SECURITY.md */,
 			);
 			name = Docs;
+			sourceTree = "<group>";
+		};
+		943D50002AD5B8C10097C4DF /* Test Plans */ = {
+			isa = PBXGroup;
+			children = (
+				F168BCBF2966369200306FAF /* Feditext.xctestplan */,
+				943D4FFF2AD5B89B0097C4DF /* MastodonAPI GtS integration.xctestplan */,
+			);
+			path = "Test Plans";
 			sourceTree = "<group>";
 		};
 		947B6CED2A70824800630B24 /* Timeline Actions */ = {
@@ -902,7 +912,6 @@
 				D085C3BB25008DEC008A6C5E /* DB */,
 				9432DE2429A158460007C2BF /* Docs */,
 				D0C7D46824F76169001EBDBB /* Extensions */,
-				F168BCBF2966369200306FAF /* Feditext.xctestplan */,
 				D0666A7924C7745A00F3F04B /* Frameworks */,
 				D0BFDAF524FC7C5300C86618 /* HTTP */,
 				947873BB297E0F9000CACEFE /* Identity.xcconfig */,
@@ -918,6 +927,7 @@
 				D08E526D257C36CA00FA2C5F /* Share Extension */,
 				D0C7D41D24F76169001EBDBB /* Supporting Files */,
 				D0C7D45324F76169001EBDBB /* System */,
+				943D50002AD5B8C10097C4DF /* Test Plans */,
 				D0666A2224C677B400F3F04B /* Tests */,
 				D08B8D5C2540DDFC00B1EBEF /* Transitions */,
 				D0C7D43024F76169001EBDBB /* View Controllers */,

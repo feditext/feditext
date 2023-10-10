@@ -1,0 +1,45 @@
+{
+  "configurations" : [
+    {
+      "id" : "85E4C76B-E2A2-4496-909D-6B36FCA9F1CE",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "MASTODON_API_TEST_INSTANCE_URL",
+        "value" : "http:\/\/localhost:8080"
+      },
+      {
+        "key" : "MASTODON_API_TEST_USERNAME",
+        "value" : "zork@example.org"
+      },
+      {
+        "key" : "MASTODON_API_TEST_PASSWORD",
+        "value" : "password"
+      },
+      {
+        "key" : "MASTODON_API_TEST_ACCESS_TOKEN",
+        "value" : "NZAZOTC0OWITMDU0NC0ZODG4LWE4NJITMWUXM2M4MTRHZDEX"
+      },
+      {
+        "key" : "MASTODON_API_TEST_GOTOSOCIAL_TESTRIG_REAL_VERSION",
+        "value" : "0.11.1"
+      }
+    ]
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "MastodonAPITests",
+        "name" : "MastodonAPITests"
+      }
+    }
+  ],
+  "version" : 1
+}
