@@ -6,13 +6,15 @@ import Mastodon
 
 public enum AccessTokenEndpoint {
     case oauthToken(
-            clientId: String,
-            clientSecret: String,
-            grantType: String,
-            scopes: String,
-            code: String?,
-            redirectURI: String?
-         )
+        clientId: String,
+        clientSecret: String,
+        grantType: String,
+        scopes: String,
+        code: String?,
+        username: String?,
+        password: String?,
+        redirectURI: String?
+    )
     case accounts(Registration)
 }
 
@@ -60,7 +62,16 @@ extension AccessTokenEndpoint: Endpoint {
 
     public var jsonBody: [String: Any]? {
         switch self {
-        case let .oauthToken(clientId, clientSecret, grantType, scopes, code, redirectURI):
+        case let .oauthToken(
+            clientId,
+            clientSecret,
+            grantType,
+            scopes,
+            code,
+            username,
+            password,
+            redirectURI
+        ):
             var params = [
                 "client_id": clientId,
                 "client_secret": clientSecret,
@@ -68,6 +79,8 @@ extension AccessTokenEndpoint: Endpoint {
                 "scope": scopes]
 
             params["code"] = code
+            params["username"] = username
+            params["password"] = password
             params["redirect_uri"] = redirectURI
 
             return params

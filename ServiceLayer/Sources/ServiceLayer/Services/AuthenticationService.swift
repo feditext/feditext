@@ -49,6 +49,8 @@ extension AuthenticationService {
                         grantType: OAuth.registrationGrantType,
                         scopes: OAuth.scopes,
                         code: nil,
+                        username: nil,
+                        password: nil,
                         redirectURI: redirectURI.absoluteString))
                     .flatMap { accessToken -> AnyPublisher<AccessToken, Error> in
                         mastodonAPIClient.accessToken = accessToken.accessToken
@@ -141,6 +143,8 @@ private extension AuthenticationService {
                         grantType: OAuth.authorizationCodeGrantType,
                         scopes: OAuth.scopes,
                         code: $0,
+                        username: nil,
+                        password: nil,
                         redirectURI: AppUrl.oauthCallback.absoluteString))
             }
             .eraseToAnyPublisher()
