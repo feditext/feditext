@@ -169,9 +169,16 @@ private extension HTML {
 
         let entireString = NSRange(location: 0, length: attributed.length)
         attributed.enumerateAttribute(.backgroundColor, in: entireString) { val, range, _ in
+            #if !os(macOS)
             guard let color = val as? UIColor else {
                 return
             }
+            #else
+            guard let color = val as? NSColor else {
+                return
+            }
+            #endif
+
             var r: CGFloat = 0
             var g: CGFloat = 0
             var b: CGFloat = 0
@@ -229,7 +236,7 @@ private extension HTML {
             switch linkClass {
             case .hashtag:
                 let trimmed: Substring
-                if #available(iOS 16.0, *) {
+                if #available(iOS 16.0, macOS 13.0, *) {
                     trimmed = substring.trimmingPrefix("#")
                 } else {
                     trimmed = substring.drop(while: { $0 == "#" })

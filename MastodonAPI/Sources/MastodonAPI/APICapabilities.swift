@@ -75,7 +75,7 @@ public struct APICapabilities: Codable {
     /// Pull the first three numbers off the front and hope it's good enough.
     private static func relaxedSemver(_ s: Substring) -> Semver {
         let trimmed: Substring
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.0, macOS 13.0, *) {
             trimmed = s.trimmingPrefix("v")
         } else {
             trimmed = s.drop(while: { $0 == "v" })
