@@ -63,18 +63,18 @@ public extension PushNotificationParsingService {
         case .poll, .status:
             let secrets = Secrets(identityId: identityId, keychain: environment.keychain)
             let instanceURL: URL
+            let mastodonAPIClient: MastodonAPIClient
 
             do {
                 instanceURL = try secrets.getInstanceURL()
+                mastodonAPIClient = try MastodonAPIClient(
+                    session: .shared,
+                    instanceURL: instanceURL,
+                    apiCapabilities: secrets.getAPICapabilities()
+                )
             } catch {
                 return Fail(error: error).eraseToAnyPublisher()
             }
-
-            let mastodonAPIClient = MastodonAPIClient(
-                session: .shared,
-                instanceURL: instanceURL,
-                apiCapabilities: secrets.getAPICapabilities()
-            )
 
             mastodonAPIClient.accessToken = pushNotification.accessToken
 

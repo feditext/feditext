@@ -29,14 +29,14 @@ public struct IdentityService {
 
         let instanceURL = try secrets.getInstanceURL()
 
-        mastodonAPIClient = MastodonAPIClient(
+        mastodonAPIClient = try MastodonAPIClient(
             session: environment.session,
             instanceURL: instanceURL,
             apiCapabilities: secrets.getAPICapabilities()
         )
         mastodonAPIClient.accessToken = try? secrets.getAccessToken()
 
-        nodeInfoClient = NodeInfoClient(session: environment.session, instanceURL: instanceURL)
+        nodeInfoClient = try NodeInfoClient(session: environment.session, instanceURL: instanceURL)
 
         let appPreferences = AppPreferences(environment: environment)
 

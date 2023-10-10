@@ -7,7 +7,7 @@ extension MastodonAPIClient {
     static func forIdentity(id: Identity.Id, environment: AppEnvironment) throws -> Self {
         let secrets = Secrets(identityId: id, keychain: environment.keychain)
 
-        let client = Self(
+        let client = try Self(
             session: environment.session,
             instanceURL: try secrets.getInstanceURL(),
             apiCapabilities: secrets.getAPICapabilities()

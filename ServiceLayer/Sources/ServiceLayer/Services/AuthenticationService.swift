@@ -15,8 +15,8 @@ struct AuthenticationService {
     private let webAuthSessionType: WebAuthSession.Type
     private let webAuthSessionContextProvider = WebAuthSessionContextProvider()
 
-    init(url: URL, environment: AppEnvironment, apiCapabilities: APICapabilities) {
-        mastodonAPIClient = MastodonAPIClient(
+    init(url: URL, environment: AppEnvironment, apiCapabilities: APICapabilities) throws {
+        mastodonAPIClient = try MastodonAPIClient(
             session: environment.session,
             instanceURL: url,
             apiCapabilities: apiCapabilities

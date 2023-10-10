@@ -8,22 +8,28 @@ import Mastodon
 /// Client for retrieving NodeInfo for an instance.
 public final class NodeInfoClient: HTTPClient {
     private let instanceURL: URL
+    private let allowUnencryptedHTTP: Bool
 
-    public required init(session: URLSession, instanceURL: URL) {
+    public required init(session: URLSession, instanceURL: URL, allowUnencryptedHTTP: Bool = false) throws {
+        guard instanceURL.scheme == "https" || (instanceURL.scheme == "http" && allowUnencryptedHTTP) else {
+            throw JRDError.protocolNotSupported(instanceURL.scheme)
+        }
+
         self.instanceURL = instanceURL
+        self.allowUnencryptedHTTP = allowUnencryptedHTTP
         super.init(session: session, decoder: .init())
     }
 
     /// Retrieve a NodeInfo doc from the well-known location.
     public func nodeInfo() -> AnyPublisher<NodeInfo, Error> {
         request(JRDTarget(instanceURL: instanceURL))
-            .tryMap(Self.newestNodeInfoURL)
+            .tryMap(newestNodeInfoURL)
             .flatMap { url in self.request(NodeInfoTarget(url: url)) }
             .eraseToAnyPublisher()
     }
 
     /// Get URL for newest schema version available.
-    static func newestNodeInfoURL(_ jrd: JRD) throws -> URL {
+    func newestNodeInfoURL(_ jrd: JRD) throws -> URL {
         let url = (jrd.links ?? [])
             .compactMap { link -> (Version, URL)? in
                 if let version = Version(rawValue: link.rel),
@@ -41,7 +47,7 @@ public final class NodeInfoClient: HTTPClient {
             throw JRDError.noSupportedNodeInfoVersionsInJrd
         }
 
-        guard url.scheme == "https" else {
+        guard url.scheme == "https" || (url.scheme == "http" && allowUnencryptedHTTP) else {
             throw JRDError.protocolNotSupported(url.scheme)
         }
 
@@ -65,7 +71,7 @@ public final class NodeInfoClient: HTTPClient {
 
     /// Errors related to discovering a NodeInfo document using a JRD.
     public enum JRDError: Error {
-        /// We only support retrieving NodeInfo over HTTPS.
+        /// We only support retrieving NodeInfo over HTTPS except for testing purposes.
         case protocolNotSupported(_ scheme: String?)
         /// This might happen if everyone upgraded to a future NodeInfo version and stopped serving old ones.
         case noSupportedNodeInfoVersionsInJrd

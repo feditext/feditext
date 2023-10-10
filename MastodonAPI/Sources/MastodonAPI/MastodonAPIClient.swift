@@ -10,7 +10,16 @@ public final class MastodonAPIClient: HTTPClient {
     public var accessToken: String?
     public let apiCapabilities: APICapabilities
 
-    public required init(session: URLSession, instanceURL: URL, apiCapabilities: APICapabilities) {
+    public required init(
+        session: URLSession,
+        instanceURL: URL,
+        apiCapabilities: APICapabilities,
+        allowUnencryptedHTTP: Bool = false
+    ) throws {
+        guard instanceURL.scheme == "https" || (instanceURL.scheme == "http" && allowUnencryptedHTTP) else {
+            throw MastodonAPIClientError.protocolNotSupported(instanceURL.scheme)
+        }
+
         self.instanceURL = instanceURL
         self.apiCapabilities = apiCapabilities
         super.init(session: session, decoder: MastodonDecoder())
@@ -201,4 +210,11 @@ private extension MastodonAPIClient {
     func target<E: Endpoint>(endpoint: E) -> MastodonAPITarget<E> {
         MastodonAPITarget(baseURL: instanceURL, endpoint: endpoint, accessToken: accessToken)
     }
+}
+
+
+/// Errors that can be thrown when creating a Mastodon API client.
+public enum MastodonAPIClientError: Error {
+    /// We only support making Mastodon API calls over HTTPS except for testing purposes.
+    case protocolNotSupported(_ scheme: String?)
 }

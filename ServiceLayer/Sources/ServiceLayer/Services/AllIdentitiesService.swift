@@ -77,19 +77,35 @@ public extension AllIdentitiesService {
 
         let authenticationPublisher: AnyPublisher<(AppAuthorization, AccessToken), Error>
 
+        let authenticationServicePublisher = apiCapabilitiesPublisher
+            .flatMap { apiCapabilities in
+                let authenticationService: AuthenticationService
+                do {
+                    authenticationService = try AuthenticationService(
+                        url: url,
+                        environment: environment,
+                        apiCapabilities: apiCapabilities
+                    )
+                } catch {
+                    return Fail<AuthenticationService, Error>(error: error).eraseToAnyPublisher()
+                }
+
+                return Just(authenticationService)
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
         switch kind {
         case .authentication:
-            authenticationPublisher = apiCapabilitiesPublisher
-                .flatMap { apiCapabilities in
-                    AuthenticationService(url: url, environment: environment, apiCapabilities: apiCapabilities)
-                        .authenticate()
+            authenticationPublisher = authenticationServicePublisher
+                .flatMap { authenticationService in
+                    authenticationService.authenticate()
                 }
                 .eraseToAnyPublisher()
         case let .registration(registration):
-            authenticationPublisher = apiCapabilitiesPublisher
-                .flatMap { apiCapabilities in
-                    AuthenticationService(url: url, environment: environment, apiCapabilities: apiCapabilities)
-                        .register(registration, id: id)
+            authenticationPublisher = authenticationServicePublisher
+                .flatMap { authenticationService in
+                    authenticationService.register(registration, id: id)
                 }
                 .eraseToAnyPublisher()
         case .browsing:
@@ -121,7 +137,7 @@ public extension AllIdentitiesService {
                 defer { secrets.deleteAllItems() }
 
                 do {
-                    return MastodonAPIClient(
+                    return try MastodonAPIClient(
                         session: environment.session,
                         instanceURL: try secrets.getInstanceURL(),
                         apiCapabilities: secrets.getAPICapabilities()

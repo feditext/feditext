@@ -15,7 +15,14 @@ extension APICapabilities {
         instanceURL: URL,
         secrets: Secrets
     ) -> AnyPublisher<APICapabilities, Error> {
-        NodeInfoClient(session: session, instanceURL: instanceURL)
+        let nodeInfoClient: NodeInfoClient
+        do {
+            nodeInfoClient = try NodeInfoClient(session: session, instanceURL: instanceURL)
+        } catch {
+            return Fail(error: error).eraseToAnyPublisher()
+        }
+
+        return nodeInfoClient
             .nodeInfo()
             .map(APICapabilities.init(nodeInfo:))
             .map { apiCapabilities in
@@ -43,17 +50,24 @@ extension APICapabilities {
         instanceURL: URL,
         apiCapabilities: APICapabilities
     ) -> AnyPublisher<APICapabilities, Error> {
-        MastodonAPIClient(
-            session: session,
-            instanceURL: instanceURL,
-            apiCapabilities: apiCapabilities
-        )
-        .request(InstanceEndpoint.instance)
-        .map { instance in
-            var apiCapabilities = apiCapabilities
-            apiCapabilities.setDetectedFeatures(instance)
-            return apiCapabilities
+        let mastodonAPIClient: MastodonAPIClient
+        do {
+            mastodonAPIClient = try MastodonAPIClient(
+                session: session,
+                instanceURL: instanceURL,
+                apiCapabilities: apiCapabilities
+            )
+        } catch {
+            return Fail(error: error).eraseToAnyPublisher()
         }
-        .eraseToAnyPublisher()
+
+        return mastodonAPIClient
+            .request(InstanceEndpoint.instance)
+            .map { instance in
+                var apiCapabilities = apiCapabilities
+                apiCapabilities.setDetectedFeatures(instance)
+                return apiCapabilities
+            }
+            .eraseToAnyPublisher()
     }
 }
