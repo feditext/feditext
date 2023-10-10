@@ -106,6 +106,23 @@ final class MastodonAPIClientTests: XCTestCase {
         XCTAssertGreaterThan(instance.stats.userCount, 0)
     }
 
+    /// Test request progress tracking.
+    func testProgress() async throws {
+        let client = try await unauthenticatedClient()
+        let progress = Progress(totalUnitCount: 1)
+
+        XCTAssertEqual(progress.fractionCompleted, 0)
+
+        let _ = try await client
+            .request(
+                InstanceEndpoint.instance,
+                progress: progress
+            )
+            .onlyValue
+
+        XCTAssertEqual(progress.fractionCompleted, 1)
+    }
+
     /// Register an OAuth application.
     func registerApp(_ client: MastodonAPIClient) async throws -> (clientID: String, clientSecret: String) {
         let client = try await unauthenticatedClient()
