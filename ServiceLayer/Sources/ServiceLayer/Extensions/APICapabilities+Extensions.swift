@@ -14,61 +14,34 @@ extension APICapabilities {
         session: URLSession,
         instanceURL: URL,
         secrets: Secrets
-    ) -> AnyPublisher<APICapabilities, Error> {
-        let nodeInfoClient: NodeInfoClient
-        do {
-            nodeInfoClient = try NodeInfoClient(session: session, instanceURL: instanceURL)
-        } catch {
-            return Fail(error: error).eraseToAnyPublisher()
-        }
+    ) async throws -> APICapabilities {
+        let nodeInfoClient = try NodeInfoClient(session: session, instanceURL: instanceURL)
+        let nodeInfo = try await nodeInfoClient.nodeInfo()
+        var apiCapabilities = APICapabilities(nodeInfo: nodeInfo)
 
-        return nodeInfoClient
-            .nodeInfo()
-            .map(APICapabilities.init(nodeInfo:))
-            .map { apiCapabilities in
-                var apiCapabilities = apiCapabilities
-                apiCapabilities.compatibilityMode = secrets.getAPICompatibilityMode()
-                return apiCapabilities
-            }
-            .flatMap { apiCapabilities in
-                Self.detectFeatures(
-                    session: session,
-                    instanceURL: instanceURL,
-                    apiCapabilities: apiCapabilities
-                )
-            }
-            .tryMap { apiCapabilities in
-                try secrets.setAPICapabilities(apiCapabilities)
-                return apiCapabilities
-            }
-            .eraseToAnyPublisher()
+        apiCapabilities.compatibilityMode = secrets.getAPICompatibilityMode()
+
+        let mastodonAPIClient = try MastodonAPIClient(
+            session: session,
+            instanceURL: instanceURL,
+            apiCapabilities: apiCapabilities,
+            accessToken: nil
+        )
+        let instance = try await mastodonAPIClient.request(InstanceEndpoint.instance)
+        apiCapabilities.setDetectedFeatures(instance)
+
+        try secrets.setAPICapabilities(apiCapabilities)
+        return apiCapabilities
     }
 
-    /// Add features detected from the instance API.
-    private static func detectFeatures(
+    static func refresh(
         session: URLSession,
         instanceURL: URL,
-        apiCapabilities: APICapabilities
+        secrets: Secrets
     ) -> AnyPublisher<APICapabilities, Error> {
-        let mastodonAPIClient: MastodonAPIClient
-        do {
-            mastodonAPIClient = try MastodonAPIClient(
-                session: session,
-                instanceURL: instanceURL,
-                apiCapabilities: apiCapabilities,
-                accessToken: nil
-            )
-        } catch {
-            return Fail(error: error).eraseToAnyPublisher()
-        }
-
-        return mastodonAPIClient
-            .request(InstanceEndpoint.instance)
-            .map { instance in
-                var apiCapabilities = apiCapabilities
-                apiCapabilities.setDetectedFeatures(instance)
-                return apiCapabilities
-            }
-            .eraseToAnyPublisher()
+        Future(asyncThrows: {
+            try await Self.refresh(session: session, instanceURL: instanceURL, secrets: secrets)
+        })
+        .eraseToAnyPublisher()
     }
 }

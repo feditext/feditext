@@ -12,12 +12,10 @@ public enum InstanceURLError: Error {
 }
 
 public struct InstanceURLService {
-    private let httpClient: HTTPClient
-    private var appPreferences: AppPreferences
+    private let session: URLSession
 
     public init(environment: AppEnvironment) {
-        httpClient = HTTPClient(session: environment.session, decoder: MastodonDecoder())
-        appPreferences = AppPreferences(environment: environment)
+        session = environment.session
     }
 }
 
@@ -44,23 +42,36 @@ public extension InstanceURLService {
         return .success(url)
     }
 
+    private func client(url: URL) throws -> MastodonAPIClient {
+        try MastodonAPIClient(
+            session: session,
+            instanceURL: url,
+            apiCapabilities: .unknown,
+            accessToken: nil
+        )
+    }
+
+    func instance(url: URL) async throws -> Instance {
+        try await client(url: url).request(InstanceEndpoint.instance)
+    }
+
     func instance(url: URL) -> AnyPublisher<Instance, Error> {
-        httpClient.request(
-            MastodonAPITarget(
-                baseURL: url,
-                endpoint: InstanceEndpoint.instance,
-                accessToken: nil))
-            .eraseToAnyPublisher()
+        Future(asyncThrows: {
+            try await instance(url: url)
+        })
+        .eraseToAnyPublisher()
+    }
+
+    func isPublicTimelineAvailable(url: URL) async throws -> Bool {
+        _ = try await client(url: url).request(StatusesEndpoint.timelinesPublic(local: true))
+        return true
     }
 
     func isPublicTimelineAvailable(url: URL) -> AnyPublisher<Bool, Error> {
-        httpClient.request(
-            MastodonAPITarget(
-                baseURL: url,
-                endpoint: StatusesEndpoint.timelinesPublic(local: true),
-                accessToken: nil))
-            .map { _ in true }
-            .eraseToAnyPublisher()
+        Future(asyncThrows: {
+            try await isPublicTimelineAvailable(url: url)
+        })
+        .eraseToAnyPublisher()
     }
 }
 
