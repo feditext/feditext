@@ -2,6 +2,7 @@
 
 import Foundation
 import HTTP
+import Mastodon
 
 public struct MastodonAPITarget<E: Endpoint> {
     public let baseURL: URL
@@ -17,6 +18,8 @@ public struct MastodonAPITarget<E: Endpoint> {
 
 extension MastodonAPITarget: DecodableTarget {
     public typealias ResultType = E.ResultType
+
+    public var decoder: JSONDecoder { MastodonDecoder() }
 
     public var pathComponents: [String] { endpoint.pathComponents }
 

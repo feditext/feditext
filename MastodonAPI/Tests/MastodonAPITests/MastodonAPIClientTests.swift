@@ -53,7 +53,6 @@ final class MastodonAPIClientTests: XCTestCase {
             allowUnencryptedHTTP: true
         )
             .nodeInfo()
-            .onlyValue
 
         var apiCapabilities = APICapabilities(nodeInfo: nodeInfo)
 

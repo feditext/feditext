@@ -22,4 +22,5 @@ extension JRDTarget: Target {
 
 extension JRDTarget: DecodableTarget {
     public typealias ResultType = JRD
+    public var decoder: JSONDecoder { .init() }
 }

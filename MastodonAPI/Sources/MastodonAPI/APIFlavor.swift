@@ -10,7 +10,7 @@ import Foundation
 /// - https://docs.akkoma.dev/stable/development/API/differences_in_mastoapi_responses/
 /// - https://docs.gotosocial.org/en/latest/api/swagger/
 /// - https://firefish.social/api-doc (Misskey API only)
-public enum APIFlavor: String, Codable, Hashable, Identifiable, CaseIterable {
+public enum APIFlavor: String, Codable, Hashable, Identifiable, CaseIterable, Sendable {
     case mastodon
     case glitch
     case hometown

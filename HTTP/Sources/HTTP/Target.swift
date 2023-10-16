@@ -55,6 +55,7 @@ public extension Target {
 
 public protocol DecodableTarget: Target {
     associatedtype ResultType: Decodable
+    var decoder: JSONDecoder { get }
 }
 
 public protocol TargetProcessing {

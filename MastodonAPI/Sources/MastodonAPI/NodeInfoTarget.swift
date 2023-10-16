@@ -22,4 +22,5 @@ extension NodeInfoTarget: Target {
 
 extension NodeInfoTarget: DecodableTarget {
     public typealias ResultType = NodeInfo
+    public var decoder: JSONDecoder { .init() }
 }

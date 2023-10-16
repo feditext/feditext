@@ -5,7 +5,7 @@ import Mastodon
 import Semver
 
 /// Capabilities of the exact server we're talking to, taking into account API flavor and version.
-public struct APICapabilities: Codable {
+public struct APICapabilities: Codable, Sendable {
     public let flavor: APIFlavor?
     public let version: Semver?
     public var features: Set<APIFeature>
@@ -94,7 +94,7 @@ public struct APICapabilities: Codable {
 }
 
 /// Features detected through the instance API.
-public enum APIFeature: String, Codable {
+public enum APIFeature: String, Codable, Sendable {
     /// Has Glitch PR #2221 compatible emoji reactions.
     case emojiReactions
 }
@@ -163,3 +163,6 @@ public extension Semver {
     /// We don't know which version added this, but assume it's available.
     static let assumeAvailable: Semver = "0.0.0"
 }
+
+/// All `Semver` fields are `Int` or `String` so this is safe.
+extension Semver: @unchecked Sendable {}

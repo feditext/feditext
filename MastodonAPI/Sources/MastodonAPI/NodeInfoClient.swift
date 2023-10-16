@@ -6,26 +6,26 @@ import HTTP
 import Mastodon
 
 /// Client for retrieving NodeInfo for an instance.
-public final class NodeInfoClient: HTTPClient {
+public struct NodeInfoClient: Sendable {
+    private let httpClient: HTTPClient
     private let instanceURL: URL
     private let allowUnencryptedHTTP: Bool
 
-    public required init(session: URLSession, instanceURL: URL, allowUnencryptedHTTP: Bool = false) throws {
+    public init(session: URLSession, instanceURL: URL, allowUnencryptedHTTP: Bool = false) throws {
         guard instanceURL.scheme == "https" || (instanceURL.scheme == "http" && allowUnencryptedHTTP) else {
             throw JRDError.protocolNotSupported(instanceURL.scheme)
         }
 
+        self.httpClient = .init(session: session)
         self.instanceURL = instanceURL
         self.allowUnencryptedHTTP = allowUnencryptedHTTP
-        super.init(session: session, decoder: .init())
     }
 
     /// Retrieve a NodeInfo doc from the well-known location.
-    public func nodeInfo() -> AnyPublisher<NodeInfo, Error> {
-        request(JRDTarget(instanceURL: instanceURL))
-            .tryMap(newestNodeInfoURL)
-            .flatMap { url in self.request(NodeInfoTarget(url: url)) }
-            .eraseToAnyPublisher()
+    public func nodeInfo() async throws -> NodeInfo {
+        let jrd = try await httpClient.request(JRDTarget(instanceURL: instanceURL)).decoded
+        let url = try newestNodeInfoURL(jrd)
+        return try await httpClient.request(NodeInfoTarget(url: url)).decoded
     }
 
     /// Get URL for newest schema version available.
