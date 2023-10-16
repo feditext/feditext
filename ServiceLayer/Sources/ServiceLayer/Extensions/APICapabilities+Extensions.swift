@@ -55,7 +55,8 @@ extension APICapabilities {
             mastodonAPIClient = try MastodonAPIClient(
                 session: session,
                 instanceURL: instanceURL,
-                apiCapabilities: apiCapabilities
+                apiCapabilities: apiCapabilities,
+                accessToken: nil
             )
         } catch {
             return Fail(error: error).eraseToAnyPublisher()

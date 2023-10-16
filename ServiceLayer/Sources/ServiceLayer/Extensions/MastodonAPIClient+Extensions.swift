@@ -10,10 +10,9 @@ extension MastodonAPIClient {
         let client = try Self(
             session: environment.session,
             instanceURL: try secrets.getInstanceURL(),
-            apiCapabilities: secrets.getAPICapabilities()
+            apiCapabilities: secrets.getAPICapabilities(),
+            accessToken: try secrets.getAccessToken()
         )
-
-        client.accessToken = try secrets.getAccessToken()
 
         return client
     }

@@ -70,13 +70,12 @@ public extension PushNotificationParsingService {
                 mastodonAPIClient = try MastodonAPIClient(
                     session: .shared,
                     instanceURL: instanceURL,
-                    apiCapabilities: secrets.getAPICapabilities()
+                    apiCapabilities: secrets.getAPICapabilities(),
+                    accessToken: pushNotification.accessToken
                 )
             } catch {
                 return Fail(error: error).eraseToAnyPublisher()
             }
-
-            mastodonAPIClient.accessToken = pushNotification.accessToken
 
             let endpoint = NotificationEndpoint.notification(id: String(pushNotification.notificationId))
 

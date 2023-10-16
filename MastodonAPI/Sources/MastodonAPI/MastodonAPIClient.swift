@@ -7,13 +7,14 @@ import Mastodon
 
 public final class MastodonAPIClient: HTTPClient {
     public let instanceURL: URL
-    public var accessToken: String?
+    public let accessToken: String?
     public let apiCapabilities: APICapabilities
 
     public required init(
         session: URLSession,
         instanceURL: URL,
         apiCapabilities: APICapabilities,
+        accessToken: String?,
         allowUnencryptedHTTP: Bool = false
     ) throws {
         guard instanceURL.scheme == "https" || (instanceURL.scheme == "http" && allowUnencryptedHTTP) else {
@@ -22,6 +23,7 @@ public final class MastodonAPIClient: HTTPClient {
 
         self.instanceURL = instanceURL
         self.apiCapabilities = apiCapabilities
+        self.accessToken = accessToken
         super.init(session: session, decoder: MastodonDecoder())
     }
 

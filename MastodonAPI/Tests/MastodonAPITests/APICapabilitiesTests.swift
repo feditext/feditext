@@ -1,3 +1,5 @@
+// Copyright © 2023 Vyr Cossont. All rights reserved.
+
 @testable import MastodonAPI
 import XCTest
 

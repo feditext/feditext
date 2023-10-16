@@ -32,9 +32,9 @@ public struct IdentityService {
         mastodonAPIClient = try MastodonAPIClient(
             session: environment.session,
             instanceURL: instanceURL,
-            apiCapabilities: secrets.getAPICapabilities()
+            apiCapabilities: secrets.getAPICapabilities(),
+            accessToken: try secrets.getAccessToken()
         )
-        mastodonAPIClient.accessToken = try? secrets.getAccessToken()
 
         nodeInfoClient = try NodeInfoClient(session: environment.session, instanceURL: instanceURL)
 

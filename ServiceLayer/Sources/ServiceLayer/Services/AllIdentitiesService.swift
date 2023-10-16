@@ -140,7 +140,8 @@ public extension AllIdentitiesService {
                     return try MastodonAPIClient(
                         session: environment.session,
                         instanceURL: try secrets.getInstanceURL(),
-                        apiCapabilities: secrets.getAPICapabilities()
+                        apiCapabilities: secrets.getAPICapabilities(),
+                        accessToken: nil
                     )
                         .request(
                             EmptyEndpoint.oauthRevoke(

@@ -56,10 +56,11 @@ extension APICapabilities {
 }
 
 extension MastodonAPIClient {
-    static let preview = MastodonAPIClient(
+    static let preview = try! MastodonAPIClient(
         session: URLSession(configuration: .stubbing),
         instanceURL: .previewInstanceURL,
-        apiCapabilities: .preview
+        apiCapabilities: .preview,
+        accessToken: nil
     )
 }
 

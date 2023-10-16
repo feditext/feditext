@@ -73,6 +73,7 @@ final class MastodonAPIClientTests: XCTestCase {
             session: .shared,
             instanceURL: self.instanceURL,
             apiCapabilities: apiCapabilities,
+            accessToken: nil,
             allowUnencryptedHTTP: true
         )
 
@@ -86,6 +87,7 @@ final class MastodonAPIClientTests: XCTestCase {
             session: .shared,
             instanceURL: self.instanceURL,
             apiCapabilities: apiCapabilities,
+            accessToken: nil,
             allowUnencryptedHTTP: true
         )
     }
@@ -203,11 +205,12 @@ final class MastodonAPIClientTests: XCTestCase {
     func authenticatedClient() async throws -> MastodonAPIClient {
         let client = try await unauthenticatedClient()
 
+        let accessToken: String?
         if let environmentAccessToken = self.accessToken {
-            client.accessToken = environmentAccessToken
+            accessToken = environmentAccessToken
         } else if supportsPasswordFlow(client.apiCapabilities) {
             let (clientID, clientSecret) = try await registerApp(client)
-            client.accessToken = try await getAccessTokenWithPasswordFlow(client, clientID, clientSecret)
+            accessToken = try await getAccessTokenWithPasswordFlow(client, clientID, clientSecret)
         } else {
             throw XCTSkip("""
                 MASTODON_API_TEST_ACCESS_TOKEN env var not set. \
@@ -216,7 +219,13 @@ final class MastodonAPIClientTests: XCTestCase {
             )
         }
 
-        return client
+        return try MastodonAPIClient(
+            session: .shared,
+            instanceURL: self.instanceURL,
+            apiCapabilities: client.apiCapabilities,
+            accessToken: accessToken,
+            allowUnencryptedHTTP: true
+        )
     }
 
     /// Try fetching the home timeline, which requires authentication.

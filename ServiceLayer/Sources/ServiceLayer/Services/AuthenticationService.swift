@@ -11,15 +11,21 @@ public enum AuthenticationError: Error {
 }
 
 struct AuthenticationService {
+    private let session: URLSession
+    private let instanceURL: URL
+
     private let mastodonAPIClient: MastodonAPIClient
     private let webAuthSessionType: WebAuthSession.Type
     private let webAuthSessionContextProvider = WebAuthSessionContextProvider()
 
     init(url: URL, environment: AppEnvironment, apiCapabilities: APICapabilities) throws {
+        session = environment.session
+        instanceURL = url
         mastodonAPIClient = try MastodonAPIClient(
             session: environment.session,
             instanceURL: url,
-            apiCapabilities: apiCapabilities
+            apiCapabilities: apiCapabilities,
+            accessToken: nil
         )
         webAuthSessionType = environment.webAuthSessionType
     }
@@ -53,9 +59,20 @@ extension AuthenticationService {
                         password: nil,
                         redirectURI: redirectURI.absoluteString))
                     .flatMap { accessToken -> AnyPublisher<AccessToken, Error> in
-                        mastodonAPIClient.accessToken = accessToken.accessToken
+                        let authenticatedMastodonAPIClient: MastodonAPIClient
+                        do {
+                            authenticatedMastodonAPIClient = try MastodonAPIClient(
+                                session: session,
+                                instanceURL: instanceURL,
+                                apiCapabilities: mastodonAPIClient.apiCapabilities,
+                                accessToken: accessToken.accessToken
+                            )
+                        } catch {
+                            return Fail(outputType: AccessToken.self, failure: error)
+                                .eraseToAnyPublisher()
+                        }
 
-                        return mastodonAPIClient.request(AccessTokenEndpoint.accounts(registration))
+                        return authenticatedMastodonAPIClient.request(AccessTokenEndpoint.accounts(registration))
                     }
                     .eraseToAnyPublisher()
             })
