@@ -56,9 +56,9 @@ public extension InstanceURLService {
     }
 
     func instance(url: URL) -> AnyPublisher<Instance, Error> {
-        Future(asyncThrows: {
+        Future {
             try await instance(url: url)
-        })
+        }
         .eraseToAnyPublisher()
     }
 
@@ -68,9 +68,9 @@ public extension InstanceURLService {
     }
 
     func isPublicTimelineAvailable(url: URL) -> AnyPublisher<Bool, Error> {
-        Future(asyncThrows: {
+        Future {
             try await isPublicTimelineAvailable(url: url)
-        })
+        }
         .eraseToAnyPublisher()
     }
 }

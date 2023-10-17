@@ -17,6 +17,8 @@ let package = Package(
             targets: ["MastodonAPIStubs"])
     ],
     dependencies: [
+        .package(path: "AppMetadata"),
+        .package(path: "CombineInterop"),
         .package(path: "HTTP"),
         .package(path: "Mastodon"),
         .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.0"))
@@ -24,7 +26,7 @@ let package = Package(
     targets: [
         .target(
             name: "MastodonAPI",
-            dependencies: ["HTTP", "Mastodon", "Semver"]),
+            dependencies: ["AppMetadata", "CombineInterop", "HTTP", "Mastodon", "Semver"]),
         .target(
             name: "MastodonAPIStubs",
             dependencies: ["MastodonAPI", .product(name: "Stubbing", package: "HTTP")],

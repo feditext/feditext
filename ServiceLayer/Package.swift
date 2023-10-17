@@ -19,7 +19,9 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/groue/CombineExpectations.git", .upToNextMajor(from: "0.7.0")),
         .package(url: "https://github.com/metabolist/codable-bloom-filter.git", .upToNextMajor(from: "1.0.0")),
+        .package(path: "AppMetadata"),
         .package(path: "AppUrls"),
+        .package(path: "CombineInterop"),
         .package(path: "DB"),
         .package(path: "Keychain"),
         .package(path: "MastodonAPI"),
@@ -29,7 +31,9 @@ let package = Package(
         .target(
             name: "ServiceLayer",
             dependencies: [
+                "AppMetadata",
                 "AppUrls",
+                "CombineInterop",
                 "DB",
                 "MastodonAPI",
                 "Secrets",

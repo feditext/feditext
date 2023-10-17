@@ -1,5 +1,6 @@
 // Copyright © 2021 Metabolist. All rights reserved.
 
+import AppMetadata
 import Foundation
 import SDWebImage
 import ServiceLayer
@@ -35,7 +36,7 @@ extension ImageCacheConfiguration {
 
 private extension ImageCacheConfiguration {
     static let cachesDirectoryURL = FileManager.default.containerURL(
-        forSecurityApplicationGroupIdentifier: AppEnvironment.appGroup)?
+        forSecurityApplicationGroupIdentifier: AppMetadata.appGroup)?
         .appendingPathComponent("Library")
         .appendingPathComponent("Caches")
     static let imageCacheDirectoryURL = cachesDirectoryURL?.appendingPathComponent("com.metabolist.metatext.images")

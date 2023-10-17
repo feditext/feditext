@@ -1,6 +1,7 @@
 // Copyright © 2023 Vyr Cossont. All rights reserved.
 
 import Combine
+import CombineInterop
 import Foundation
 import Mastodon
 import MastodonAPI
@@ -39,9 +40,9 @@ extension APICapabilities {
         instanceURL: URL,
         secrets: Secrets
     ) -> AnyPublisher<APICapabilities, Error> {
-        Future(asyncThrows: {
+        Future {
             try await Self.refresh(session: session, instanceURL: instanceURL, secrets: secrets)
-        })
+        }
         .eraseToAnyPublisher()
     }
 }

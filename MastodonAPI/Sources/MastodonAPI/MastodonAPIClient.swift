@@ -1,6 +1,8 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
+import AppMetadata
 import Combine
+import CombineInterop
 import Foundation
 import HTTP
 import Mastodon
@@ -32,7 +34,7 @@ public struct MastodonAPIClient: Sendable {
     }
 
     /// Performance signposter for API calls.
-    private static let signposter = OSSignposter(subsystem: bundleIDBase, category: .pointsOfInterest)
+    private static let signposter = OSSignposter(subsystem: AppMetadata.bundleIDBase, category: .pointsOfInterest)
 
     /// Signpost name for this class.
     private static let signpostName: StaticString = "MastodonAPIClient"
@@ -187,7 +189,7 @@ public extension MastodonAPIClient {
         line: Int = #line,
         function: String = #function
     ) -> AnyPublisher<E.ResultType, Error> {
-        Future(asyncThrows: {
+        Future {
             try await request(
                 endpoint,
                 progress: progress,
@@ -195,7 +197,7 @@ public extension MastodonAPIClient {
                 line: line,
                 function: function
             )
-        })
+        }
         .eraseToAnyPublisher()
     }
 
@@ -210,7 +212,7 @@ public extension MastodonAPIClient {
         line: Int = #line,
         function: String = #function
     ) -> AnyPublisher<PagedResult<E.ResultType>, Error> {
-        Future(asyncThrows: {
+        Future {
             try await pagedRequest(
                 endpoint,
                 maxId: maxId,
@@ -222,7 +224,7 @@ public extension MastodonAPIClient {
                 line: line,
                 function: function
             )
-        })
+        }
         .eraseToAnyPublisher()
     }
 }
@@ -231,35 +233,4 @@ public extension MastodonAPIClient {
 public enum MastodonAPIClientError: Error {
     /// We only support making Mastodon API calls over HTTPS except for testing purposes.
     case protocolNotSupported(_ scheme: String?)
-}
-
-// TODO: (Vyr) duplicated from ServiceLayer
-extension Future {
-    public convenience init(asyncThrows closure: @Sendable @escaping () async throws -> Output) where Failure == Error {
-        self.init { promise in
-            Task {
-                do {
-                    let result = try await closure()
-                    promise(.success(result))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
-        }
-    }
-}
-
-// TODO: (Vyr) duplicated from ServiceLayer.AppEnvironment
-private var bundleIDBase: String {
-    // Normal
-    if let base = Bundle.main.infoDictionary?["Feditext bundle ID base"] as? String {
-        return base
-    }
-
-    #if canImport(XCTest)
-        // Some test bundles are built in a way that doesn't include the Feditext bundle ID base
-        return "test.example"
-    #else
-        fatalError("Feditext bundle ID base missing from bundle plist")
-    #endif
 }

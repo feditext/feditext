@@ -1,5 +1,6 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
+import AppMetadata
 import Combine
 import DB
 import Foundation
@@ -238,7 +239,7 @@ public extension StatusService {
                     id: id,
                     useHomeTimelineLastReadId: true,
                     inMemory: environment.inMemoryContent,
-                    appGroup: AppEnvironment.appGroup,
+                    appGroup: AppMetadata.appGroup,
                     keychain: environment.keychain)) }
             .eraseToAnyPublisher()
     }

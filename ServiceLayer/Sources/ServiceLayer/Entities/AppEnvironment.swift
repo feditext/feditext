@@ -1,5 +1,6 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
+import AppMetadata
 import DB
 import Foundation
 import HTTP
@@ -43,25 +44,6 @@ public struct AppEnvironment {
 }
 
 public extension AppEnvironment {
-    /// Makes it possible to change the bundle ID of the app and all of its extensions from `Identify.xcconfig`.
-    static var bundleIDBase: String {
-        // Normal
-        if let base = Bundle.main.infoDictionary?["Feditext bundle ID base"] as? String {
-            return base
-        }
-
-        #if canImport(XCTest)
-            // Some test bundles are built in a way that doesn't include the Feditext bundle ID base
-            return "test.example"
-        #else
-            fatalError("Feditext bundle ID base missing from bundle plist")
-        #endif
-    }
-
-    static var appGroup: String {
-        "group.\(bundleIDBase)"
-    }
-
     static func live(userNotificationCenter: UNUserNotificationCenter,
                      reduceMotion: @escaping () -> Bool,
                      autoplayVideos: @escaping () -> Bool) -> Self {
@@ -69,7 +51,7 @@ public extension AppEnvironment {
             session: URLSession.shared,
             webAuthSessionType: LiveWebAuthSession.self,
             keychain: LiveKeychain.self,
-            userDefaults: UserDefaults(suiteName: appGroup)!,
+            userDefaults: UserDefaults(suiteName: AppMetadata.appGroup)!,
             userNotificationClient: .live(userNotificationCenter),
             reduceMotion: reduceMotion,
             autoplayVideos: autoplayVideos,

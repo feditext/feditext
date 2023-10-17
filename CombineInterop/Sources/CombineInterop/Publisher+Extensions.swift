@@ -3,7 +3,7 @@
 import Combine
 import Foundation
 
-extension Publisher {
+public extension Publisher {
     /// We want to run another publisher that never returns values as a side effect, such as storing the output
     /// in the DB, but pass through the original value since we don't care about the result of that.
     /// If the side effect fails, this should still fail as well.

@@ -3,8 +3,8 @@
 import Combine
 import Foundation
 
-extension Future {
-    public convenience init(async closure: @Sendable @escaping () async -> Output) {
+public extension Future {
+    convenience init(async closure: @Sendable @escaping () async -> Output) {
         self.init { promise in
             Task {
                 let result = await closure()
@@ -13,7 +13,7 @@ extension Future {
         }
     }
 
-    public convenience init(asyncThrows closure: @Sendable @escaping () async throws -> Output) where Failure == Error {
+    convenience init(asyncThrows closure: @Sendable @escaping () async throws -> Output) where Failure == Error {
         self.init { promise in
             Task {
                 do {
