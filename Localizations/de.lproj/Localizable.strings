@@ -109,7 +109,7 @@
 "add-identity.prompt" = "Gib die URL deiner Mastodon-Instanz ein:";
 "add-identity.request-invite" = "Einladung anfragen";
 "add-identity.unable-to-connect-to-instance" = "Verbindung zur Instanz kann nicht hergestellt werden. Überprüfe, ob die Instanz-URL richtig ist und versuche es erneut.";
-"add-identity.welcome" = "Willkommen bei Metatext";
+"add-identity.welcome" = "Willkommen bei Feditext";
 "add-identity.what-is-mastodon" = "Was ist Mastodon?";
 "attachment.edit.description" = "Beschreibung für sehbehinderte Menschen hinzufügen";
 "attachment.edit.description.audio" = "Beschreibung für hörbehinderte Menschen hinzufügen";
@@ -272,7 +272,8 @@
 "main-navigation.explore" = "Erkunden";
 "main-navigation.notifications" = "Benachrichtigungen";
 "main-navigation.conversations" = "Nachrichten";
-"metatext" = "Metatext";
+"metatext" = "Feditext";
+"feditext" = "Feditext";
 "notification.accessibility.view-profile" = "Profil anzeigen";
 "notification.accessibility.view-profiles" = "Profile anzeigen";
 "notification.signed-in-as-%@" = "Eingeloggt als %@";
