@@ -146,7 +146,7 @@ public struct MastodonAPIClient: Sendable {
         function: String = #function
     ) async throws -> PagedResult<E.ResultType> {
         let (decoded, response) = try await requestCommon(
-            endpoint,
+            Paged(endpoint, maxId: maxId, minId: minId, sinceId: sinceId, limit: limit),
             progress: progress,
             file: file,
             line: line,

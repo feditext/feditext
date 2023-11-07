@@ -4,6 +4,8 @@ import Foundation
 import HTTP
 import Mastodon
 
+/// Endpoint wrapper that adds common paging parameters to an existing endpoint.
+/// - See: https://docs.joinmastodon.org/api/guidelines/#pagination
 public struct Paged<T: Endpoint> {
     public let endpoint: T
     public let maxId: String?
@@ -21,7 +23,7 @@ public struct Paged<T: Endpoint> {
 }
 
 extension Paged: Endpoint {
-    public typealias ResultType = PagedResult<T.ResultType>
+    public typealias ResultType = T.ResultType
 
     public var APIVersion: String { endpoint.APIVersion }
 
@@ -53,11 +55,20 @@ extension Paged: Endpoint {
         return queryParameters
     }
 
+    public var jsonBody: [String: Any]? { endpoint.jsonBody }
+
+    public var multipartFormData: [String: MultipartFormValue]? { endpoint.multipartFormData }
+
     public var headers: [String: String]? { endpoint.headers }
+
+    public var requires: APICapabilityRequirements? { endpoint.requires }
+
+    public var fallback: ResultType? { endpoint.fallback }
 }
 
-public struct PagedResult<T: Decodable>: Decodable {
-    public struct Info: Decodable {
+/// Paged result consisting of a regular result plus paging info extracted from headers.
+public struct PagedResult<T: Decodable> {
+    public struct Info {
         public let maxId: String?
         public let minId: String?
         public let sinceId: String?
