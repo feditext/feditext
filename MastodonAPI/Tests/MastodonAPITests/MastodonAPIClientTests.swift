@@ -114,7 +114,7 @@ final class MastodonAPIClientTests: XCTestCase {
 
         XCTAssertEqual(progress.fractionCompleted, 0)
 
-        let _ = try await client
+        _ = try await client
             .request(
                 InstanceEndpoint.instance,
                 progress: progress
@@ -186,7 +186,8 @@ final class MastodonAPIClientTests: XCTestCase {
     func testGetAccessTokenWithPasswordFlow() async throws {
         let client = try await unauthenticatedClient()
         guard supportsPasswordFlow(client.apiCapabilities) else {
-            throw XCTSkip("\(client.apiCapabilities.flavor?.rawValue ?? "Unknown server flavor") does not support the OAuth password flow")
+            let flavor = client.apiCapabilities.flavor?.rawValue ?? "Unknown server flavor"
+            throw XCTSkip("\(flavor) does not support the OAuth password flow")
         }
 
         let (clientID, clientSecret) = try await registerApp(client)

@@ -8,7 +8,7 @@ import XCTest
 
 final class AuthenticationServiceTests: XCTestCase {
     func testAuthentication() throws {
-        let sut = AuthenticationService(
+        let sut = try AuthenticationService(
             url: URL(string: "https://mastodon.social")!,
             environment: .mock(),
             apiCapabilities: .init(nodeinfoSoftware: .init(name: "mastodon", version: "4.2.0"))
