@@ -33,8 +33,12 @@ public struct MastodonAPIClient: Sendable {
         self.accessToken = accessToken
     }
 
+    #if DEBUG
     /// Performance signposter for API calls.
     private static let signposter = OSSignposter(subsystem: AppMetadata.bundleIDBase, category: .pointsOfInterest)
+    #else
+    private static let signposter = OSSignposter.disabled
+    #endif
 
     /// Signpost name for this class.
     private static let signpostName: StaticString = "MastodonAPIClient"
