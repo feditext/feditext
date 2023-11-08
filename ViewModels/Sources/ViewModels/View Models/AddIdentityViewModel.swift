@@ -2,6 +2,7 @@
 
 import Combine
 import Foundation
+import HTTP
 import Mastodon
 import ServiceLayer
 
@@ -101,7 +102,7 @@ private extension AddIdentityViewModel {
 
                     if case InstanceURLError.instanceNotSupported = error {
                         displayedError = AddIdentityError.instanceNotSupported
-                    } else if error is URLError {
+                    } else if error is URLError || error is AnnotatedURLError {
                         displayedError = AddIdentityError.unableToConnectToInstance
                     } else {
                         displayedError = error

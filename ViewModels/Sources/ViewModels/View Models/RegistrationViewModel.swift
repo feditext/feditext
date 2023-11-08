@@ -2,6 +2,7 @@
 
 import Combine
 import Foundation
+import HTTP
 import Mastodon
 import ServiceLayer
 
@@ -55,7 +56,7 @@ public extension RegistrationViewModel {
         allIdentitiesService.createIdentity(url: url, kind: .registration(registration))
             .handleEvents(receiveSubscription: { [weak self] _ in self?.registering = true })
             .mapError { error -> Error in
-                if error is URLError {
+                if error is URLError || error is AnnotatedURLError {
                     return AddIdentityError.unableToConnectToInstance
                 } else {
                     return error
