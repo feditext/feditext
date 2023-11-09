@@ -1,5 +1,7 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
+import AppMetadata
+import Foundation
 import Mastodon
 import MastodonAPI
 import SwiftUI
@@ -179,6 +181,20 @@ struct AppPreferencesSection: View {
                     Image(systemName: "trash")
                 }
             }
+
+            // App-wide HTML parser switch.
+            Picker("preferences.html-parser.picker-title", selection: Binding<HTML.Parser>(
+                get: { HTML.parser },
+                set: {
+                    HTML.parser = $0
+                    UserDefaults(suiteName: AppMetadata.appGroup)!.set($0.rawValue, forKey: "HTML.parser")
+                }
+            )) {
+                ForEach(HTML.Parser.allCases) { parser in
+                    Text(parser.rawValue).tag(parser.id)
+                }
+            }
+            .pickerStyle(.menu)
         }
     }
 }
@@ -190,6 +206,17 @@ extension APICompatibilityMode {
             return "preferences.api-compatibility-mode.fallback-on-errors"
         case .failOnErrors:
             return "preferences.api-compatibility-mode.fail-on-errors"
+        }
+    }
+}
+
+extension HTML.Parser {
+    var localizedStringKey: LocalizedStringKey {
+        switch self {
+        case .webkit:
+            return "preferences.html-parser.webkit"
+        case .siren:
+            return "preferences.html-parser.siren"
         }
     }
 }

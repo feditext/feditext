@@ -47,11 +47,19 @@ public extension AppEnvironment {
     static func live(userNotificationCenter: UNUserNotificationCenter,
                      reduceMotion: @escaping () -> Bool,
                      autoplayVideos: @escaping () -> Bool) -> Self {
-        Self(
+        let userDefaults = UserDefaults(suiteName: AppMetadata.appGroup)!
+
+        // TODO: (Vyr) hack for testing Siren
+        if let rawValue = userDefaults.string(forKey: "HTML.parser"),
+           let parser = HTML.Parser(rawValue: rawValue) {
+            HTML.parser = parser
+        }
+
+        return Self(
             session: URLSession.shared,
             webAuthSessionType: LiveWebAuthSession.self,
             keychain: LiveKeychain.self,
-            userDefaults: UserDefaults(suiteName: AppMetadata.appGroup)!,
+            userDefaults: userDefaults,
             userNotificationClient: .live(userNotificationCenter),
             reduceMotion: reduceMotion,
             autoplayVideos: autoplayVideos,

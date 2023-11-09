@@ -14,16 +14,18 @@ let package = Package(
             targets: ["Mastodon"])
     ],
     dependencies: [
+        .package(path: "AppMetadata"),
+        .package(path: "AppUrls"),
+        .package(path: "Siren"),
         .package(
             url: "https://github.com/scinfu/SwiftSoup.git",
-            from: "2.4.3"
-        ),
-        .package(path: "AppUrls")
+            from: "2.6.1"
+        )
     ],
     targets: [
         .target(
             name: "Mastodon",
-            dependencies: ["AppUrls", "SwiftSoup"]),
+            dependencies: ["AppMetadata", "AppUrls", "Siren", "SwiftSoup"]),
         .testTarget(
             name: "MastodonTests",
             dependencies: ["Mastodon"])

@@ -305,6 +305,9 @@
 "preferences.blocked-domains" = "Blocked Domains";
 "preferences.blocked-users" = "Blocked Users";
 "preferences.cache.clear.navigation" = "Clear navigation cache";
+"preferences.html-parser.picker-title" = "HTML parser (applies to all accounts)";
+"preferences.html-parser.webkit" = "WebKit";
+"preferences.html-parser.siren" = "Siren (experimental)";
 "preferences.media" = "Media";
 "preferences.media.avatars" = "Avatars";
 "preferences.media.avatars.animate" = "Animate avatars";

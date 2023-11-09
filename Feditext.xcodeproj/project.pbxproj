@@ -384,6 +384,7 @@
 		947ED41E2A6B1D7700A18AFA /* StatusReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusReactionsView.swift; sourceTree = "<group>"; };
 		948586022ADE004B005C772B /* CombineInterop */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CombineInterop; sourceTree = "<group>"; };
 		948586032ADE0299005C772B /* AppMetadata */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AppMetadata; sourceTree = "<group>"; };
+		948586082ADE06C8005C772B /* Siren */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Siren; sourceTree = "<group>"; };
 		9489DAF72A53D01F002ADDA3 /* CardContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardContentView.swift; sourceTree = "<group>"; };
 		94979DA32A3E37ED00542793 /* MastodonNotification.NotificationType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MastodonNotification.NotificationType+Extensions.swift"; sourceTree = "<group>"; };
 		94979DA52A3E386D00542793 /* PushSubscription.Policy+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PushSubscription.Policy+Extensions.swift"; sourceTree = "<group>"; };
@@ -931,6 +932,7 @@
 				D0BECB962501BCE0002C1B13 /* Secrets */,
 				D0BDF66524FD7A6400C7FA1C /* ServiceLayer */,
 				D08E526D257C36CA00FA2C5F /* Share Extension */,
+				948586082ADE06C8005C772B /* Siren */,
 				D0C7D41D24F76169001EBDBB /* Supporting Files */,
 				D0C7D45324F76169001EBDBB /* System */,
 				943D50002AD5B8C10097C4DF /* Test Plans */,
