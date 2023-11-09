@@ -13,9 +13,11 @@ public enum Siren {
             .addTags("h1", "h2", "h3", "h4", "h5", "h6")
             .addTags("kbd", "samp", "tt")
             .addTags("s", "ins", "del")
-            .addTags("hr")
+            .addTags("hr", "wbr")
+            .removeTags("q", "dl", "dt", "dd")
             .addAttributes("ol", "start", "reversed")
             .addAttributes("li", "value")
+            .removeAttributes("blockquote", "cite")
             .removeProtocols("a", "href", "ftp", "mailto")
             .addProtocols(
                 "a",
@@ -253,8 +255,11 @@ class Visitor: NodeVisitor {
                 styles.insert(style)
                 stylesStack.append(styles)
 
-            } else if name == "a", let href = element.attrUrl("href") {
-                linkStack.append(href)
+            } else if name == "a" {
+                if let href = element.attrUrl("href") {
+                    linkStack.append(href)
+                }
+                // Otherwise, ignore it, since we don't use anchors for anything else.
 
             } else if let tag = BlockIntentTag(element) {
                 let kind: PresentationIntent.Kind
@@ -284,9 +289,10 @@ class Visitor: NodeVisitor {
                 blockIntentStack.append(intent)
 
             } else {
+                // Hitting this point means that the sanitizer's tag list is out of sync with what we recognize,
+                // and really should be a compile error somehow. But we can ignore it and keep going in release builds.
                 #if DEBUG
-                // TODO: (Vyr) which tags are we missing?
-                throw SirenError.tag(name)
+                fatalError("Tag not supported: \(name)")
                 #endif
             }
 
@@ -358,6 +364,10 @@ enum InlineIntentTag {
             self = .italic
         case "code", "kbd", "samp", "tt":
             self = .code
+        case "br":
+            self = .lineBreak
+        case "wbr":
+            self = .softBreak
         default:
             return nil
         }
