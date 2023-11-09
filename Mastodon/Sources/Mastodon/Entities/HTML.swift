@@ -327,9 +327,17 @@ private extension HTML {
         // TODO: (Vyr) debugging only. Remove this eventually.
         switch HTML.parser {
         case .webkit:
+            #if !os(macOS)
             attributed.addAttribute(.backgroundColor, value: UIColor.systemGray, range: entireString)
+            #else
+            attributed.addAttribute(.backgroundColor, value: NSColor.systemGray, range: entireString)
+            #endif
         case .siren:
+            #if !os(macOS)
             attributed.addAttribute(.backgroundColor, value: UIColor.systemMint, range: entireString)
+            #else
+            attributed.addAttribute(.backgroundColor, value: NSColor.systemMint, range: entireString)
+            #endif
         }
         #endif
 
@@ -342,7 +350,11 @@ private extension HTML {
 
         // Format in a way compatible with the scaling in `adaptHtmlAttributes`.
         // TODO: (Vyr) we can move this there once Siren is the only parser
+        #if !os(macOS)
         let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).withSize(12.0)
+        #else
+        let descriptor = NSFontDescriptor.preferredFontDescriptor(forTextStyle: .body).withSize(12.0)
+        #endif
         var attributed = Siren.format(parsed, descriptor: descriptor)
 
         // Map Siren semantic classes to Feditext semantic classes.

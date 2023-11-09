@@ -14,14 +14,18 @@ let package = Package(
             targets: ["MastodonAPI"]),
         .library(
             name: "MastodonAPIStubs",
-            targets: ["MastodonAPIStubs"])
+            targets: ["MastodonAPIStubs"]),
+        .executable(
+            name: "MastodonAPITool",
+            targets: ["MastodonAPITool"])
     ],
     dependencies: [
         .package(path: "AppMetadata"),
         .package(path: "CombineInterop"),
         .package(path: "HTTP"),
         .package(path: "Mastodon"),
-        .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.0"))
+        .package(url: "https://github.com/ddddxxx/Semver.git", .upToNextMinor(from: "0.2.0")),
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0")
     ],
     targets: [
         .target(
@@ -33,6 +37,12 @@ let package = Package(
             resources: [.process("Resources")]),
         .testTarget(
             name: "MastodonAPITests",
-            dependencies: ["MastodonAPIStubs"])
+            dependencies: ["MastodonAPIStubs"]),
+        .executableTarget(
+            name: "MastodonAPITool",
+            dependencies: [
+                "MastodonAPI",
+                .product(name: "ArgumentParser", package: "swift-argument-parser")
+            ])
     ]
 )
