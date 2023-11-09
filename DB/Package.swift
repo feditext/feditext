@@ -14,14 +14,21 @@ let package = Package(
             targets: ["DB"])
     ],
     dependencies: [
-        .package(name: "GRDB", url: "https://github.com/metabolist/GRDB.swift.git", .revision("a6ff285")),
+        .package(path: "AppMetadata"),
+        .package(url: "https://github.com/metabolist/GRDB.swift.git", revision: "a6ff285"),
         .package(path: "Mastodon"),
         .package(path: "Secrets")
     ],
     targets: [
         .target(
             name: "DB",
-            dependencies: ["GRDB", "Mastodon", "Secrets"]),
+            dependencies: [
+                "AppMetadata",
+                .product(name: "GRDB", package: "GRDB.swift"),
+                "Mastodon",
+                "Secrets"
+            ]
+        ),
         .testTarget(
             name: "DBTests",
             dependencies: ["DB"])

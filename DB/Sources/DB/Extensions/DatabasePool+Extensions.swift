@@ -1,9 +1,20 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
+import AppMetadata
 import Foundation
 import GRDB
+import os
 
 // https://github.com/groue/GRDB.swift/blob/master/Documentation/SharingADatabase.md
+
+#if DEBUG
+private let logger = Logger(
+    subsystem: AppMetadata.bundleIDBase,
+    category: "SQL"
+)
+#else
+private let logger = Logger(.disabled)
+#endif
 
 extension DatabasePool {
     class func withFileCoordinator(url: URL,
@@ -22,9 +33,8 @@ extension DatabasePool {
                 configuration.defaultTransactionKind = .immediate
                 configuration.observesSuspensionNotifications = true
                 configuration.prepareDatabase { db in
-                    #if DEBUG
-                    db.trace { print("DB: \($0)") }
-                    #endif
+                    // Traced SQL statements only contain value placeholders, not actual values, and can be public.
+                    db.trace { logger.trace("\($0, privacy: .public)") }
 
                     try db.usePassphrase(passphrase())
                     try db.execute(sql: "PRAGMA cipher_plaintext_header_size = 32")
