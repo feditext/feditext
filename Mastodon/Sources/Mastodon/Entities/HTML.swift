@@ -323,24 +323,6 @@ private extension HTML {
         let entireString = NSRange(location: 0, length: attributed.length)
         attributed.fixAttributes(in: entireString)
 
-        #if DEBUG
-        // TODO: (Vyr) debugging only. Remove this eventually.
-        switch HTML.parser {
-        case .webkit:
-            #if !os(macOS)
-            attributed.addAttribute(.backgroundColor, value: UIColor.systemGray, range: entireString)
-            #else
-            attributed.addAttribute(.backgroundColor, value: NSColor.systemGray, range: entireString)
-            #endif
-        case .siren:
-            #if !os(macOS)
-            attributed.addAttribute(.backgroundColor, value: UIColor.systemMint, range: entireString)
-            #else
-            attributed.addAttribute(.backgroundColor, value: NSColor.systemMint, range: entireString)
-            #endif
-        }
-        #endif
-
         return attributed
     }
 

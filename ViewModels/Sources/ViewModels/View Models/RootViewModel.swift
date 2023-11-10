@@ -96,6 +96,13 @@ public extension RootViewModel {
             extensionContext: nil)
     }
 
+    /// Debugging aid: force all views to reload.
+    func reload() {
+        guard let id = mostRecentlyUsedIdentityId else { return }
+        identitySelected(id: nil)
+        identitySelected(id: id)
+    }
+
     /// Debugging aid: clear the navigation cache.
     func clearNavigationCache() {
         NavigationService.clearCache()

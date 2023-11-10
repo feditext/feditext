@@ -1,6 +1,7 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
 import AppMetadata
+import Combine
 import Foundation
 import Mastodon
 import MastodonAPI
@@ -14,6 +15,7 @@ struct AppPreferencesSection: View {
     @EnvironmentObject var rootViewModel: RootViewModel
 
     @State var apiCompatibilityModeChanged: Bool = false
+    @StateObject var htmlGlobals: HTMLGlobals = .init()
 
     var body: some View {
         Section(header: Text("preferences.app")) {
@@ -159,9 +161,7 @@ struct AppPreferencesSection: View {
             .pickerStyle(.menu)
 
             Button(role: .destructive) {
-                // Force all views and API clients to update.
-                rootViewModel.identitySelected(id: nil)
-                rootViewModel.identitySelected(id: identityContext.identity.id)
+                rootViewModel.reload()
             } label: {
                 Label {
                     Text("preferences.api-compatibility-mode.apply")
@@ -171,7 +171,9 @@ struct AppPreferencesSection: View {
                 }
             }
             .disabled(!apiCompatibilityModeChanged)
+        }
 
+        Section {
             Button(role: .destructive) {
                 rootViewModel.clearNavigationCache()
             } label: {
@@ -181,21 +183,47 @@ struct AppPreferencesSection: View {
                     Image(systemName: "trash")
                 }
             }
+        }
 
-            // App-wide HTML parser switch.
-            Picker("preferences.html-parser.picker-title", selection: Binding<HTML.Parser>(
-                get: { HTML.parser },
-                set: {
-                    HTML.parser = $0
-                    UserDefaults(suiteName: AppMetadata.appGroup)!.set($0.rawValue, forKey: "HTML.parser")
-                }
-            )) {
+        Section {
+            Picker("preferences.html-parser.picker-title", selection: $htmlGlobals.parser) {
                 ForEach(HTML.Parser.allCases) { parser in
-                    Text(parser.rawValue).tag(parser.id)
+                    Text(parser.localizedStringKey).tag(parser.id)
                 }
             }
             .pickerStyle(.menu)
+
+            Button(role: .destructive) {
+                rootViewModel.reload()
+            } label: {
+                Label {
+                    Text("preferences.html-parser.apply")
+                } icon: {
+                    Image(systemName: "arrow.clockwise.circle")
+                        .foregroundColor(htmlGlobals.parserChanged ? .red : .gray)
+                }
+            }
+            .disabled(!htmlGlobals.parserChanged)
         }
+    }
+}
+
+/// App-wide HTML parser switch.
+class HTMLGlobals: ObservableObject {
+    @Published var parser: HTML.Parser
+    @Published var parserChanged: Bool = false
+    private var cancellables = Set<AnyCancellable>()
+
+    init() {
+        self.parser = HTML.parser
+        $parser
+            .dropFirst()
+            .sink(receiveValue: { [weak self] in
+                HTML.parser = $0
+                UserDefaults(suiteName: AppMetadata.appGroup)!.set($0.rawValue, forKey: "HTML.parser")
+                self?.parserChanged = true
+            })
+            .store(in: &cancellables)
     }
 }
 
