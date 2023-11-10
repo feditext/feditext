@@ -74,7 +74,7 @@ public extension HTML {
         /// The host and partial path part of a shortened URL, always visible.
         /// So named because it has `…` as an `::after` decoration in Mastodon web client CSS.
         case ellipsis = 2
-        /// The trailing part of a shortened URL, hidden in Mastodon web client CSS, normally replaced with an `…` by us.
+        /// The trailing part of a shortened URL, hidden in Mastodon web client CSS, normally replaced with `…` by us.
         case trailingInvisible = 3
         /// Specifically a user mention.
         case mention = 4
@@ -358,9 +358,22 @@ private extension HTML {
         var attributed = Siren.format(parsed, descriptor: descriptor)
 
         // Map Siren semantic classes to Feditext semantic classes.
-        // (Siren doesn't keep track of previous elements.)
+        // (Siren doesn't keep track of previous elements, and its ranges may have leading and trailing whitespace.)
         var prevEllipsis = false
-        for (sirenClasses, range) in attributed.runs[\.classes] {
+        for (sirenClasses, sirenRange) in attributed.runs[\.classes] {
+            // Exclude leading and trailing whitespace from range with Feditext attribute.
+            if sirenRange.isEmpty { continue }
+            var lower = sirenRange.lowerBound
+            var upperInclusive = attributed.index(beforeCharacter: sirenRange.upperBound)
+            while lower <= upperInclusive && attributed.characters[lower].isWhitespace {
+                lower = attributed.index(afterCharacter: lower)
+            }
+            while lower <= upperInclusive && attributed.characters[upperInclusive].isWhitespace {
+                upperInclusive = attributed.index(beforeCharacter: upperInclusive)
+            }
+            if !(lower <= upperInclusive) { continue }
+            let range = lower...upperInclusive
+
             let sirenClasses = sirenClasses ?? []
             if sirenClasses.contains(.hashtag) {
                 attributed[range].linkClass = .hashtag
@@ -398,20 +411,33 @@ private extension HTML {
     /// Assumes string has already been marked with Feditext attributes.
     static func rewriteLinks(_ attributed: NSMutableAttributedString) {
         let entireString = NSRange(location: 0, length: attributed.length)
-        attributed.enumerateAttribute(.link, in: entireString) { val, nsRange, stop in
+        attributed.enumerateAttribute(.link, in: entireString) { val, linkNSRange, stop in
             guard let url = val as? URL else { return }
 
-            guard let range = Range(nsRange, in: attributed.string) else {
+            guard let linkRange = Range(linkNSRange, in: attributed.string) else {
                 assertionFailure("Getting the substring range should always succeed")
                 stop.pointee = true
                 return
             }
 
+            // Exclude leading and trailing whitespace from range with link attribute.
+            if linkRange.isEmpty { return }
+            var lower = linkRange.lowerBound
+            var upperInclusive = attributed.string.index(before: linkRange.upperBound)
+            while lower <= upperInclusive && attributed.string[lower].isWhitespace {
+                lower = attributed.string.index(after: lower)
+            }
+            while lower <= upperInclusive && attributed.string[upperInclusive].isWhitespace {
+                upperInclusive = attributed.string.index(before: upperInclusive)
+            }
+            if !(lower <= upperInclusive) { return }
+            let range = lower...upperInclusive
+
             let substring = attributed.string[range]
 
             var linkClass = attributed.attribute(
                 Self.Key.linkClass,
-                at: nsRange.location,
+                at: range.lowerBound.utf16Offset(in: attributed.string),
                 effectiveRange: nil
             ) as? Self.LinkClass
 
@@ -427,6 +453,7 @@ private extension HTML {
                 return
             }
 
+            let nsRange = NSRange(range, in: attributed.string)
             switch linkClass {
             case .hashtag:
                 let trimmed: Substring
