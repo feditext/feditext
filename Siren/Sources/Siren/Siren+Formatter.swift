@@ -84,50 +84,50 @@ public extension Siren {
                 paragraphStyle.setParagraphStyle(.default)
                 paragraphStyle.firstLineHeadIndent = indent
                 paragraphStyle.headIndent = indent
+                paragraphStyle.tabStops = []
+                // TODO: (Vyr) HACK: this plus the leading tabs on `listDecoration` make lists look okay,
+                //  but I have no idea why. `fontSize * 1` doesn't work. This may break for any reason. See below.
+                paragraphStyle.defaultTabInterval = fontSize * 2
                 attributed[range].paragraphStyle = paragraphStyle
                 #endif
 
-                var decorations = [String]()
-                var newlines = false
-                var listMarker = false
                 var listType: ListType?
+                var listDecoration: String?
+                var newlines: String?
                 // Order: parents to children.
                 for component in intent.components.reversed() {
                     switch component.kind {
-                    case .paragraph:
-                        newlines = true
+                    case .paragraph, .blockQuote:
+                        newlines = "\n\n"
                     case .orderedList:
                         listType = .ordered
                     case .unorderedList:
                         listType = .unordered
                     case let .listItem(ordinal):
-                        if !listMarker, let listType = listType {
-                            // TODO: (Vyr) need a way to output only the last list decoration
-                            //  At this point only lists have decorations anyway since we don't do > for blockquotes,
-                            //  so decorations should just become a scalar.
-                            // TODO: (Vyr) the first list item in some lists is normal, but subsequent items are intended and shouldn't be
-                            //  - fine: https://infosec.exchange/@vyr/111378145558735113
-                            //  - not fine: https://infosec.exchange/@rakkhi/111377963111795045
-                            switch listType {
-                            case .ordered:
-                                decorations.append("\(ordinal). ")
-                            case .unordered:
-                                decorations.append("• ")
-                            }
-                            listMarker = true
+                        // If we're not inside a list, just skip this.
+                        // The sanitizer may or may not correct that kind of malformed HTML.
+                        guard let listType = listType else { continue }
+
+                        // TODO: (Vyr) the first list item in some lists is normal,
+                        //  but subsequent items are indented and shouldn't be:
+                        //  - fine: https://infosec.exchange/@vyr/111378145558735113
+                        //  - not fine: https://demon.social/@vyr/111387309365750057
+                        switch listType {
+                        case .ordered:
+                            listDecoration = "\t\(ordinal).\t"
+                        case .unordered:
+                            listDecoration = "\t•\t"
                         }
-                        newlines = true
-                    case .blockQuote:
-                        newlines = true
+                        newlines = "\n"
                     default:
                         break
                     }
                 }
-                if !decorations.isEmpty {
-                    insertions.append((decorations.joined(), at: range.lowerBound))
+                if let listDecoration = listDecoration {
+                    insertions.append((listDecoration, at: range.lowerBound))
                 }
-                if newlines {
-                    insertions.append(("\n\n", at: range.upperBound))
+                if let newlines = newlines {
+                    insertions.append((newlines, at: range.upperBound))
                 }
             } else {
                 // Ensure that every run has a paragraph style.
