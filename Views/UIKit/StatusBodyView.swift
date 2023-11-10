@@ -5,6 +5,8 @@ import Mastodon
 import UIKit
 import ViewModels
 
+/// Show a post's text and attachments only.
+/// ``StatusView`` uses this to display the post with user info.
 final class StatusBodyView: UIView {
     let spoilerTextLabel = AnimatedAttachmentLabel()
     let toggleShowContentButton = CapsuleButton()
@@ -20,7 +22,8 @@ final class StatusBodyView: UIView {
     /// Show this many lines of a folded post as a preview.
     static let numLinesFoldedPreview: Int = 2
 
-    /// Don't fold hashtags when there are this many or fewer, and they follow post text without an intervening newline.
+    // /// Don't fold hashtags when there are this many or fewer, and they follow post text without an intervening newline.
+    // TODO: (Vyr) implement this: https://github.com/feditext/feditext/issues/305
 
     var viewModel: StatusViewModel? {
         didSet {
