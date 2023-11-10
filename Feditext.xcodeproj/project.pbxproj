@@ -14,6 +14,8 @@
 		941F79D02A243499007FCC65 /* MultiNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941F79CF2A243499007FCC65 /* MultiNotificationView.swift */; };
 		942099F32A4E2DDE00007663 /* AppUrls in Frameworks */ = {isa = PBXBuildFile; productRef = 942099F22A4E2DDE00007663 /* AppUrls */; };
 		942099F52A4E328B00007663 /* AppUrls in Frameworks */ = {isa = PBXBuildFile; productRef = 942099F42A4E328B00007663 /* AppUrls */; };
+		943123D02AFDC29A0022A705 /* public-timeline-html-fragments.json in Resources */ = {isa = PBXBuildFile; fileRef = 943123CF2AFDC29A0022A705 /* public-timeline-html-fragments.json */; };
+		943123D22AFDC2DA0022A705 /* HTMLPerfTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943123D12AFDC2DA0022A705 /* HTMLPerfTests.swift */; };
 		943141D7299AADD900D90FC4 /* AboutInstanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943141D6299AADD900D90FC4 /* AboutInstanceView.swift */; };
 		943CF10D2A731FC30032A0D2 /* AppIconTransPaint@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 943CF1052A731FC00032A0D2 /* AppIconTransPaint@3x.png */; };
 		943CF10E2A731FC30032A0D2 /* AppIconRainbowPaint@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 943CF1062A731FC00032A0D2 /* AppIconRainbowPaint@2x.png */; };
@@ -361,6 +363,9 @@
 		941F79CD2A243446007FCC65 /* MultiNotificationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiNotificationTableViewCell.swift; sourceTree = "<group>"; };
 		941F79CF2A243499007FCC65 /* MultiNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiNotificationView.swift; sourceTree = "<group>"; };
 		942099F12A4E2D6900007663 /* AppUrls */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AppUrls; sourceTree = "<group>"; };
+		943123CF2AFDC29A0022A705 /* public-timeline-html-fragments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "public-timeline-html-fragments.json"; sourceTree = "<group>"; };
+		943123D12AFDC2DA0022A705 /* HTMLPerfTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLPerfTests.swift; sourceTree = "<group>"; };
+		943123D32AFDD1FF0022A705 /* On-Device Perf Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "On-Device Perf Tests.xctestplan"; sourceTree = "<group>"; };
 		943141D6299AADD900D90FC4 /* AboutInstanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutInstanceView.swift; sourceTree = "<group>"; };
 		9432DE2529A1587C0007C2BF /* SECURITY.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = SECURITY.md; sourceTree = "<group>"; };
 		9432DE2629A1587C0007C2BF /* CONTRIBUTING.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
@@ -663,6 +668,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		943123CE2AFDC29A0022A705 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				943123CF2AFDC29A0022A705 /* public-timeline-html-fragments.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		9432DE2429A158460007C2BF /* Docs */ = {
 			isa = PBXGroup;
 			children = (
@@ -680,6 +693,7 @@
 			children = (
 				F168BCBF2966369200306FAF /* Feditext.xctestplan */,
 				943D4FFF2AD5B89B0097C4DF /* MastodonAPI GtS integration.xctestplan */,
+				943123D32AFDD1FF0022A705 /* On-Device Perf Tests.xctestplan */,
 			);
 			path = "Test Plans";
 			sourceTree = "<group>";
@@ -959,6 +973,8 @@
 		D0666A2224C677B400F3F04B /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				943123D12AFDC2DA0022A705 /* HTMLPerfTests.swift */,
+				943123CE2AFDC29A0022A705 /* Resources */,
 				D0666A2524C677B400F3F04B /* Info.plist */,
 			);
 			path = Tests;
@@ -1366,6 +1382,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				943123D02AFDC29A0022A705 /* public-timeline-html-fragments.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1614,6 +1631,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				943123D22AFDC2DA0022A705 /* HTMLPerfTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

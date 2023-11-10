@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "C0651271-6C66-449B-8298-FC4DD0F433FE",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Feditext.xcodeproj",
+        "identifier" : "D0666A2024C677B400F3F04B",
+        "name" : "Tests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -67,7 +67,9 @@ struct MastodonAPITool: AsyncParsableCommand {
                 })
             }
 
-            try JSONEncoder().encode(htmlFragments).write(to: options.dataFile)
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+            try encoder.encode(htmlFragments).write(to: options.dataFile)
         }
     }
 
