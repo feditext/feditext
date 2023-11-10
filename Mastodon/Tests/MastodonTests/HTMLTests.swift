@@ -8,6 +8,15 @@ final class HTMLTests: XCTestCase {
     /// but different URLs, should produce two mentions.
     /// - See: https://github.com/feditext/feditext/issues/101
     func testMultipleMentionsWithSameUsernamePart() {
+        multipleMentionsWithSameUsernamePart(parser: .webkit)
+    }
+
+    func testMultipleMentionsWithSameUsernamePartSiren() {
+        multipleMentionsWithSameUsernamePart(parser: .siren)
+    }
+    private func multipleMentionsWithSameUsernamePart(parser: HTML.Parser) {
+        HTML.parser = parser
+
         // swiftlint:disable:next line_length
         let html = HTML(raw: #"<p><span class="h-card"><a href="https://octodon.social/@Kadsenchaos" class="u-url mention" rel="nofollow noreferrer noopener" target="_blank">@<span>Kadsenchaos</span></a></span> <span class="h-card"><a href="https://blahaj.zone/@Kadsenchaos" class="u-url mention" rel="nofollow noreferrer noopener" target="_blank">@<span>Kadsenchaos</span></a></span> hmm, mal sehen, ob das überhaupt mit meinem GtS sauber föderiert, hatte da den anderen Tag Probleme mit</p>"#)
 
@@ -80,6 +89,16 @@ final class HTMLTests: XCTestCase {
     /// regardless of whether they also have `mention`.
     /// Mastodon and GotoSocial both send `mention hashtag` for hashtags but others might not.
     func testHashtagVariants() {
+        hashtagVariants(parser: .webkit)
+    }
+
+    func testHashtagVariantsSiren() {
+        hashtagVariants(parser: .siren)
+    }
+
+    private func hashtagVariants(parser: HTML.Parser) {
+        HTML.parser = parser
+
         // swiftlint:disable:next line_length
         let html = HTML(raw: #"<p><span class="h-card"><a href="https://example.org/@Feditext" class="u-url mention" rel="nofollow noreferrer noopener" target="_blank">@<span>Feditext</span></a></span> <a href="https://example.org/tags/foo" class="hashtag" rel="tag nofollow noreferrer noopener" target="_blank">#<span>foo</span></a> <a href="https://example.org/tags/bar" class="mention hashtag" rel="tag nofollow noreferrer noopener" target="_blank">#<span>bar</span></a></p>"#)
 
