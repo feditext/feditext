@@ -94,6 +94,7 @@ public extension Siren {
                 var listType: ListType?
                 var listDecoration: String?
                 var newlines: String?
+                var preformatted = false
                 // Order: parents to children.
                 for component in intent.components.reversed() {
                     switch component.kind {
@@ -119,6 +120,8 @@ public extension Siren {
                             listDecoration = "\t•\t"
                         }
                         newlines = "\n"
+                    case .codeBlock:
+                        preformatted = true
                     default:
                         break
                     }
@@ -126,8 +129,10 @@ public extension Siren {
                 if let listDecoration = listDecoration {
                     insertions.append((listDecoration, at: range.lowerBound))
                 }
-                if let newlines = newlines {
-                    insertions.append((newlines, at: range.upperBound))
+                if !preformatted {
+                    if let newlines = newlines {
+                        insertions.append((newlines, at: range.upperBound))
+                    }
                 }
             } else {
                 // Ensure that every run has a paragraph style.
