@@ -3,6 +3,8 @@
 import Mastodon
 import UIKit
 
+// TODO: (Vyr) rename this class
+/// This badly-misnamed class also handles tapped-link highlights and blockquote rendering.
 final class TouchFallthroughTextView: UITextView, EmojiInsertable {
     var shouldFallthrough: Bool = true
 
@@ -189,6 +191,15 @@ private extension TouchFallthroughTextView {
     }
 
     func updateBlockquotesLayer() {
+        switch HTML.parser {
+        case .webkit:
+            updateBlockquotesLayerWebKit()
+        case .siren:
+            updateBlockquotesLayerSiren()
+        }
+    }
+
+    func updateBlockquotesLayerWebKit() {
         blockquotesLayer.frame = bounds
         blockquotesLayer.sublayers = nil
 
@@ -248,6 +259,113 @@ private extension TouchFallthroughTextView {
                 let sidebarLayer = CALayer()
                 sidebarLayer.frame = sidebarRect
                 sidebarLayer.backgroundColor = UIColor.opaqueSeparator.cgColor
+                blockquotesLayer.addSublayer(sidebarLayer)
+            }
+        }
+    }
+
+    /// Collection of text bounding rectangles for a blockquote.
+    struct Blockquote {
+        var rects: [CGRect]
+    }
+
+    func updateBlockquotesLayerSiren() {
+        blockquotesLayer.frame = bounds
+        blockquotesLayer.sublayers = nil
+
+        // Indexed by `(level - 1)` since there is no level 0.
+        var levelMaps = [[Int: Blockquote]]()
+
+        attributedText.enumerateAttribute(
+            .presentationIntentAttributeName,
+            in: NSRange(location: 0, length: attributedText.length)
+        ) { val, range, _ in
+            guard let intent = val as? PresentationIntent else { return }
+
+            // Reversed so we get it in parents to children order.
+            let blockquoteComponents = intent.components.filter({ $0.kind == .blockQuote}).reversed()
+            guard !blockquoteComponents.isEmpty else { return }
+
+            // Shrink to exclude leading and trailing whitespace.
+            guard let stringRange = Range(range, in: attributedText.string) else { return }
+            var lower = stringRange.lowerBound
+            var upperInclusive = attributedText.string.index(before: stringRange.upperBound)
+            while lower <= upperInclusive && attributedText.string[lower].isWhitespace {
+                lower = attributedText.string.index(after: lower)
+            }
+            while lower <= upperInclusive && attributedText.string[upperInclusive].isWhitespace {
+                upperInclusive = attributedText.string.index(before: upperInclusive)
+            }
+            if !(lower <= upperInclusive) { return }
+            let range = NSRange(lower...upperInclusive, in: attributedText.string)
+            guard
+                let start = position(
+                    from: beginningOfDocument,
+                    offset: range.location
+                ),
+                let end = position(
+                    from: start,
+                    offset: range.length
+                ),
+                let quoteRange = textRange(from: start, to: end)
+            else {
+                return
+            }
+
+            // Create any level maps that are missing.
+            while levelMaps.count < blockquoteComponents.count {
+                levelMaps.append([Int: Blockquote]())
+            }
+
+            // Add blockquote text bounding rectangles to all nested blockquotes containing that text.
+            let textRects = selectionRects(for: quoteRange).map(\.rect).filter({ !$0.isEmpty })
+            for (levelMapsIndex, component) in blockquoteComponents.enumerated() {
+                let level = levelMapsIndex + 1
+                let id = component.identity
+                var blockquote = levelMaps[levelMapsIndex][id] ?? Blockquote(rects: [])
+                blockquote.rects.append(contentsOf: textRects)
+                levelMaps[levelMapsIndex][id] = blockquote
+            }
+        }
+
+        // Arrange decorations for higher-level quotes in front.
+        for (levelMapsIndex, levelMap) in levelMaps.enumerated() {
+            let level = levelMapsIndex + 1
+
+            for (_, blockquote) in levelMap {
+                var quoteRect = CGRect.null
+                for rect in blockquote.rects {
+                    quoteRect = quoteRect.union(rect)
+                }
+                if quoteRect.isEmpty { continue }
+
+                // Clamp to left and right margins.
+                let indentedLeftMargin = CGFloat(level - 1) * NSMutableAttributedString.blockquoteIndent
+                quoteRect.origin.x = indentedLeftMargin
+                quoteRect.size.width = bounds.size.width - indentedLeftMargin
+
+                // Draw quote background.
+                let backgroundLayer = CALayer()
+                backgroundLayer.frame = quoteRect
+                backgroundLayer.backgroundColor = Self.backgroundColor(for: level).cgColor
+                backgroundLayer.zPosition = CGFloat(level)
+                blockquotesLayer.addSublayer(backgroundLayer)
+
+                // Draw quote sidebar.
+                let sidebarRect = CGRect.init(
+                    origin: .init(
+                        x: indentedLeftMargin,
+                        y: quoteRect.origin.y
+                    ),
+                    size: .init(
+                        width: NSMutableAttributedString.blockquoteIndent / 3,
+                        height: quoteRect.height
+                    )
+                )
+                let sidebarLayer = CALayer()
+                sidebarLayer.frame = sidebarRect
+                sidebarLayer.backgroundColor = UIColor.opaqueSeparator.cgColor
+                sidebarLayer.zPosition = CGFloat(level) + 0.1
                 blockquotesLayer.addSublayer(sidebarLayer)
             }
         }
