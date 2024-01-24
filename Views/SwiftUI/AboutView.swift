@@ -72,7 +72,7 @@ struct AboutView: View {
 }
 
 private extension AboutView {
-    static let officialAccountURL = URL(string: "https://fedi.software/@Feditext")!
+    static let officialAccountURL = URL(string: "https://mastodon.social/@Feditext")!
     static let sourceCodeAndIssueTrackerURL = AppUrl.website
 
     struct Maintainer: Identifiable {
