@@ -199,6 +199,7 @@ private extension ReportHeaderView {
                         self.viewModel.elements.ruleIDs.removeAll()
                         for ruleCheckbox in self.ruleCheckboxes {
                             ruleCheckbox.isSelected = false
+                            ruleCheckbox.configuration?.image = .init(systemName: "square")
                         }
                     }
                     self.rulesHintLabel.isHidden_stackViewSafe = notViolation
@@ -211,8 +212,7 @@ private extension ReportHeaderView {
                 }
             )
             categoryButton.changesSelectionAsPrimaryAction = true
-            // If there's only one supported category (GtS as of 0.10.0) it should be pre-selected.
-            categoryButton.isSelected = categories.count == 1
+            categoryButton.isSelected = category == viewModel.elements.category
             categoryButtons.append(categoryButton)
             categoryButtonStack.addArrangedSubview(categoryButton)
         }

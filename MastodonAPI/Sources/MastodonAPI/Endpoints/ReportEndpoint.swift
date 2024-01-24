@@ -73,6 +73,8 @@ extension ReportEndpoint: Endpoint {
     public var requires: APICapabilityRequirements? {
         switch self {
         case let .create(elements):
+            // As of 0.12.0, GotoSocial doesn't care about the `category` parameter at all, but it will accept a list
+            // of rule IDs if one is sent, and right now it's easiest to use the `violation` category for that.
             switch elements.category {
             case .none:
                 return nil
@@ -80,11 +82,13 @@ extension ReportEndpoint: Endpoint {
                 return [:]
             case .other:
                 return .mastodonForks("3.5.0") | [
-                    .mastodon: "3.5.0",
-                    .hometown: "3.5.0",
                     .gotosocial: .assumeAvailable
                 ]
-            case .spam, .violation:
+            case .violation:
+                return .mastodonForks("3.5.0") | [
+                    .gotosocial: "0.12.0"
+                ]
+            case .spam:
                 return .mastodonForks("3.5.0")
             case .legal:
                 return .mastodonForks("4.2.0")

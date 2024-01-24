@@ -47,6 +47,19 @@ public final class ReportViewModel: CollectionItemsViewModel {
             }
             .assign(to: &$categories)
 
+        $categories
+            .sink(receiveValue: { [weak self] categories in
+                guard let self = self else { return }
+                if categories.count == 1, let singleCategory = categories.first {
+                    // If there's only one category, it should be pre-selected.
+                    self.elements.category = singleCategory
+                } else {
+                    // Otherwise, changing the categories should de-select any current selection.
+                    self.elements.category = nil
+                }
+            })
+            .store(in: &cancellables)
+
         $elements.combineLatest($categories)
             .map { elements, categories in
                 if elements.category == .violation {

@@ -32,7 +32,8 @@ extension RulesEndpoint: Endpoint {
 
     public var requires: APICapabilityRequirements? {
         .mastodonForks("3.4.0") | [
-            .fedibird: "0.1.0"
+            .fedibird: "0.1.0",
+            .gotosocial: "0.12.0"
         ]
     }
 
