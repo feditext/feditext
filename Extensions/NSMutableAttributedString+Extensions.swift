@@ -57,12 +57,8 @@ extension NSMutableAttributedString {
         appendWithSeparator(.init(string: string))
     }
 
-    /// Get size of body text produced by `NSAttributedString`'s HTML parser.
-    /// Default is observed height on macOS 13.
-    private static let htmlBodyTextHeight: CGFloat = (NSAttributedString(html: "x")?
-        .attribute(.font, at: 0, effectiveRange: nil) as? UIFont)?
-        .pointSize
-    ?? 12.0
+    /// Size of body text produced by `NSAttributedString`'s WebKit HTML parser.
+    private static let htmlBodyTextHeight: CGFloat = 12.0
 
     private var entireString: NSRange { NSRange(location: 0, length: length) }
 
