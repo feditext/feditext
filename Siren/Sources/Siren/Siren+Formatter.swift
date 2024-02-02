@@ -14,7 +14,6 @@ import SwiftUI
 #endif
 
 public extension Siren {
-    // TODO: (Vyr) add SwiftUI attributes as well
     /// Given an attributed string with Foundation and Siren attributes,
     /// convert them to AppKit/UIKit attributes for display,
     /// using the provided font descriptor.
@@ -28,6 +27,9 @@ public extension Siren {
             fontSize = 0
         }
         let defaultFont = CTFontCreateWithFontDescriptor(descriptor, 0, nil)
+        #if canImport(SwiftUI)
+        let swiftUIDefaultFont = Font(defaultFont)
+        #endif
 
         for run in attributed.runs {
             if let intent = run.inlinePresentationIntent {
@@ -47,26 +49,46 @@ public extension Siren {
                     .traitClassMask
                 ) {
                     let font = CTFontCreateWithFontDescriptor(descriptorWithTraits, 0, nil)
-                    #if canImport(AppKit) || canImport(UIKit)
-                    attributed[run.range].font = font
+                    #if canImport(AppKit)
+                    attributed[run.range].appKit.font = font
+                    #elseif canImport(UIKit)
+                    attributed[run.range].uiKit.font = font
+                    #endif
+                    #if canImport(SwiftUI)
+                    attributed[run.range].swiftUI.font = .init(font)
                     #endif
                 }
             } else {
                 // Ensure that every run has a font.
-                #if canImport(AppKit) || canImport(UIKit)
-                attributed[run.range].font = defaultFont
+                #if canImport(AppKit)
+                attributed[run.range].appKit.font = defaultFont
+                #elseif canImport(UIKit)
+                attributed[run.range].uiKit.font = defaultFont
+                #endif
+                #if canImport(SwiftUI)
+                attributed[run.range].swiftUI.font = swiftUIDefaultFont
                 #endif
             }
 
             if let styles = run.styles {
                 if styles.contains(.strikethru) {
-                    #if canImport(AppKit) || canImport(UIKit)
-                    attributed[run.range].strikethroughStyle = .single
+                    #if canImport(AppKit)
+                    attributed[run.range].appKit.strikethroughStyle = .single
+                    #elseif canImport(UIKit)
+                    attributed[run.range].uiKit.strikethroughStyle = .single
+                    #endif
+                    #if canImport(SwiftUI)
+                    attributed[run.range].swiftUI.strikethroughStyle = .single
                     #endif
                 }
                 if styles.contains(.underline) {
-                    #if canImport(AppKit) || canImport(UIKit)
-                    attributed[run.range].underlineStyle = .single
+                    #if canImport(AppKit)
+                    attributed[run.range].appKit.underlineStyle = .single
+                    #elseif canImport(UIKit)
+                    attributed[run.range].uiKit.underlineStyle = .single
+                    #endif
+                    #if canImport(SwiftUI)
+                    attributed[run.range].swiftUI.underlineStyle = .single
                     #endif
                 }
                 // TODO: (Vyr) handle .small, .sub, and .sup
@@ -136,9 +158,12 @@ public extension Siren {
                 }
             } else {
                 // Ensure that every run has a paragraph style.
-                #if canImport(AppKit) || canImport(UIKit)
-                attributed[range].paragraphStyle = .default
+                #if canImport(AppKit)
+                attributed[range].appKit.paragraphStyle = .default
+                #elseif canImport(UIKit)
+                attributed[range].uiKit.paragraphStyle = .default
                 #endif
+                // SwiftUI doesn't have a paragraph style attribute.
                 insertions.append(("\n\n", at: range.upperBound))
             }
         }
