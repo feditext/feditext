@@ -348,6 +348,7 @@ private extension AccountView {
             UIImage(systemName: "checkmark.circle",
                     withConfiguration: UIImage.SymbolConfiguration(pointSize: largeTitlePointSize)),
             for: .normal)
+        acceptFollowRequestButton.tintColor = .systemGreen
         acceptFollowRequestButton.setContentHuggingPriority(.required, for: .horizontal)
         acceptFollowRequestButton.addAction(
             UIAction { [weak self] _ in self?.accountConfiguration.viewModel.acceptFollowRequest() },
