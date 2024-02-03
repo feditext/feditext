@@ -359,11 +359,25 @@ public extension StatusViewModel {
     }
 
     func urlSelected(_ url: URL) {
-        eventsSubject.send(
-            statusService.navigationService.lookup(url: url, identityId: identityContext.identity.id)
-                .map { .navigation($0) }
-                .setFailureType(to: Error.self)
-                .eraseToAnyPublisher())
+        let urlString = url.absoluteString
+        if urlString == statusService.status.uri || urlString == statusService.status.url {
+            // Special case: if we try to navigate to a URL that's the same as this status's,
+            // the status is most likely a non-Note AP activity which has been rendered
+            // by the server as a status containing a link to the original.
+            // This is really common for blog articles.
+            // The correct behavior in this case is to open it in the browser.
+            eventsSubject.send(
+                Just(.navigation(.url(url)))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            )
+        } else {
+            eventsSubject.send(
+                statusService.navigationService.lookup(url: url, identityId: identityContext.identity.id)
+                    .map { .navigation($0) }
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher())
+        }
     }
 
     func accountSelected() {
