@@ -86,7 +86,7 @@ private func formatAttributed(_ formatString: String, _ args: [Any]) -> NSMutabl
     return attributed
 }
 
-private let formatPattern = #"%(?:@|ld)\b"#
+private let formatPattern = #"%(?:@|ld\b)"#
 
 /// Find a tiny subset of `NSString` format specifiers.
 /// Return them and their positions using `NSString`-style ranges.
