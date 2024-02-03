@@ -428,6 +428,7 @@
 "notifications.favourited-your-status-%@.post" = "%@ favorited your post";
 "notifications.favourited-your-status-%@.toot" = "%@ favorited your toot";
 "notifications.followed-you-%@" = "%@ followed you";
+"notifications.requested-to-follow-you-%@" = "%@ requested to follow you";
 "notifications.poll-ended" = "A poll you have voted in has ended";
 "notifications.your-poll-ended" = "Your poll has ended";
 "notifications.signed-up-%@" = "%@ signed up";

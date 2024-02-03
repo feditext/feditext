@@ -33,8 +33,10 @@ extension MastodonNotification.NotificationType {
 
     var systemImageName: String {
         switch self {
-        case .follow, .followRequest:
-            return "person.badge.plus"
+        case .follow:
+            return "person.fill.badge.plus"
+        case .followRequest:
+            return "person.fill.questionmark"
         case .mention:
             return "at"
         case .reblog:

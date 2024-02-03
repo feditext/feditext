@@ -188,6 +188,13 @@ private extension NotificationView {
                 label: typeLabel,
                 identityContext: viewModel.identityContext)
             iconImageView.tintColor = nil
+        case .followRequest:
+            typeLabel.attributedText = "notifications.requested-to-follow-you-%@".localizedBolding(
+                displayName: viewModel.accountViewModel.displayName,
+                emojis: viewModel.accountViewModel.emojis,
+                label: typeLabel,
+                identityContext: viewModel.identityContext)
+            iconImageView.tintColor = nil
         case .reblog:
             let stringName: String
             switch viewModel.identityContext.appPreferences.statusWord {
