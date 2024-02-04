@@ -88,7 +88,13 @@ private extension Status {
             muted: record.muted,
             bookmarked: record.bookmarked,
             pinned: record.pinned,
-            reactions: record.reactions ?? []
+            // Workaround for a problem with Sharkey, which sends both `Status.reactions`
+            // and `Status.emojiReactions` with identical data, causing `record.reactions`
+            // to contain duplicate entries, which results in a duplicated item crash:
+            // https://github.com/feditext/feditext/issues/323#issuecomment-1925916923
+            // This de-dupes reaction data containing existing duplicate reactions,
+            // and can be removed once Sharkey users have upgraded.
+            reactions: Array(Set(record.reactions ?? []))
         )
     }
 }

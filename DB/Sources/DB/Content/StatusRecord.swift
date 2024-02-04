@@ -167,6 +167,6 @@ extension StatusRecord {
         muted = status.muted
         bookmarked = status.bookmarked
         pinned = status.pinned
-        reactions = status.reactions + status.emojiReactions
+        reactions = status.unifiedReactions
     }
 }
