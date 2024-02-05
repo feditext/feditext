@@ -5,17 +5,10 @@ import Mastodon
 import UIKit
 import ViewModels
 
-// TODO: (Vyr) generalize this to handle more than 4 attachments
 final class AttachmentsView: UIView {
     private let containerStackView = UIStackView()
     private let leftStackView = UIStackView()
     private let rightStackView = UIStackView()
-    private let attachmentViews = [
-        AttachmentView(),
-        AttachmentView(),
-        AttachmentView(),
-        AttachmentView()
-    ]
     private let curtain = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
     private let curtainButton = UIButton(type: .system)
     private let hideButtonBackground = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
@@ -23,57 +16,38 @@ final class AttachmentsView: UIView {
     private var aspectRatioConstraint: NSLayoutConstraint?
     private var cancellables = Set<AnyCancellable>()
 
-    /// If we have fewer than 4 attachments, the first one should be displayed in its own stack
-    /// to give it as much space as possible. Left to right top to bottom otherwise.
-    /// Lower indexes are in the left stack.
-    private let viewIndexPermutations = [
-        [],
-        [0],
-        [0, 2],
-        [0, 2, 3],
-        [0, 2, 1, 3]
-    ]
-
     var viewModel: AttachmentsRenderingViewModel? {
         didSet {
-            guard let viewModel = viewModel else {
-                for attachmentView in self.attachmentViews {
-                    attachmentView.parentViewModel = nil
-                    attachmentView.viewModel = nil
-                    attachmentView.isHidden_stackViewSafe = true
+            for stackView in [leftStackView, rightStackView] {
+                for view in stackView.arrangedSubviews {
+                    stackView.removeArrangedSubview(view)
+                    view.removeFromSuperview()
                 }
-                return
             }
 
-            // TODO: (Vyr) attachments: remove temporary restriction to 4 attachments
-            let attachmentViewModels = viewModel.attachmentViewModels.prefix(4)
+            guard let viewModel = viewModel else { return }
 
-            rightStackView.isHidden = attachmentViewModels.count == 1
+            rightStackView.isHidden = viewModel.attachmentViewModels.count == 1
 
-            let viewIndexPermutation = viewIndexPermutations[attachmentViewModels.count]
-            var unusedViewIndexes = Set(0..<attachmentViews.count)
-            for (viewModelIndex, attachmentViewModel) in attachmentViewModels.enumerated() {
-                let viewIndex = viewIndexPermutation[viewModelIndex]
-                unusedViewIndexes.remove(viewIndex)
-
-                let attachmentView = attachmentViews[viewIndex]
-                attachmentView.parentViewModel = viewModel
-                attachmentView.viewModel = attachmentViewModel
-                attachmentView.isHidden_stackViewSafe = false
+            for (index, attachmentViewModel) in viewModel.attachmentViewModels.enumerated() {
+                let attachmentView = AttachmentView(viewModel: attachmentViewModel, parentViewModel: viewModel)
+                attachmentView.playing = viewModel.shouldShowAttachments && attachmentViewModel.shouldAutoplay
                 attachmentView.removeButton.isHidden = !viewModel.canRemoveAttachments
                 attachmentView.isAccessibilityElement = !viewModel.canRemoveAttachments
-            }
-            for viewIndex in unusedViewIndexes {
-                let attachmentView = attachmentViews[viewIndex]
-                attachmentView.parentViewModel = viewModel
-                attachmentView.viewModel = nil
-                attachmentView.isHidden_stackViewSafe = true
+
+                if viewModel.attachmentViewModels.count == 2 && index == 1
+                    || viewModel.attachmentViewModels.count == 3 && index != 0
+                    || viewModel.attachmentViewModels.count > 3 && index % 2 != 0 {
+                    rightStackView.addArrangedSubview(attachmentView)
+                } else {
+                    leftStackView.addArrangedSubview(attachmentView)
+                }
             }
 
             let newAspectRatio: CGFloat
 
-            if attachmentViewModels.count == 1,
-               let aspectRatio = attachmentViewModels.first?.attachment.aspectRatio {
+            if viewModel.attachmentViewModels.count == 1,
+               let aspectRatio = viewModel.attachmentViewModels.first?.attachment.aspectRatio {
                 newAspectRatio = max(CGFloat(aspectRatio), 16 / 9)
             } else {
                 newAspectRatio = 16 / 9
@@ -99,17 +73,17 @@ final class AttachmentsView: UIView {
                 if viewModel.attachmentViewModels
                     .allSatisfy({ $0.attachment.type == .image || $0.attachment.type == .gifv }) {
                     type = .image
-                } else if attachmentViewModels.allSatisfy({ $0.attachment.type == .video }) {
+                } else if viewModel.attachmentViewModels.allSatisfy({ $0.attachment.type == .video }) {
                     type = .video
-                } else if attachmentViewModels.allSatisfy({ $0.attachment.type == .audio }) {
+                } else if viewModel.attachmentViewModels.allSatisfy({ $0.attachment.type == .audio }) {
                     type = .audio
                 } else {
                     type = .unknown
                 }
 
-                var accessibilityLabel = type.accessibilityNames(count: attachmentViewModels.count)
+                var accessibilityLabel = type.accessibilityNames(count: viewModel.attachmentViewModels.count)
 
-                for attachmentViewModel in attachmentViewModels {
+                for attachmentViewModel in viewModel.attachmentViewModels {
                     guard let description = attachmentViewModel.attachment.description,
                           !description.isEmpty
                     else { continue }
@@ -215,14 +189,6 @@ private extension AttachmentsView {
         curtainButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         curtainButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
-        let split = Int((Double(attachmentViews.count) / 2).rounded(.up))
-        for attachmentView in attachmentViews.prefix(split) {
-            leftStackView.addArrangedSubview(attachmentView)
-        }
-        for attachmentView in attachmentViews.suffix(split) {
-            rightStackView.addArrangedSubview(attachmentView)
-        }
-
         NSLayoutConstraint.activate([
             containerStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -251,5 +217,10 @@ private extension AttachmentsView {
             curtainButton.trailingAnchor.constraint(equalTo: curtain.contentView.trailingAnchor),
             curtainButton.bottomAnchor.constraint(equalTo: curtain.contentView.bottomAnchor)
         ])
+    }
+
+    var attachmentViews: [AttachmentView] {
+        (leftStackView.arrangedSubviews + rightStackView.arrangedSubviews)
+            .compactMap { $0 as? AttachmentView }
     }
 }
