@@ -25,7 +25,7 @@ public struct AnnouncementsService {
 }
 
 extension AnnouncementsService: CollectionService {
-    public func request(maxId: String?, minId: String?, search: Search?) -> AnyPublisher<Never, Error> {
+    public func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error> {
         mastodonAPIClient.request(AnnouncementsEndpoint.announcements)
             .flatMap(contentDatabase.update(announcements:))
             .eraseToAnyPublisher()

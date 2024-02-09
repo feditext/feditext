@@ -204,7 +204,7 @@ public extension NavigationViewModel {
             identityContext: identityContext)
 
         if excludeTypes.isEmpty {
-            viewModel.request(maxId: nil, minId: nil, search: nil)
+            viewModel.request(maxId: nil, minId: nil)
         }
 
         return viewModel
@@ -219,7 +219,7 @@ public extension NavigationViewModel {
             collectionService: identityContext.service.conversationsService(),
             identityContext: identityContext)
 
-        conversationsViewModel.request(maxId: nil, minId: nil, search: nil)
+        conversationsViewModel.request(maxId: nil, minId: nil)
 
         return conversationsViewModel
     }

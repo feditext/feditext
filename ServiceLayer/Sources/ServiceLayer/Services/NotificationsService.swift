@@ -8,14 +8,14 @@ import MastodonAPI
 
 public struct NotificationsService {
     public let sections: AnyPublisher<[CollectionSection], Error>
-    public let nextPageMaxId: AnyPublisher<String, Never>
+    public let nextPageMaxId: AnyPublisher<String?, Never>
     public let navigationService: NavigationService
     public let announcesNewItems = true
 
     private let excludeTypes: Set<MastodonNotification.NotificationType>
     private let mastodonAPIClient: MastodonAPIClient
     private let contentDatabase: ContentDatabase
-    private let nextPageMaxIdSubject: CurrentValueSubject<String, Never>
+    private let nextPageMaxIdSubject: CurrentValueSubject<String?, Never>
 
     init(
         excludeTypes: Set<MastodonNotification.NotificationType>,
@@ -27,7 +27,7 @@ public struct NotificationsService {
         self.mastodonAPIClient = mastodonAPIClient
         self.contentDatabase = contentDatabase
 
-        let nextPageMaxIdSubject = CurrentValueSubject<String, Never>(String(Int.max))
+        let nextPageMaxIdSubject = CurrentValueSubject<String?, Never>(String(Int.max))
         self.nextPageMaxIdSubject = nextPageMaxIdSubject
 
         let appPreferences = AppPreferences(environment: environment)
@@ -46,7 +46,8 @@ public struct NotificationsService {
             }
             .handleEvents(receiveOutput: {
                 guard case let .notification(notification, _, _) = $0.last?.items.last,
-                      notification.id < nextPageMaxIdSubject.value
+                      let nextPageMaxId = nextPageMaxIdSubject.value,
+                      notification.id < nextPageMaxId
                 else { return }
 
                 nextPageMaxIdSubject.send(notification.id)
@@ -65,12 +66,15 @@ public struct NotificationsService {
 extension NotificationsService: CollectionService {
     public var markerTimeline: Marker.Timeline? { excludeTypes.isEmpty ? .notifications : nil }
 
-    public func request(maxId: String?, minId: String?, search: Search?) -> AnyPublisher<Never, Error> {
+    public func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error> {
         mastodonAPIClient.pagedRequest(NotificationsEndpoint.notifications(excludeTypes: excludeTypes),
                                        maxId: maxId,
                                        minId: minId)
             .handleEvents(receiveOutput: {
-                guard let maxId = $0.info.maxId, maxId < nextPageMaxIdSubject.value else { return }
+                guard let maxId = $0.info.maxId,
+                      let nextPageMaxId = nextPageMaxIdSubject.value,
+                      maxId < nextPageMaxId
+                else { return }
 
                 nextPageMaxIdSubject.send(maxId)
             })

@@ -20,12 +20,13 @@ public final class SearchViewModel: CollectionItemsViewModel {
             .debounce(for: .seconds(Self.debounceInterval), scheduler: DispatchQueue.global())
             .removeDuplicates()
             .combineLatest($scope.removeDuplicates())
-            .sink { [weak self] in
-                self?.cancelRequests()
-                self?.request(
-                    maxId: nil,
-                    minId: nil,
-                    search: .init(query: $0, type: $1.type, limit: $1.limit))
+            .sink { [weak self] query, scope in
+                guard let self = self else { return }
+                self.cancelRequests()
+                self.searchService.query = query
+                self.searchService.type = scope.type
+                self.searchService.limit = scope.limit
+                self.request(maxId: nil, minId: nil)
             }
             .store(in: &cancellables)
     }
@@ -33,10 +34,7 @@ public final class SearchViewModel: CollectionItemsViewModel {
     public override func requestNextPage(fromIndexPath indexPath: IndexPath) {
         guard scope != .all else { return }
 
-        request(
-            maxId: nil,
-            minId: nil,
-            search: .init(query: query, type: scope.type, offset: indexPath.item + 1))
+        request(maxId: nextPageMaxId, minId: nil)
     }
 }
 

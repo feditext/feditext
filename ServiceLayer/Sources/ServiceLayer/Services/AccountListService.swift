@@ -8,7 +8,7 @@ import MastodonAPI
 
 public struct AccountListService {
     public let sections: AnyPublisher<[CollectionSection], Error>
-    public let nextPageMaxId: AnyPublisher<String, Never>
+    public let nextPageMaxId: AnyPublisher<String?, Never>
     public let accountIdsForRelationships: AnyPublisher<Set<Account.Id>, Never>
     public let navigationService: NavigationService
     public let canRefresh = false
@@ -18,7 +18,7 @@ public struct AccountListService {
     private let mastodonAPIClient: MastodonAPIClient
     private let contentDatabase: ContentDatabase
     private let titleComponents: [String]?
-    private let nextPageMaxIdSubject = PassthroughSubject<String, Never>()
+    private let nextPageMaxIdSubject = PassthroughSubject<String?, Never>()
     private let accountIdsForRelationshipsSubject = PassthroughSubject<Set<Account.Id>, Never>()
 
     init(endpoint: AccountsEndpoint,
@@ -46,7 +46,7 @@ public extension AccountListService {
 }
 
 extension AccountListService: CollectionService {
-    public func request(maxId: String?, minId: String?, search: Search?) -> AnyPublisher<Never, Error> {
+    public func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error> {
         mastodonAPIClient.pagedRequest(endpoint, maxId: maxId, minId: minId)
             .handleEvents(receiveOutput: {
                 accountIdsForRelationshipsSubject.send(Set($0.result.map(\.id)))

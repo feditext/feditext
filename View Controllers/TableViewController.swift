@@ -98,7 +98,7 @@ class TableViewController: UITableViewController {
 
         setupViewModelBindings()
 
-        viewModel.request(maxId: nil, minId: nil, search: nil)
+        viewModel.request(maxId: nil, minId: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -863,7 +863,7 @@ private extension TableViewController {
 
     func refreshIfAble() {
         if viewModel.canRefresh {
-            viewModel.request(maxId: nil, minId: nil, search: nil)
+            viewModel.request(maxId: nil, minId: nil)
         }
     }
 

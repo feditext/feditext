@@ -5,7 +5,7 @@ import Mastodon
 
 public protocol CollectionService {
     var sections: AnyPublisher<[CollectionSection], Error> { get }
-    var nextPageMaxId: AnyPublisher<String, Never> { get }
+    var nextPageMaxId: AnyPublisher<String?, Never> { get }
     var accountIdsForRelationships: AnyPublisher<Set<Account.Id>, Never> { get }
     var preferLastPresentIdOverNextPageMaxId: Bool { get }
     var canRefresh: Bool { get }
@@ -14,13 +14,13 @@ public protocol CollectionService {
     var announcesNewItems: Bool { get }
     var navigationService: NavigationService { get }
     var positionTimeline: Timeline? { get }
-    func request(maxId: String?, minId: String?, search: Search?) -> AnyPublisher<Never, Error>
+    func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error>
     func requestMarkerLastReadId() -> AnyPublisher<CollectionItem.Id, Error>
     func setMarkerLastReadId(_ id: CollectionItem.Id) -> AnyPublisher<CollectionItem.Id, Error>
 }
 
 extension CollectionService {
-    public var nextPageMaxId: AnyPublisher<String, Never> { Empty().eraseToAnyPublisher() }
+    public var nextPageMaxId: AnyPublisher<String?, Never> { Empty().eraseToAnyPublisher() }
 
     public var accountIdsForRelationships: AnyPublisher<Set<Account.Id>, Never> { Empty().eraseToAnyPublisher() }
 

@@ -151,7 +151,7 @@ extension ProfileViewModel: CollectionViewModel {
 
     public var timelineActionViewModel: TimelineActionViewModel? { collectionViewModel.value.timelineActionViewModel }
 
-    public func request(maxId: String?, minId: String?, search: Search?) {
+    public func request(maxId: String?, minId: String?) {
         if case .statuses = collection, maxId == nil {
             profileService.fetchPinnedStatuses()
                 .assignErrorsToAlertItem(to: \.alertItem, on: self)
@@ -159,7 +159,7 @@ extension ProfileViewModel: CollectionViewModel {
                 .store(in: &cancellables)
         }
 
-        collectionViewModel.value.request(maxId: maxId, minId: minId, search: nil)
+        collectionViewModel.value.request(maxId: maxId, minId: minId)
     }
 
     public func cancelRequests() {

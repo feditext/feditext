@@ -9,7 +9,7 @@ import MastodonAPI
 public struct TimelineService {
     public let sections: AnyPublisher<[CollectionSection], Error>
     public let navigationService: NavigationService
-    public let nextPageMaxId: AnyPublisher<String, Never>
+    public let nextPageMaxId: AnyPublisher<String?, Never>
     public let accountIdsForRelationships: AnyPublisher<Set<Account.Id>, Never>
     public let title: AnyPublisher<String, Never>
     public let titleLocalizationComponents: AnyPublisher<[String], Never>
@@ -18,7 +18,7 @@ public struct TimelineService {
     private let timeline: Timeline
     private let mastodonAPIClient: MastodonAPIClient
     private let contentDatabase: ContentDatabase
-    private let nextPageMaxIdSubject = PassthroughSubject<String, Never>()
+    private let nextPageMaxIdSubject = PassthroughSubject<String?, Never>()
     private let accountIdsForRelationshipsSubject = PassthroughSubject<Set<Account.Id>, Never>()
     private let displayFilterSubject = CurrentValueSubject<DisplayFilter?, Error>(nil)
 
@@ -89,7 +89,7 @@ extension TimelineService: CollectionService {
         !timeline.ordered
     }
 
-    public func request(maxId: String?, minId: String?, search: Search?) -> AnyPublisher<Never, Error> {
+    public func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error> {
         mastodonAPIClient.pagedRequest(timeline.endpoint, maxId: maxId, minId: minId)
             .handleEvents(receiveOutput: {
                 if let maxId = $0.info.maxId {

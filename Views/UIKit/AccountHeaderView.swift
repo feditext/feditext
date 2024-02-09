@@ -711,7 +711,7 @@ private extension AccountHeaderView {
                     discoverabilityTitle: collection.title(statusWord: statusWord, shorten: false)
                 ) { [weak self] _ in
                     self?.viewModel.collection = collection
-                    self?.viewModel.request(maxId: nil, minId: nil, search: nil)
+                    self?.viewModel.request(maxId: nil, minId: nil)
                 },
                 at: index,
                 animated: false)

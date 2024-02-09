@@ -16,7 +16,7 @@ public protocol CollectionViewModel {
     var canRefresh: Bool { get }
     var announcesNewItems: Bool { get }
     var timelineActionViewModel: TimelineActionViewModel? { get }
-    func request(maxId: String?, minId: String?, search: Search?)
+    func request(maxId: String?, minId: String?)
     func requestNextPage(fromIndexPath indexPath: IndexPath)
     func cancelRequests()
     func viewedAtTop(indexPath: IndexPath)

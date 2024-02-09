@@ -43,7 +43,7 @@ public struct FixedAccountListService {
 }
 
 extension FixedAccountListService: CollectionService {
-    public func request(maxId: String?, minId: String?, search: Search?) -> AnyPublisher<Never, Error> {
+    public func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error> {
         Empty().eraseToAnyPublisher()
     }
 

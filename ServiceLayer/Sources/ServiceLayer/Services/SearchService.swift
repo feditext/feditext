@@ -6,71 +6,106 @@ import Foundation
 import Mastodon
 import MastodonAPI
 
-public struct SearchService {
+public class SearchService: ObservableObject {
     public let sections: AnyPublisher<[CollectionSection], Error>
     public let navigationService: NavigationService
-    public let nextPageMaxId: AnyPublisher<String, Never>
+    public let nextPageMaxId: AnyPublisher<String?, Never>
+
+    public var query: String = "" {
+        didSet {
+            newSearch()
+        }
+    }
+    public var type: ResultsEndpoint.Search.SearchType? {
+        didSet {
+            newSearch()
+        }
+    }
+    public var limit: Int? {
+        didSet {
+            newSearch()
+        }
+    }
 
     private let mastodonAPIClient: MastodonAPIClient
     private let contentDatabase: ContentDatabase
-    private let nextPageMaxIdSubject = PassthroughSubject<String, Never>()
-    private let resultsSubject = PassthroughSubject<(Results, Search), Error>()
+    private let nextPageMaxIdSubject = PassthroughSubject<String?, Never>()
+    private let sectionsPublisherSubject = PassthroughSubject<AnyPublisher<[CollectionSection], Error>, Error>()
+
+    private var results: Results = .empty
 
     init(environment: AppEnvironment, mastodonAPIClient: MastodonAPIClient, contentDatabase: ContentDatabase) {
         self.mastodonAPIClient = mastodonAPIClient
         self.contentDatabase = contentDatabase
-        nextPageMaxId = nextPageMaxIdSubject.eraseToAnyPublisher()
         navigationService = NavigationService(environment: environment,
                                               mastodonAPIClient: mastodonAPIClient,
                                               contentDatabase: contentDatabase)
-        sections = resultsSubject.scan((.empty, nil)) {
-            let (results, search) = $1
+        nextPageMaxId = nextPageMaxIdSubject.eraseToAnyPublisher()
+        sections = sectionsPublisherSubject
+            .switchToLatest()
+            .eraseToAnyPublisher()
+    }
 
-            return (search.offset == nil ? results : $0.0.appending(results), search.limit)
-        }
-        .map(contentDatabase.publisher(results:limit:)).switchToLatest().eraseToAnyPublisher()
+    private func newSearch() {
+        results = .empty
+        nextPageMaxIdSubject.send(nil)
+        sectionsPublisherSubject.send(Just([]).setFailureType(to: Error.self).eraseToAnyPublisher())
     }
 }
 
 extension SearchService: CollectionService {
-    public func request(maxId: String?, minId: String?, search: Search?) -> AnyPublisher<Never, Error> {
-        guard
-            let search = search,
-            !search.query.trimmingCharacters(in: .whitespaces).isEmpty
-        else { return Empty().eraseToAnyPublisher() }
+    public func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error> {
+        Future { [weak self] in
+            try await self?.request(maxId: maxId, minId: minId)
+        }
+        .ignoreOutput()
+        .eraseToAnyPublisher()
+    }
 
-        return mastodonAPIClient.request(ResultsEndpoint.search(search))
-            .flatMap { results in contentDatabase.insert(results: results).collect().map { _ in results } }
-            .flatMap { results in
-                if !results.accounts.isEmpty {
-                    return mastodonAPIClient
-                        .request(RelationshipsEndpoint.relationships(ids: results.accounts.map { $0.id }))
-                        .flatMap(contentDatabase.insert(relationships:))
-                        .collect()
-                        .map { _ in results }
-                        .eraseToAnyPublisher()
-                } else {
-                    return Just(results)
-                        .setFailureType(to: Error.self)
-                        .eraseToAnyPublisher()
-                }
-            }
-            .flatMap { results in
-                if !results.accounts.isEmpty {
-                    return mastodonAPIClient
-                        .request(FamiliarFollowersEndpoint.familiarFollowers(ids: results.accounts.map { $0.id }))
-                        .flatMap(contentDatabase.insert(familiarFollowers:))
-                        .collect()
-                        .map { _ in results }
-                        .eraseToAnyPublisher()
-                } else {
-                    return Just(results)
-                        .setFailureType(to: Error.self)
-                        .eraseToAnyPublisher()
-                }
-            }
-            .handleEvents(receiveOutput: { resultsSubject.send(($0, search)) })
-            .ignoreOutput()
-            .eraseToAnyPublisher()
+    public func request(maxId: String?, minId: String?) async throws {
+        guard !query.trimmingCharacters(in: .whitespaces).isEmpty
+        else { return }
+
+        let pagedResponse = try await mastodonAPIClient.pagedRequest(
+            ResultsEndpoint.search(.init(query: query, type: type)),
+            maxId: maxId,
+            minId: minId,
+            limit: limit
+        )
+        let page = pagedResponse.result
+
+        if page.isEmpty {
+            return
+        }
+
+        // No known search API implementers actually use Link headers for paging,
+        // so we get the next page's max ID from the appropriate entity type.
+        switch type {
+        case .accounts:
+            nextPageMaxIdSubject.send(page.accounts.lazy.map(\.id).min())
+        case .statuses:
+            nextPageMaxIdSubject.send(page.statuses.lazy.map(\.id).min())
+        default:
+            nextPageMaxIdSubject.send(nil)
+        }
+
+        try await contentDatabase.insert(results: page).finished
+
+        let accountIDs = page.accounts.map(\.id)
+        if !accountIDs.isEmpty {
+            let relationships = try await mastodonAPIClient.request(
+                RelationshipsEndpoint.relationships(ids: accountIDs)
+            )
+            try await contentDatabase.insert(relationships: relationships).finished
+
+            let familiarFollowers = try await mastodonAPIClient.request(
+                FamiliarFollowersEndpoint.familiarFollowers(ids: accountIDs)
+            )
+            try await contentDatabase.insert(familiarFollowers: familiarFollowers).finished
+        }
+
+        results = results.appending(page)
+
+        sectionsPublisherSubject.send(contentDatabase.publisher(results: results, limit: limit))
     }
 }

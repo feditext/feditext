@@ -159,7 +159,7 @@ public class CollectionItemsViewModel: ObservableObject {
                 : nextPageMaxId
         else { return }
 
-        request(maxId: maxId, minId: nil, search: nil)
+        request(maxId: maxId, minId: nil)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
@@ -364,8 +364,8 @@ extension CollectionItemsViewModel: CollectionViewModel {
 
     public var announcesNewItems: Bool { collectionService.announcesNewItems }
 
-    public func request(maxId: String? = nil, minId: String? = nil, search: Search?) {
-        collectionService.request(maxId: realMaxId(maxId: maxId), minId: minId, search: search)
+    public func request(maxId: String? = nil, minId: String? = nil) {
+        collectionService.request(maxId: realMaxId(maxId: maxId), minId: minId)
             .receive(on: DispatchQueue.main)
             .assignErrorsToAlertItem(to: \.alertItem, on: self)
             .handleEvents(

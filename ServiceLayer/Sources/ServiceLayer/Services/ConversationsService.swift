@@ -8,12 +8,12 @@ import MastodonAPI
 
 public struct ConversationsService {
     public let sections: AnyPublisher<[CollectionSection], Error>
-    public let nextPageMaxId: AnyPublisher<String, Never>
+    public let nextPageMaxId: AnyPublisher<String?, Never>
     public let navigationService: NavigationService
 
     private let mastodonAPIClient: MastodonAPIClient
     private let contentDatabase: ContentDatabase
-    private let nextPageMaxIdSubject = PassthroughSubject<String, Never>()
+    private let nextPageMaxIdSubject = PassthroughSubject<String?, Never>()
 
     init(environment: AppEnvironment, mastodonAPIClient: MastodonAPIClient, contentDatabase: ContentDatabase) {
         self.mastodonAPIClient = mastodonAPIClient
@@ -38,7 +38,7 @@ public extension ConversationsService {
 }
 
 extension ConversationsService: CollectionService {
-    public func request(maxId: String?, minId: String?, search: Search?) -> AnyPublisher<Never, Error> {
+    public func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error> {
         mastodonAPIClient.pagedRequest(ConversationsEndpoint.conversations, maxId: maxId, minId: minId)
             .handleEvents(receiveOutput: {
                 guard let maxId = $0.info.maxId else { return }

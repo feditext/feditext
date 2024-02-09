@@ -120,7 +120,7 @@ public extension IdentityService {
     }
 
     func refreshAnnouncements() -> AnyPublisher<Never, Error> {
-        announcementsService().request(maxId: nil, minId: nil, search: nil)
+        announcementsService().request(maxId: nil, minId: nil)
     }
 
     func refreshRules() -> AnyPublisher<Never, Error> {

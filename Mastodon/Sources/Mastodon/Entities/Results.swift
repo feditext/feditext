@@ -21,4 +21,10 @@ public extension Results {
             statuses: statuses + results.statuses.filter { !statusIds.contains($0.id) },
             hashtags: hashtags + results.hashtags.filter { !tagNames.contains($0.name) })
     }
+
+    var isEmpty: Bool {
+        get {
+            accounts.isEmpty && statuses.isEmpty && hashtags.isEmpty
+        }
+    }
 }
