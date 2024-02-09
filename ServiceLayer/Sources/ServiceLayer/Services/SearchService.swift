@@ -8,7 +8,6 @@ import MastodonAPI
 
 public struct SearchService {
     public let sections: AnyPublisher<[CollectionSection], Error>
-    public let endOfResults: AnyPublisher<Bool, Never>
     public let navigationService: NavigationService
     public let nextPageMaxId: AnyPublisher<String, Never>
 
@@ -16,7 +15,6 @@ public struct SearchService {
     private let contentDatabase: ContentDatabase
     private let nextPageMaxIdSubject = PassthroughSubject<String, Never>()
     private let resultsSubject = PassthroughSubject<(Results, Search), Error>()
-    private let endOfResultsSubject = CurrentValueSubject<Bool, Never>(false)
 
     init(environment: AppEnvironment, mastodonAPIClient: MastodonAPIClient, contentDatabase: ContentDatabase) {
         self.mastodonAPIClient = mastodonAPIClient
@@ -31,7 +29,6 @@ public struct SearchService {
             return (search.offset == nil ? results : $0.0.appending(results), search.limit)
         }
         .map(contentDatabase.publisher(results:limit:)).switchToLatest().eraseToAnyPublisher()
-        endOfResults = endOfResultsSubject.eraseToAnyPublisher()
     }
 }
 
