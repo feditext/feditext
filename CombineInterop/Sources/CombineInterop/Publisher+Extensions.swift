@@ -41,3 +41,97 @@ public extension Publisher {
             .eraseToAnyPublisher()
     }
 }
+
+public extension Publisher where Output == Never, Failure == Never {
+    var finished: () {
+        get async {
+            var valuesIter = values.makeAsyncIterator()
+
+            while await valuesIter.next() != nil {
+                fatalError("Too many values published")
+            }
+        }
+    }
+}
+
+public extension Publisher where Output == Never {
+    var finished: () {
+        get async throws {
+            var valuesIter = values.makeAsyncIterator()
+
+            while try await valuesIter.next() != nil {
+                fatalError("Too many values published")
+            }
+        }
+    }
+}
+
+public extension Publisher where Failure == Never {
+    var singleValue: Output {
+        get async {
+            var valuesIter = values.makeAsyncIterator()
+            guard let first = await valuesIter.next() else {
+                 fatalError("No values published")
+            }
+
+            while await valuesIter.next() != nil {
+                fatalError("Too many values published")
+            }
+
+            return first
+        }
+    }
+
+    var finalValue: Output {
+        get async {
+            var valuesIter = values.makeAsyncIterator()
+            var last: Output?
+
+            while true {
+                if let value = await valuesIter.next() {
+                    last = value
+                } else {
+                    if let last = last {
+                        return last
+                    }
+                    fatalError("No values published")
+                }
+            }
+        }
+    }
+}
+
+public extension Publisher {
+    var singleValue: Output {
+        get async throws {
+            var valuesIter = values.makeAsyncIterator()
+            guard let first = try await valuesIter.next() else {
+                 fatalError("No values published")
+            }
+
+            while try await valuesIter.next() != nil {
+                fatalError("Too many values published")
+            }
+
+            return first
+        }
+    }
+
+    var finalValue: Output {
+        get async throws {
+            var valuesIter = values.makeAsyncIterator()
+            var last: Output?
+
+            while true {
+                if let value = try await valuesIter.next() {
+                    last = value
+                } else {
+                    if let last = last {
+                        return last
+                    }
+                    fatalError("No values published")
+                }
+            }
+        }
+    }
+}
