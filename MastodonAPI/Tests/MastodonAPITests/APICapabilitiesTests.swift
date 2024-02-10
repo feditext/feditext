@@ -48,4 +48,36 @@ final class APICapabilitiesTests: XCTestCase {
         XCTAssertNil(version.prereleaseString)
         XCTAssertNil(version.buildMetadataString)
     }
+
+    /// Test that a string with fewer than 3 numeric version components will still be parsed.
+    func testShortNumeric() {
+        let apiCapabilities = APICapabilities(
+            nodeinfoSoftware: .init(
+                name: "mastodon",
+                version: "4.1"
+            )
+        )
+
+        guard let version = apiCapabilities.version else {
+            XCTFail("Couldn't parse version at all")
+            return
+        }
+
+        // We expect only the major and minor numeric version, with a default patch numeric version.
+        XCTAssertEqual(version.major, 4)
+        XCTAssertEqual(version.minor, 1)
+        XCTAssertEqual(version.patch, 0)
+    }
+
+    /// Test that these don't crash the parser. Hopefully this doesn't get optimized out when testing.
+    func testWeird() {
+        for versionString in ["", " ", "-", "0.4rc3", "aleph", "git-890fe4b", "4.3.0-alpha.1+glitch"] {
+            _ = APICapabilities(
+                nodeinfoSoftware: .init(
+                    name: "mastodon",
+                    version: versionString
+                )
+            )
+        }
+    }
 }

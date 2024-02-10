@@ -25,6 +25,8 @@ public struct APICapabilities: Codable, Sendable {
 
     /// Init from the mandatory software object of a NodeInfo doc.
     public init(nodeinfoSoftware: NodeInfo.Software) {
+        // The space split is there mostly to handle GtS versions before this patch:
+        // https://github.com/superseriousbusiness/gotosocial/pull/2611
         let version = nodeinfoSoftware.version
             .split(separator: " ", maxSplits: 1)
             .first
@@ -71,7 +73,7 @@ public struct APICapabilities: Codable, Sendable {
 
         let leadingNumericComponents = trimmed
             .split(maxSplits: 3, whereSeparator: { !$0.isNumber })
-            .prefix(upTo: 3)
+            .prefix(3)
             .compactMap { Int.init($0) }
 
         var major = 0
