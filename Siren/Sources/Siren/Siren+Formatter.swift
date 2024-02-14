@@ -20,55 +20,16 @@ public extension Siren {
     static func format(_ attributed: AttributedString, descriptor: CTFontDescriptor) -> AttributedString {
         var attributed = attributed
 
-        let fontSize: CGFloat
-        if let fontSizeNumber = CTFontDescriptorCopyAttribute(descriptor, kCTFontSizeAttribute) as? NSNumber {
-            fontSize = .init(truncating: fontSizeNumber)
+        var baseFontSize: CGFloat
+        if let baseFontSizeNumber = CTFontDescriptorCopyAttribute(descriptor, kCTFontSizeAttribute) as? NSNumber {
+            baseFontSize = .init(truncating: baseFontSizeNumber)
         } else {
-            fontSize = 0
+            baseFontSize = 0
         }
-        let defaultFont = CTFontCreateWithFontDescriptor(descriptor, 0, nil)
-        #if canImport(SwiftUI)
-        let swiftUIDefaultFont = Font(defaultFont)
-        #endif
 
         for run in attributed.runs {
-            if let intent = run.inlinePresentationIntent {
-                var traits: CTFontSymbolicTraits = []
-                if intent.contains(.stronglyEmphasized) {
-                    traits.insert(.traitBold)
-                }
-                if intent.contains(.emphasized) {
-                    traits.insert(.traitItalic)
-                }
-                if intent.contains(.code) {
-                    traits.insert(.traitMonoSpace)
-                }
-                if let descriptorWithTraits = CTFontDescriptorCreateCopyWithSymbolicTraits(
-                    descriptor,
-                    traits,
-                    .traitClassMask
-                ) {
-                    let font = CTFontCreateWithFontDescriptor(descriptorWithTraits, 0, nil)
-                    #if canImport(AppKit)
-                    attributed[run.range].appKit.font = font
-                    #elseif canImport(UIKit)
-                    attributed[run.range].uiKit.font = font
-                    #endif
-                    #if canImport(SwiftUI)
-                    attributed[run.range].swiftUI.font = .init(font)
-                    #endif
-                }
-            } else {
-                // Ensure that every run has a font.
-                #if canImport(AppKit)
-                attributed[run.range].appKit.font = defaultFont
-                #elseif canImport(UIKit)
-                attributed[run.range].uiKit.font = defaultFont
-                #endif
-                #if canImport(SwiftUI)
-                attributed[run.range].swiftUI.font = swiftUIDefaultFont
-                #endif
-            }
+            var fontSize = baseFontSize
+            var baselineOffset: CGFloat = 0
 
             if let styles = run.styles {
                 if styles.contains(.strikethru) {
@@ -91,7 +52,73 @@ public extension Siren {
                     attributed[run.range].swiftUI.underlineStyle = .single
                     #endif
                 }
-                // TODO: (Vyr) handle .small, .sub, and .sup
+                // TODO: (Vyr) we should support several levels of nesting (say, 3),
+                //  but not arbitrary nesting, because that'd allow hidden text.
+                if styles.contains(.sup) {
+                    baselineOffset += fontSize * 0.4
+                    fontSize *= 0.8
+                }
+                if styles.contains(.sub) {
+                    baselineOffset -= fontSize * 0.4
+                    fontSize *= 0.8
+                }
+                if styles.contains(.small) {
+                    fontSize *= 0.8
+                }
+            }
+
+            if baselineOffset != 0 {
+                #if canImport(AppKit)
+                attributed[run.range].appKit.baselineOffset = baselineOffset
+                #elseif canImport(UIKit)
+                attributed[run.range].uiKit.baselineOffset = baselineOffset
+                #endif
+                #if canImport(SwiftUI)
+                attributed[run.range].swiftUI.baselineOffset = baselineOffset
+                #endif
+            }
+
+            let runDescriptor = CTFontDescriptorCreateCopyWithAttributes(
+                descriptor,
+                [kCTFontSizeAttribute: fontSize as NSNumber] as CFDictionary
+            )
+            if let intent = run.inlinePresentationIntent {
+                var traits: CTFontSymbolicTraits = []
+                if intent.contains(.stronglyEmphasized) {
+                    traits.insert(.traitBold)
+                }
+                if intent.contains(.emphasized) {
+                    traits.insert(.traitItalic)
+                }
+                if intent.contains(.code) {
+                    traits.insert(.traitMonoSpace)
+                }
+                if let runDescriptorWithTraits = CTFontDescriptorCreateCopyWithSymbolicTraits(
+                    runDescriptor,
+                    traits,
+                    .traitClassMask
+                ) {
+                    let font = CTFontCreateWithFontDescriptor(runDescriptorWithTraits, 0, nil)
+                    #if canImport(AppKit)
+                    attributed[run.range].appKit.font = font
+                    #elseif canImport(UIKit)
+                    attributed[run.range].uiKit.font = font
+                    #endif
+                    #if canImport(SwiftUI)
+                    attributed[run.range].swiftUI.font = .init(font)
+                    #endif
+                }
+            } else {
+                let font = CTFontCreateWithFontDescriptor(runDescriptor, 0, nil)
+                // Ensure that every run has a font.
+                #if canImport(AppKit)
+                attributed[run.range].appKit.font = font
+                #elseif canImport(UIKit)
+                attributed[run.range].uiKit.font = font
+                #endif
+                #if canImport(SwiftUI)
+                attributed[run.range].swiftUI.font = Font(font)
+                #endif
             }
         }
 
@@ -99,7 +126,7 @@ public extension Siren {
 
         for (intent, range) in attributed.runs[\.presentationIntent] {
             if let intent = intent {
-                let indent = CGFloat(intent.indentationLevel) * fontSize
+                let indent = CGFloat(intent.indentationLevel) * baseFontSize
 
                 #if canImport(AppKit) || canImport(UIKit)
                 let paragraphStyle = NSMutableParagraphStyle()
@@ -109,7 +136,7 @@ public extension Siren {
                 paragraphStyle.tabStops = []
                 // TODO: (Vyr) HACK: this plus the leading tabs on `listDecoration` make lists look okay,
                 //  but I have no idea why. `fontSize * 1` doesn't work. This may break for any reason. See below.
-                paragraphStyle.defaultTabInterval = fontSize * 2
+                paragraphStyle.defaultTabInterval = baseFontSize * 2
                 attributed[range].paragraphStyle = paragraphStyle
                 #endif
 
@@ -145,6 +172,7 @@ public extension Siren {
                     case .codeBlock:
                         preformatted = true
                     default:
+                        // TODO: (Vyr) style headers
                         break
                     }
                 }
