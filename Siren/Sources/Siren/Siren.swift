@@ -90,6 +90,7 @@ public extension AttributeScopes {
     struct SirenAttributes: AttributeScope {
         public let classes: SirenClassesAttribute
         public let styles: SirenStylesAttribute
+        public let special: SirenSpecialAttribute
     }
 }
 
@@ -173,6 +174,17 @@ public struct SirenStyle: OptionSet, Codable, Hashable, CaseIterable {
     }
 }
 
+public enum SirenSpecialAttribute: CodableAttributedStringKey {
+    public static let name = "SirenSpecial"
+    public typealias Value = SirenSpecial
+}
+
+/// Pseudo-text intended to be replaced with graphics when rendered.
+public enum SirenSpecial: String, Codable {
+    /// AKA `hr` tag, which never contains text. Replaced with a line.
+    case thematicBreak
+}
+
 class Visitor: NodeVisitor {
     var attributed = AttributedString()
 
@@ -209,7 +221,7 @@ class Visitor: NodeVisitor {
         return ordinal
     }
 
-    func insertText(_ string: String) {
+    func insertText(_ string: String, special: SirenSpecial? = nil) {
         var text = AttributedString(string)
 
         if let intent = inlineIntentStack.last {
@@ -217,7 +229,7 @@ class Visitor: NodeVisitor {
         }
 
         if let styles = stylesStack.last {
-            text.styles = styles
+            text.siren.styles = styles
         }
 
         if let link = linkStack.last {
@@ -229,7 +241,11 @@ class Visitor: NodeVisitor {
         }
 
         if let classes = classesStack.last {
-            text.classes = classes
+            text.siren.classes = classes
+        }
+
+        if let special = special {
+            text.siren.special = special
         }
 
         attributed.append(text)
@@ -334,6 +350,8 @@ class Visitor: NodeVisitor {
                     preNestLevel -= 1
                 case .orderedList, .unorderedList:
                     endList()
+                case .thematicBreak:
+                    insertText("\u{fffc}", special: .thematicBreak) // OBJECT REPLACEMENT CHARACTER
                 default:
                     break
                 }

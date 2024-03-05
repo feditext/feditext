@@ -1,6 +1,7 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
 import Mastodon
+import Siren
 import UIKit
 
 // TODO: (Vyr) rename this class
@@ -320,7 +321,6 @@ private extension TouchFallthroughTextView {
             // Add blockquote text bounding rectangles to all nested blockquotes containing that text.
             let textRects = selectionRects(for: quoteRange).map(\.rect).filter({ !$0.isEmpty })
             for (levelMapsIndex, component) in blockquoteComponents.enumerated() {
-                let level = levelMapsIndex + 1
                 let id = component.identity
                 var blockquote = levelMaps[levelMapsIndex][id] ?? Blockquote(rects: [])
                 blockquote.rects.append(contentsOf: textRects)
@@ -368,6 +368,60 @@ private extension TouchFallthroughTextView {
                 sidebarLayer.zPosition = CGFloat(level) + 0.1
                 blockquotesLayer.addSublayer(sidebarLayer)
             }
+        }
+
+        updateHorizontalRuleLayerSiren(.init(levelMaps.count + 1))
+    }
+
+    /// Draw horizontal rules in front of blockquotes.
+    func updateHorizontalRuleLayerSiren(_ zPosition: CGFloat) {
+        attributedText.enumerateAttribute(
+            .init(SirenSpecialAttribute.name),
+            in: NSRange(location: 0, length: attributedText.length)
+        ) { val, range, _ in
+            guard
+                let special = val as? SirenSpecial,
+                special == .thematicBreak,
+                let start = position(
+                    from: beginningOfDocument,
+                    offset: range.location
+                ),
+                let end = position(
+                    from: start,
+                    offset: range.length
+                ),
+                let hrRange = textRange(from: start, to: end)
+            else { return }
+
+            let textRects = selectionRects(for: hrRange).map(\.rect)
+            var textRect = CGRect.null
+            for rect in textRects {
+                textRect = textRect.union(rect)
+            }
+
+            // Indent if inside an indented block.
+            let indentedLeftMargin = attributedText
+                .attribute(.presentationIntentAttributeName, at: range.location, effectiveRange: nil)
+                .flatMap { $0 as? PresentationIntent }
+                .map { CGFloat($0.indentationLevel) * NSMutableAttributedString.blockquoteIndent }
+                ?? 0.0
+            let availableWidth = bounds.size.width - indentedLeftMargin
+
+            // Mostly arbitrary but looks okay.
+            let hrLayer = CALayer()
+            hrLayer.frame = .init(
+                origin: .init(
+                    x: indentedLeftMargin + availableWidth * 0.1,
+                    y: textRect.origin.y - NSMutableAttributedString.blockquoteIndent
+                ),
+                size: .init(
+                    width: availableWidth * 0.8,
+                    height: NSMutableAttributedString.blockquoteIndent / 6
+                )
+            )
+            hrLayer.backgroundColor = UIColor.opaqueSeparator.cgColor
+            hrLayer.zPosition = zPosition
+            blockquotesLayer.addSublayer(hrLayer)
         }
     }
 }

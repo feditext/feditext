@@ -17,7 +17,7 @@ public extension Siren {
     /// Given an attributed string with Foundation and Siren attributes,
     /// convert them to AppKit/UIKit attributes for display,
     /// using the provided font descriptor.
-    static func format(_ attributed: AttributedString, descriptor: CTFontDescriptor) -> AttributedString {
+    static func format(_ attributed: AttributedString, descriptor: CTFontDescriptor, baseIndent: CGFloat) -> AttributedString {
         var attributed = attributed
 
         var baseFontSize: CGFloat
@@ -31,6 +31,19 @@ public extension Siren {
             var fontSize = baseFontSize
             var baselineOffset: CGFloat = 0
 
+            // Embiggen font if this run is inside a header.
+            if let headerLevel = run.presentationIntent?.components.lazy.compactMap({ component in
+                switch component.kind {
+                case let .header(level):
+                    return level
+                default:
+                    return nil
+                }
+            }).first {
+                fontSize *= 1.0 + CGFloat(7 - headerLevel) / 10.0
+            }
+
+            // Handle strikethru, underline, and text size/baseline changes other than headers.
             if let styles = run.styles {
                 if styles.contains(.strikethru) {
                     #if canImport(AppKit)
@@ -78,6 +91,7 @@ public extension Siren {
                 #endif
             }
 
+            // Handle bold, italic, and monospace.
             let runDescriptor = CTFontDescriptorCreateCopyWithAttributes(
                 descriptor,
                 [kCTFontSizeAttribute: fontSize as NSNumber] as CFDictionary
@@ -96,7 +110,7 @@ public extension Siren {
                 if let runDescriptorWithTraits = CTFontDescriptorCreateCopyWithSymbolicTraits(
                     runDescriptor,
                     traits,
-                    .traitClassMask
+                    []
                 ) {
                     let font = CTFontCreateWithFontDescriptor(runDescriptorWithTraits, 0, nil)
                     #if canImport(AppKit)
@@ -117,38 +131,37 @@ public extension Siren {
                 attributed[run.range].uiKit.font = font
                 #endif
                 #if canImport(SwiftUI)
-                attributed[run.range].swiftUI.font = Font(font)
+                attributed[run.range].swiftUI.font = .init(font)
                 #endif
             }
         }
 
-        var insertions = [(String, at: AttributedString.Index)]()
+        var insertions = [(AttributedString, at: AttributedString.Index)]()
 
         for (intent, range) in attributed.runs[\.presentationIntent] {
             if let intent = intent {
-                let indent = CGFloat(intent.indentationLevel) * baseFontSize
+                let indent = CGFloat(intent.indentationLevel) * baseIndent
 
                 #if canImport(AppKit) || canImport(UIKit)
                 let paragraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.setParagraphStyle(.default)
                 paragraphStyle.firstLineHeadIndent = indent
                 paragraphStyle.headIndent = indent
-                paragraphStyle.tabStops = []
-                // TODO: (Vyr) HACK: this plus the leading tabs on `listDecoration` make lists look okay,
-                //  but I have no idea why. `fontSize * 1` doesn't work. This may break for any reason. See below.
-                paragraphStyle.defaultTabInterval = baseFontSize * 2
-                attributed[range].paragraphStyle = paragraphStyle
+                // Start tabs at the beginning of the indent, not the leading margin.
+                paragraphStyle.tabStops = [.init(textAlignment: .natural, location: indent)]
+                paragraphStyle.defaultTabInterval = baseIndent
                 #endif
 
                 var listType: ListType?
                 var listDecoration: String?
                 var newlines: String?
-                var preformatted = false
                 // Order: parents to children.
                 for component in intent.components.reversed() {
                     switch component.kind {
-                    case .paragraph, .blockQuote:
+                    case .paragraph, .blockQuote, .header:
                         newlines = "\n\n"
+                    case .codeBlock:
+                        newlines = "\n"
                     case .orderedList:
                         listType = .ordered
                     case .unorderedList:
@@ -158,31 +171,42 @@ public extension Siren {
                         // The sanitizer may or may not correct that kind of malformed HTML.
                         guard let listType = listType else { continue }
 
-                        // TODO: (Vyr) the first list item in some lists is normal,
-                        //  but subsequent items are indented and shouldn't be:
-                        //  - fine: https://infosec.exchange/@vyr/111378145558735113
-                        //  - not fine: https://demon.social/@vyr/111387309365750057
                         switch listType {
                         case .ordered:
-                            listDecoration = "\t\(ordinal).\t"
+                            listDecoration = "\(ordinal). \t"
                         case .unordered:
-                            listDecoration = "\t•\t"
+                            listDecoration = "• \t"
                         }
                         newlines = "\n"
-                    case .codeBlock:
-                        preformatted = true
                     default:
-                        // TODO: (Vyr) style headers
-                        break
+                        continue
                     }
                 }
+
+                // Used to apply paragraph style to text decorations, not the main text.
+                var decorationStyleContainer = AttributeContainer()
+
+                #if canImport(AppKit) || canImport(UIKit)
+                if listDecoration != nil {
+                    paragraphStyle.firstLineHeadIndent -= baseIndent
+                    paragraphStyle.headIndent += baseIndent
+                }
+
+                attributed[range].paragraphStyle = paragraphStyle
+                decorationStyleContainer.paragraphStyle = paragraphStyle
+                #endif
+
                 if let listDecoration = listDecoration {
-                    insertions.append((listDecoration, at: range.lowerBound))
+                    insertions.append((
+                        AttributedString(listDecoration, attributes: decorationStyleContainer),
+                        at: range.lowerBound
+                    ))
                 }
-                if !preformatted {
-                    if let newlines = newlines {
-                        insertions.append((newlines, at: range.upperBound))
-                    }
+                if let newlines = newlines {
+                    insertions.append((
+                        AttributedString(newlines, attributes: decorationStyleContainer),
+                        at: range.upperBound
+                    ))
                 }
             } else {
                 // Ensure that every run has a paragraph style.
@@ -191,13 +215,11 @@ public extension Siren {
                 #elseif canImport(UIKit)
                 attributed[range].uiKit.paragraphStyle = .default
                 #endif
-                // SwiftUI doesn't have a paragraph style attribute.
-                insertions.append(("\n\n", at: range.upperBound))
             }
         }
 
-        for (string, index) in insertions.reversed() {
-            attributed.characters.insert(contentsOf: string, at: index)
+        for (attrStr, index) in insertions.reversed() {
+            attributed.insert(attrStr, at: index)
         }
 
         return attributed
@@ -209,23 +231,53 @@ public extension Siren {
     }
 
     #if canImport(AppKit)
-    static func format(_ attributed: AttributedString, textStyle: NSFont.TextStyle) -> AttributedString {
-        format(attributed, descriptor: NSFontDescriptor.preferredFontDescriptor(forTextStyle: textStyle))
+    static func format(
+        _ attributed: AttributedString,
+        textStyle: NSFont.TextStyle,
+        baseIndent: CGFloat
+    ) -> AttributedString {
+        format(
+            attributed,
+            descriptor: NSFontDescriptor.preferredFontDescriptor(forTextStyle: textStyle),
+            baseIndent: baseIndent
+        )
     }
 
     #if canImport(SwiftUI)
-    static func format(_ attributed: AttributedString, textStyle: SwiftUI.Font.TextStyle) -> AttributedString {
-        format(attributed, descriptor: textStyle.descriptor)
+    static func format(
+        _ attributed: AttributedString,
+        textStyle: SwiftUI.Font.TextStyle,
+        baseIndent: CGFloat
+    ) -> AttributedString {
+        format(
+            attributed,
+            descriptor: textStyle.descriptor,
+            baseIndent: baseIndent
+        )
     }
     #endif
     #elseif canImport(UIKit)
-    static func format(_ attributed: AttributedString, textStyle: UIFont.TextStyle) -> AttributedString {
-        format(attributed, descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: textStyle))
+    static func format(
+        _ attributed: AttributedString,
+        textStyle: UIFont.TextStyle, baseIndent: CGFloat) -> AttributedString {
+        format(
+            attributed,
+            descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: textStyle),
+            baseIndent: baseIndent
+        )
     }
 
     #if canImport(SwiftUI)
-    static func format(_ attributed: AttributedString, textStyle: SwiftUI.Font.TextStyle) -> AttributedString {
-        format(attributed, descriptor: textStyle.descriptor)
+    static func format(
+        _ attributed: AttributedString,
+        textStyle: SwiftUI.Font.TextStyle,
+        baseIndent: CGFloat
+    ) -> AttributedString {
+        format(
+            attributed,
+            descriptor: textStyle.descriptor,
+            baseIndent: baseIndent
+        )
     }
     #endif
     #endif

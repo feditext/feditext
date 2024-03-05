@@ -337,7 +337,7 @@ private extension HTML {
         #else
         let descriptor = NSFontDescriptor.preferredFontDescriptor(forTextStyle: .body).withSize(12.0)
         #endif
-        var attributed = Siren.format(parsed, descriptor: descriptor)
+        var attributed = Siren.format(parsed, descriptor: descriptor, baseIndent: 12.0)
 
         // Map Siren semantic classes to Feditext semantic classes.
         // (Siren doesn't keep track of previous elements, and its ranges may have leading and trailing whitespace.)
