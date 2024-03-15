@@ -72,7 +72,7 @@ extension SearchService: CollectionService {
             minId: minId,
             limit: limit
         )
-        let page = pagedResponse.result
+        let page = pagedResponse.result.dedupe()
 
         if page.isEmpty {
             return

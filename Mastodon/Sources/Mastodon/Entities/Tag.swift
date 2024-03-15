@@ -34,3 +34,7 @@ extension Tag: Hashable {
         hasher.combine(name)
     }
 }
+
+extension Tag: Identifiable {
+    public var id: Tag.Name { name }
+}

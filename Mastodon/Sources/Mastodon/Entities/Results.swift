@@ -11,20 +11,40 @@ public struct Results: Codable {
 public extension Results {
     static let empty = Self(accounts: [], statuses: [], hashtags: [])
 
-    func appending(_ results: Self) -> Self {
-        let accountIds = Set(accounts.map(\.id))
-        let statusIds = Set(statuses.map(\.id))
-        let tagNames = Set(hashtags.map(\.name))
-
-        return Self(
-            accounts: accounts + results.accounts.filter { !accountIds.contains($0.id) },
-            statuses: statuses + results.statuses.filter { !statusIds.contains($0.id) },
-            hashtags: hashtags + results.hashtags.filter { !tagNames.contains($0.name) })
+    var isEmpty: Bool {
+        accounts.isEmpty && statuses.isEmpty && hashtags.isEmpty
     }
 
-    var isEmpty: Bool {
-        get {
-            accounts.isEmpty && statuses.isEmpty && hashtags.isEmpty
+    /// Search results may contain duplicate entries if there are bugs.
+    /// This will result in a crash when the search results table gets multiple cells with the same ID,
+    /// so we need to dedupe results before using them for that.
+    func dedupe() -> Self {
+        return Self(
+            accounts: accounts.dedupe(),
+            statuses: statuses.dedupe(),
+            hashtags: hashtags.dedupe()
+        )
+    }
+
+    func appending(_ results: Self) -> Self {
+        return Self(
+            accounts: accounts + results.accounts,
+            statuses: statuses + results.statuses,
+            hashtags: hashtags + results.hashtags
+        )
+        .dedupe()
+    }
+}
+
+extension Array where Element: Identifiable {
+    /// De-duplicate a list with ``Identifiable`` elements, preserving order.
+    func dedupe() -> Self {
+        var ids = Set<Element.ID>()
+        var deduped = [Element]()
+        for element in self where !ids.contains(element.id) {
+            deduped.append(element)
+            ids.insert(element.id)
         }
+        return deduped
     }
 }
