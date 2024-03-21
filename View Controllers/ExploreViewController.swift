@@ -91,7 +91,10 @@ final class ExploreViewController: UICollectionViewController {
             webfingerIndicatorView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
         ])
 
-        viewModel.events.sink { [weak self] in self?.handle(event: $0) }.store(in: &cancellables)
+        viewModel.events
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in self?.handle(event: $0) }
+            .store(in: &cancellables)
 
         viewModel.$loading.sink { [weak self] in
             guard let self = self else { return }
