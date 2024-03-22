@@ -37,7 +37,7 @@ public struct APICapabilitiesViewModel {
         case .snac:
             return "flavor.snac.name"
         case .pixelfed:
-            return "flavor.snac.name"
+            return "flavor.pixelfed.name"
         }
     }
 
