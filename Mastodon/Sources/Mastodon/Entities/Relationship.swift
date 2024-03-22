@@ -13,7 +13,8 @@ public struct Relationship: Codable {
     @DecodableDefault.False public private(set) var showingReblogs: Bool
     public let notifying: Bool?
     public let blocking: Bool
-    public let domainBlocking: Bool
+    // So far Pixelfed is the only implementation not to send this.
+    @DecodableDefault.False public private(set) var domainBlocking: Bool
     @DecodableDefault.False public private(set) var blockedBy: Bool
     @DecodableDefault.EmptyString public private(set) var note: String
 }

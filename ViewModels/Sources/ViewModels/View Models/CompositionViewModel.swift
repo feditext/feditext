@@ -47,8 +47,12 @@ public final class CompositionViewModel: AttachmentsRenderingViewModel, Observab
         $text.map { !$0.isEmpty }
             .removeDuplicates()
             .combineLatest($attachmentViewModels.map { !$0.isEmpty })
-            .map { textPresent, attachmentPresent in
-                textPresent || attachmentPresent
+            .map { [weak self] textPresent, attachmentPresent in
+                // Special case: Pixelfed requires at least one media attachment to post.
+                if self?.identityContext.apiCapabilities.flavor == .pixelfed {
+                    return attachmentPresent
+                }
+                return textPresent || attachmentPresent
             }
             .assign(to: &$isPostable)
 

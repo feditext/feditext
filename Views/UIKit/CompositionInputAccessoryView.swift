@@ -211,11 +211,17 @@ private extension CompositionInputAccessoryView {
         // See `charactersBarItem.setTitleTextAttributes` calls elsewhere;
         // all text attributes have to be set every time we change any of them.
 
-        toolbar.items = [
+        var toolbarItems = [
             attachmentButton,
             UIBarButtonItem.fixedSpace(.defaultSpacing),
-            pollButton,
-            UIBarButtonItem.fixedSpace(.defaultSpacing),
+        ]
+        if parentViewModel.canAttachPoll {
+            toolbarItems += [
+                pollButton,
+                UIBarButtonItem.fixedSpace(.defaultSpacing),
+            ]
+        }
+        toolbarItems += [
             visibilityButton,
             UIBarButtonItem.fixedSpace(.defaultSpacing),
             contentWarningButton,
@@ -226,7 +232,9 @@ private extension CompositionInputAccessoryView {
             UIBarButtonItem.flexibleSpace(),
             charactersBarItem,
             UIBarButtonItem.fixedSpace(.defaultSpacing),
-            addButton]
+            addButton,
+        ]
+        toolbar.items = toolbarItems
 
         viewModel.$canAddAttachment
             .sink { attachmentButton.isEnabled = $0 }

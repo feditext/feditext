@@ -192,6 +192,8 @@ public extension NavigationService {
         case .snac:
             // TODO: (Vyr) snac support: does snac even have a web settings UI?
             return nil
+        case .pixelfed:
+            url = mastodonAPIClient.instanceURL.appendingPathComponents("settings", "home")
         }
 
         return .authenticatedWebView(
@@ -218,6 +220,9 @@ public extension NavigationService {
         case .snac:
             // TODO: (Vyr) snac support: does snac even have a web settings UI?
             return nil
+        case .pixelfed:
+            // Pixelfed has multiple pages for password, 2FA, etc. best reached from the profile settings page.
+            url = mastodonAPIClient.instanceURL.appendingPathComponents("settings", "home")
         }
 
         return .authenticatedWebView(

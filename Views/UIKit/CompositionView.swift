@@ -125,7 +125,11 @@ private extension CompositionView {
         textViewPlaceholder.adjustsFontForContentSizeCategory = true
         textViewPlaceholder.font = .preferredFont(forTextStyle: .body)
         textViewPlaceholder.textColor = .secondaryLabel
-        textViewPlaceholder.text = NSLocalizedString("compose.prompt", comment: "")
+        if parentViewModel.mediaRequired {
+            textViewPlaceholder.text = NSLocalizedString("compose.prompt.media-required", comment: "")
+        } else {
+            textViewPlaceholder.text = NSLocalizedString("compose.prompt", comment: "")
+        }
 
         stackView.addArrangedSubview(attachmentsView)
         attachmentsView.isHidden_stackViewSafe = true

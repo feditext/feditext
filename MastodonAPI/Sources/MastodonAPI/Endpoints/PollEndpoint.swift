@@ -42,4 +42,13 @@ extension PollEndpoint: Endpoint {
             return .post
         }
     }
+
+    public var requires: APICapabilityRequirements? {
+        return .mastodonForks(.assumeAvailable) | [
+            .fedibird: .assumeAvailable,
+            .pleroma: .assumeAvailable,
+            .akkoma: .assumeAvailable,
+            .gotosocial: .assumeAvailable,
+        ]
+    }
 }

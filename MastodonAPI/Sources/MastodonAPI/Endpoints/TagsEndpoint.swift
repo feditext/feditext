@@ -51,7 +51,9 @@ extension TagsEndpoint: Endpoint {
                 .iceshrimp: "1.0.0"
             ]
         case .followed:
-            return .mastodonForks("4.0.0")
+            return .mastodonForks("4.0.0") | [
+                .pixelfed: .assumeAvailable,
+            ]
         }
     }
 

@@ -8,7 +8,7 @@ import Foundation
 /// See also: `DB.Identity.Instance` summary version in identity database.
 public struct Instance: Codable {
     public struct URLs: Codable, Hashable {
-        public let streamingApi: UnicodeURL
+        public let streamingApi: UnicodeURL?
     }
 
     public struct Stats: Codable, Hashable {
@@ -115,3 +115,5 @@ extension Instance: Hashable {
         hasher.combine(uri)
     }
 }
+
+// swiftlint:enable nesting

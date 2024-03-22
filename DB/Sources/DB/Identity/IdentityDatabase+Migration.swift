@@ -91,6 +91,13 @@ extension IdentityDatabase {
             }
         }
 
+        migrator.registerMigration("1.7.4-instance-allow-null-streamingAPI") { db in
+            try db.alter(table: "instance") { t in
+                t.drop(column: "streamingAPI")
+                t.add(column: "streamingAPI", .text)
+            }
+        }
+
         return migrator
     }
 }

@@ -3,6 +3,7 @@
 import Combine
 import Foundation
 import Mastodon
+import MastodonAPI
 import ServiceLayer
 
 public final class ComposeStatusViewModel: ObservableObject {
@@ -251,6 +252,18 @@ public extension ComposeStatusViewModel {
     var postingLanguages: [PrefsLanguage] {
         identityContext.appPreferences.postingLanguages
             .map { PrefsLanguage(tag: $0) }
+    }
+
+    /// Is a media attachment required to post?
+    var mediaRequired: Bool {
+        // TODO: (Vyr) Only Pixelfed OPs require media.
+        //  This is too conservative when composing a post and reply at the same time.
+        identityContext.apiCapabilities.flavor == .pixelfed && inReplyToViewModel == nil
+    }
+
+    /// Does the user's instance support polls?
+    var canAttachPoll: Bool {
+        PollEndpoint.poll(id: "").canCallWith(identityContext.apiCapabilities)
     }
 }
 

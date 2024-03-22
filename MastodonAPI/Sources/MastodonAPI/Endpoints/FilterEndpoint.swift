@@ -65,6 +65,10 @@ extension FilterEndpoint: Endpoint {
             return .put
         }
     }
+
+    public var requires: APICapabilityRequirements? {
+        FiltersEndpoint.filters.requires
+    }
 }
 
 private extension FilterEndpoint {

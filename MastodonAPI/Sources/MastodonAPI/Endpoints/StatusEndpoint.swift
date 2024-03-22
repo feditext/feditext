@@ -177,6 +177,8 @@ extension StatusEndpoint: Endpoint {
         switch self {
         case .put:
             return StatusEditsEndpoint.history(id: "").requires
+        case .bookmark, .unbookmark:
+            return StatusesEndpoint.bookmarks.requires
         case .react, .unreact:
             // Glitch PR #2221 reaction support must be detected using the instance API.
             return .features(.emojiReactions) | [

@@ -101,7 +101,8 @@ extension StatusesEndpoint: Endpoint {
                 .gotosocial: "0.11.0-0",
                 .calckey: "14.0.0-0",
                 .firefish: "1.0.0",
-                .iceshrimp: "1.0.0"
+                .iceshrimp: "1.0.0",
+                .pixelfed: .assumeAvailable,
             ]
         case .timelinesList:
             return .mastodonForks(.assumeAvailable) | [
@@ -111,6 +112,15 @@ extension StatusesEndpoint: Endpoint {
                 .calckey: "14.0.0-0",
                 .firefish: "1.0.0",
                 .iceshrimp: "1.0.0"
+            ]
+        case .bookmarks:
+            return .mastodonForks(.assumeAvailable) | [
+                .pleroma: .assumeAvailable,
+                .akkoma: .assumeAvailable,
+                .gotosocial: .assumeAvailable,
+                .calckey: .assumeAvailable,
+                .firefish: .assumeAvailable,
+                .iceshrimp: .assumeAvailable,
             ]
         default:
             return nil

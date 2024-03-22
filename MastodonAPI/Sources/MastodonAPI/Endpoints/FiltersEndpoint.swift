@@ -29,5 +29,15 @@ extension FiltersEndpoint: Endpoint {
         }
     }
 
+    public var requires: APICapabilityRequirements? {
+        .mastodonForks(.assumeAvailable) | [
+            .fedibird: .assumeAvailable,
+            .pleroma: .assumeAvailable,
+            .akkoma: .assumeAvailable,
+            .gotosocial: "0.15.0-0",
+        ]
+        // Stubbed in Pixelfed 0.11.
+    }
+
     public var fallback: [Filter]? { [] }
 }

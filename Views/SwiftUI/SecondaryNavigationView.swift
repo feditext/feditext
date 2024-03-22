@@ -61,6 +61,7 @@ struct SecondaryNavigationView: View {
                             Label("secondary-navigation.lists", systemImage: "scroll")
                         }
                     }
+
                     if TagsEndpoint.followed.canCallWith(viewModel.identityContext.apiCapabilities) {
                         NavigationLink(
                             destination: FollowedTagsView(viewModel: .init(identityContext: viewModel.identityContext))
@@ -69,17 +70,29 @@ struct SecondaryNavigationView: View {
                             Label("secondary-navigation.followed-tags", systemImage: "number")
                         }
                     }
-                    ForEach([Timeline.favorites, Timeline.bookmarks]) { timeline in
+
+                    Button {
+                        viewModel.navigate(timeline: .favorites)
+                    } label: {
+                        Label {
+                            Text(Timeline.favorites.title).foregroundColor(.primary)
+                        } icon: {
+                            Image(systemName: Timeline.favorites.systemImageName)
+                        }
+                    }
+
+                    if StatusesEndpoint.bookmarks.canCallWith(viewModel.identityContext.apiCapabilities) {
                         Button {
-                            viewModel.navigate(timeline: timeline)
+                            viewModel.navigate(timeline: .bookmarks)
                         } label: {
                             Label {
-                                Text(timeline.title).foregroundColor(.primary)
+                                Text(Timeline.bookmarks.title).foregroundColor(.primary)
                             } icon: {
-                                Image(systemName: timeline.systemImageName)
+                                Image(systemName: Timeline.bookmarks.systemImageName)
                             }
                         }
                     }
+
                     if let followRequestCount = viewModel.identityContext.identity.account?.followRequestCount,
                        followRequestCount > 0 {
                         Button {

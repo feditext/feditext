@@ -36,6 +36,8 @@ public struct APICapabilitiesViewModel {
             return "flavor.iceshrimp.name"
         case .snac:
             return "flavor.snac.name"
+        case .pixelfed:
+            return "flavor.snac.name"
         }
     }
 
@@ -65,6 +67,8 @@ public struct APICapabilitiesViewModel {
             return URL(string: "https://iceshrimp.dev/")
         case .snac:
             return URL(string: "https://codeberg.org/grunfink/snac2")
+        case .pixelfed:
+            return URL(string: "https://pixelfed.org/")
         }
     }
 

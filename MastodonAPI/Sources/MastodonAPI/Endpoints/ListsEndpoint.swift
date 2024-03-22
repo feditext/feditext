@@ -40,8 +40,9 @@ extension ListsEndpoint: Endpoint {
             .fedibird: "0.1.0",
             .pleroma: .assumeAvailable,
             .akkoma: .assumeAvailable,
-            .gotosocial: "0.10.0-0"
+            .gotosocial: "0.10.0-0",
         ]
+        // Stubbed in Pixelfed 0.11.
     }
 
     public var fallback: [List]? { [] }

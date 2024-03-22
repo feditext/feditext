@@ -27,5 +27,7 @@ public enum APIFlavor: String, Codable, Hashable, Identifiable, CaseIterable, Se
 
     case snac
 
+    case pixelfed
+
     public var id: Self { self }
 }

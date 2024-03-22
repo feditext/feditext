@@ -78,7 +78,8 @@ extension AccountsEndpoint: Endpoint {
                 .akkoma: .assumeAvailable,
                 .calckey: .assumeAvailable,
                 .firefish: "1.0.0",
-                .iceshrimp: "1.0.0"
+                .iceshrimp: "1.0.0",
+                .pixelfed: .assumeAvailable,
             ]
         default:
             return nil

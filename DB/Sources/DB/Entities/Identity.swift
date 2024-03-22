@@ -38,7 +38,7 @@ public extension Identity {
                 return uri
             }
         }
-        public let streamingAPI: UnicodeURL
+        public let streamingAPI: UnicodeURL?
         public let title: String
         public let thumbnail: UnicodeURL?
         public let version: String

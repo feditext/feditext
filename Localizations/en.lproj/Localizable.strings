@@ -157,6 +157,7 @@
 "compose.poll.allow-multiple-choices" = "Allow multiple choices";
 "compose.poll-button.accessibility-label" = "Add a poll";
 "compose.prompt" = "What's on your mind?";
+"compose.prompt.media-required" = "Attach a photo or video.";
 "compose.take-photo-or-video" = "Take Photo or Video";
 "compose.visibility-button.accessibility-label-%@" = "Privacy: %@";
 "compose-button.accessibility-label.post" = "Compose Post";
@@ -204,6 +205,7 @@
 "flavor.firefish.name" = "Firefish";
 "flavor.iceshrimp.name" = "Iceshrimp";
 "flavor.snac.name" = "snac";
+"flavor.pixelfed.name" = "Pixelfed";
 "followed-tags.new-tag-title" = "Hashtag (without #)";
 "follow-requests" = "Follow Requests";
 "instance.about-instance-title-%@" = "About %@";
