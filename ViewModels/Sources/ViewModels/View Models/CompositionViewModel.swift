@@ -19,6 +19,8 @@ public final class CompositionViewModel: AttachmentsRenderingViewModel, Observab
     @Published public var displayPoll = false
     @Published public var pollMultipleChoice = false
     @Published public var pollExpiresIn = PollExpiry.oneDay
+    /// Does this post require a media attachment?
+    @Published public var mediaRequired: Bool = false
     @Published public private(set) var autocompleteQuery: String?
     @Published public private(set) var contentWarningAutocompleteQuery: String?
     @Published public private(set) var pollOptions = [PollOption(text: ""), PollOption(text: "")]
@@ -43,13 +45,13 @@ public final class CompositionViewModel: AttachmentsRenderingViewModel, Observab
         self.identityContext = identityContext
         self.maxCharacters = identityContext.identity.instance?.maxTootChars ?? Self.defaultMaxCharacters
         self.language = identityContext.identity.preferences.postingDefaultLanguage
+        self.mediaRequired = mediaRequired
 
         $text.map { !$0.isEmpty }
             .removeDuplicates()
-            .combineLatest($attachmentViewModels.map { !$0.isEmpty })
-            .map { [weak self] textPresent, attachmentPresent in
-                // Special case: Pixelfed requires at least one media attachment to post.
-                if self?.identityContext.apiCapabilities.flavor == .pixelfed {
+            .combineLatest($attachmentViewModels.map { !$0.isEmpty }, $mediaRequired)
+            .map { textPresent, attachmentPresent, mediaRequired in
+                if mediaRequired {
                     return attachmentPresent
                 }
                 return textPresent || attachmentPresent

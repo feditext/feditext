@@ -125,11 +125,6 @@ private extension CompositionView {
         textViewPlaceholder.adjustsFontForContentSizeCategory = true
         textViewPlaceholder.font = .preferredFont(forTextStyle: .body)
         textViewPlaceholder.textColor = .secondaryLabel
-        if parentViewModel.mediaRequired {
-            textViewPlaceholder.text = NSLocalizedString("compose.prompt.media-required", comment: "")
-        } else {
-            textViewPlaceholder.text = NSLocalizedString("compose.prompt", comment: "")
-        }
 
         stackView.addArrangedSubview(attachmentsView)
         attachmentsView.isHidden_stackViewSafe = true
@@ -269,6 +264,16 @@ private extension CompositionView {
                     self?.pollView.isHidden_stackViewSafe = !displayPoll
                 }
             }
+            .store(in: &cancellables)
+
+        viewModel.$mediaRequired
+            .sink(receiveValue: { [weak self] mediaRequired in
+                if mediaRequired {
+                    self?.textViewPlaceholder.text = NSLocalizedString("compose.prompt.media-required", comment: "")
+                } else {
+                    self?.textViewPlaceholder.text = NSLocalizedString("compose.prompt", comment: "")
+                }
+            })
             .store(in: &cancellables)
 
         textInputAccessoryView.autocompleteSelections

@@ -115,6 +115,7 @@ public final class ComposeStatusViewModel: ObservableObject {
         }
 
         compositionViewModels = [compositionViewModel]
+        updateMediaRequired()
         $compositionViewModels.flatMap { Publishers.MergeMany($0.map(\.$isPostable)) }
             .receive(on: DispatchQueue.main) // hack to punt to next run loop, consider refactoring
             .compactMap { [weak self] _ in self?.compositionViewModels.allSatisfy(\.isPostable) }
@@ -193,6 +194,8 @@ public extension ComposeStatusViewModel {
 
     func remove(viewModel: CompositionViewModel) {
         compositionViewModels.removeAll { $0 === viewModel }
+
+        updateMediaRequired()
     }
 
     func insert(after: CompositionViewModel) {
@@ -225,6 +228,8 @@ public extension ComposeStatusViewModel {
         } else {
             compositionViewModels.insert(newViewModel, at: index + 1)
         }
+
+        updateMediaRequired()
     }
 
     func attach(itemProviders: [NSItemProvider], to compositionViewModel: CompositionViewModel) {
@@ -254,10 +259,8 @@ public extension ComposeStatusViewModel {
             .map { PrefsLanguage(tag: $0) }
     }
 
-    /// Is a media attachment required to post?
-    var mediaRequired: Bool {
-        // TODO: (Vyr) Only Pixelfed OPs require media.
-        //  This is too conservative when composing a post and reply at the same time.
+    /// Is a media attachment required to start a new thread?
+    var mediaRequiredToStartThread: Bool {
         identityContext.apiCapabilities.flavor == .pixelfed && inReplyToViewModel == nil
     }
 
@@ -326,5 +329,15 @@ private extension ComposeStatusViewModel {
                 }
             }
             .store(in: &cancellables)
+    }
+
+    /// Update the `mediaRequired` flags when `compositionViewModels` changes.
+    func updateMediaRequired() {
+        if let compositionViewModel = compositionViewModels.first {
+            compositionViewModel.mediaRequired = mediaRequiredToStartThread && inReplyToViewModel == nil
+        }
+        for compositionViewModel in compositionViewModels.dropFirst() {
+            compositionViewModel.mediaRequired = false
+        }
     }
 }
