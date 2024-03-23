@@ -179,6 +179,12 @@ extension StatusEndpoint: Endpoint {
             return StatusEditsEndpoint.history(id: "").requires
         case .bookmark, .unbookmark:
             return StatusesEndpoint.bookmarks.requires
+        case .mute, .unmute:
+            return .mastodonForks(.assumeAvailable) | [
+                .pleroma: .assumeAvailable,
+                .akkoma: .assumeAvailable,
+                .gotosocial: .assumeAvailable,
+            ]
         case .react, .unreact:
             // Glitch PR #2221 reaction support must be detected using the instance API.
             return .features(.emojiReactions) | [

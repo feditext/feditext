@@ -90,6 +90,8 @@ public extension StatusService {
             .eraseToAnyPublisher()
     }
 
+    var canMute: Bool { StatusEndpoint.mute(id: "").canCallWith(mastodonAPIClient.apiCapabilities) }
+
     func toggleMuted() -> AnyPublisher<Never, Error> {
         mastodonAPIClient.request(status.displayStatus.muted
                                     ? StatusEndpoint.unmute(id: status.displayStatus.id)

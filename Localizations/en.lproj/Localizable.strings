@@ -183,6 +183,8 @@
 "explore.trending.links" = "Trending Links";
 "explore.trending.statuses.post" = "Trending Posts";
 "explore.trending.statuses.toot" = "Trending Toots";
+"explore.recommended.statuses.post" = "Recommended Posts";
+"explore.recommended.statuses.toot" = "Recommended Toots";
 "explore.instance" = "Instance";
 "explore.profile-directory" = "Profile Directory";
 "explore.suggested-accounts" = "Suggested Accounts to Follow";

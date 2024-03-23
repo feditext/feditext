@@ -804,7 +804,7 @@ private extension StatusView {
 
         var secondSectionItems = [UIAction]()
 
-        if viewModel.isMine || viewModel.mentionsMe {
+        if viewModel.canToggleMute {
             secondSectionItems.append(
                 UIAction(
                     title: viewModel.muted
@@ -1215,7 +1215,7 @@ private extension StatusView {
                 })
             }
 
-            if viewModel.isMine || viewModel.mentionsMe {
+            if viewModel.canToggleMute {
                 actions.append(UIAccessibilityCustomAction(
                     name: viewModel.muted
                         ? NSLocalizedString("status.unmute", comment: "")

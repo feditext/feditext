@@ -472,6 +472,8 @@ public extension StatusViewModel {
                 .eraseToAnyPublisher())
     }
 
+    var canToggleMute: Bool { (isMine || mentionsMe) && statusService.canMute }
+
     func toggleMuted() {
         eventsSubject.send(
             statusService.toggleMuted()

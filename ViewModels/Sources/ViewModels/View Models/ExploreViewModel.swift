@@ -13,6 +13,7 @@ public final class ExploreViewModel: ObservableObject {
     @Published public var tags = [Tag]()
     @Published public var links = [Card]()
     @Published public var statuses = [Status]()
+    @Published public var recommendedStatuses = [Status]()
     @Published public private(set) var loading = false
     @Published public var alertItem: AlertItem?
     public let identityContext: IdentityContext
@@ -69,6 +70,7 @@ public extension ExploreViewModel {
         case tags
         case links
         case statuses
+        case recommendedStatuses
         case instance
     }
 
@@ -111,7 +113,22 @@ public extension ExploreViewModel {
             })
             .ignoreOutput()
 
-        refreshInstance.merge(with: refreshAnnouncements, refreshTags, refreshLinks, refreshStatuses)
+        let refreshRecommendedStatuses = exploreService.fetchRecommendedStatuses()
+            .handleEvents(receiveOutput: { [weak self] statuses in
+                DispatchQueue.main.async {
+                    self?.recommendedStatuses = statuses
+                }
+            })
+            .ignoreOutput()
+
+        refreshInstance
+            .merge(
+                with: refreshAnnouncements,
+                refreshTags,
+                refreshLinks,
+                refreshStatuses,
+                refreshRecommendedStatuses
+            )
             .receive(on: DispatchQueue.main)
             .handleEvents(receiveSubscription: { [weak self] _ in self?.loading = true },
                           receiveCompletion: { [weak self] _ in self?.loading = false })

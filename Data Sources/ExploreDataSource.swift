@@ -101,21 +101,23 @@ final class ExploreDataSource: UICollectionViewDiffableDataSource<ExploreViewMod
 
         viewModel.$instanceViewModel
             .combineLatest(
-                viewModel.$announcementCount
+                viewModel.$announcementCount,
+                viewModel.$tags,
+                viewModel.$links
             )
             .combineLatest(
-                viewModel.$tags,
-                viewModel.$links,
-                viewModel.$statuses
+                viewModel.$statuses,
+                viewModel.$recommendedStatuses
             )
-            .sink { [weak self] instanceAndAnnouncement, tags, links, statuses in
-                let (instanceViewModel, announcementCount) = instanceAndAnnouncement
+            .sink { [weak self] instanceAnnouncementTagsLinks, statuses, recommendedStatuses in
+                let (instanceViewModel, announcementCount, tags, links) = instanceAnnouncementTagsLinks
                 self?.update(
                     instanceViewModel: instanceViewModel,
                     announcementCount: announcementCount,
                     tags: tags,
                     links: links,
-                    statuses: statuses
+                    statuses: statuses,
+                    recommendedStatuses: recommendedStatuses
                 )
             }
             .store(in: &cancellables)
@@ -136,11 +138,12 @@ private extension ExploreDataSource {
         announcementCount: (total: Int, unread: Int),
         tags: [Tag],
         links: [Card],
-        statuses: [Status]
+        statuses: [Status],
+        recommendedStatuses: [Status]
     ) {
         var newsnapshot = NSDiffableDataSourceSnapshot<ExploreViewModel.Section, ExploreViewModel.Item>()
 
-        // TODO: (Vyr) move directory and suggetions to their own tab or secondary nav.
+        // TODO: (Vyr) move directory and suggestions to their own tab or secondary nav.
         var instanceSectionItems = [ExploreViewModel.Item]()
 
         if announcementCount.total > 0 {
@@ -162,7 +165,11 @@ private extension ExploreDataSource {
 
         // Use the `.instance` item as a fallback for decoration on instances that don't support trends or suggestions.
         // TODO: (Vyr) roll this into `AboutInstanceView`.
-        if instanceSectionItems.isEmpty && tags.isEmpty && links.isEmpty && statuses.isEmpty,
+        if instanceSectionItems.isEmpty
+            && tags.isEmpty
+            && links.isEmpty
+            && statuses.isEmpty
+            && recommendedStatuses.isEmpty,
             instanceViewModel != nil {
             instanceSectionItems.append(.instance)
         }
@@ -185,6 +192,14 @@ private extension ExploreDataSource {
         if !statuses.isEmpty {
             newsnapshot.appendSections([.statuses])
             newsnapshot.appendItems(statuses.map(ExploreViewModel.Item.status), toSection: .statuses)
+        }
+
+        if !recommendedStatuses.isEmpty {
+            newsnapshot.appendSections([.recommendedStatuses])
+            newsnapshot.appendItems(
+                recommendedStatuses.map(ExploreViewModel.Item.status),
+                toSection: .recommendedStatuses
+            )
         }
 
         let wasEmpty = self.snapshot().itemIdentifiers.isEmpty
@@ -211,6 +226,13 @@ private extension ExploreViewModel.Section {
                 return NSLocalizedString("explore.trending.statuses.post", comment: "")
             case .toot:
                 return NSLocalizedString("explore.trending.statuses.toot", comment: "")
+            }
+        case .recommendedStatuses:
+            switch statusWord {
+            case .post:
+                return NSLocalizedString("explore.recommended.statuses.post", comment: "")
+            case .toot:
+                return NSLocalizedString("explore.recommended.statuses.toot", comment: "")
             }
         case .instance:
             return NSLocalizedString("explore.instance", comment: "")
