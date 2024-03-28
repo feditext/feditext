@@ -3,10 +3,10 @@
 import CoreText
 import Foundation
 
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
+#if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
 #endif
 
 #if canImport(SwiftUI)
@@ -46,20 +46,20 @@ public extension Siren {
             // Handle strikethru, underline, and text size/baseline changes other than headers.
             if let styles = run.styles {
                 if styles.contains(.strikethru) {
-                    #if canImport(AppKit)
-                    attributed[run.range].appKit.strikethroughStyle = .single
-                    #elseif canImport(UIKit)
+                    #if canImport(UIKit)
                     attributed[run.range].uiKit.strikethroughStyle = .single
+                    #elseif canImport(AppKit)
+                    attributed[run.range].appKit.strikethroughStyle = .single
                     #endif
                     #if canImport(SwiftUI)
                     attributed[run.range].swiftUI.strikethroughStyle = .single
                     #endif
                 }
                 if styles.contains(.underline) {
-                    #if canImport(AppKit)
-                    attributed[run.range].appKit.underlineStyle = .single
-                    #elseif canImport(UIKit)
+                    #if canImport(UIKit)
                     attributed[run.range].uiKit.underlineStyle = .single
+                    #elseif canImport(AppKit)
+                    attributed[run.range].appKit.underlineStyle = .single
                     #endif
                     #if canImport(SwiftUI)
                     attributed[run.range].swiftUI.underlineStyle = .single
@@ -81,10 +81,10 @@ public extension Siren {
             }
 
             if baselineOffset != 0 {
-                #if canImport(AppKit)
-                attributed[run.range].appKit.baselineOffset = baselineOffset
-                #elseif canImport(UIKit)
+                #if canImport(UIKit)
                 attributed[run.range].uiKit.baselineOffset = baselineOffset
+                #elseif canImport(AppKit)
+                attributed[run.range].appKit.baselineOffset = baselineOffset
                 #endif
                 #if canImport(SwiftUI)
                 attributed[run.range].swiftUI.baselineOffset = baselineOffset
@@ -113,10 +113,10 @@ public extension Siren {
                     []
                 ) {
                     let font = CTFontCreateWithFontDescriptor(runDescriptorWithTraits, 0, nil)
-                    #if canImport(AppKit)
-                    attributed[run.range].appKit.font = font
-                    #elseif canImport(UIKit)
+                    #if canImport(UIKit)
                     attributed[run.range].uiKit.font = font
+                    #elseif canImport(AppKit)
+                    attributed[run.range].appKit.font = font
                     #endif
                     #if canImport(SwiftUI)
                     attributed[run.range].swiftUI.font = .init(font)
@@ -125,10 +125,10 @@ public extension Siren {
             } else {
                 let font = CTFontCreateWithFontDescriptor(runDescriptor, 0, nil)
                 // Ensure that every run has a font.
-                #if canImport(AppKit)
-                attributed[run.range].appKit.font = font
-                #elseif canImport(UIKit)
+                #if canImport(UIKit)
                 attributed[run.range].uiKit.font = font
+                #elseif canImport(AppKit)
+                attributed[run.range].appKit.font = font
                 #endif
                 #if canImport(SwiftUI)
                 attributed[run.range].swiftUI.font = .init(font)
@@ -186,7 +186,7 @@ public extension Siren {
                 // Used to apply paragraph style to text decorations, not the main text.
                 var decorationStyleContainer = AttributeContainer()
 
-                #if canImport(AppKit) || canImport(UIKit)
+                #if canImport(UIKit) || canImport(AppKit)
                 if listDecoration != nil {
                     paragraphStyle.firstLineHeadIndent -= baseIndent
                     paragraphStyle.headIndent += baseIndent
@@ -210,10 +210,10 @@ public extension Siren {
                 }
             } else {
                 // Ensure that every run has a paragraph style.
-                #if canImport(AppKit)
-                attributed[range].appKit.paragraphStyle = .default
-                #elseif canImport(UIKit)
+                #if canImport(UIKit)
                 attributed[range].uiKit.paragraphStyle = .default
+                #elseif canImport(AppKit)
+                attributed[range].appKit.paragraphStyle = .default
                 #endif
             }
         }
@@ -230,7 +230,31 @@ public extension Siren {
         case unordered
     }
 
-    #if canImport(AppKit)
+    #if canImport(UIKit)
+    static func format(
+        _ attributed: AttributedString,
+        textStyle: UIFont.TextStyle, baseIndent: CGFloat) -> AttributedString {
+        format(
+            attributed,
+            descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: textStyle),
+            baseIndent: baseIndent
+        )
+    }
+
+    #if canImport(SwiftUI)
+    static func format(
+        _ attributed: AttributedString,
+        textStyle: SwiftUI.Font.TextStyle,
+        baseIndent: CGFloat
+    ) -> AttributedString {
+        format(
+            attributed,
+            descriptor: textStyle.descriptor,
+            baseIndent: baseIndent
+        )
+    }
+    #endif
+    #elseif canImport(AppKit)
     static func format(
         _ attributed: AttributedString,
         textStyle: NSFont.TextStyle,
@@ -256,72 +280,11 @@ public extension Siren {
         )
     }
     #endif
-    #elseif canImport(UIKit)
-    static func format(
-        _ attributed: AttributedString,
-        textStyle: UIFont.TextStyle, baseIndent: CGFloat) -> AttributedString {
-        format(
-            attributed,
-            descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: textStyle),
-            baseIndent: baseIndent
-        )
-    }
-
-    #if canImport(SwiftUI)
-    static func format(
-        _ attributed: AttributedString,
-        textStyle: SwiftUI.Font.TextStyle,
-        baseIndent: CGFloat
-    ) -> AttributedString {
-        format(
-            attributed,
-            descriptor: textStyle.descriptor,
-            baseIndent: baseIndent
-        )
-    }
-    #endif
     #endif
 }
 
 #if canImport(SwiftUI)
-#if canImport(AppKit)
-extension SwiftUI.Font.TextStyle {
-    var descriptor: CTFontDescriptor {
-        let textStyle: NSFont.TextStyle
-        switch self {
-        case .largeTitle:
-            textStyle = .largeTitle
-        case .title:
-            textStyle = .title1
-        case .title2:
-            textStyle = .title2
-        case .title3:
-            textStyle = .title3
-        case .headline:
-            textStyle = .headline
-        case .subheadline:
-            textStyle = .subheadline
-        case .body:
-            textStyle = .body
-        case .callout:
-            textStyle = .callout
-        case .footnote:
-            textStyle = .footnote
-        case .caption:
-            textStyle = .caption1
-        case .caption2:
-            textStyle = .caption2
-        @unknown default:
-            #if DEBUG
-            fatalError("Unknown SwiftUI.Font.TextStyle: \(self)")
-            #else
-            return NSFont.systemFont(ofSize: 0).fontDescriptor
-            #endif
-        }
-        return NSFontDescriptor.preferredFontDescriptor(forTextStyle: textStyle)
-    }
-}
-#elseif canImport(UIKit)
+#if canImport(UIKit)
 extension SwiftUI.Font.TextStyle {
     var descriptor: CTFontDescriptor {
         let textStyle: UIFont.TextStyle
@@ -359,9 +322,46 @@ extension SwiftUI.Font.TextStyle {
     }
 }
 #endif
+#elseif canImport(AppKit)
+extension SwiftUI.Font.TextStyle {
+    var descriptor: CTFontDescriptor {
+        let textStyle: NSFont.TextStyle
+        switch self {
+        case .largeTitle:
+            textStyle = .largeTitle
+        case .title:
+            textStyle = .title1
+        case .title2:
+            textStyle = .title2
+        case .title3:
+            textStyle = .title3
+        case .headline:
+            textStyle = .headline
+        case .subheadline:
+            textStyle = .subheadline
+        case .body:
+            textStyle = .body
+        case .callout:
+            textStyle = .callout
+        case .footnote:
+            textStyle = .footnote
+        case .caption:
+            textStyle = .caption1
+        case .caption2:
+            textStyle = .caption2
+        @unknown default:
+            #if DEBUG
+            fatalError("Unknown SwiftUI.Font.TextStyle: \(self)")
+            #else
+            return NSFont.systemFont(ofSize: 0).fontDescriptor
+            #endif
+        }
+        return NSFontDescriptor.preferredFontDescriptor(forTextStyle: textStyle)
+    }
+}
 #endif
 
-#if canImport(AppKit) || canImport(UIKit)
+#if canImport(UIKit) || canImport(AppKit)
 // Conform `NSParagraphStyle` to `Sendable` so we can assign it to `.paragraphStyle` without compiler warnings.
 // source: trust me bro
 extension NSParagraphStyle: @unchecked Sendable {}
