@@ -82,4 +82,14 @@ extension ListEndpoint: Endpoint {
             ]
         }
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .create:
+            return nil
+
+        case .update(id: let id, _, _, _):
+            return .list(id)
+        }
+    }
 }

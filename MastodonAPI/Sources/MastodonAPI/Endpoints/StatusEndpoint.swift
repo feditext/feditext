@@ -200,4 +200,30 @@ extension StatusEndpoint: Endpoint {
             return nil
         }
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .post:
+            return nil
+
+        case .status(id: let id),
+                .reblog(id: let id),
+                .unreblog(id: let id),
+                .favourite(id: let id),
+                .unfavourite(id: let id),
+                .bookmark(id: let id),
+                .unbookmark(id: let id),
+                .pin(id: let id),
+                .unpin(id: let id),
+                .mute(id: let id),
+                .unmute(id: let id),
+                .delete(id: let id),
+                .put(id: let id, _),
+                .react(id: let id, _),
+                .unreact(id: let id, _),
+                .pleromaReact(id: let id, _),
+                .pleromaUnreact(id: let id, _):
+            return .status(id)
+        }
+    }
 }

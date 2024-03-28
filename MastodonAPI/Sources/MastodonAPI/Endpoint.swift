@@ -2,6 +2,7 @@
 
 import Foundation
 import HTTP
+import Mastodon
 
 public protocol Endpoint {
     associatedtype ResultType: Decodable
@@ -17,6 +18,8 @@ public protocol Endpoint {
     var requires: APICapabilityRequirements? { get }
     /// Is there a value we can return if the API doesn't exist?
     var fallback: ResultType? { get }
+    /// If the object being requested is not found, what should we delete?
+    var notFound: EntityNotFound? { get }
 }
 
 public extension Endpoint {
@@ -45,6 +48,8 @@ public extension Endpoint {
     var requires: APICapabilityRequirements? { nil }
 
     var fallback: ResultType? { nil }
+
+    var notFound: EntityNotFound? { nil }
 
     /// We only have to satisfy requirements if they exist.
     func canCallWith(_ apiCapabilities: APICapabilities) -> Bool {

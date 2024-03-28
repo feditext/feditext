@@ -6,6 +6,7 @@ import Foundation
 import Mastodon
 import MastodonAPI
 
+/// Display a thread's context: a focused post and its ancestors and descendants.
 public struct ContextService {
     public let sections: AnyPublisher<[CollectionSection], Error>
     public let navigationService: NavigationService
@@ -31,9 +32,13 @@ public struct ContextService {
 extension ContextService: CollectionService {
     public func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error> {
         mastodonAPIClient.request(StatusEndpoint.status(id: id))
+            .catch(contentDatabase.catchNotFound)
             .flatMap(contentDatabase.insert(status:))
-            .merge(with: mastodonAPIClient.request(ContextEndpoint.context(id: id))
-                    .flatMap { contentDatabase.insert(context: $0, parentId: id) })
+            .merge(
+                with: mastodonAPIClient.request(ContextEndpoint.context(id: id))
+                    .catch(contentDatabase.catchNotFound)
+                    .flatMap { contentDatabase.insert(context: $0, parentId: id) }
+            )
             .eraseToAnyPublisher()
     }
 
@@ -44,4 +49,7 @@ extension ContextService: CollectionService {
     public func collapse(ids: Set<Status.Id>) -> AnyPublisher<Never, Error> {
         contentDatabase.collapse(ids: ids)
     }
+
+    /// An empty context looks weird, so don't display one.
+    public var closeWhenEmpty: Bool { true }
 }

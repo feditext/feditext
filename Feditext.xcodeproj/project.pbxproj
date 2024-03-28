@@ -26,6 +26,10 @@
 		943CF1132A731FC30032A0D2 /* AppIconClassic@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 943CF10B2A731FC20032A0D2 /* AppIconClassic@3x.png */; };
 		943CF1142A731FC30032A0D2 /* AppIconRainbow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 943CF10C2A731FC20032A0D2 /* AppIconRainbow@2x.png */; };
 		9460331F2A2D3B8E00F5757E /* NotificationReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9460331E2A2D3B8E00F5757E /* NotificationReportView.swift */; };
+		946923072BB5FA0A00628836 /* AlertItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946923062BB5FA0A00628836 /* AlertItem+Extensions.swift */; };
+		946923092BB6116600628836 /* AnnotatedAPIError+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946923082BB6116600628836 /* AnnotatedAPIError+Extensions.swift */; };
+		9469230B2BB611D300628836 /* AnnotatedURLError+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9469230A2BB611D300628836 /* AnnotatedURLError+Extensions.swift */; };
+		9469230D2BB617D500628836 /* EnvironmentValues+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9469230C2BB617D500628836 /* EnvironmentValues+Extensions.swift */; };
 		947B6CEF2A70909300630B24 /* EditDisplayFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947B6CEE2A70909300630B24 /* EditDisplayFilterView.swift */; };
 		947E728F29A9618900155DD2 /* EditNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947E728E29A9618900155DD2 /* EditNoteView.swift */; };
 		947ED41F2A6B1D7700A18AFA /* StatusReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947ED41E2A6B1D7700A18AFA /* StatusReactionsView.swift */; };
@@ -383,6 +387,10 @@
 		943CF1152A7324620032A0D2 /* Asset Originals */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Asset Originals"; sourceTree = "<group>"; };
 		943D4FFF2AD5B89B0097C4DF /* MastodonAPI GtS integration.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MastodonAPI GtS integration.xctestplan"; sourceTree = "<group>"; };
 		9460331E2A2D3B8E00F5757E /* NotificationReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationReportView.swift; sourceTree = "<group>"; };
+		946923062BB5FA0A00628836 /* AlertItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlertItem+Extensions.swift"; sourceTree = "<group>"; };
+		946923082BB6116600628836 /* AnnotatedAPIError+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnnotatedAPIError+Extensions.swift"; sourceTree = "<group>"; };
+		9469230A2BB611D300628836 /* AnnotatedURLError+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnnotatedURLError+Extensions.swift"; sourceTree = "<group>"; };
+		9469230C2BB617D500628836 /* EnvironmentValues+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentValues+Extensions.swift"; sourceTree = "<group>"; };
 		947873BB297E0F9000CACEFE /* Identity.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Identity.xcconfig; sourceTree = "<group>"; };
 		947B6CEE2A70909300630B24 /* EditDisplayFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDisplayFilterView.swift; sourceTree = "<group>"; };
 		947E728E29A9618900155DD2 /* EditNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditNoteView.swift; sourceTree = "<group>"; };
@@ -1087,12 +1095,16 @@
 		D0C7D46824F76169001EBDBB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				946923062BB5FA0A00628836 /* AlertItem+Extensions.swift */,
+				946923082BB6116600628836 /* AnnotatedAPIError+Extensions.swift */,
+				9469230A2BB611D300628836 /* AnnotatedURLError+Extensions.swift */,
 				D00CB22925C92C0F008EF267 /* Attachment+Extensions.swift */,
 				D0BE633625F2D95E001139FA /* AVAudioSession+Extensions.swift */,
 				D05E688425B55AE8001FB2C6 /* AVURLAsset+Extensions.swift */,
 				D0BE97A225CF44310057E161 /* CGRect+Extensions.swift */,
 				D0F0B135251AA12700942152 /* CollectionItem+Extensions.swift */,
 				D0D2AC3825BBEC0F003D5DF2 /* CollectionSection+Extensions.swift */,
+				9469230C2BB617D500628836 /* EnvironmentValues+Extensions.swift */,
 				94C282772A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift */,
 				94E7B18A2A5A0F7000A1F1DA /* List.RepliesPolicy+Extensions.swift */,
 				94979DA32A3E37ED00542793 /* MastodonNotification.NotificationType+Extensions.swift */,
@@ -1449,6 +1461,7 @@
 				94E174AB299AEC2D00D040B3 /* Report+Extensions.swift in Sources */,
 				D0F0B126251A90F400942152 /* AccountTableViewCell.swift in Sources */,
 				D0B32F50250B373600311912 /* RegistrationView.swift in Sources */,
+				9469230D2BB617D500628836 /* EnvironmentValues+Extensions.swift in Sources */,
 				D08B8D612540DE3B00B1EBEF /* ZoomDismissalInteractionController.swift in Sources */,
 				D036AA07254B6118009094DF /* NotificationView.swift in Sources */,
 				D08E52EE257D757100FA2C5F /* CompositionView.swift in Sources */,
@@ -1532,6 +1545,7 @@
 				94E7B18F2A5A271B00A1F1DA /* CloseButton.swift in Sources */,
 				D09D970825C64522007E6394 /* InstanceView.swift in Sources */,
 				94EE2E112A3FD49800CBB9A8 /* StatusCollectionViewCell.swift in Sources */,
+				946923072BB5FA0A00628836 /* AlertItem+Extensions.swift in Sources */,
 				D021A62C25C38570008A0C0D /* AboutView.swift in Sources */,
 				D00702362555F4C500F38136 /* ConversationContentConfiguration.swift in Sources */,
 				94E7B18D2A5A1B1A00A1F1DA /* EditListView.swift in Sources */,
@@ -1545,6 +1559,7 @@
 				D00CB22A25C92C0F008EF267 /* Attachment+Extensions.swift in Sources */,
 				D0D2AC5325BCD2BA003D5DF2 /* TagContentConfiguration.swift in Sources */,
 				94C282782A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift in Sources */,
+				9469230B2BB611D300628836 /* AnnotatedURLError+Extensions.swift in Sources */,
 				94EE2E132A402C2E00CBB9A8 /* Suggestion.Source+Extensions.swift in Sources */,
 				D08B8D72254246E200B1EBEF /* PollView.swift in Sources */,
 				D035F8A925B9155900DC75ED /* NewStatusButtonView.swift in Sources */,
@@ -1602,6 +1617,7 @@
 				94E6C24D2991ABDF003771D1 /* UserPreferencesSection.swift in Sources */,
 				D0C7D4C324F7616A001EBDBB /* MetatextApp.swift in Sources */,
 				D097F4C125BFA04C00859F2C /* NotificationsViewController.swift in Sources */,
+				946923092BB6116600628836 /* AnnotatedAPIError+Extensions.swift in Sources */,
 				D02D33EF25EE04CC000A35CC /* AddRemoveFromListsView.swift in Sources */,
 				D0E1F583251F13EC00D45315 /* WebfingerIndicatorView.swift in Sources */,
 				D0CEC0E125E0BB9700FEF5A6 /* NewItemsView.swift in Sources */,

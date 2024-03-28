@@ -108,4 +108,21 @@ extension RelationshipEndpoint: Endpoint {
             return nil
         }
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .accountsFollow(id: let id, _, _),
+                .accountsUnfollow(id: let id),
+                .accountsBlock(id: let id),
+                .accountsUnblock(id: let id),
+                .accountsMute(id: let id, _, _),
+                .accountsUnmute(id: let id),
+                .accountsPin(id: let id),
+                .accountsUnpin(id: let id),
+                .note(_, id: let id),
+                .acceptFollowRequest(id: let id),
+                .rejectFollowRequest(id: let id):
+            return .account(id)
+        }
+    }
 }

@@ -25,4 +25,11 @@ extension ContextEndpoint: Endpoint {
     public var method: HTTPMethod { .get }
 
     public var fallback: Context? { .init(ancestors: [], descendants: []) }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .context(let id):
+            return .status(id)
+        }
+    }
 }

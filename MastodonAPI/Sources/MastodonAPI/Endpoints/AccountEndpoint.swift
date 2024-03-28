@@ -28,4 +28,14 @@ extension AccountEndpoint: Endpoint {
         case .verifyCredentials, .accounts: return .get
         }
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .verifyCredentials:
+            return nil
+
+        case .accounts(let id):
+            return .account(id)
+        }
+    }
 }

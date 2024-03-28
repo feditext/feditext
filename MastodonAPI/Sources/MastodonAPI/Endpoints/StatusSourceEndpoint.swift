@@ -44,4 +44,11 @@ extension StatusSourceEndpoint: Endpoint {
             .akkoma: .assumeAvailable
         ]
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .source(id: let id):
+            return .status(id)
+        }
+    }
 }

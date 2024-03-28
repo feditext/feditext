@@ -205,6 +205,13 @@ struct AppPreferencesSection: View {
             }
             .disabled(!htmlGlobals.parserChanged)
         }
+
+        Section {
+            Toggle("preferences.toasts.title",
+                   isOn: $identityContext.appPreferences.useToasts)
+            Text("preferences.toasts.description")
+                .font(.footnote)
+        }
     }
 }
 

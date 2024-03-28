@@ -51,4 +51,12 @@ extension PollEndpoint: Endpoint {
             .gotosocial: .assumeAvailable,
         ]
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .poll(let id),
+                .votes(id: let id, _):
+            return .poll(id)
+        }
+    }
 }

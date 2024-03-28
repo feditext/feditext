@@ -447,6 +447,7 @@ public extension StatusViewModel {
         eventsSubject.send(
             statusService.toggleReblogged(identityId: identityId)
                 .map { _ in .ignorableOutput }
+                .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
                 .eraseToAnyPublisher())
     }
 
@@ -454,6 +455,7 @@ public extension StatusViewModel {
         eventsSubject.send(
             statusService.toggleFavorited(identityId: identityId)
                 .map { _ in .ignorableOutput }
+                .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
                 .eraseToAnyPublisher())
     }
 
@@ -461,6 +463,7 @@ public extension StatusViewModel {
         eventsSubject.send(
             statusService.toggleBookmarked()
                 .map { _ in .ignorableOutput }
+                .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
                 .eraseToAnyPublisher())
     }
 
@@ -469,6 +472,7 @@ public extension StatusViewModel {
             statusService.togglePinned()
                 .collect()
                 .map { _ in .refresh }
+                .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
                 .eraseToAnyPublisher())
     }
 
@@ -478,6 +482,7 @@ public extension StatusViewModel {
         eventsSubject.send(
             statusService.toggleMuted()
                 .map { _ in .ignorableOutput }
+                .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
                 .eraseToAnyPublisher())
     }
 
@@ -611,6 +616,7 @@ public extension StatusViewModel {
             statusService
                 .addReaction(name: name)
                 .map { _ in .ignorableOutput }
+                .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
                 .eraseToAnyPublisher()
         )
     }
@@ -621,6 +627,7 @@ public extension StatusViewModel {
             statusService
                 .removeReaction(name: name)
                 .map { _ in .ignorableOutput }
+                .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
                 .eraseToAnyPublisher()
         )
     }
@@ -696,5 +703,11 @@ private extension StatusViewModel {
             .eraseToAnyPublisher()
 
         eventsSubject.send(eventPublisher)
+    }
+
+    /// Divert errors that should be shown as toasts.
+    /// Pass other errors through.
+    func handleToasts(_ error: Error) -> AnyPublisher<CollectionItemEvent, Error> {
+        AlertItem.handleToasts(error: error, identityContext: identityContext)
     }
 }

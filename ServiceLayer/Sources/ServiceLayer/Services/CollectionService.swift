@@ -14,6 +14,8 @@ public protocol CollectionService {
     var announcesNewItems: Bool { get }
     var navigationService: NavigationService { get }
     var positionTimeline: Timeline? { get }
+    /// This collection doesn't make sense to display when empty, so we should navigate back when that happens.
+    var closeWhenEmpty: Bool { get }
     func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error>
     func requestMarkerLastReadId() -> AnyPublisher<CollectionItem.Id, Error>
     func setMarkerLastReadId(_ id: CollectionItem.Id) -> AnyPublisher<CollectionItem.Id, Error>
@@ -35,6 +37,8 @@ extension CollectionService {
     public var announcesNewItems: Bool { false }
 
     public var positionTimeline: Timeline? { nil }
+
+    public var closeWhenEmpty: Bool { false }
 
     public func requestMarkerLastReadId() -> AnyPublisher<CollectionItem.Id, Error> { Empty().eraseToAnyPublisher() }
 

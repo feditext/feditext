@@ -64,4 +64,14 @@ extension AttachmentEndpoint: Endpoint {
             return .put
         }
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .create:
+            return nil
+
+        case .update(let id, _, _):
+            return .attachment(id)
+        }
+    }
 }

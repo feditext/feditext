@@ -9,6 +9,9 @@ import ServiceLayer
 public final class RootViewModel: ObservableObject {
     @Published public private(set) var navigationViewModel: NavigationViewModel?
     @Published public private(set) var tintColor: Identity.Preferences.TintColor?
+    @Published public private(set) var statusWord: AppPreferences.StatusWord = .default
+    /// Assign something to this to display a toast alert.
+    @Published public var toastAlertItem: AlertItem?
 
     @Published private var mostRecentlyUsedIdentityId: Identity.Id?
     private let environment: AppEnvironment
@@ -57,6 +60,18 @@ public final class RootViewModel: ObservableObject {
                     .eraseToAnyPublisher()
             }
             .assign(to: &$tintColor)
+
+        $navigationViewModel
+            .flatMap { navigationViewModel in
+                guard let navigationViewModel = navigationViewModel else {
+                    return Empty<AppPreferences.StatusWord, Never>().eraseToAnyPublisher()
+                }
+
+                return navigationViewModel.identityContext.$appPreferences
+                    .map(\.statusWord)
+                    .eraseToAnyPublisher()
+            }
+            .assign(to: &$statusWord)
     }
 }
 

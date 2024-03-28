@@ -117,4 +117,34 @@ extension EmptyEndpoint: Endpoint {
             return nil
         }
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .oauthRevoke,
+                .blockDomain,
+                .unblockDomain:
+            return nil
+
+        case .addAccountsToList(id: let id, _),
+                .removeAccountsFromList(id: let id, _),
+                .deleteList(id: let id):
+            return .list(id)
+
+        case .deleteFilter(id: let id):
+            return .filter(id)
+
+        case .dismissAnnouncement(id: let id),
+                .addAnnouncementReaction(id: let id, _),
+                .removeAnnouncementReaction(id: let id, _):
+            return .announcement(id)
+
+        case .removeFollowSuggestion(id: let id):
+            // Note: Mastodon docs say this succeeds even if the account ID is invalid,
+            // so this is for other implementations.
+            return .account(id)
+
+        case .removeConversation(id: let id):
+            return .conversation(id)
+        }
+    }
 }

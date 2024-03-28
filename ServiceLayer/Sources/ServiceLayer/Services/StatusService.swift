@@ -57,7 +57,8 @@ public extension StatusService {
             return mastodonAPIClient.request(status.displayStatus.reblogged
                                                 ? StatusEndpoint.unreblog(id: status.displayStatus.id)
                                                 : StatusEndpoint.reblog(id: status.displayStatus.id))
-                .flatMap(contentDatabase.insert(status:))
+                .catch(contentDatabase.catchNotFound)
+                .flatMap(contentDatabase.insert(status:)) .catch(contentDatabase.catchNotFound)
                 .eraseToAnyPublisher()
         }
     }
@@ -69,6 +70,7 @@ public extension StatusService {
             return mastodonAPIClient.request(status.displayStatus.favourited
                                                 ? StatusEndpoint.unfavourite(id: status.displayStatus.id)
                                                 : StatusEndpoint.favourite(id: status.displayStatus.id))
+                .catch(contentDatabase.catchNotFound)
                 .flatMap(contentDatabase.insert(status:))
                 .eraseToAnyPublisher()
         }
@@ -78,6 +80,7 @@ public extension StatusService {
         mastodonAPIClient.request(status.displayStatus.bookmarked
                                     ? StatusEndpoint.unbookmark(id: status.displayStatus.id)
                                     : StatusEndpoint.bookmark(id: status.displayStatus.id))
+            .catch(contentDatabase.catchNotFound)
             .flatMap(contentDatabase.insert(status:))
             .eraseToAnyPublisher()
     }
@@ -86,6 +89,7 @@ public extension StatusService {
         mastodonAPIClient.request(status.displayStatus.pinned ?? false
                                     ? StatusEndpoint.unpin(id: status.displayStatus.id)
                                     : StatusEndpoint.pin(id: status.displayStatus.id))
+            .catch(contentDatabase.catchNotFound)
             .flatMap(contentDatabase.insert(status:))
             .eraseToAnyPublisher()
     }
@@ -96,6 +100,7 @@ public extension StatusService {
         mastodonAPIClient.request(status.displayStatus.muted
                                     ? StatusEndpoint.unmute(id: status.displayStatus.id)
                                     : StatusEndpoint.mute(id: status.displayStatus.id))
+            .catch(contentDatabase.catchNotFound)
             .flatMap(contentDatabase.insert(status:))
             .eraseToAnyPublisher()
     }
@@ -205,10 +210,12 @@ public extension StatusService {
     func addReaction(name: String) -> AnyPublisher<Never, Error> {
         if canEditReactionsGlitch {
             return mastodonAPIClient.request(StatusEndpoint.react(id: status.id, name: name))
+                .catch(contentDatabase.catchNotFound)
                 .flatMap(contentDatabase.insert(status:))
                 .eraseToAnyPublisher()
         } else if canEditReactionsPleroma {
             return mastodonAPIClient.request(StatusEndpoint.pleromaReact(id: status.id, name: name))
+                .catch(contentDatabase.catchNotFound)
                 .flatMap(contentDatabase.insert(status:))
                 .eraseToAnyPublisher()
         } else {
@@ -220,10 +227,12 @@ public extension StatusService {
     func removeReaction(name: String) -> AnyPublisher<Never, Error> {
         if canEditReactionsGlitch {
             return mastodonAPIClient.request(StatusEndpoint.unreact(id: status.id, name: name))
+                .catch(contentDatabase.catchNotFound)
                 .flatMap(contentDatabase.insert(status:))
                 .eraseToAnyPublisher()
         } else if canEditReactionsPleroma {
             return mastodonAPIClient.request(StatusEndpoint.pleromaUnreact(id: status.id, name: name))
+                .catch(contentDatabase.catchNotFound)
                 .flatMap(contentDatabase.insert(status:))
                 .eraseToAnyPublisher()
         } else {
@@ -280,6 +289,7 @@ private extension StatusService {
         return fetchAs(identityId: identityId)
             .flatMap { client.request(endpointClosure($0.id)) }
             .flatMap { _ in mastodonAPIClient.request(StatusEndpoint.status(id: status.displayStatus.id)) }
+            .catch(contentDatabase.catchNotFound)
             .flatMap(contentDatabase.insert(status:))
             .eraseToAnyPublisher()
     }

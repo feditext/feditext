@@ -367,6 +367,7 @@ extension CollectionItemsViewModel: CollectionViewModel {
     public func request(maxId: String? = nil, minId: String? = nil) {
         collectionService.request(maxId: realMaxId(maxId: maxId), minId: minId)
             .receive(on: DispatchQueue.main)
+            .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
             .assignErrorsToAlertItem(to: \.alertItem, on: self)
             .handleEvents(
                 receiveSubscription: { [weak self] _ in self?.loadingSubject.send(true) },
@@ -597,6 +598,15 @@ private extension CollectionItemsViewModel {
             shouldAdjustContentInset: lastUpdateWasContextParentOnly && items.count > 1)
 
         viewModelCache = viewModelCache.filter { itemsSet.contains($0.key) }
+
+        // If a collection that shouldn't be shown empty becomes empty, navigate back.
+        if sections.isEmpty && collectionService.closeWhenEmpty {
+            eventsSubject.send(
+                Just(CollectionItemEvent.contextParentDeleted)
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            )
+        }
     }
 
     func realMaxId(maxId: String?) -> String? {
@@ -663,5 +673,28 @@ private extension CollectionItemsViewModel {
         }
 
         return nil
+    }
+
+    /// Divert errors that should be shown as toasts.
+    /// Pass other errors through.
+    func handleToasts(_ error: Error) -> AnyPublisher<Never, Error> {
+        if let error = error as? ToastableError, error.toastable {
+            var toastPublisher: AnyPublisher<CollectionItemEvent, Error> = AlertItem.handleToasts(error: error, identityContext: identityContext)
+            if case .notFound = (error as? SpecialCaseError)?.specialCase {
+                // Not found errors when paging indicate:
+                // - a deleted context root status if we're using a context service
+                // - a deleted account if we're using a profile service
+                // - a deleted tag if we're looking at a hashtag timeline
+                // so we need to both pop a toast and navigate backwards.
+                toastPublisher = toastPublisher
+                    .append(CollectionItemEvent.contextParentDeleted)
+                    .eraseToAnyPublisher()
+            }
+            eventsSubject.send(toastPublisher)
+            return Empty(outputType: Never.self, failureType: Error.self)
+                .eraseToAnyPublisher()
+        }
+        return Fail(outputType: Never.self, failure: error)
+            .eraseToAnyPublisher()
     }
 }

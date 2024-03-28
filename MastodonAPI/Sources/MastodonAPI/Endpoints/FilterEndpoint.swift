@@ -69,6 +69,16 @@ extension FilterEndpoint: Endpoint {
     public var requires: APICapabilityRequirements? {
         FiltersEndpoint.filters.requires
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .create:
+            return nil
+
+        case .update(id: let id, _, _, _, _, _):
+            return .filter(id)
+        }
+    }
 }
 
 private extension FilterEndpoint {

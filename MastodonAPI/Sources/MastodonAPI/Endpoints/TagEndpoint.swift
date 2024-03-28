@@ -44,4 +44,14 @@ extension TagEndpoint: Endpoint {
             return TagsEndpoint.followed.requires
         }
     }
+
+    /// Mastodon claims never to 404 for these methods, but we have these in case other implementations do.
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .get(let name),
+                .follow(let name),
+                .unfollow(let name):
+            return .tag(name)
+        }
+    }
 }

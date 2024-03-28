@@ -5,13 +5,14 @@ import HTTP
 import Mastodon
 
 /// Thrown when an API call fails but returns a decodable Mastodon API error instead of a lower-level one.
-public struct AnnotatedAPIError: Error, AnnotatedError, LocalizedError, Encodable {
+public struct AnnotatedAPIError: Error, AnnotatedError, SpecialCaseError, LocalizedError, Encodable {
     public let apiError: APIError
     public let method: String
     public let url: URL
     public let statusCode: Int
     public let requestLocation: DebugLocation
     public let apiCapabilities: APICapabilities
+    public let specialCase: SpecialErrorCase?
 
     public init(
         apiError: APIError,
@@ -19,7 +20,8 @@ public struct AnnotatedAPIError: Error, AnnotatedError, LocalizedError, Encodabl
         url: URL,
         statusCode: Int,
         requestLocation: DebugLocation,
-        apiCapabilities: APICapabilities
+        apiCapabilities: APICapabilities,
+        specialCase: SpecialErrorCase?
     ) {
         self.apiError = apiError
         self.method = method
@@ -27,11 +29,12 @@ public struct AnnotatedAPIError: Error, AnnotatedError, LocalizedError, Encodabl
         self.statusCode = statusCode
         self.requestLocation = requestLocation
         self.apiCapabilities = apiCapabilities
+        self.specialCase = specialCase
     }
 
-    public init?(
+    public init?<E>(
         apiError: APIError,
-        target: Target,
+        target: MastodonAPITarget<E>,
         response: HTTPURLResponse,
         requestLocation: DebugLocation,
         apiCapabilities: APICapabilities
@@ -44,7 +47,10 @@ public struct AnnotatedAPIError: Error, AnnotatedError, LocalizedError, Encodabl
             url: url,
             statusCode: response.statusCode,
             requestLocation: requestLocation,
-            apiCapabilities: apiCapabilities
+            apiCapabilities: apiCapabilities,
+            specialCase: response.statusCode == 404
+                ? target.endpoint.notFound.map(SpecialErrorCase.notFound)
+                : nil
         )
     }
 

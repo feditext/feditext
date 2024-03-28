@@ -32,4 +32,11 @@ extension ConversationEndpoint: Endpoint {
     public var requires: APICapabilityRequirements? {
         ConversationsEndpoint.conversations.requires
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .read(let id):
+            return .conversation(id)
+        }
+    }
 }

@@ -37,4 +37,11 @@ extension ReactionsEndpoint: Endpoint {
             ]
         }
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .status(id: let id):
+            return .status(id)
+        }
+    }
 }

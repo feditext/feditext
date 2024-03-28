@@ -28,4 +28,11 @@ extension NotificationEndpoint: Endpoint {
             return .get
         }
     }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .notification(id: let id):
+            return .notification(id)
+        }
+    }
 }

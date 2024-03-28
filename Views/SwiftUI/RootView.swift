@@ -23,6 +23,8 @@ struct RootView: View {
                 .tint(viewModel.tintColor?.color)
                 .onReceive(viewModel.$tintColor,
                            perform: setTintColor)
+                .environment(\.statusWord, viewModel.statusWord)
+                .toast($viewModel.toastAlertItem)
         } else {
             NavigationView {
                 AddIdentityView(

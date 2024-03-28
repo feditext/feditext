@@ -16,6 +16,8 @@ class TableViewController: UITableViewController {
     private let loadingTableFooterView = LoadingTableFooterView()
     private let webfingerIndicatorView = WebfingerIndicatorView()
     private let newItemsView = NewItemsView()
+    /// The new items view is visible when this is set *and* the root view (if any) isn't displaying a toast.
+    @Published private var showNewItems = false
     @Published private var loading = false
     private var visibleLoadMoreViews = Set<LoadMoreView>()
     private var cancellables = Set<AnyCancellable>()
@@ -438,6 +440,20 @@ private extension TableViewController {
             }
             .store(in: &cancellables)
 
+        $showNewItems
+            .combineLatest(
+                rootViewModel?.$toastAlertItem
+                    .map { $0 != nil }
+                    .eraseToAnyPublisher()
+                ?? Just(true)
+                    .eraseToAnyPublisher()
+            )
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] show, showingToast in
+                self?.showNewItemsChanged(show && !showingToast)
+            })
+            .store(in: &cancellables)
+
         tableView.publisher(for: \.contentOffset)
             .removeDuplicates()
             .handleEvents(receiveOutput: { [weak self] _ in
@@ -534,6 +550,8 @@ private extension TableViewController {
         switch event {
         case .ignorableOutput:
             break
+        case let .toast(alertItem):
+            rootViewModel?.toastAlertItem = alertItem
         case .contextParentDeleted:
             navigationController?.popViewController(animated: true)
         case .refresh:
@@ -886,30 +904,38 @@ private extension TableViewController {
             return
         }
 
-        newItemsView.layoutIfNeeded()
-
-        UIView.animate(withDuration: .zeroIfReduceMotion(.defaultAnimationDuration),
-                       delay: 0,
-                       usingSpringWithDamping: 0.5,
-                       initialSpringVelocity: 5,
-                       options: .curveEaseInOut) {
-            self.newItemsView.alpha = 1
-            self.newItemsViewHiddenConstraint?.isActive = false
-            self.newItemsViewVisibleConstraint?.isActive = true
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            self.reloadVisibleItems()
-        }
+        showNewItems = true
     }
 
     func hideNewItemsView() {
-        UIView.animate(withDuration: .zeroIfReduceMotion(.defaultAnimationDuration)) {
-            self.newItemsView.alpha = 0
-            self.newItemsViewVisibleConstraint?.isActive = false
-            self.newItemsViewHiddenConstraint?.isActive = true
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            self.reloadVisibleItems()
+        showNewItems = false
+    }
+
+    func showNewItemsChanged(_ show: Bool) {
+        if show {
+            newItemsView.layoutIfNeeded()
+
+            UIView.animate(withDuration: .zeroIfReduceMotion(.defaultAnimationDuration),
+                           delay: 0,
+                           usingSpringWithDamping: 0.5,
+                           initialSpringVelocity: 5,
+                           options: .curveEaseInOut) {
+                self.newItemsView.alpha = 1
+                self.newItemsViewHiddenConstraint?.isActive = false
+                self.newItemsViewVisibleConstraint?.isActive = true
+                self.view.layoutIfNeeded()
+            } completion: { _ in
+                self.reloadVisibleItems()
+            }
+        } else {
+            UIView.animate(withDuration: .zeroIfReduceMotion(.defaultAnimationDuration)) {
+                self.newItemsView.alpha = 0
+                self.newItemsViewVisibleConstraint?.isActive = false
+                self.newItemsViewHiddenConstraint?.isActive = true
+                self.view.layoutIfNeeded()
+            } completion: { _ in
+                self.reloadVisibleItems()
+            }
         }
     }
 

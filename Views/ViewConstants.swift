@@ -13,8 +13,6 @@ extension CGFloat {
     static let barButtonItemDimension: Self = 28
     static let newStatusButtonDimension: Self = 58
     static let defaultShadowRadius: Self = 2
-    static let systemMenuWidth: Self = 250
-    static let systemMenuInset: Self = 15
 }
 
 extension Float {

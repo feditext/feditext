@@ -30,6 +30,8 @@ public extension AppPreferences {
         case post
 
         public var id: String { rawValue }
+
+        public static var `default`: Self { .toot }
     }
 
     enum AnimateAvatars: String, CaseIterable, Identifiable {
@@ -81,7 +83,7 @@ public extension AppPreferences {
                 return value
             }
 
-            return .toot
+            return .default
         }
         set { self[.statusWord] = newValue.rawValue }
     }
@@ -258,6 +260,11 @@ public extension AppPreferences {
         }
         set { self[.postingLanguages] = newValue }
     }
+
+    var useToasts: Bool {
+        get { self[.useToasts] ?? true }
+        set { self[.useToasts] = newValue }
+    }
 }
 
 private extension AppPreferences {
@@ -288,6 +295,7 @@ private extension AppPreferences {
         case useMediaDescriptionMetadata
         case visibilityIconColors
         case postingLanguages
+        case useToasts
     }
 
     subscript<T>(index: Item) -> T? {

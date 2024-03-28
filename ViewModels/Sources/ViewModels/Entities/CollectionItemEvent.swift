@@ -4,8 +4,12 @@ import Foundation
 import Mastodon
 import ServiceLayer
 
-public enum CollectionItemEvent {
+public enum CollectionItemEvent: ToastableEvent {
     case ignorableOutput
+    /// Non-actionable error that we want to be displayed as a toast.
+    case toast(AlertItem)
+    /// The entity whose context we're looking at is gone, and we should navigate back.
+    /// This can be a focused post in a thread, the account that owns some posts, the tag for a tag timeline, etc.
     case contextParentDeleted
     case refresh
     case navigation(Navigation)

@@ -1,6 +1,7 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
 import Combine
+import CombineInterop
 import Foundation
 import GRDB
 import Keychain
@@ -867,6 +868,24 @@ public extension ContentDatabase {
             .first()
             .eraseToAnyPublisher()
     }
+
+    /// Handle not-found API errors by removing the relevant object.
+    /// Use this as a handler for `Publisher.catch` when 404s are a possibility.
+    /// Preserves the original error. 
+    func catchNotFound<Output>(_ failure: Error) -> AnyPublisher<Output, Error> {
+        let failurePublisher = Fail(outputType: Output.self, failure: failure)
+
+        if let error = failure as? SpecialCaseError,
+           case let .notFound(what) = error.specialCase {
+            return delete(what)
+                .andThen {
+                    failurePublisher
+                }
+                .eraseToAnyPublisher()
+        }
+
+        return failurePublisher.eraseToAnyPublisher()
+    }
 }
 
 public enum URLLookupResult {
@@ -925,5 +944,26 @@ private extension ContentDatabase {
         let allAccountIds = try Account.Id.fetchSet(db, AccountRecord.select(AccountRecord.Columns.id))
 
         return allAccountIds.subtracting(accountIdsToKeep)
+    }
+
+    /// If an API call told us something wasn't found, delete it.
+    private func delete(_ what: EntityNotFound) -> AnyPublisher<Never, Error> {
+        switch what {
+        case let .account(id):
+            // The block() function actually deletes our record of the account.
+            return block(id: id)
+        case let .filter(id):
+            return deleteFilter(id: id)
+        case let .list(id):
+            return deleteList(id: id)
+        case let .status(id):
+            return delete(id: id)
+        default:
+            #if DEBUG
+            fatalError("Don't know how to handle \(String(describing: what))")
+            #else
+            return Empty().eraseToAnyPublisher()
+            #endif
+        }
     }
 }

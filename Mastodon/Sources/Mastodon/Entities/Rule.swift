@@ -4,8 +4,6 @@ import Foundation
 
 /// A server rule.
 public struct Rule: Codable, Identifiable, Equatable {
-    public typealias Id = String
-
     public let id: Id
     public let text: String
 
@@ -13,6 +11,10 @@ public struct Rule: Codable, Identifiable, Equatable {
         self.id = id
         self.text = text
     }
+}
+
+public extension Rule {
+    typealias Id = String
 }
 
 extension Rule: Hashable {

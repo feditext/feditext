@@ -128,4 +128,24 @@ extension StatusesEndpoint: Endpoint {
     }
 
     public var fallback: [Status]? { [] }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .timelinesPublic,
+                .timelinesHome,
+                .favourites,
+                .bookmarks,
+                .trends:
+            return nil
+
+        case .timelinesTag(let name):
+            return .tag(name)
+
+        case .timelinesList(let id):
+            return .list(id)
+
+        case .accountsStatuses(let id, _, _, _, _):
+            return .account(id)
+        }
+    }
 }

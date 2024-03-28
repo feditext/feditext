@@ -46,4 +46,11 @@ extension StatusEditsEndpoint: Endpoint {
     }
 
     public var fallback: [StatusEdit]? { [] }
+
+    public var notFound: EntityNotFound? {
+        switch self {
+        case .history(id: let id):
+            return .status(id)
+        }
+    }
 }
