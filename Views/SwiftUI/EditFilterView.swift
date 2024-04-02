@@ -36,15 +36,17 @@ struct EditFilterView: View {
                 }
             }
 
-            Section {
-                Toggle(isOn: $viewModel.filter.irreversible, label: {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("filter.irreversible")
-                        Text("filter.irreversible-explanation")
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                    }
-                })
+            if viewModel.canUseIrreversible {
+                Section {
+                    Toggle(isOn: $viewModel.filter.irreversible, label: {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("filter.irreversible")
+                            Text("filter.irreversible-explanation")
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                        }
+                    })
+                }
             }
 
             Section {

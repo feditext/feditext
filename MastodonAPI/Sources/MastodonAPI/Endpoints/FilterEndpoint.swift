@@ -67,7 +67,19 @@ extension FilterEndpoint: Endpoint {
     }
 
     public var requires: APICapabilityRequirements? {
-        FiltersEndpoint.filters.requires
+        switch self {
+        case .create(_, _, irreversible: true, _, _),
+                .update(_, _, _, irreversible: true, _, _):
+            // FiltersEndpoint.filters.requires without GtS, which doesn't support irreversible filters yet.
+            return .mastodonForks(.assumeAvailable) | [
+                .fedibird: .assumeAvailable,
+                .pleroma: .assumeAvailable,
+                .akkoma: .assumeAvailable,
+            ]
+
+        case .create, .update:
+            return FiltersEndpoint.filters.requires
+        }
     }
 
     public var notFound: EntityNotFound? {

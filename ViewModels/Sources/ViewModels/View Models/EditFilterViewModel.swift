@@ -3,6 +3,7 @@
 import Combine
 import Foundation
 import Mastodon
+import MastodonAPI
 import ServiceLayer
 
 public final class EditFilterViewModel: ObservableObject {
@@ -31,6 +32,13 @@ public extension EditFilterViewModel {
     var isNew: Bool { filter.id == Filter.newFilterId }
 
     var isSaveDisabled: Bool { filter.phrase.isEmpty || filter.context.isEmpty }
+
+    /// Some backends don't support irreversible/hide filters yet.
+    var canUseIrreversible: Bool {
+        FilterEndpoint
+            .create(phrase: "", context: [], irreversible: true, wholeWord: false, expiresIn: nil)
+            .canCallWith(identityContext.apiCapabilities)
+    }
 
     func toggleSelection(context: Filter.Context) {
         if filter.context.contains(context) {
