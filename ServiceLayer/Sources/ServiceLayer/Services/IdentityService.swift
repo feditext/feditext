@@ -419,10 +419,14 @@ public extension IdentityService {
     }
 
     func notificationsService(excludeTypes: Set<MastodonNotification.NotificationType>) -> NotificationsService {
-        NotificationsService(excludeTypes: excludeTypes,
-                             environment: environment,
-                             mastodonAPIClient: mastodonAPIClient,
-                             contentDatabase: contentDatabase)
+        NotificationsService(
+            excludeTypes: excludeTypes,
+            environment: environment,
+            mastodonAPIClient: mastodonAPIClient,
+            contentDatabase: contentDatabase,
+            identityDatabase: identityDatabase,
+            identityId: id
+        )
     }
 
     func conversationsService() -> ConversationsService {
