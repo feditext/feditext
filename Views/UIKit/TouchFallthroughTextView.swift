@@ -33,6 +33,9 @@ final class TouchFallthroughTextView: UITextView, EmojiInsertable {
         linkTextAttributes = [.foregroundColor: UIColor.tintColor as Any, .underlineColor: UIColor.clear]
 
         layer.addSublayer(blockquotesLayer)
+        // Don't draw text decorations outside of bounds.
+        // Fixes blank areas when posts are folded.
+        blockquotesLayer.masksToBounds = true
         // Draw the decorations behind the text.
         blockquotesLayer.zPosition = -1
         updateBlockquotesLayer()
