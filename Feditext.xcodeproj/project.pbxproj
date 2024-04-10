@@ -46,6 +46,7 @@
 		94B5C6D92A741DC40076DB01 /* ActivityPub@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 94B5C6D72A741DC40076DB01 /* ActivityPub@2x.png */; };
 		94B5C6DA2A741DC40076DB01 /* ActivityPub@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 94B5C6D82A741DC40076DB01 /* ActivityPub@3x.png */; };
 		94C282782A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C282772A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift */; };
+		94D9E1B32BC60B47003C1C18 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 94D9E1B22BC60B47003C1C18 /* PrivacyInfo.xcprivacy */; };
 		94E174AB299AEC2D00D040B3 /* Report+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E174AA299AEC2D00D040B3 /* Report+Extensions.swift */; };
 		94E6C2482991A235003771D1 /* PostingDefaultLanguageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C2472991A235003771D1 /* PostingDefaultLanguageView.swift */; };
 		94E6C24B2991A5BC003771D1 /* PostingLanguagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */; };
@@ -413,6 +414,7 @@
 		94B5C6D72A741DC40076DB01 /* ActivityPub@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ActivityPub@2x.png"; sourceTree = "<group>"; };
 		94B5C6D82A741DC40076DB01 /* ActivityPub@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ActivityPub@3x.png"; sourceTree = "<group>"; };
 		94C282772A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity.Preferences.TintColor+Extensions.swift"; sourceTree = "<group>"; };
+		94D9E1B22BC60B47003C1C18 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		94E174AA299AEC2D00D040B3 /* Report+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Report+Extensions.swift"; sourceTree = "<group>"; };
 		94E6C2472991A235003771D1 /* PostingDefaultLanguageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingDefaultLanguageView.swift; sourceTree = "<group>"; };
 		94E6C24A2991A5BC003771D1 /* PostingLanguagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingLanguagesView.swift; sourceTree = "<group>"; };
@@ -1033,6 +1035,7 @@
 		D0C7D41D24F76169001EBDBB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				94D9E1B22BC60B47003C1C18 /* PrivacyInfo.xcprivacy */,
 				D0C7D41F24F76169001EBDBB /* Info.plist */,
 				D0C7D41E24F76169001EBDBB /* Metatext.entitlements */,
 			);
@@ -1382,6 +1385,7 @@
 				D9E658662601CF76007C426E /* Localizable.strings in Resources */,
 				943CF1142A731FC30032A0D2 /* AppIconRainbow@2x.png in Resources */,
 				D0C7D4C224F7616A001EBDBB /* Assets.xcassets in Resources */,
+				94D9E1B32BC60B47003C1C18 /* PrivacyInfo.xcprivacy in Resources */,
 				943CF1102A731FC30032A0D2 /* AppIconClassic@2x.png in Resources */,
 				D9E6586F2601CF79007C426E /* Localizable.stringsdict in Resources */,
 				943CF1112A731FC30032A0D2 /* AppIconRainbow@3x.png in Resources */,
