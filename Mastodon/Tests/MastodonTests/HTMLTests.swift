@@ -14,6 +14,7 @@ final class HTMLTests: XCTestCase {
     func testMultipleMentionsWithSameUsernamePartSiren() {
         multipleMentionsWithSameUsernamePart(parser: .siren)
     }
+
     private func multipleMentionsWithSameUsernamePart(parser: HTML.Parser) {
         HTML.parser = parser
 
@@ -51,11 +52,10 @@ final class HTMLTests: XCTestCase {
             actualMentions.append((text, url))
         }
 
-        XCTAssertEqual(
-            expectedMentions.count,
-            actualMentions.count,
-            "Expected to find \(expectedMentions.count) mentions, found \(actualMentions.count)"
-        )
+        if expectedMentions.count != actualMentions.count {
+            XCTFail("Expected to find \(expectedMentions.count) mentions, found \(actualMentions.count)")
+            return
+        }
         for i in 0..<expectedMentions.count {
             let expectedMention = expectedMentions[i]
             let actualMention = actualMentions[i]
@@ -133,11 +133,10 @@ final class HTMLTests: XCTestCase {
             actualHashtags.append((text, url))
         }
 
-        XCTAssertEqual(
-            expectedHashtags.count,
-            actualHashtags.count,
-            "Expected to find \(expectedHashtags.count) hashtags, found \(actualHashtags.count)"
-        )
+        if expectedHashtags.count != actualHashtags.count {
+            XCTFail("Expected to find \(expectedHashtags.count) hashtags, found \(actualHashtags.count)")
+            return
+        }
         for i in 0..<expectedHashtags.count {
             let expectedHashtag = expectedHashtags[i]
             let actualHashtag = actualHashtags[i]

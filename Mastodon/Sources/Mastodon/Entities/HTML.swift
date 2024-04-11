@@ -303,7 +303,7 @@ private extension HTML {
             Self.signposter.endInterval(signpostName, signpostInterval)
         }
 
-        let attributed: NSMutableAttributedString
+        var attributed: NSMutableAttributedString
         switch HTML.parser {
         case .webkit:
             attributed = Self.parseWithWebkit(raw)
@@ -318,7 +318,9 @@ private extension HTML {
             attributed.deleteCharacters(in: NSRange(range, in: attributed.string))
         }
 
-        Self.rewriteLinks(attributed)
+        var attrStr = (try? AttributedString(attributed, including: \.all)) ?? AttributedString()
+        Self.rewriteLinks(&attrStr)
+        attributed = (try? NSMutableAttributedString(attrStr, including: \.all)) ?? NSMutableAttributedString()
 
         let entireString = NSRange(location: 0, length: attributed.length)
         attributed.fixAttributes(in: entireString)
@@ -391,7 +393,7 @@ private extension HTML {
 
     /// Apply heuristics to rewrite HTTPS links for mentions and hashtags into Feditext internal links.
     /// Assumes string has already been marked with Feditext attributes.
-    static func rewriteLinks(_ attributed: NSMutableAttributedString) {
+    static func rewriteLinksOld(_ attributed: NSMutableAttributedString) {
         let entireString = NSRange(location: 0, length: attributed.length)
         attributed.enumerateAttribute(.link, in: entireString) { val, linkNSRange, stop in
             guard let url = val as? URL else { return }
@@ -459,6 +461,62 @@ private extension HTML {
                     range: nsRange
                 )
             default:
+                break
+            }
+        }
+    }
+
+    static func rewriteLinks(_ attributed: inout AttributedString) {
+        for (url, linkRange) in attributed.runs[\.link] {
+            guard let url = url else { continue }
+
+            // Exclude leading and trailing whitespace from range with link attribute.
+            if linkRange.isEmpty { continue }
+            var lower = linkRange.lowerBound
+            var upperInclusive = attributed.characters.index(before: linkRange.upperBound)
+            while lower <= upperInclusive && attributed.characters[lower].isWhitespace {
+                lower = attributed.characters.index(after: lower)
+            }
+            while lower <= upperInclusive && attributed.characters[upperInclusive].isWhitespace {
+                upperInclusive = attributed.characters.index(before: upperInclusive)
+            }
+            if !(lower <= upperInclusive) { continue }
+            let range = lower...upperInclusive
+
+            let substring = attributed[range]
+
+            var linkClass = substring.linkClass
+
+            if linkClass == nil {
+                if substring.characters.starts(with: "#") {
+                    linkClass = .hashtag
+                } else if substring.characters.starts(with: "@") {
+                    linkClass = .mention
+                }
+            }
+
+            guard let linkClass = linkClass else {
+                continue
+            }
+
+            switch linkClass {
+            case .hashtag:
+                let trimmed: AttributedString.CharacterView.SubSequence
+                if #available(iOS 16.0, macOS 13.0, *) {
+                    trimmed = substring.characters.trimmingPrefix("#")
+                } else {
+                    trimmed = substring.characters.drop(while: { $0 == "#" })
+                }
+                let normalized = Tag.normalizeName(String(trimmed))
+                attributed[range].hashtag = normalized
+                attributed[linkRange].link = nil
+                attributed[range].link = AppUrl.tagTimeline(normalized).url
+
+            case .mention:
+                attributed[linkRange].link = nil
+                attributed[range].link = AppUrl.mention(url).url
+
+            case .ellipsis, .leadingInvisible, .trailingInvisible:
                 break
             }
         }
