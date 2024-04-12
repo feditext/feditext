@@ -19,25 +19,15 @@ final class HTMLTests: XCTestCase {
         ]
 
         var actualMentions = [(text: String, url: URL)]()
-        let entireString = NSRange(location: 0, length: html.attributed.length)
-        html.attributed.enumerateAttribute(HTML.Key.linkClass, in: entireString) { val, nsRange, _ in
-            guard let linkClass = val as? HTML.LinkClass, linkClass == .mention else { return }
+        for (linkClass, range) in html.attrStr.runs[\.linkClass] {
+            guard let linkClass = linkClass, linkClass == .mention else { continue }
 
-            guard let range = Range(nsRange, in: html.attributed.string) else {
-                XCTFail("Getting the substring range should always succeed")
-                return
-            }
-
-            guard let url = html.attributed.attribute(
-                .link,
-                at: nsRange.location,
-                effectiveRange: nil
-            ) as? URL else {
+            guard let url = html.attrStr[range].link else {
                 XCTFail("Getting the link for a span with a linkClass should always succeed")
                 return
             }
 
-            let text = String(html.attributed.string[range])
+            let text = String(html.attrStr.characters[range])
 
             actualMentions.append((text, url))
         }
@@ -66,8 +56,8 @@ final class HTMLTests: XCTestCase {
         let expectedLinks = expectedMentions.map(\.url)
 
         var actualLinks = [URL]()
-        html.attributed.enumerateAttribute(.link, in: entireString) { val, _, _ in
-            guard let url = val as? URL else { return }
+        for (url, _) in html.attrStr.runs[\.link] {
+            guard let url = url else { return }
 
             actualLinks.append(url)
         }
@@ -90,25 +80,15 @@ final class HTMLTests: XCTestCase {
         ]
 
         var actualHashtags = [(text: String, url: URL)]()
-        let entireString = NSRange(location: 0, length: html.attributed.length)
-        html.attributed.enumerateAttribute(HTML.Key.linkClass, in: entireString) { val, nsRange, _ in
-            guard let linkClass = val as? HTML.LinkClass, linkClass == .hashtag else { return }
+        for (linkClass, range) in html.attrStr.runs[\.linkClass] {
+            guard let linkClass = linkClass, linkClass == .hashtag else { continue }
 
-            guard let range = Range(nsRange, in: html.attributed.string) else {
-                XCTFail("Getting the substring range should always succeed")
-                return
-            }
-
-            guard let url = html.attributed.attribute(
-                .link,
-                at: nsRange.location,
-                effectiveRange: nil
-            ) as? URL else {
+            guard let url = html.attrStr[range].link else {
                 XCTFail("Getting the link for a span with a linkClass should always succeed")
                 return
             }
 
-            let text = String(html.attributed.string[range])
+            let text = String(html.attrStr.characters[range])
 
             actualHashtags.append((text, url))
         }

@@ -17,9 +17,7 @@ public extension Siren {
     /// Given an attributed string with Foundation and Siren attributes,
     /// convert them to AppKit/UIKit attributes for display,
     /// using the provided font descriptor.
-    static func format(_ attributed: AttributedString, descriptor: CTFontDescriptor, baseIndent: CGFloat) -> AttributedString {
-        var attributed = attributed
-
+    static func format(_ attrStr: inout AttributedString, descriptor: CTFontDescriptor, baseIndent: CGFloat) {
         var baseFontSize: CGFloat
         if let baseFontSizeNumber = CTFontDescriptorCopyAttribute(descriptor, kCTFontSizeAttribute) as? NSNumber {
             baseFontSize = .init(truncating: baseFontSizeNumber)
@@ -27,7 +25,7 @@ public extension Siren {
             baseFontSize = 0
         }
 
-        for run in attributed.runs {
+        for run in attrStr.runs {
             var fontSize = baseFontSize
             var baselineOffset: CGFloat = 0
 
@@ -47,22 +45,22 @@ public extension Siren {
             if let styles = run.styles {
                 if styles.contains(.strikethru) {
                     #if canImport(UIKit)
-                    attributed[run.range].uiKit.strikethroughStyle = .single
+                    attrStr[run.range].uiKit.strikethroughStyle = .single
                     #elseif canImport(AppKit)
                     attributed[run.range].appKit.strikethroughStyle = .single
                     #endif
                     #if canImport(SwiftUI)
-                    attributed[run.range].swiftUI.strikethroughStyle = .single
+                    attrStr[run.range].swiftUI.strikethroughStyle = .single
                     #endif
                 }
                 if styles.contains(.underline) {
                     #if canImport(UIKit)
-                    attributed[run.range].uiKit.underlineStyle = .single
+                    attrStr[run.range].uiKit.underlineStyle = .single
                     #elseif canImport(AppKit)
                     attributed[run.range].appKit.underlineStyle = .single
                     #endif
                     #if canImport(SwiftUI)
-                    attributed[run.range].swiftUI.underlineStyle = .single
+                    attrStr[run.range].swiftUI.underlineStyle = .single
                     #endif
                 }
                 // TODO: (Vyr) we should support several levels of nesting (say, 3),
@@ -82,12 +80,12 @@ public extension Siren {
 
             if baselineOffset != 0 {
                 #if canImport(UIKit)
-                attributed[run.range].uiKit.baselineOffset = baselineOffset
+                attrStr[run.range].uiKit.baselineOffset = baselineOffset
                 #elseif canImport(AppKit)
                 attributed[run.range].appKit.baselineOffset = baselineOffset
                 #endif
                 #if canImport(SwiftUI)
-                attributed[run.range].swiftUI.baselineOffset = baselineOffset
+                attrStr[run.range].swiftUI.baselineOffset = baselineOffset
                 #endif
             }
 
@@ -114,31 +112,31 @@ public extension Siren {
                 ) {
                     let font = CTFontCreateWithFontDescriptor(runDescriptorWithTraits, 0, nil)
                     #if canImport(UIKit)
-                    attributed[run.range].uiKit.font = font
+                    attrStr[run.range].uiKit.font = font
                     #elseif canImport(AppKit)
                     attributed[run.range].appKit.font = font
                     #endif
                     #if canImport(SwiftUI)
-                    attributed[run.range].swiftUI.font = .init(font)
+                    attrStr[run.range].swiftUI.font = .init(font)
                     #endif
                 }
             } else {
                 let font = CTFontCreateWithFontDescriptor(runDescriptor, 0, nil)
                 // Ensure that every run has a font.
                 #if canImport(UIKit)
-                attributed[run.range].uiKit.font = font
+                attrStr[run.range].uiKit.font = font
                 #elseif canImport(AppKit)
                 attributed[run.range].appKit.font = font
                 #endif
                 #if canImport(SwiftUI)
-                attributed[run.range].swiftUI.font = .init(font)
+                attrStr[run.range].swiftUI.font = .init(font)
                 #endif
             }
         }
 
         var insertions = [(AttributedString, at: AttributedString.Index)]()
 
-        for (intent, range) in attributed.runs[\.presentationIntent] {
+        for (intent, range) in attrStr.runs[\.presentationIntent] {
             if let intent = intent {
                 let indent = CGFloat(intent.indentationLevel) * baseIndent
 
@@ -192,7 +190,7 @@ public extension Siren {
                     paragraphStyle.headIndent += baseIndent
                 }
 
-                attributed[range].paragraphStyle = paragraphStyle
+                attrStr[range].paragraphStyle = paragraphStyle
                 decorationStyleContainer.paragraphStyle = paragraphStyle
                 #endif
 
@@ -211,18 +209,16 @@ public extension Siren {
             } else {
                 // Ensure that every run has a paragraph style.
                 #if canImport(UIKit)
-                attributed[range].uiKit.paragraphStyle = .default
+                attrStr[range].uiKit.paragraphStyle = .default
                 #elseif canImport(AppKit)
                 attributed[range].appKit.paragraphStyle = .default
                 #endif
             }
         }
 
-        for (attrStr, index) in insertions.reversed() {
-            attributed.insert(attrStr, at: index)
+        for (chunk, index) in insertions.reversed() {
+            attrStr.insert(chunk, at: index)
         }
-
-        return attributed
     }
 
     private enum ListType {
@@ -231,53 +227,31 @@ public extension Siren {
     }
 
     #if canImport(UIKit)
-    static func format(
-        _ attributed: AttributedString,
-        textStyle: UIFont.TextStyle, baseIndent: CGFloat) -> AttributedString {
+    static func format(_ attributed: inout AttributedString, textStyle: UIFont.TextStyle, baseIndent: CGFloat) {
         format(
-            attributed,
+            &attributed,
             descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: textStyle),
             baseIndent: baseIndent
         )
     }
 
     #if canImport(SwiftUI)
-    static func format(
-        _ attributed: AttributedString,
-        textStyle: SwiftUI.Font.TextStyle,
-        baseIndent: CGFloat
-    ) -> AttributedString {
-        format(
-            attributed,
-            descriptor: textStyle.descriptor,
-            baseIndent: baseIndent
-        )
+    static func format(_ attributed: inout AttributedString, textStyle: SwiftUI.Font.TextStyle, baseIndent: CGFloat) {
+        format(&attributed, descriptor: textStyle.descriptor, baseIndent: baseIndent)
     }
     #endif
     #elseif canImport(AppKit)
-    static func format(
-        _ attributed: AttributedString,
-        textStyle: NSFont.TextStyle,
-        baseIndent: CGFloat
-    ) -> AttributedString {
+    static func format(_ attributed: inout AttributedString, textStyle: NSFont.TextStyle, baseIndent: CGFloat) {
         format(
-            attributed,
+            &attributed,
             descriptor: NSFontDescriptor.preferredFontDescriptor(forTextStyle: textStyle),
             baseIndent: baseIndent
         )
     }
 
     #if canImport(SwiftUI)
-    static func format(
-        _ attributed: AttributedString,
-        textStyle: SwiftUI.Font.TextStyle,
-        baseIndent: CGFloat
-    ) -> AttributedString {
-        format(
-            attributed,
-            descriptor: textStyle.descriptor,
-            baseIndent: baseIndent
-        )
+    static func format(_ attributed: inout AttributedString, textStyle: SwiftUI.Font.TextStyle, baseIndent: CGFloat) {
+        format(&attributed, descriptor: textStyle.descriptor, baseIndent: baseIndent)
     }
     #endif
     #endif
@@ -321,7 +295,6 @@ extension SwiftUI.Font.TextStyle {
         return UIFontDescriptor.preferredFontDescriptor(withTextStyle: textStyle)
     }
 }
-#endif
 #elseif canImport(AppKit)
 extension SwiftUI.Font.TextStyle {
     var descriptor: CTFontDescriptor {
@@ -359,6 +332,7 @@ extension SwiftUI.Font.TextStyle {
         return NSFontDescriptor.preferredFontDescriptor(forTextStyle: textStyle)
     }
 }
+#endif
 #endif
 
 #if canImport(UIKit) || canImport(AppKit)

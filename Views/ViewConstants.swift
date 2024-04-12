@@ -13,6 +13,8 @@ extension CGFloat {
     static let barButtonItemDimension: Self = 28
     static let newStatusButtonDimension: Self = 58
     static let defaultShadowRadius: Self = 2
+    /// Indent each level of blockquote in HTML views by this much.
+    static let blockquoteIndent: Self = 12
 }
 
 extension Float {

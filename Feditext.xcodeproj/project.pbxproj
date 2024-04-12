@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		14FC7D32292A556E00567DBC /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FC7D31292A556E00567DBC /* UIFont+Extensions.swift */; };
 		75F7B3CC291F51D300FDE7C7 /* SwipeableNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F7B3CB291F51D300FDE7C7 /* SwipeableNavigationController.swift */; };
+		94059CDA2BC98E3B00BF9319 /* AttributedString+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94059CD92BC98E3B00BF9319 /* AttributedString+Extensions.swift */; };
+		94059CDC2BC996D700BF9319 /* HTMLFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94059CDB2BC996D700BF9319 /* HTMLFormatTests.swift */; };
 		941F79CC2A243418007FCC65 /* MultiNotificationContentConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941F79CB2A243418007FCC65 /* MultiNotificationContentConfiguration.swift */; };
 		941F79CE2A243446007FCC65 /* MultiNotificationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941F79CD2A243446007FCC65 /* MultiNotificationTableViewCell.swift */; };
 		941F79D02A243499007FCC65 /* MultiNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941F79CF2A243499007FCC65 /* MultiNotificationView.swift */; };
@@ -364,6 +366,8 @@
 		68B039892934360A003570DD /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
 		68B0398A2934360A003570DD /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = uk; path = uk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		75F7B3CB291F51D300FDE7C7 /* SwipeableNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeableNavigationController.swift; sourceTree = "<group>"; };
+		94059CD92BC98E3B00BF9319 /* AttributedString+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AttributedString+Extensions.swift"; sourceTree = "<group>"; };
+		94059CDB2BC996D700BF9319 /* HTMLFormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLFormatTests.swift; sourceTree = "<group>"; };
 		941F79CB2A243418007FCC65 /* MultiNotificationContentConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiNotificationContentConfiguration.swift; sourceTree = "<group>"; };
 		941F79CD2A243446007FCC65 /* MultiNotificationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiNotificationTableViewCell.swift; sourceTree = "<group>"; };
 		941F79CF2A243499007FCC65 /* MultiNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiNotificationView.swift; sourceTree = "<group>"; };
@@ -983,9 +987,10 @@
 		D0666A2224C677B400F3F04B /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				94059CDB2BC996D700BF9319 /* HTMLFormatTests.swift */,
 				943123D12AFDC2DA0022A705 /* HTMLPerfTests.swift */,
-				943123CE2AFDC29A0022A705 /* Resources */,
 				D0666A2524C677B400F3F04B /* Info.plist */,
+				943123CE2AFDC29A0022A705 /* Resources */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1108,6 +1113,7 @@
 				D0F0B135251AA12700942152 /* CollectionItem+Extensions.swift */,
 				D0D2AC3825BBEC0F003D5DF2 /* CollectionSection+Extensions.swift */,
 				9469230C2BB617D500628836 /* EnvironmentValues+Extensions.swift */,
+				94059CD92BC98E3B00BF9319 /* AttributedString+Extensions.swift */,
 				94C282772A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift */,
 				94E7B18A2A5A0F7000A1F1DA /* List.RepliesPolicy+Extensions.swift */,
 				94979DA32A3E37ED00542793 /* MastodonNotification.NotificationType+Extensions.swift */,
@@ -1577,6 +1583,7 @@
 				9489DAF82A53D01F002ADDA3 /* CardContentView.swift in Sources */,
 				D025B14D25C4E482001C69A8 /* ImageCacheConfiguration.swift in Sources */,
 				D01EF22425182B1F00650C6B /* AccountHeaderView.swift in Sources */,
+				94059CDA2BC98E3B00BF9319 /* AttributedString+Extensions.swift in Sources */,
 				D0D8B0312622398F00A874A4 /* AnnouncementTableViewCell.swift in Sources */,
 				941F79CC2A243418007FCC65 /* MultiNotificationContentConfiguration.swift in Sources */,
 				D059373E25AB8D5200754FDF /* CompositionPollOptionView.swift in Sources */,
@@ -1652,6 +1659,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				943123D22AFDC2DA0022A705 /* HTMLPerfTests.swift in Sources */,
+				94059CDC2BC996D700BF9319 /* HTMLFormatTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

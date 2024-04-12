@@ -14,12 +14,10 @@ import SwiftSoup
 import SwiftUI
 
 public struct HTML {
+    /// HTML source. Not sanitized.
     public let raw: String
+    /// Parsed and annotated with Feditext attributes, but without fonts or paragraph styles.
     public let attrStr: AttributedString
-
-    public var attributed: NSAttributedString {
-        (try? NSAttributedString(attrStr, including: \.all)) ?? NSAttributedString()
-    }
 }
 
 extension HTML: Hashable {
@@ -116,9 +114,9 @@ public extension AttributeScopes {
 extension AttributeScopes {
     /// String attributes specific to Feditext (but not Siren).
     public struct FeditextAttributes: AttributeScope {
-        let linkClass: FeditextLinkClassAttribute
-        let quoteLevel: FeditextQuoteLevelAttribute
-        let hashtag: FeditextHashtagAttribute
+        public let linkClass: FeditextLinkClassAttribute
+        public let quoteLevel: FeditextQuoteLevelAttribute
+        public let hashtag: FeditextHashtagAttribute
     }
 }
 
@@ -147,95 +145,95 @@ private final class AttributedStringCacheValue {
 
 private extension HTML {
     /// Cache for parsed versions of HTML strings, keyed by the original HTML.
-    static var attributedStringCache = NSCache<NSString, AttributedStringCacheValue>()
-
-    #if DEBUG
-    /// Performance signposter for HTML parsing.
-    private static let signposter = OSSignposter(subsystem: AppMetadata.bundleIDBase, category: .pointsOfInterest)
-    #else
-    private static let signposter = OSSignposter.disabled
-    #endif
+    static let attributedStringCache = NSCache<NSString, AttributedStringCacheValue>()
 
     /// Parse the subset of HTML we support, including semantic classes where present
     /// (not all Fedi servers send them, and Mastodon does a terrible job of normalizing remote HTML).
     static func parse(_ raw: String) -> AttributedString {
+        #if DEBUG
+        let signposter = OSSignposter(subsystem: AppMetadata.bundleIDBase, category: .pointsOfInterest)
         let signpostName: StaticString = "HTML.parser.siren"
-        let signpostInterval = Self.signposter.beginInterval(signpostName, id: Self.signposter.makeSignpostID())
+        let signpostInterval = signposter.beginInterval(signpostName, id: signposter.makeSignpostID())
         defer {
-            Self.signposter.endInterval(signpostName, signpostInterval)
+            signposter.endInterval(signpostName, signpostInterval)
+        }
+        #endif
+
+        var attrStr: AttributedString
+        do {
+            attrStr = try Siren.parse(raw)
+        } catch {
+            #if DEBUG
+            fatalError("Siren.parse failed: \(error)")
+            #else
+            return .init()
+            #endif
         }
 
-        var attrStr = Self.parseWithSiren(raw)
-
+        Self.mapSirenAttrsToFeditextAttrs(&attrStr)
         Self.trimTrailingWhitespace(&attrStr)
         Self.rewriteLinks(&attrStr)
 
         return attrStr
     }
 
-    /// Parse HTML with Siren.
-    static func parseWithSiren(_ raw: String) -> AttributedString {
-        guard let parsed = try? Siren.parse(raw) else { return .init() }
-
-        // Format in a way compatible with the scaling in `adaptHtmlAttributes`.
-        // TODO: (Vyr) we can move this there once Siren is the only parser
-        #if !os(macOS)
-        let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).withSize(12.0)
-        #else
-        let descriptor = NSFontDescriptor.preferredFontDescriptor(forTextStyle: .body).withSize(12.0)
-        #endif
-        var attributed = Siren.format(parsed, descriptor: descriptor, baseIndent: 12.0)
-
-        // Map Siren semantic classes to Feditext semantic classes.
+    /// Map some Siren attributes to their Feditext equivalents.
+    static func mapSirenAttrsToFeditextAttrs(_ attrStr: inout AttributedString) {
+        // Map Siren semantic link classes to Feditext semantic link classes.
         // (Siren doesn't keep track of previous elements, and its ranges may have leading and trailing whitespace.)
         var prevEllipsis = false
-        for (sirenClasses, sirenRange) in attributed.runs[\.classes] {
-            // Exclude leading and trailing whitespace from range with Feditext attribute.
-            if sirenRange.isEmpty { continue }
-            var lower = sirenRange.lowerBound
-            var upperInclusive = attributed.index(beforeCharacter: sirenRange.upperBound)
-            while lower <= upperInclusive && attributed.characters[lower].isWhitespace {
-                lower = attributed.index(afterCharacter: lower)
-            }
-            while lower <= upperInclusive && attributed.characters[upperInclusive].isWhitespace {
-                upperInclusive = attributed.index(beforeCharacter: upperInclusive)
-            }
-            if !(lower <= upperInclusive) { continue }
-            let range = lower...upperInclusive
-
-            let sirenClasses = sirenClasses ?? []
-            if sirenClasses.contains(.hashtag) {
-                attributed[range].linkClass = .hashtag
-                prevEllipsis = false
-            } else if sirenClasses.contains(.mention) {
-                attributed[range].linkClass = .mention
-                prevEllipsis = false
-            } else if sirenClasses.contains(.ellipsis) {
-                attributed[range].linkClass = .ellipsis
-                prevEllipsis = true
-            } else if sirenClasses.contains(.invisible) {
-                if prevEllipsis {
-                    attributed[range].linkClass = .trailingInvisible
-                } else {
-                    attributed[range].linkClass = .leadingInvisible
+        // Handle one link run at a time so as to avoid concatenating the classes for two adjacent links into one run.
+        for (_, linkRange) in attrStr.runs[\.link] {
+            for (sirenClasses, sirenRange) in attrStr[linkRange].runs[\.classes] {
+                // Exclude leading and trailing whitespace from range with Feditext attribute.
+                if sirenRange.isEmpty { continue }
+                var lower = sirenRange.lowerBound
+                var upperInclusive = attrStr.index(beforeCharacter: sirenRange.upperBound)
+                while lower <= upperInclusive && attrStr.characters[lower].isWhitespace {
+                    lower = attrStr.index(afterCharacter: lower)
                 }
-                prevEllipsis = false
-            } else {
-                prevEllipsis = false
+                while lower <= upperInclusive && attrStr.characters[upperInclusive].isWhitespace {
+                    upperInclusive = attrStr.index(beforeCharacter: upperInclusive)
+                }
+                if !(lower <= upperInclusive) {
+                    prevEllipsis = false
+                    continue
+                }
+                let range = lower...upperInclusive
+
+                let sirenClasses = sirenClasses ?? []
+                if sirenClasses.contains(.hashtag) {
+                    attrStr[range].linkClass = .hashtag
+                    prevEllipsis = false
+                } else if sirenClasses.contains(.mention) {
+                    attrStr[range].linkClass = .mention
+                    prevEllipsis = false
+                } else if sirenClasses.contains(.ellipsis) {
+                    attrStr[range].linkClass = .ellipsis
+                    prevEllipsis = true
+                } else if sirenClasses.contains(.invisible) {
+                    if prevEllipsis {
+                        attrStr[range].linkClass = .trailingInvisible
+                    } else {
+                        attrStr[range].linkClass = .leadingInvisible
+                    }
+                    prevEllipsis = false
+                } else {
+                    prevEllipsis = false
+                }
             }
         }
 
         // Map Apple presentation intents to Feditext quote level.
-        for (intent, range) in attributed.runs[\.presentationIntent] {
+        for (intent, range) in attrStr.runs[\.presentationIntent] {
             let quoteLevel = intent?.components.filter { $0.kind == .blockQuote }.count ?? 0
             if quoteLevel > 0 {
-                attributed[range].quoteLevel = quoteLevel
+                attrStr[range].quoteLevel = quoteLevel
             }
         }
-
-        return attributed
     }
 
+    /// Remove trailing whitespace, which is common from `<p>` tags but makes posts look funny.
     static func trimTrailingWhitespace(_ attrStr: inout AttributedString) {
         if !attrStr.characters.isEmpty {
             var startOfTrailingWhitespace = attrStr.endIndex
@@ -252,24 +250,24 @@ private extension HTML {
 
     /// Apply heuristics to rewrite HTTPS links for mentions and hashtags into Feditext internal links.
     /// Assumes string has already been marked with Feditext attributes.
-    static func rewriteLinks(_ attributed: inout AttributedString) {
-        for (url, linkRange) in attributed.runs[\.link] {
+    static func rewriteLinks(_ attrStr: inout AttributedString) {
+        for (url, linkRange) in attrStr.runs[\.link] {
             guard let url = url else { continue }
 
             // Exclude leading and trailing whitespace from range with link attribute.
             if linkRange.isEmpty { continue }
             var lower = linkRange.lowerBound
-            var upperInclusive = attributed.index(beforeCharacter: linkRange.upperBound)
-            while lower <= upperInclusive && attributed.characters[lower].isWhitespace {
-                lower = attributed.index(afterCharacter: lower)
+            var upperInclusive = attrStr.index(beforeCharacter: linkRange.upperBound)
+            while lower <= upperInclusive && attrStr.characters[lower].isWhitespace {
+                lower = attrStr.index(afterCharacter: lower)
             }
-            while lower <= upperInclusive && attributed.characters[upperInclusive].isWhitespace {
-                upperInclusive = attributed.index(beforeCharacter: upperInclusive)
+            while lower <= upperInclusive && attrStr.characters[upperInclusive].isWhitespace {
+                upperInclusive = attrStr.index(beforeCharacter: upperInclusive)
             }
             if !(lower <= upperInclusive) { continue }
             let range = lower...upperInclusive
 
-            let substring = attributed[range]
+            let substring = attrStr[range]
 
             var linkClass = substring.linkClass
 
@@ -294,13 +292,13 @@ private extension HTML {
                     trimmed = substring.characters.drop(while: { $0 == "#" })
                 }
                 let normalized = Tag.normalizeName(String(trimmed))
-                attributed[range].hashtag = normalized
-                attributed[linkRange].link = nil
-                attributed[range].link = AppUrl.tagTimeline(normalized).url
+                attrStr[range].hashtag = normalized
+                attrStr[linkRange].link = nil
+                attrStr[range].link = AppUrl.tagTimeline(normalized).url
 
             case .mention:
-                attributed[linkRange].link = nil
-                attributed[range].link = AppUrl.mention(url).url
+                attrStr[linkRange].link = nil
+                attrStr[range].link = AppUrl.mention(url).url
 
             case .ellipsis, .leadingInvisible, .trailingInvisible:
                 break
