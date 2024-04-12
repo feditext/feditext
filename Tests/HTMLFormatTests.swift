@@ -1,4 +1,4 @@
-// Copyright © 2024 Metabolist. All rights reserved.
+// Copyright © 2024 Vyr Cossont. All rights reserved.
 
 @testable import Feditext
 import Foundation

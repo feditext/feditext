@@ -1,4 +1,4 @@
-// Copyright © 2023 Metabolist. All rights reserved.
+// Copyright © 2023 Vyr Cossont. All rights reserved.
 
 import Foundation
 import GRDB
