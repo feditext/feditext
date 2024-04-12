@@ -75,7 +75,7 @@ struct MastodonAPITool: AsyncParsableCommand {
 
     struct Bench: AsyncParsableCommand {
         static var configuration = CommandConfiguration(
-            abstract: "Benchmark HTML parsing with WebKit and Siren on the same set of posts."
+            abstract: "Benchmark HTML parsing given a set of posts."
         )
 
         @OptionGroup var options: TimelineFileOptions
@@ -86,39 +86,34 @@ struct MastodonAPITool: AsyncParsableCommand {
             print("total input HTML fragments: \(htmlFragments.count)")
             print()
 
-            for parser in HTML.Parser.allCases {
-                HTML.parser = parser
+            // If we print some function of the actual output, the parsing can't get optimized out.
+            var outputCharCount = 0
+            var emptyOutputStrings = 0
+            var worstParseTime: TimeInterval = 0
 
-                // If we print some function of the actual output, the parsing can't get optimized out.
-                var outputCharCount = 0
-                var emptyOutputStrings = 0
-                var worstParseTime: TimeInterval = 0
+            let startTime = ProcessInfo.processInfo.systemUptime
+            for htmlFragment in htmlFragments {
+                let fragmentStartTime = ProcessInfo.processInfo.systemUptime
+                let parsed = HTML(raw: htmlFragment).attributed
+                let fragmentEndTime = ProcessInfo.processInfo.systemUptime
 
-                let startTime = ProcessInfo.processInfo.systemUptime
-                for htmlFragment in htmlFragments {
-                    let fragmentStartTime = ProcessInfo.processInfo.systemUptime
-                    let parsed = HTML(raw: htmlFragment).attributed
-                    let fragmentEndTime = ProcessInfo.processInfo.systemUptime
-
-                    outputCharCount += parsed.string.count
-                    if parsed.string.isEmpty {
-                        emptyOutputStrings += 1
-                    }
-                    let fragmentElapsedTime = fragmentEndTime - fragmentStartTime
-                    worstParseTime = max(worstParseTime, fragmentElapsedTime)
+                outputCharCount += parsed.string.count
+                if parsed.string.isEmpty {
+                    emptyOutputStrings += 1
                 }
-                let endTime = ProcessInfo.processInfo.systemUptime
-
-                let elapsedTime = endTime - startTime
-
-                print("parser: \(parser.rawValue)")
-                print("elapsed time (s): \(String(format: "%.1f", elapsedTime))")
-                print("average time per input string (ms): \(String(format: "%.0f", 1000 * elapsedTime / Double(htmlFragments.count)))")
-                print("worst time for any input string (ms): \(String(format: "%.0f", 1000 * worstParseTime))")
-                print("total output chars: \(outputCharCount)")
-                print("total empty output strings: \(emptyOutputStrings)")
-                print()
+                let fragmentElapsedTime = fragmentEndTime - fragmentStartTime
+                worstParseTime = max(worstParseTime, fragmentElapsedTime)
             }
+            let endTime = ProcessInfo.processInfo.systemUptime
+
+            let elapsedTime = endTime - startTime
+
+            print("elapsed time (s): \(String(format: "%.1f", elapsedTime))")
+            print("average time per input string (ms): \(String(format: "%.0f", 1000 * elapsedTime / Double(htmlFragments.count)))")
+            print("worst time for any input string (ms): \(String(format: "%.0f", 1000 * worstParseTime))")
+            print("total output chars: \(outputCharCount)")
+            print("total empty output strings: \(emptyOutputStrings)")
+            print()
         }
     }
 }

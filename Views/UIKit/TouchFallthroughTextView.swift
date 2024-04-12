@@ -194,86 +194,12 @@ private extension TouchFallthroughTextView {
         }
     }
 
-    func updateBlockquotesLayer() {
-        switch HTML.parser {
-        case .webkit:
-            updateBlockquotesLayerWebKit()
-        case .siren:
-            updateBlockquotesLayerSiren()
-        }
-    }
-
-    func updateBlockquotesLayerWebKit() {
-        blockquotesLayer.frame = bounds
-        blockquotesLayer.sublayers = nil
-
-        attributedText.enumerateAttribute(
-            HTML.Key.quoteLevel,
-            in: NSRange(location: 0, length: attributedText.length)
-        ) { val, range, _ in
-            // Get text range for string range.
-            guard
-                let quoteLevel = val as? Int,
-                quoteLevel > 0,
-                let start = position(
-                    from: beginningOfDocument,
-                    offset: range.location
-                ),
-                let end = position(
-                    from: start,
-                    offset: range.length
-                ),
-                let quoteRange = textRange(from: start, to: end) else {
-                return
-            }
-
-            // Union all rectangles covering the quote's text.
-            var quoteRect = CGRect.null
-            for selectionRect in selectionRects(for: quoteRange) {
-                quoteRect = quoteRect.union(selectionRect.rect)
-            }
-            guard quoteRect != .null else {
-                return
-            }
-
-            // TODO: (Vyr) needs to be generalized for RTL (we already have a Hebrew localization)
-
-            // Clamp to left and right margins.
-            quoteRect.origin.x = 0
-            quoteRect.size.width = bounds.size.width
-
-            // Draw quote background.
-            let backgroundLayer = CALayer()
-            backgroundLayer.frame = quoteRect
-            backgroundLayer.backgroundColor = Self.backgroundColor(for: quoteLevel).cgColor
-            blockquotesLayer.addSublayer(backgroundLayer)
-
-            // Draw quote sidebars.
-            for i in 0..<quoteLevel {
-                let sidebarRect = CGRect.init(
-                    origin: .init(
-                        x: CGFloat(i) * NSMutableAttributedString.blockquoteIndent,
-                        y: quoteRect.origin.y
-                    ),
-                    size: .init(
-                        width: NSMutableAttributedString.blockquoteIndent / 3,
-                        height: quoteRect.height
-                    )
-                )
-                let sidebarLayer = CALayer()
-                sidebarLayer.frame = sidebarRect
-                sidebarLayer.backgroundColor = UIColor.opaqueSeparator.cgColor
-                blockquotesLayer.addSublayer(sidebarLayer)
-            }
-        }
-    }
-
     /// Collection of text bounding rectangles for a blockquote.
     struct Blockquote {
         var rects: [CGRect]
     }
 
-    func updateBlockquotesLayerSiren() {
+    func updateBlockquotesLayer() {
         blockquotesLayer.frame = bounds
         blockquotesLayer.sublayers = nil
 

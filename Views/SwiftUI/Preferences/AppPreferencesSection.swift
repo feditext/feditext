@@ -15,7 +15,6 @@ struct AppPreferencesSection: View {
     @EnvironmentObject var rootViewModel: RootViewModel
 
     @State var apiCompatibilityModeChanged: Bool = false
-    @StateObject var htmlGlobals: HTMLGlobals = .init()
 
     var body: some View {
         Section(header: Text("preferences.app")) {
@@ -186,51 +185,11 @@ struct AppPreferencesSection: View {
         }
 
         Section {
-            Picker("preferences.html-parser.picker-title", selection: $htmlGlobals.parser) {
-                ForEach(HTML.Parser.allCases) { parser in
-                    Text(parser.localizedStringKey).tag(parser.id)
-                }
-            }
-            .pickerStyle(.menu)
-
-            Button(role: .destructive) {
-                rootViewModel.reload()
-            } label: {
-                Label {
-                    Text("preferences.html-parser.apply")
-                } icon: {
-                    Image(systemName: "arrow.clockwise.circle")
-                        .foregroundColor(htmlGlobals.parserChanged ? .red : .gray)
-                }
-            }
-            .disabled(!htmlGlobals.parserChanged)
-        }
-
-        Section {
             Toggle("preferences.toasts.title",
                    isOn: $identityContext.appPreferences.useToasts)
             Text("preferences.toasts.description")
                 .font(.footnote)
         }
-    }
-}
-
-/// App-wide HTML parser switch.
-class HTMLGlobals: ObservableObject {
-    @Published var parser: HTML.Parser
-    @Published var parserChanged: Bool = false
-    private var cancellables = Set<AnyCancellable>()
-
-    init() {
-        self.parser = HTML.parser
-        $parser
-            .dropFirst()
-            .sink(receiveValue: { [weak self] in
-                HTML.parser = $0
-                UserDefaults(suiteName: AppMetadata.appGroup)!.set($0.rawValue, forKey: "HTML.parser")
-                self?.parserChanged = true
-            })
-            .store(in: &cancellables)
     }
 }
 
@@ -241,17 +200,6 @@ extension APICompatibilityMode {
             return "preferences.api-compatibility-mode.fallback-on-errors"
         case .failOnErrors:
             return "preferences.api-compatibility-mode.fail-on-errors"
-        }
-    }
-}
-
-extension HTML.Parser {
-    var localizedStringKey: LocalizedStringKey {
-        switch self {
-        case .webkit:
-            return "preferences.html-parser.webkit"
-        case .siren:
-            return "preferences.html-parser.siren"
         }
     }
 }

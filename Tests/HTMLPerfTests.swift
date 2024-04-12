@@ -7,7 +7,7 @@ import XCTest
 /// Here and not in the `Mastodon` package because it needs to be app-hosted to run on device
 /// (SwiftPM tests can apparently only run in the simulator).
 final class HTMLPerfTests: XCTestCase {
-    // swiftlint:disable force_try
+    // swiftlint:disable:next force_try
     static let htmlFragments = try! JSONDecoder().decode(
         [String].self,
         from: Data(
@@ -18,17 +18,7 @@ final class HTMLPerfTests: XCTestCase {
         )
     )
 
-    func testHtmlPerfWebKit() {
-        parseHtmlFragments(with: .webkit)
-    }
-
-    func testHtmlPerfSiren() {
-        parseHtmlFragments(with: .siren)
-    }
-
-    /// This function relies on the `HTML.parser` global and should not be run concurrently with itself.
-    private func parseHtmlFragments(with parser: HTML.Parser) {
-        HTML.parser = parser
+    func testHtmlPerf() {
         measure {
             for htmlFragment in Self.htmlFragments {
                 _ = HTML(raw: htmlFragment)

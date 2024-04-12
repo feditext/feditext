@@ -39,7 +39,7 @@ public extension DecodableDefault {
         }
 
         public enum EmptyHTML: Source {
-            public static var defaultValue: HTML { HTML(raw: "", attributed: NSAttributedString(string: "")) }
+            public static var defaultValue: HTML { HTML(raw: "", attrStr: .init()) }
         }
 
         public enum EmptyList<T: List>: Source {

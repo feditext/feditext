@@ -15,15 +15,10 @@ import SwiftUI
 
 public struct HTML {
     public let raw: String
-    public var attributed: NSAttributedString
+    public let attrStr: AttributedString
 
-    /// Temporary app-wide global for switching HTML parsers.
-    /// Necessary because HTML parsing in Feditext is currently part of `Decodable` decoding,
-    /// and has no other way to inject app state.
-    public static var parser: Parser = .webkit {
-        didSet {
-            Self.attributedStringCache.removeAllObjects()
-        }
+    public var attributed: NSAttributedString {
+        (try? NSAttributedString(attrStr, including: \.all)) ?? NSAttributedString()
     }
 }
 
@@ -42,11 +37,11 @@ extension HTML: Codable {
 
     public init(raw: String) {
         self.raw = raw
-        if let cachedAttributedString = Self.attributedStringCache.object(forKey: raw as NSString) {
-            attributed = cachedAttributedString
+        if let cacheValue = Self.attributedStringCache.object(forKey: raw as NSString) {
+            attrStr = cacheValue.attrStr
         } else {
-            attributed = Self.parse(raw)
-            Self.attributedStringCache.setObject(attributed, forKey: raw as NSString)
+            attrStr = Self.parse(raw)
+            Self.attributedStringCache.setObject(.init(attrStr: attrStr), forKey: raw as NSString)
         }
     }
 
@@ -81,24 +76,6 @@ public extension HTML {
         /// Specifically a hashtag.
         /// Many servers use both ``hashtag`` and ``mention`` for hashtag links in HTML, but we don't.
         case hashtag = 5
-    }
-
-    /// Choice of two HTML parsers so users can switch back and forth until we get Siren stable.
-    enum Parser: String, Codable, CaseIterable, Identifiable {
-        case webkit
-        case siren
-
-        public var id: Self { self }
-
-        /// Signpost name for performance signposter.
-        var signpostName: StaticString {
-            switch self {
-            case .webkit:
-                "HTML.Parser.webkit"
-            case .siren:
-                "HTML.Parser.siren"
-            }
-        }
     }
 }
 
@@ -160,9 +137,17 @@ public enum FeditextHashtagAttribute: CodableAttributedStringKey {
     public typealias Value = String
 }
 
+private final class AttributedStringCacheValue {
+    let attrStr: AttributedString
+
+    init(attrStr: AttributedString) {
+        self.attrStr = attrStr
+    }
+}
+
 private extension HTML {
     /// Cache for parsed versions of HTML strings, keyed by the original HTML.
-    static var attributedStringCache = NSCache<NSString, NSAttributedString>()
+    static var attributedStringCache = NSCache<NSString, AttributedStringCacheValue>()
 
     #if DEBUG
     /// Performance signposter for HTML parsing.
@@ -171,161 +156,21 @@ private extension HTML {
     private static let signposter = OSSignposter.disabled
     #endif
 
-    /// This hack uses text background color to pass class information through the WebKit HTML parser,
-    /// since there's no direct mechanism for attaching CSS classes to an attributed string.
-    /// Currently `r` is for link class, `g` is for quote level, and `b` and `a` are unused.
-    /// See https://docs.joinmastodon.org/spec/activitypub/#sanitization for what we expect from vanilla instances.
-    static let style: String = """
-        <style>
-            a > span.invisible {
-                background-color: rgb(1 0 0);
-            }
-
-            a > span.ellipsis {
-                background-color: rgb(2 0 0);
-            }
-
-            a > span.ellipsis + span.invisible {
-                background-color: rgb(3 0 0);
-            }
-
-            a.mention {
-                background-color: rgb(4 0 0);
-            }
-
-            a.mention.hashtag, a.hashtag {
-                background-color: rgb(5 0 0);
-            }
-
-            blockquote {
-                background-color: rgb(0 1 0);
-            }
-
-            blockquote blockquote {
-                background-color: rgb(0 2 0);
-            }
-
-            blockquote blockquote blockquote {
-                background-color: rgb(0 3 0);
-            }
-
-            blockquote blockquote blockquote blockquote {
-                background-color: rgb(0 4 0);
-            }
-
-            blockquote blockquote blockquote blockquote blockquote {
-                background-color: rgb(0 5 0);
-            }
-
-            blockquote blockquote blockquote blockquote blockquote blockquote {
-                background-color: rgb(0 6 0);
-            }
-
-            blockquote blockquote blockquote blockquote blockquote blockquote blockquote {
-                background-color: rgb(0 7 0);
-            }
-        </style>
-    """
-
-    /// Parse HTML with SwiftSoup and then pass it to WebKit.
-    static func parseWithWebkit(_ raw: String) -> NSMutableAttributedString {
-        guard
-            let sanitized: String = try? SwiftSoup.clean(
-                raw,
-                .basic()
-                    .addTags("h1", "h2", "h3", "h4", "h5", "h6")
-                    .addTags("kbd", "samp", "tt")
-                    .addTags("s", "ins", "del")
-                    .addAttributes("ol", "start", "reversed")
-                    .addAttributes("li", "value")
-                    .removeProtocols("a", "href", "ftp", "mailto")
-                    .addProtocols(
-                        "a",
-                        "href",
-                        "web+ap",
-                        // From here on down: see https://docs.joinmastodon.org/spec/activitypub/#sanitization
-                        "dat",
-                        "dweb",
-                        "ipfs",
-                        "ipns",
-                        "ssb",
-                        "gopher",
-                        "xmpp",
-                        "magnet",
-                        "gemini"
-                    )
-                    .addAttributes("a", "class", "rel", "type")
-                    .removeEnforcedAttribute("a", "rel")
-                    .addAttributes("span", "class")
-            ),
-            let attributed = NSMutableAttributedString(html: style.appending(sanitized))
-        else {
-            return NSMutableAttributedString()
-        }
-
-        let entireString = NSRange(location: 0, length: attributed.length)
-        attributed.enumerateAttribute(.backgroundColor, in: entireString) { val, range, _ in
-            #if !os(macOS)
-            guard let color = val as? UIColor else {
-                return
-            }
-            #else
-            guard let color = val as? NSColor else {
-                return
-            }
-            #endif
-
-            var r: CGFloat = 0
-            var g: CGFloat = 0
-            var b: CGFloat = 0
-            color.getRed(&r, green: &g, blue: &b, alpha: nil)
-            attributed.removeAttribute(.backgroundColor, range: range)
-
-            if let linkClass = Self.LinkClass(rawValue: Int((r * 255.0).rounded())) {
-                attributed.addAttribute(Self.Key.linkClass, value: linkClass, range: range)
-            }
-
-            let quoteLevel = Int((g * 255.0).rounded())
-            if quoteLevel > 0 {
-                attributed.addAttribute(Self.Key.quoteLevel, value: quoteLevel, range: range)
-            }
-        }
-
-        return attributed
-    }
-
     /// Parse the subset of HTML we support, including semantic classes where present
     /// (not all Fedi servers send them, and Mastodon does a terrible job of normalizing remote HTML).
-    static func parse(_ raw: String) -> NSAttributedString {
-        let signpostName = HTML.parser.signpostName
+    static func parse(_ raw: String) -> AttributedString {
+        let signpostName: StaticString = "HTML.parser.siren"
         let signpostInterval = Self.signposter.beginInterval(signpostName, id: Self.signposter.makeSignpostID())
         defer {
             Self.signposter.endInterval(signpostName, signpostInterval)
         }
 
-        var attributed: NSMutableAttributedString
-        switch HTML.parser {
-        case .webkit:
-            attributed = Self.parseWithWebkit(raw)
-        case .siren:
-            attributed = (try? NSMutableAttributedString(Self.parseWithSiren(raw), including: \.all))
-            ?? NSMutableAttributedString()
-        }
+        var attrStr = Self.parseWithSiren(raw)
 
-        // Trim trailing newline added by parser, probably for p tags.
-        if let range = attributed.string.rangeOfCharacter(from: .newlines, options: .backwards),
-              range.upperBound == attributed.string.endIndex {
-            attributed.deleteCharacters(in: NSRange(range, in: attributed.string))
-        }
-
-        var attrStr = (try? AttributedString(attributed, including: \.all)) ?? AttributedString()
+        Self.trimTrailingWhitespace(&attrStr)
         Self.rewriteLinks(&attrStr)
-        attributed = (try? NSMutableAttributedString(attrStr, including: \.all)) ?? NSMutableAttributedString()
 
-        let entireString = NSRange(location: 0, length: attributed.length)
-        attributed.fixAttributes(in: entireString)
-
-        return attributed
+        return attrStr
     }
 
     /// Parse HTML with Siren.
@@ -391,81 +236,22 @@ private extension HTML {
         return attributed
     }
 
-    /// Apply heuristics to rewrite HTTPS links for mentions and hashtags into Feditext internal links.
-    /// Assumes string has already been marked with Feditext attributes.
-    static func rewriteLinksOld(_ attributed: NSMutableAttributedString) {
-        let entireString = NSRange(location: 0, length: attributed.length)
-        attributed.enumerateAttribute(.link, in: entireString) { val, linkNSRange, stop in
-            guard let url = val as? URL else { return }
-
-            guard let linkRange = Range(linkNSRange, in: attributed.string) else {
-                assertionFailure("Getting the substring range should always succeed")
-                stop.pointee = true
-                return
-            }
-
-            // Exclude leading and trailing whitespace from range with link attribute.
-            if linkRange.isEmpty { return }
-            var lower = linkRange.lowerBound
-            var upperInclusive = attributed.string.index(before: linkRange.upperBound)
-            while lower <= upperInclusive && attributed.string[lower].isWhitespace {
-                lower = attributed.string.index(after: lower)
-            }
-            while lower <= upperInclusive && attributed.string[upperInclusive].isWhitespace {
-                upperInclusive = attributed.string.index(before: upperInclusive)
-            }
-            if !(lower <= upperInclusive) { return }
-            let range = lower...upperInclusive
-
-            let substring = attributed.string[range]
-
-            var linkClass = attributed.attribute(
-                Self.Key.linkClass,
-                at: range.lowerBound.utf16Offset(in: attributed.string),
-                effectiveRange: nil
-            ) as? Self.LinkClass
-
-            if linkClass == nil {
-                if substring.starts(with: "#") {
-                    linkClass = .hashtag
-                } else if substring.starts(with: "@") {
-                    linkClass = .mention
+    static func trimTrailingWhitespace(_ attrStr: inout AttributedString) {
+        if !attrStr.characters.isEmpty {
+            var startOfTrailingWhitespace = attrStr.endIndex
+            while startOfTrailingWhitespace > attrStr.startIndex {
+                let prev = attrStr.index(beforeCharacter: startOfTrailingWhitespace)
+                if !attrStr.characters[prev].isWhitespace {
+                    break
                 }
+                startOfTrailingWhitespace = prev
             }
-
-            guard let linkClass = linkClass else {
-                return
-            }
-
-            let nsRange = NSRange(range, in: attributed.string)
-            switch linkClass {
-            case .hashtag:
-                let trimmed: Substring
-                if #available(iOS 16.0, macOS 13.0, *) {
-                    trimmed = substring.trimmingPrefix("#")
-                } else {
-                    trimmed = substring.drop(while: { $0 == "#" })
-                }
-                let normalized = Tag.normalizeName(trimmed)
-                attributed.addAttributes(
-                    [
-                        Self.Key.hashtag: normalized,
-                        .link: AppUrl.tagTimeline(normalized).url
-                    ],
-                    range: nsRange
-                )
-            case .mention:
-                attributed.addAttribute(
-                    .link,
-                    value: AppUrl.mention(url).url,
-                    range: nsRange
-                )
-            default:
-                break
-            }
+            attrStr.removeSubrange(startOfTrailingWhitespace..<attrStr.endIndex)
         }
     }
 
+    /// Apply heuristics to rewrite HTTPS links for mentions and hashtags into Feditext internal links.
+    /// Assumes string has already been marked with Feditext attributes.
     static func rewriteLinks(_ attributed: inout AttributedString) {
         for (url, linkRange) in attributed.runs[\.link] {
             guard let url = url else { continue }
@@ -473,12 +259,12 @@ private extension HTML {
             // Exclude leading and trailing whitespace from range with link attribute.
             if linkRange.isEmpty { continue }
             var lower = linkRange.lowerBound
-            var upperInclusive = attributed.characters.index(before: linkRange.upperBound)
+            var upperInclusive = attributed.index(beforeCharacter: linkRange.upperBound)
             while lower <= upperInclusive && attributed.characters[lower].isWhitespace {
-                lower = attributed.characters.index(after: lower)
+                lower = attributed.index(afterCharacter: lower)
             }
             while lower <= upperInclusive && attributed.characters[upperInclusive].isWhitespace {
-                upperInclusive = attributed.characters.index(before: upperInclusive)
+                upperInclusive = attributed.index(beforeCharacter: upperInclusive)
             }
             if !(lower <= upperInclusive) { continue }
             let range = lower...upperInclusive
@@ -520,28 +306,5 @@ private extension HTML {
                 break
             }
         }
-    }
-}
-
-extension NSAttributedString {
-    /// The built-in `init?(html:)` methods only exist on macOS,
-    /// and `loadFromHTML` is async and invokes WebKit,
-    /// so we roll our own convenience constructor from sanitized HTML.
-    /// Which turns out to also invoke WebKit, and comes with some IPC overhead on iOS 17.
-    ///
-    /// Note that this constructor should not be used for general-purpose HTML:
-    /// https://developer.apple.com/documentation/foundation/nsattributedstring/1524613-init#discussion
-    public convenience init?(html: String) {
-        guard let data = html.data(using: .utf8) else {
-            return nil
-        }
-        try? self.init(
-            data: data,
-            options: [
-                .characterEncoding: NSUTF8StringEncoding,
-                .documentType: NSAttributedString.DocumentType.html
-            ],
-            documentAttributes: nil
-        )
     }
 }
