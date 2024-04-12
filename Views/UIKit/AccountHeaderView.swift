@@ -187,25 +187,10 @@ final class AccountHeaderView: UIView {
                     view.removeFromSuperview()
                 }
 
-                for identityProof in accountViewModel.identityProofs {
-                    let fieldView = AccountFieldView(
-                        name: identityProof.provider,
-                        value: NSAttributedString(
-                            string: identityProof.providerUsername,
-                            attributes: [.link: identityProof.profileUrl]),
-                        verifiedAt: identityProof.updatedAt,
-                        emojis: [],
-                        identityContext: viewModel.identityContext)
-
-                    fieldView.valueTextView.delegate = self
-
-                    fieldsStackView.addArrangedSubview(fieldView)
-                }
-
                 for field in accountViewModel.fields {
                     let fieldView = AccountFieldView(
                         name: field.name,
-                        value: field.value.attributed,
+                        value: field.value.attrStr,
                         verifiedAt: field.verifiedAt,
                         emojis: accountViewModel.emojis,
                         identityContext: viewModel.identityContext)
@@ -225,7 +210,7 @@ final class AccountHeaderView: UIView {
                 }
 
                 let noteFont = UIFont.preferredFont(forTextStyle: .callout)
-                let mutableNote = NSMutableAttributedString(attributedString: accountViewModel.note)
+                let mutableNote = NSMutableAttributedString(accountViewModel.note.formatSiren(.callout))
                 let noteRange = NSRange(location: 0, length: mutableNote.length)
                 mutableNote.removeAttribute(.font, range: noteRange)
                 mutableNote.addAttributes(

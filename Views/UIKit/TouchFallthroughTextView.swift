@@ -269,7 +269,7 @@ private extension TouchFallthroughTextView {
                 if quoteRect.isEmpty { continue }
 
                 // Clamp to left and right margins.
-                let indentedLeftMargin = CGFloat(level - 1) * NSMutableAttributedString.blockquoteIndent
+                let indentedLeftMargin = CGFloat(level - 1) * .blockquoteIndent
                 quoteRect.origin.x = indentedLeftMargin
                 quoteRect.size.width = bounds.size.width - indentedLeftMargin
 
@@ -287,7 +287,7 @@ private extension TouchFallthroughTextView {
                         y: quoteRect.origin.y
                     ),
                     size: .init(
-                        width: NSMutableAttributedString.blockquoteIndent / 3,
+                        width: .blockquoteIndent / 3,
                         height: quoteRect.height
                     )
                 )
@@ -332,7 +332,7 @@ private extension TouchFallthroughTextView {
             let indentedLeftMargin = attributedText
                 .attribute(.presentationIntentAttributeName, at: range.location, effectiveRange: nil)
                 .flatMap { $0 as? PresentationIntent }
-                .map { CGFloat($0.indentationLevel) * NSMutableAttributedString.blockquoteIndent }
+                .map { CGFloat($0.indentationLevel) * .blockquoteIndent }
                 ?? 0.0
             let availableWidth = bounds.size.width - indentedLeftMargin
 
@@ -341,11 +341,11 @@ private extension TouchFallthroughTextView {
             hrLayer.frame = .init(
                 origin: .init(
                     x: indentedLeftMargin + availableWidth * 0.1,
-                    y: textRect.origin.y - NSMutableAttributedString.blockquoteIndent
+                    y: textRect.origin.y - .blockquoteIndent
                 ),
                 size: .init(
                     width: availableWidth * 0.8,
-                    height: NSMutableAttributedString.blockquoteIndent / 6
+                    height: .blockquoteIndent / 6
                 )
             )
             hrLayer.backgroundColor = UIColor.opaqueSeparator.cgColor

@@ -64,7 +64,7 @@ public extension AccountViewModel {
 
     var fields: [Account.Field] { accountService.account.fields }
 
-    var note: NSAttributedString { accountService.account.note.attributed }
+    var note: AttributedString { accountService.account.note.attrStr }
 
     var emojis: [Emoji] { accountService.account.emojis }
 

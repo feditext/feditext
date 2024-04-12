@@ -132,7 +132,7 @@ extension StatusRecord {
 
     // TODO: (Vyr) filters: should this include attachment alt text?
     var filterableContent: [String] {
-        [content.attributed.string, spoilerText] + (poll?.options.map(\.title) ?? [])
+        [String(content.attrStr.characters), spoilerText] + (poll?.options.map(\.title) ?? [])
     }
 
     init(status: Status) {

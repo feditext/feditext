@@ -145,7 +145,7 @@ private extension AnnouncementView {
 
     func applyAnnouncementConfiguration() {
         let viewModel = announcementConfiguration.viewModel
-        let mutableContent = NSMutableAttributedString(attributedString: viewModel.announcement.content.attributed)
+        let mutableContent = NSMutableAttributedString(viewModel.announcement.content.attrStr)
         let contentFont = UIFont.preferredFont(forTextStyle: .callout)
         let contentRange = NSRange(location: 0, length: mutableContent.length)
 

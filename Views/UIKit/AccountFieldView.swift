@@ -14,7 +14,7 @@ final class AccountFieldView: UIView {
 
     // swiftlint:disable:next function_body_length
     init(name: String,
-         value: NSAttributedString,
+         value: AttributedString,
          verifiedAt: Date?,
          emojis: [Emoji],
          identityContext: IdentityContext) {
@@ -69,8 +69,9 @@ final class AccountFieldView: UIView {
                 .underlineColor: UIColor.clear]
         }
 
-        let valueFont = UIFont.preferredFont(forTextStyle: verifiedAt == nil ? .body : .headline)
-        let mutableValue = NSMutableAttributedString(attributedString: value)
+        let valueTextStyle: UIFont.TextStyle = verifiedAt == nil ? .body : .headline
+        let valueFont = UIFont.preferredFont(forTextStyle: valueTextStyle)
+        let mutableValue = NSMutableAttributedString(value.formatSiren(valueTextStyle))
         let valueRange = NSRange(location: 0, length: mutableValue.length)
 
         mutableValue.removeAttribute(.font, range: valueRange)

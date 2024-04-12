@@ -27,11 +27,28 @@ extension AttributedString {
             }
         }
 
+        Self.trimTrailingWhitespace(&formatted)
+
         return formatted
     }
 
     /// Return a copy of this string, formatted with Siren for a given text style.
     func nsFormatSiren(_ textStyle: UIFont.TextStyle) -> NSAttributedString {
         return (try? NSAttributedString(formatSiren(textStyle), including: \.all)) ?? .init()
+    }
+
+    /// Remove trailing whitespace, which is common from `<p>` tags but makes posts look funny.
+    private static func trimTrailingWhitespace(_ attrStr: inout AttributedString) {
+        if !attrStr.characters.isEmpty {
+            var startOfTrailingWhitespace = attrStr.endIndex
+            while startOfTrailingWhitespace > attrStr.startIndex {
+                let prev = attrStr.index(beforeCharacter: startOfTrailingWhitespace)
+                if !attrStr.characters[prev].isWhitespace {
+                    break
+                }
+                startOfTrailingWhitespace = prev
+            }
+            attrStr.removeSubrange(startOfTrailingWhitespace..<attrStr.endIndex)
+        }
     }
 }

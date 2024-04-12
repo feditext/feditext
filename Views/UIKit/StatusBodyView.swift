@@ -32,8 +32,7 @@ final class StatusBodyView: UIView {
             let foldTrailingHashtags = viewModel.identityContext.appPreferences.foldTrailingHashtags
             let outOfTextTagPairs = findOutOfTextTagPairs()
 
-            let mutableContent = NSMutableAttributedString(attributedString: viewModel.content)
-            mutableContent.adaptHtmlAttributes(style: contentTextStyle)
+            let mutableContent = NSMutableAttributedString(viewModel.content.formatSiren(contentTextStyle))
             let trailingTagPairs: [(id: TagViewModel.ID, name: String)]
             if foldTrailingHashtags {
                 trailingTagPairs = Self.dropTrailingHashtags(mutableContent)
@@ -219,10 +218,12 @@ extension StatusBodyView {
                                 identityContext: IdentityContext,
                                 status: Status,
                                 configuration: CollectionItem.StatusConfiguration) -> CGFloat {
+        let plainTextContent = String(status.displayStatus.content.attrStr.characters)
+
         let contentFont = UIFont.preferredFont(forTextStyle: configuration.isContextParent ? .title3 : .callout)
         var height: CGFloat = 0
 
-        var contentHeight = status.displayStatus.content.attributed.string.height(
+        var contentHeight = plainTextContent.height(
             width: width,
             font: contentFont)
 
@@ -252,7 +253,6 @@ extension StatusBodyView {
         let shouldHideDueToSpoiler = hasSpoiler && !alwaysExpandSpoilers
 
         let hasLongContent: Bool
-        let plainTextContent = status.displayStatus.content.attributed.string
         if plainTextContent.count > StatusViewModel.foldCharacterLimit {
             hasLongContent = true
         } else {
@@ -425,11 +425,8 @@ private extension StatusBodyView {
         let content = viewModel.content
 
         var tagIds = Set(tagViewModels.map { $0.id })
-        let entireString = NSRange(location: 0, length: content.length)
-        content.enumerateAttribute(HTML.Key.hashtag, in: entireString) { val, _, _ in
-            guard let tagId = val as? TagViewModel.ID else {
-                return
-            }
+        for (tagId, _) in content.runs[\.hashtag] {
+            guard let tagId = tagId else { continue }
             tagIds.remove(tagId)
         }
 

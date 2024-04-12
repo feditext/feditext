@@ -171,7 +171,6 @@ private extension HTML {
         }
 
         Self.mapSirenAttrsToFeditextAttrs(&attrStr)
-        Self.trimTrailingWhitespace(&attrStr)
         Self.rewriteLinks(&attrStr)
 
         return attrStr
@@ -230,21 +229,6 @@ private extension HTML {
             if quoteLevel > 0 {
                 attrStr[range].quoteLevel = quoteLevel
             }
-        }
-    }
-
-    /// Remove trailing whitespace, which is common from `<p>` tags but makes posts look funny.
-    static func trimTrailingWhitespace(_ attrStr: inout AttributedString) {
-        if !attrStr.characters.isEmpty {
-            var startOfTrailingWhitespace = attrStr.endIndex
-            while startOfTrailingWhitespace > attrStr.startIndex {
-                let prev = attrStr.index(beforeCharacter: startOfTrailingWhitespace)
-                if !attrStr.characters[prev].isWhitespace {
-                    break
-                }
-                startOfTrailingWhitespace = prev
-            }
-            attrStr.removeSubrange(startOfTrailingWhitespace..<attrStr.endIndex)
         }
     }
 

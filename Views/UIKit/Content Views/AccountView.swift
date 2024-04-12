@@ -107,7 +107,7 @@ extension AccountView {
         }
 
         if configuration == .withNote {
-            height += .compactSpacing + account.note.attributed.string.height(
+            height += .compactSpacing + String(account.note.attrStr.characters).height(
                 width: width,
                 font: .preferredFont(forTextStyle: .callout))
         } else if configuration == .followSuggestion, suggestionSource != nil {
@@ -468,7 +468,7 @@ private extension AccountView {
         if let firstVerifiedField = viewModel.fields.first(where: { $0.verifiedAt != nil }) {
             verifiedStack.isHidden = false
             // Full HTML display and tap support not necessary: we're just showing a URL in this case.
-            verifiedLabel.text = firstVerifiedField.value.attributed.string
+            verifiedLabel.text = String(firstVerifiedField.value.attrStr.characters)
         } else {
             verifiedStack.isHidden = true
         }
@@ -482,7 +482,7 @@ private extension AccountView {
 
         if viewModel.configuration == .withNote {
             let noteFont = UIFont.preferredFont(forTextStyle: .callout)
-            let mutableNote = NSMutableAttributedString(attributedString: viewModel.note)
+            let mutableNote = NSMutableAttributedString(viewModel.note.formatSiren(.callout))
             let noteRange = NSRange(location: 0, length: mutableNote.length)
 
             mutableNote.removeAttribute(.font, range: noteRange)

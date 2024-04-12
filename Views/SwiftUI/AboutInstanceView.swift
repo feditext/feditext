@@ -82,30 +82,18 @@ struct AboutInstanceView: View {
         }
     }
 
-    // TODO: (Vyr) extract this code from `StatusHistoryEditView` for reuse across SwiftUI
+    // TODO: (Vyr) extract this code from `StatusEditHistoryView` for reuse across SwiftUI
     private var attributedDescription: AttributedString? {
         guard !viewModel.instance.description.raw.isEmpty else {
             return nil
         }
-        let mutable = NSMutableAttributedString(attributedString: viewModel.instance.description.attributed)
-        mutable.adaptHtmlAttributes(style: .body)
-        let entireString = NSRange(location: 0, length: mutable.length)
-        mutable.addAttribute(
-            .foregroundColor,
-            value: UIColor.label,
-            range: entireString
-        )
-        mutable.enumerateAttribute(HTML.Key.quoteLevel, in: entireString) { val, range, _ in
-            guard let quoteLevel = val as? Int,
-                  quoteLevel > 0 else {
-                return
-            }
-            mutable.replaceCharacters(
-                in: NSRange(location: range.location, length: 0),
-                with: String(repeating: "> ", count: quoteLevel)
-            )
+        var formatted = viewModel.instance.description.attrStr.formatSiren(.body)
+        formatted.swiftUI.foregroundColor = .init(uiColor: .label)
+        for (quoteLevel, range) in formatted.runs[\.quoteLevel].reversed() {
+            guard let quoteLevel = quoteLevel, quoteLevel > 0 else { continue }
+            formatted.characters.insert(contentsOf: String(repeating: "> ", count: quoteLevel), at: range.lowerBound)
         }
-        return AttributedString(mutable)
+        return formatted
     }
 }
 

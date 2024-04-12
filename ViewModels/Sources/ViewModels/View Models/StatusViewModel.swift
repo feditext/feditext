@@ -10,7 +10,7 @@ import ServiceLayer
 
 public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObject {
     public let accountViewModel: AccountViewModel
-    public let content: NSAttributedString
+    public let content: AttributedString
     public let contentEmojis: [Emoji]
     public let spoilerText: String
     public let isReblog: Bool
@@ -38,7 +38,7 @@ public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObj
                 .accountService(account: statusService.status.displayStatus.account),
             identityContext: identityContext,
             eventsSubject: eventsSubject)
-        content = statusService.status.displayStatus.content.attributed
+        content = statusService.status.displayStatus.content.attrStr
         contentEmojis = statusService.status.displayStatus.emojis
         spoilerText = statusService.status.displayStatus.spoilerText
         // Quotes also contain reblog info (at least in Firefish) but should not be displayed as reblogs.
@@ -144,7 +144,7 @@ public extension StatusViewModel {
     }
 
     var hasLongContent: Bool {
-        let plainTextContent = statusService.status.displayStatus.content.attributed.string
+        let plainTextContent = String(statusService.status.displayStatus.content.attrStr.characters)
         if plainTextContent.count > Self.foldCharacterLimit {
             return true
         }

@@ -41,7 +41,7 @@ public struct StatusHistoryViewModel {
         public let date: Date
         public let emojis: [Emoji]
         public let spoiler: String?
-        public let content: NSAttributedString
+        public let content: AttributedString
 
         init(
             _ id: Int,
@@ -51,7 +51,7 @@ public struct StatusHistoryViewModel {
             self.date = edit.createdAt
             self.emojis = edit.emojis
             self.spoiler = edit.spoilerText.isEmpty ? nil : edit.spoilerText
-            self.content = edit.content.attributed
+            self.content = edit.content.attrStr
         }
 
         public static func == (lhs: Version, rhs: Version) -> Bool {
