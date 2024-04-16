@@ -452,8 +452,8 @@ public extension IdentityService {
 
 private extension IdentityService {
     #if DEBUG
-    static let pushSubscriptionEndpointURL = URL(string: "https://feditext-apns.gotgoat.com/push?sandbox=true")!
+    static let pushSubscriptionEndpointURL = URL(string: "https://apns.feditext.com/push?sandbox=true")!
     #else
-    static let pushSubscriptionEndpointURL = URL(string: "https://feditext-apns.gotgoat.com/push")!
+    static let pushSubscriptionEndpointURL = URL(string: "https://apns.feditext.com/push")!
     #endif
 }
