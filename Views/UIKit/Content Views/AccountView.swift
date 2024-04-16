@@ -482,7 +482,7 @@ private extension AccountView {
 
         if viewModel.configuration == .withNote {
             let noteFont = UIFont.preferredFont(forTextStyle: .callout)
-            let mutableNote = NSMutableAttributedString(viewModel.note.formatSiren(.callout))
+            let mutableNote = NSMutableAttributedString(attributedString: viewModel.note.nsFormatSiren(.callout))
             let noteRange = NSRange(location: 0, length: mutableNote.length)
 
             mutableNote.removeAttribute(.font, range: noteRange)

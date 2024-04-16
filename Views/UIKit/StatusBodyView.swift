@@ -32,7 +32,7 @@ final class StatusBodyView: UIView {
             let foldTrailingHashtags = viewModel.identityContext.appPreferences.foldTrailingHashtags
             let outOfTextTagPairs = findOutOfTextTagPairs()
 
-            let mutableContent = NSMutableAttributedString(viewModel.content.formatSiren(contentTextStyle))
+            let mutableContent = NSMutableAttributedString(attributedString: viewModel.content.nsFormatSiren(contentTextStyle))
             let trailingTagPairs: [(id: TagViewModel.ID, name: String)]
             if foldTrailingHashtags {
                 trailingTagPairs = Self.dropTrailingHashtags(mutableContent)

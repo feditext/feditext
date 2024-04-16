@@ -71,7 +71,7 @@ final class AccountFieldView: UIView {
 
         let valueTextStyle: UIFont.TextStyle = verifiedAt == nil ? .body : .headline
         let valueFont = UIFont.preferredFont(forTextStyle: valueTextStyle)
-        let mutableValue = NSMutableAttributedString(value.formatSiren(valueTextStyle))
+        let mutableValue = NSMutableAttributedString(attributedString: value.nsFormatSiren(valueTextStyle))
         let valueRange = NSRange(location: 0, length: mutableValue.length)
 
         mutableValue.removeAttribute(.font, range: valueRange)

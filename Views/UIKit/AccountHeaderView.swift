@@ -210,7 +210,7 @@ final class AccountHeaderView: UIView {
                 }
 
                 let noteFont = UIFont.preferredFont(forTextStyle: .callout)
-                let mutableNote = NSMutableAttributedString(accountViewModel.note.formatSiren(.callout))
+                let mutableNote = NSMutableAttributedString(attributedString: accountViewModel.note.nsFormatSiren(.callout))
                 let noteRange = NSRange(location: 0, length: mutableNote.length)
                 mutableNote.removeAttribute(.font, range: noteRange)
                 mutableNote.addAttributes(
