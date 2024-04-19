@@ -561,3 +561,12 @@
 "update.action" = "עדכון Update";
 "about.maintained-by" = "נשמר על ידי";
 "account.note" = "Note";
+"account.familiar-followers.1-%@" = "במעקב על ידי %@";
+"account.relationship.following" = "במעקב";
+"account.relationship.followed-by" = "עוקב.ת אחריך";
+"error.alert.copy-text" = "העתק טקסט";
+"preferences.notification-types.admin-report" = "דיווח";
+"preferences.posting-languages.add" = "הוספה";
+"preferences.posting-languages.remove" = "הסרה";
+"status.share-button.accessibility-label" = "שיתוף";
+"timelines.display-filter.show.reblogs" = "הצגת הידהודים";
