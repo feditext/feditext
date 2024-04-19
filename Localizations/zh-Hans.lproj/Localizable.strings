@@ -362,7 +362,7 @@
 "toot.action" = "嘟文";
 "toot.noun" = "嘟文";
 "about.maintained-by" = "维护者";
-"account.familiar-followers.1-%@" = "被%@关注";
+"account.familiar-followers.1-%@" = "被 %@ 关注";
 "account.familiar-followers.2-%@-%@" = "随后是QQ和Q";
 "account.familiar-followers.3-%@-%@-%@" = "接下来是... .....";
 "account.moved" = "账户已迁移";
@@ -564,3 +564,9 @@
 "toast.title.not-found.status.post" = "未找到邮件";
 "toast.title.not-found.status.toot" = "找不到自定义";
 "toast.title.not-found.tag" = "找不到自定义";
+"error.alert.copy-text" = "复制文字";
+"preferences.notification-types.admin-report" = "举报";
+"preferences.posting-languages.add" = "新增";
+"preferences.posting-languages.remove" = "移除";
+"status.share-button.accessibility-label" = "分享";
+"timelines.display-filter.show.reblogs" = "显示转发";
