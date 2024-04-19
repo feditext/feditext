@@ -361,3 +361,12 @@
 "timelines.federated" = "Federatua";
 "toot.action" = "Bidali";
 "toot.noun" = "Bidali";
+"account.familiar-followers.1-%@" = "%@ jarraitzaile";
+"account.relationship.following" = "Jarraitzen";
+"account.relationship.followed-by" = "Jarraitzen zaitu";
+"error.alert.copy-text" = "Kopiatu testua";
+"preferences.notification-types.admin-report" = "Salatu";
+"preferences.posting-languages.add" = "Gehitu";
+"preferences.posting-languages.remove" = "Kendu";
+"status.share-button.accessibility-label" = "Partekatu";
+"timelines.display-filter.show.reblogs" = "Erakutsi bultzadak";
