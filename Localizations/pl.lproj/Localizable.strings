@@ -561,3 +561,12 @@
 "update.action" = "Aktualizacja";
 "about.made-by-metabolist.blurb" = "Feditext jest kontynuacją przez społeczność niesamowitej pracy Metabolisty. Proszę nie wysyłać raportów o błędach lub żądań funkcji do Metabolista, ponieważ oryginalny Metatext nie jest już utrzymywany.";
 "about.maintained-by" = "Utrzymane przez";
+"account.familiar-followers.1-%@" = "Obserwowane przez %@";
+"account.relationship.following" = "Obserwujesz";
+"account.relationship.followed-by" = "Obserwuje Cię";
+"error.alert.copy-text" = "Kopiuj tekst";
+"preferences.notification-types.admin-report" = "Zgłoszenie";
+"preferences.posting-languages.add" = "Dodaj";
+"preferences.posting-languages.remove" = "Usuń";
+"status.share-button.accessibility-label" = "Udostępnij";
+"timelines.display-filter.show.reblogs" = "Pokaż podbicia";
