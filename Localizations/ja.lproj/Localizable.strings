@@ -361,3 +361,12 @@
 "timelines.federated" = "連合";
 "toot.action" = "トゥート";
 "toot.noun" = "トゥート";
+"account.familiar-followers.1-%@" = "%@にフォローされています";
+"account.relationship.following" = "フォロー中";
+"account.relationship.followed-by" = "あなたをフォロー";
+"error.alert.copy-text" = "テキストをコピー";
+"preferences.notification-types.admin-report" = "通報";
+"preferences.posting-languages.add" = "追加";
+"preferences.posting-languages.remove" = "削除";
+"status.share-button.accessibility-label" = "共有";
+"timelines.display-filter.show.reblogs" = "ブーストを表示";
