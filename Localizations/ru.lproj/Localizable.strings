@@ -561,3 +561,12 @@
 "toast.title.not-found.status.toot" = "Туалет не найден";
 "toast.title.not-found.tag" = "Тег не найден";
 "update.action" = "Обновление";
+"account.familiar-followers.1-%@" = "Подписаны %@";
+"account.relationship.following" = "Подписки";
+"account.relationship.followed-by" = "Подписался(-ась) на вас";
+"error.alert.copy-text" = "Копировать";
+"preferences.notification-types.admin-report" = "Жалоба";
+"preferences.posting-languages.add" = "Добавить";
+"preferences.posting-languages.remove" = "Удалить";
+"status.share-button.accessibility-label" = "Поделиться";
+"timelines.display-filter.show.reblogs" = "Показать продвижения";
