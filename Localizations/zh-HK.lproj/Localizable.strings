@@ -561,3 +561,12 @@
 "toast.title.not-found.status.post" = "未找到邮件";
 "toast.title.not-found.status.toot" = "找不到自定义";
 "toast.title.not-found.tag" = "未找到标记";
+"preferences.posting-languages.add" = "新增";
+"account.familiar-followers.1-%@" = "被 %@ 追蹤";
+"account.relationship.following" = "正在追蹤";
+"account.relationship.followed-by" = "追蹤你";
+"error.alert.copy-text" = "複製文字";
+"preferences.notification-types.admin-report" = "檢舉";
+"preferences.posting-languages.remove" = "移除";
+"status.share-button.accessibility-label" = "分享";
+"timelines.display-filter.show.reblogs" = "顯示轉發";
