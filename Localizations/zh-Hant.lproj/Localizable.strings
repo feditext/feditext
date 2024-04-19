@@ -561,3 +561,12 @@
 "toast.title.not-found.status.toot" = "找不到自定义";
 "toast.title.not-found.tag" = "找不到自定义";
 "update.action" = "找不到自定义";
+"account.familiar-followers.1-%@" = "%@ 關注了您";
+"status.share-button.accessibility-label" = "分享";
+"account.relationship.following" = "已關注";
+"account.relationship.followed-by" = "關注了您";
+"error.alert.copy-text" = "複製文字";
+"preferences.notification-types.admin-report" = "檢舉";
+"preferences.posting-languages.add" = "新增";
+"preferences.posting-languages.remove" = "刪除";
+"timelines.display-filter.show.reblogs" = "顯示轉嘟";
