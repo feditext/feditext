@@ -561,3 +561,12 @@
 "toast.title.not-found.status.toot" = "Toot nicht gefunden";
 "toast.title.not-found.tag" = "Tag nicht gefunden";
 "update.action" = "Aktualisierung";
+"account.familiar-followers.1-%@" = "Gefolgt von %@";
+"account.relationship.following" = "Folge ich";
+"account.relationship.followed-by" = "Folgt dir";
+"error.alert.copy-text" = "Text kopieren";
+"preferences.notification-types.admin-report" = "Melden";
+"preferences.posting-languages.add" = "Hinzufügen";
+"preferences.posting-languages.remove" = "Entfernen";
+"status.share-button.accessibility-label" = "Teilen";
+"timelines.display-filter.show.reblogs" = "Boosts anzeigen";
