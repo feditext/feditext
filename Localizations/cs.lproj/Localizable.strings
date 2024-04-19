@@ -561,3 +561,12 @@
 "toast.title.not-found.status.toot" = "Toot nenalezen";
 "toast.title.not-found.tag" = "Štítek nenalezen";
 "update.action" = "Aktualizovat";
+"account.familiar-followers.1-%@" = "Sledován uživatelem %@";
+"account.relationship.following" = "Sleduji";
+"account.relationship.followed-by" = "Sleduje Vás";
+"error.alert.copy-text" = "Kopírovat text";
+"preferences.notification-types.admin-report" = "Nahlásit";
+"preferences.posting-languages.add" = "Přidat";
+"preferences.posting-languages.remove" = "Odebrat";
+"status.share-button.accessibility-label" = "Sdílet";
+"timelines.display-filter.show.reblogs" = "Zobrazit boosty";
