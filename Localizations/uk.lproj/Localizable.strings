@@ -561,3 +561,12 @@
 "toast.title.not-found.status.toot" = "Не знайдено";
 "toast.title.not-found.tag" = "Не знайдено";
 "update.action" = "Оновити";
+"account.familiar-followers.1-%@" = "Підписані %@";
+"account.relationship.following" = "Підписки";
+"account.relationship.followed-by" = "Підписаний(-на) на вас";
+"error.alert.copy-text" = "Копіювати";
+"preferences.notification-types.admin-report" = "Скарга";
+"preferences.posting-languages.add" = "Додати";
+"preferences.posting-languages.remove" = "Видалити";
+"status.share-button.accessibility-label" = "Поділитися";
+"timelines.display-filter.show.reblogs" = "Показати просування";
