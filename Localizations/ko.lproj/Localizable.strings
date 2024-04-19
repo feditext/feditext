@@ -561,3 +561,12 @@
 "account.domain-blocked" = "도메인 차단";
 "account.familiar-followers.2-%@-%@" = "%@ 및 %@에 의해 따르는";
 "account.familiar-followers.3-%@-%@-%@" = "%@, %@, %@에 의해 따르는";
+"account.relationship.following" = "팔로잉";
+"account.relationship.followed-by" = "나를 팔로우 하고 있어요";
+"error.alert.copy-text" = "텍스트 복사";
+"preferences.notification-types.admin-report" = "신고";
+"preferences.posting-languages.add" = "추가";
+"preferences.posting-languages.remove" = "제거";
+"status.share-button.accessibility-label" = "공유";
+"timelines.display-filter.show.reblogs" = "부스트 표시";
+"account.familiar-followers.1-%@" = "%@ 님이 팔로우해요";
