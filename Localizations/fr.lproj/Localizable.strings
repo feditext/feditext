@@ -561,3 +561,12 @@
 "toast.title.not-found.status.toot" = "Toot non trouvé";
 "toast.title.not-found.tag" = "Marque non trouvée";
 "update.action" = "Mise à jour";
+"account.familiar-followers.1-%@" = "Abonné·es %@";
+"account.relationship.following" = "Abonnements";
+"account.relationship.followed-by" = "Abonné·e à vous";
+"error.alert.copy-text" = "Copier le texte";
+"preferences.notification-types.admin-report" = "Signaler";
+"preferences.posting-languages.add" = "Ajouter";
+"preferences.posting-languages.remove" = "Supprimer";
+"status.share-button.accessibility-label" = "Partager";
+"timelines.display-filter.show.reblogs" = "Afficher les partages";
