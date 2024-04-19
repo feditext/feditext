@@ -561,3 +561,12 @@
 "toast.title.not-found.status.toot" = "Página não encontrada";
 "toast.title.not-found.tag" = "Tag não encontrado";
 "update.action" = "Atualização";
+"account.relationship.following" = "Seguindo";
+"account.relationship.followed-by" = "Segue você";
+"error.alert.copy-text" = "Copiar texto";
+"preferences.notification-types.admin-report" = "Denunciar";
+"preferences.posting-languages.add" = "Adicionar";
+"preferences.posting-languages.remove" = "Remover";
+"account.familiar-followers.1-%@" = "Seguido por %@";
+"status.share-button.accessibility-label" = "Compartilhar";
+"timelines.display-filter.show.reblogs" = "Mostrar boosts";
