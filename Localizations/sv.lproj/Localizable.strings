@@ -561,3 +561,12 @@
 "toast.title.not-found.status.toot" = "Toot hittade inte";
 "toast.title.not-found.tag" = "Tag not found";
 "update.action" = "Uppdatering";
+"account.familiar-followers.1-%@" = "Följs av %@";
+"account.relationship.following" = "Följer";
+"account.relationship.followed-by" = "Följer dig";
+"error.alert.copy-text" = "Kopiera text";
+"preferences.notification-types.admin-report" = "Rapportera";
+"preferences.posting-languages.add" = "Lägg till";
+"preferences.posting-languages.remove" = "Ta bort";
+"status.share-button.accessibility-label" = "Dela";
+"timelines.display-filter.show.reblogs" = "Visa boosts";
