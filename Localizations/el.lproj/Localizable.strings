@@ -561,3 +561,12 @@
 "toast.title.not-found.status.toot" = "Το τουτ δε βρέθηκε";
 "toast.title.not-found.tag" = "Η ετικέτα δε βρέθηκε";
 "update.action" = "Ενημέρωση";
+"account.familiar-followers.1-%@" = "Ακολουθείται από %@";
+"account.relationship.following" = "Ακολουθεί";
+"account.relationship.followed-by" = "Σε ακολουθεί";
+"error.alert.copy-text" = "Αντιγραφή κειμένου";
+"preferences.notification-types.admin-report" = "Αναφορά";
+"preferences.posting-languages.add" = "Προσθήκη";
+"preferences.posting-languages.remove" = "Αφαίρεση";
+"status.share-button.accessibility-label" = "Κοινοποίηση";
+"timelines.display-filter.show.reblogs" = "Προβολή των boosts";
