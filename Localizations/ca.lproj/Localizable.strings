@@ -561,3 +561,12 @@
 "toast.title.not-found.status.toot" = "No s' ha trobat el massat";
 "toast.title.not-found.tag" = "No s' ha trobat l' etiqueta";
 "update.action" = "Actualitza";
+"account.familiar-followers.1-%@" = "Seguit per %@";
+"account.relationship.following" = "Seguint";
+"account.relationship.followed-by" = "Et segueix";
+"error.alert.copy-text" = "Copia el text";
+"preferences.notification-types.admin-report" = "Denuncia";
+"preferences.posting-languages.add" = "Afegir";
+"preferences.posting-languages.remove" = "Elimina";
+"status.share-button.accessibility-label" = "Compartir";
+"timelines.display-filter.show.reblogs" = "Mostra impulsats";
