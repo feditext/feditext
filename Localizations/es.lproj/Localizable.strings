@@ -562,3 +562,11 @@
 "toast.title.not-found.status.post" = "Puestos no encontrados";
 "toast.title.not-found.status.toot" = "Toot no encontrado";
 "toast.title.not-found.tag" = "Tag not found";
+"account.familiar-followers.1-%@" = "Seguido por %@";
+"account.relationship.following" = "Siguiendo";
+"account.relationship.followed-by" = "Te sigue";
+"error.alert.copy-text" = "Copiar texto";
+"preferences.posting-languages.add" = "Añadir";
+"preferences.posting-languages.remove" = "Eliminar";
+"status.share-button.accessibility-label" = "Compartir";
+"timelines.display-filter.show.reblogs" = "Mostrar boosts";
