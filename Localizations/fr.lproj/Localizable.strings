@@ -394,7 +394,7 @@
 "app-icon.trans-paint" = "Peinture trans";
 "card.article.accessibility-hint" = "Voir l'article";
 "compose.language-button.not-selected" = "?";
-"compose.language-button.accessibility-label-%@" = "Langue & #160;: %@";
+"compose.language-button.accessibility-label-%@" = "Langue &#160;: %@";
 "compose.language-button.accessibility-label-not-selected" = "Langue non sélectionnée";
 "compose.prompt.media-required" = "Joindre une photo ou une vidéo.";
 "emoji.system-group.activities" = "Activités";
