@@ -447,7 +447,7 @@
 "language.extended.name.zba" = "Balaiban";
 "language.bcp-47-tag-%@" = "BCP 47 tag %@";
 "lists.edit-list.button" = "Upravit seznam";
-"lists.edit-list.view-title-%@" = "Nastavení pro% @";
+"lists.edit-list.view-title-%@" = "Nastavení pro %@";
 "lists.edit-list.title" = "Název seznamu";
 "lists.edit-list.replies-policy" = "Odpovědi";
 "lists.edit-list.replies-policy.followed" = "Zobrazit odpovědi každému, koho budete následovat";
@@ -533,9 +533,9 @@
 "status.edit-history.versions.select" = "Vybrat verzi";
 "status.edit-history.view" = "Zobrazit historii úprav";
 "status.quote.go-to-quoted-post" = "Přejít na citovaný příspěvek";
-"status.quote.go-to-quoted-post-on-%@" = "Přejděte na citovaný příspěvek na%@";
+"status.quote.go-to-quoted-post-on-%@" = "Přejděte na citovaný příspěvek na %@";
 "status.quote.goes-to-quoted-post-hint" = "Přechází na citované místo";
-"status.quote.quoted-post-on-%@" = "Citovaný příspěvek na% @";
+"status.quote.quoted-post-on-%@" = "Citovaný příspěvek na %@";
 "status.quote.quoted-post" = "Citovaný příspěvek";
 "status.show-more-all-button.accessibility-label" = "Ukázat více pro všechny";
 "status.show-less-all-button.accessibility-label" = "Zobrazit méně pro všechny";
