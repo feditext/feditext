@@ -18,6 +18,8 @@
 			<string>%ld osoby rozmawiające</string>
 			<key>many</key>
 			<string>%ld osób rozmawiających</string>
+			<key>other</key>
+			<string>%ld osób rozmawiających</string>
 		</dict>
 	</dict>
 	<key>status.poll.participation-count-%ld</key>
@@ -35,6 +37,8 @@
 			<key>few</key>
 			<string>%ld osoby</string>
 			<key>many</key>
+			<string>%ld osób</string>
+			<key>other</key>
 			<string>%ld osób</string>
 		</dict>
 	</dict>
@@ -54,6 +58,8 @@
 			<string>%ld Podbicia</string>
 			<key>many</key>
 			<string>%ld Podbić</string>
+			<key>other</key>
+			<string>%ld Podbić</string>
 		</dict>
 	</dict>
 	<key>status.favorites-count-%ld</key>
@@ -71,6 +77,8 @@
 			<key>few</key>
 			<string>%ld polubione</string>
 			<key>many</key>
+			<string>%ld polubionych</string>
+			<key>other</key>
 			<string>%ld polubionych</string>
 		</dict>
 	</dict>
@@ -90,6 +98,8 @@
 			<string>%ld Odpowiedzi</string>
 			<key>many</key>
 			<string>%ld Odpowiedzi</string>
+			<key>other</key>
+			<string>%ld Odpowiedzi</string>
 		</dict>
 	</dict>
 	<key>statuses.count.post-%ld</key>
@@ -107,6 +117,8 @@
 			<key>few</key>
 			<string>%ld posty</string>
 			<key>many</key>
+			<string>%ld Postów</string>
+			<key>other</key>
 			<string>%ld Postów</string>
 		</dict>
 	</dict>
@@ -126,6 +138,8 @@
 			<string>%ld Tooty</string>
 			<key>many</key>
 			<string>%ld Tootów</string>
+			<key>other</key>
+			<string>%ld Tootów</string>
 		</dict>
 	</dict>
 	<key>account.followers-count-%ld</key>
@@ -143,6 +157,8 @@
 			<key>few</key>
 			<string>%ld Obserwatorów</string>
 			<key>many</key>
+			<string>%ld obserwatorów</string>
+			<key>other</key>
 			<string>%ld obserwatorów</string>
 		</dict>
 	</dict>
@@ -162,6 +178,8 @@
 			<string>%ld obrazki</string>
 			<key>many</key>
 			<string>%ld obrazków</string>
+			<key>other</key>
+			<string>%ld obrazków</string>
 		</dict>
 	</dict>
 	<key>attachment.type.audios-%ld</key>
@@ -179,6 +197,8 @@
 			<key>few</key>
 			<string>%ld pliki dźwiękowe</string>
 			<key>many</key>
+			<string>%ld plików dźwiękowych</string>
+			<key>other</key>
 			<string>%ld plików dźwiękowych</string>
 		</dict>
 	</dict>
@@ -198,6 +218,8 @@
 			<string>%ld pliki wideo</string>
 			<key>many</key>
 			<string>%ld plików dźwiękowych</string>
+			<key>other</key>
+			<string>%ld plików dźwiękowych</string>
 		</dict>
 	</dict>
 	<key>attachment.type.unknowns-%ld</key>
@@ -215,6 +237,8 @@
 			<key>few</key>
 			<string>%ld załączniki</string>
 			<key>many</key>
+			<string>%ld załączników</string>
+			<key>other</key>
 			<string>%ld załączników</string>
 		</dict>
 	</dict>
