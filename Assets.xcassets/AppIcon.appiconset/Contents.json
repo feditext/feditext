@@ -1,67 +1,67 @@
 {
   "images" : [
     {
-      "filename" : "feditext-rainbow-paint-1024.png",
+      "filename" : "feditext-trans-paint-1024.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
     },
     {
-      "filename" : "feditext-rainbow-paint-16.png",
+      "filename" : "feditext-trans-paint-16.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
-      "filename" : "feditext-rainbow-paint-32.png",
+      "filename" : "feditext-trans-paint-32.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
-      "filename" : "feditext-rainbow-paint-32.png",
+      "filename" : "feditext-trans-paint-32.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
     },
     {
-      "filename" : "feditext-rainbow-paint-64.png",
+      "filename" : "feditext-trans-paint-64.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
-      "filename" : "feditext-rainbow-paint-128.png",
+      "filename" : "feditext-trans-paint-128.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
     },
     {
-      "filename" : "feditext-rainbow-paint-256.png",
+      "filename" : "feditext-trans-paint-256.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
     },
     {
-      "filename" : "feditext-rainbow-paint-256.png",
+      "filename" : "feditext-trans-paint-256.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
-      "filename" : "feditext-rainbow-paint-512.png",
+      "filename" : "feditext-trans-paint-512.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
-      "filename" : "feditext-rainbow-paint-512.png",
+      "filename" : "feditext-trans-paint-512.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
-      "filename" : "feditext-rainbow-paint-1024.png",
+      "filename" : "feditext-trans-paint-1024.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"
