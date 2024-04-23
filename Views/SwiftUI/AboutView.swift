@@ -28,6 +28,13 @@ struct AboutView: View {
                         Image(systemName: "checkmark.seal")
                     }
                 }
+                Link(destination: Self.projectWebsiteURL) {
+                    Label {
+                        Text("about.website").foregroundColor(.primary)
+                    } icon: {
+                        Image(systemName: "star")
+                    }
+                }
                 Link(destination: Self.sourceCodeAndIssueTrackerURL) {
                     Label {
                         Text("about.source-code-and-issue-tracker").foregroundColor(.primary)
@@ -73,6 +80,7 @@ struct AboutView: View {
 
 private extension AboutView {
     static let officialAccountURL = URL(string: "https://mastodon.social/@Feditext")!
+    static let projectWebsiteURL = URL(string: "https://www.feditext.com/")!
     static let sourceCodeAndIssueTrackerURL = AppUrl.website
 
     struct Maintainer: Identifiable {
@@ -85,7 +93,7 @@ private extension AboutView {
 
     static let maintainers: [Maintainer] = [
         Maintainer(name: "Brian Dube", emoji: "🐐", url: URL(string: "https://gotgoat.com/@bdube")!),
-        Maintainer(name: "Vyr Cossont", emoji: "😈", url: URL(string: "https://demon.social/@vyr")!)
+        Maintainer(name: "Vyr Cossont", emoji: "😈", url: URL(string: "https://princess.industries/@vyr")!)
     ]
 
     static let metabolistWebsiteURL = URL(string: "https://metabolist.org")!
