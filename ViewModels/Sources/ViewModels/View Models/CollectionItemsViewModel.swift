@@ -601,11 +601,7 @@ private extension CollectionItemsViewModel {
 
         // If a collection that shouldn't be shown empty becomes empty, navigate back.
         if sections.isEmpty && collectionService.closeWhenEmpty {
-            eventsSubject.send(
-                Just(CollectionItemEvent.contextParentDeleted)
-                    .setFailureType(to: Error.self)
-                    .eraseToAnyPublisher()
-            )
+            send(event: CollectionItemEvent.contextParentDeleted)
         }
     }
 

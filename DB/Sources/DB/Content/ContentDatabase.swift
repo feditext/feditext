@@ -597,8 +597,7 @@ public extension ContentDatabase {
             .removeDuplicates()
             .publisher(in: databaseWriter)
             .combineLatest(activeFiltersPublisher)
-            .map { $0?.items(filters: $1) }
-            .replaceNil(with: [])
+            .compactMap { $0?.items(filters: $1) }
             .eraseToAnyPublisher()
     }
 
