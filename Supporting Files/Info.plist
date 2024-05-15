@@ -10,6 +10,15 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
+			<key>AppIconRainbowPaint</key>
+			<dict>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>AppIconRainbowPaint</string>
+				</array>
+			</dict>
 			<key>AppIconClassic</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -52,6 +61,15 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
+			<key>AppIconRainbowPaint</key>
+			<dict>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>AppIconRainbowPaint</string>
+				</array>
+			</dict>
 			<key>AppIconClassic</key>
 			<dict>
 				<key>CFBundleIconFiles</key>

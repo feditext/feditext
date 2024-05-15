@@ -63,6 +63,8 @@ private extension AppIconPreferencesView {
 }
 
 enum AppIcon: String, CaseIterable {
+    /// Not explicitly set; show the app's default icon (currently `.transPaint`).
+    case `default` = ""
     case classic = "AppIconClassic"
     case rainbow = "AppIconRainbow"
     case rainbowPaint = "AppIconRainbowPaint"
@@ -70,10 +72,12 @@ enum AppIcon: String, CaseIterable {
 }
 
 extension AppIcon {
-    static var current: Self? { Self(rawValue: UIApplication.shared.alternateIconName ?? Self.rainbowPaint.rawValue) }
+    static var current: Self? { Self(rawValue: UIApplication.shared.alternateIconName ?? Self.default.rawValue) }
 
     var nameLocalizedStringKey: LocalizedStringKey {
         switch self {
+        case .default:
+            return "app-icon.default"
         case .classic:
             return "app-icon.classic"
         case .rainbow:
@@ -87,7 +91,7 @@ extension AppIcon {
 
     var alternateIconName: String? {
         switch self {
-        case .rainbowPaint:
+        case .default:
             return nil
         default:
             return rawValue
@@ -95,7 +99,7 @@ extension AppIcon {
     }
 
     var image: Image? {
-        guard let image = UIImage(named: rawValue) else { return nil }
+        guard let image = UIImage(named: alternateIconName ?? Self.transPaint.rawValue) else { return nil }
 
         return Image(uiImage: image)
     }
