@@ -43,6 +43,9 @@ public final class Status: Codable, Identifiable {
     public let reblog: Status?
     public let poll: Poll?
     public let card: Card?
+    /// ISO 639 country code from Mastodon, likely actually has script for Chinese,
+    /// also likely to be full BCP 47 from other implementations such as GotoSocial.
+    /// - See: https://docs.joinmastodon.org/entities/Status/#language
     public let language: String?
     public let text: String?
     @DecodableDefault.False public private(set) var favourited: Bool

@@ -231,12 +231,25 @@ private extension AttachmentView {
             uncaptionedLabel.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
         ])
 
-        var accessibilityLabel = viewModel.attachment.type.accessibilityName
+        var accessibilityAttributedLabel = NSMutableAttributedString(
+            string: viewModel.attachment.type.accessibilityName
+        )
 
         if let description = viewModel.attachment.description {
-            accessibilityLabel.appendWithSeparator(description)
+            if let language = parentViewModel.language {
+                accessibilityAttributedLabel.appendWithSeparator(
+                    NSAttributedString(
+                        string: description,
+                        attributes: [
+                            .accessibilitySpeechLanguage: language
+                        ]
+                    )
+                )
+            } else {
+                accessibilityAttributedLabel.appendWithSeparator(description)
+            }
         }
 
-        self.accessibilityLabel = accessibilityLabel
+        self.accessibilityAttributedLabel = accessibilityAttributedLabel
     }
 }

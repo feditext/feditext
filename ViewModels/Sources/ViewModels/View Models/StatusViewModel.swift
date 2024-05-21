@@ -10,6 +10,8 @@ import ServiceLayer
 
 public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObject {
     public let accountViewModel: AccountViewModel
+    /// BCP 47 language tag, if available.
+    public let language: String?
     public let content: AttributedString
     public let contentEmojis: [Emoji]
     public let spoilerText: String
@@ -38,6 +40,7 @@ public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObj
                 .accountService(account: statusService.status.displayStatus.account),
             identityContext: identityContext,
             eventsSubject: eventsSubject)
+        language = statusService.status.displayStatus.language
         content = statusService.status.displayStatus.content.attrStr
         contentEmojis = statusService.status.displayStatus.emojis
         spoilerText = statusService.status.displayStatus.spoilerText

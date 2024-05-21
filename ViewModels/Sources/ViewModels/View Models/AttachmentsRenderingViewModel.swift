@@ -8,6 +8,7 @@ public protocol AttachmentsRenderingViewModel {
     var shouldShowHideAttachmentsButton: Bool { get }
     var sensitive: Bool { get }
     var canRemoveAttachments: Bool { get }
+    var language: String? { get }
     func attachmentSelected(viewModel: AttachmentViewModel)
     func removeAttachment(viewModel: AttachmentViewModel)
     func toggleShowAttachments()

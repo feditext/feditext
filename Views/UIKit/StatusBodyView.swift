@@ -1,6 +1,7 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
 import AppUrls
+import Foundation
 import Mastodon
 import UIKit
 import ViewModels
@@ -32,7 +33,9 @@ final class StatusBodyView: UIView {
             let foldTrailingHashtags = viewModel.identityContext.appPreferences.foldTrailingHashtags
             let outOfTextTagPairs = findOutOfTextTagPairs()
 
-            let mutableContent = NSMutableAttributedString(attributedString: viewModel.content.nsFormatSiren(contentTextStyle))
+            let mutableContent = NSMutableAttributedString(
+                attributedString: viewModel.content.nsFormatSiren(contentTextStyle)
+            )
             let trailingTagPairs: [(id: TagViewModel.ID, name: String)]
             if foldTrailingHashtags {
                 trailingTagPairs = Self.dropTrailingHashtags(mutableContent)
@@ -52,6 +55,7 @@ final class StatusBodyView: UIView {
                                   identityContext: viewModel.identityContext)
             mutableContent.resizeAttachments(toLineHeight: contentFont.lineHeight)
             contentTextView.attributedText = mutableContent
+            contentTextView.accessibilityLanguage = viewModel.language
             contentTextView.isHidden = contentTextView.text.isEmpty
 
             if viewModel.hasSpoiler {
@@ -62,6 +66,7 @@ final class StatusBodyView: UIView {
             }
             spoilerTextLabel.font = mutableSpoilerFont
             spoilerTextLabel.attributedText = mutableSpoilerText
+            spoilerTextLabel.accessibilityLanguage = viewModel.language
             spoilerTextLabel.isHidden = !viewModel.hasSpoiler
 
             toggleShowContentButton.setTitle(
@@ -82,6 +87,7 @@ final class StatusBodyView: UIView {
             contentTextView.textContainer.maximumNumberOfLines = viewModel.shouldShowContentPreview
                 ? Self.numLinesFoldedPreview
                 : 0
+            contentTextView.accessibilityLanguage = viewModel.language
 
             let tagViewTagPairs = trailingTagPairs + outOfTextTagPairs
             tagsView.isHidden = hideContent
@@ -89,6 +95,7 @@ final class StatusBodyView: UIView {
                 || tagViewTagPairs.isEmpty
             tagsView.attributedText = makeLinkedTagViewText(tagViewTagPairs)
             tagsView.accessibilityValue = NSLocalizedString("search.scope.tags", comment: "")
+            tagsView.accessibilityLanguage = viewModel.language
             tagsView.accessibilityLabel = Self.makeLinkedTagViewAccessibilityLabel(tagViewTagPairs)
             tagsView.accessibilityTraits = .staticText
             tagsView.accessibilityHint = NSLocalizedString("status.accessibility.go-to-hashtags-hint", comment: "")
@@ -309,15 +316,32 @@ extension StatusBodyView {
             accessibilityAttributedLabel.appendWithSeparator(
                 NSLocalizedString("status.content-warning.accessibility", comment: ""))
 
-            accessibilityAttributedLabel.appendWithSeparator(spoilerText)
-        } else if (!contentTextView.isHidden || forceShowContent), let content = contentTextView.attributedText {
-            accessibilityAttributedLabel.append(content)
+            let mutableSpoilerText = NSMutableAttributedString(attributedString: spoilerText)
+            if let language = viewModel.language {
+                mutableSpoilerText.addAttribute(
+                    .accessibilitySpeechLanguage,
+                    value: language as NSString,
+                    range: .init(location: 0, length: mutableSpoilerText.length)
+                )
+            }
+            accessibilityAttributedLabel.appendWithSeparator(mutableSpoilerText)
+        } else if !contentTextView.isHidden || forceShowContent,
+                  let content = contentTextView.attributedText {
+            let mutableContent = NSMutableAttributedString(attributedString: content)
+            if let language = viewModel?.language {
+                mutableContent.addAttribute(
+                    .accessibilitySpeechLanguage,
+                    value: language as NSString,
+                    range: .init(location: 0, length: mutableContent.length)
+                )
+            }
+            accessibilityAttributedLabel.append(mutableContent)
         }
 
         for view in [tagsView, quotedView, attachmentsView, pollView, cardView] where !view.isHidden {
-            guard let viewAccessibilityLabel = view.accessibilityLabel else { continue }
+            guard let viewAccessibilityAttributedLabel = view.accessibilityAttributedLabel else { continue }
 
-            accessibilityAttributedLabel.appendWithSeparator(viewAccessibilityLabel)
+            accessibilityAttributedLabel.appendWithSeparator(viewAccessibilityAttributedLabel)
         }
 
         return accessibilityAttributedLabel

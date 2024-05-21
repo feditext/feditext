@@ -19,7 +19,13 @@ final class PollOptionButton: UIView {
     private let image: UIImage?
     private let selectedImage: UIImage?
 
-    init(title: String, emojis: [Emoji], multipleSelection: Bool, identityContext: IdentityContext) {
+    init(
+        title: String,
+        language: String?,
+        emojis: [Emoji],
+        multipleSelection: Bool,
+        identityContext: IdentityContext
+    ) {
         image = UIImage(
             systemName: multipleSelection ? "square" : "circle",
             withConfiguration: UIImage.SymbolConfiguration(scale: .medium))
@@ -44,7 +50,12 @@ final class PollOptionButton: UIView {
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
 
-        let attributedTitle = NSMutableAttributedString(string: title)
+        let attributes: [NSAttributedString.Key: Any]? = if let language = language {
+            [.accessibilitySpeechLanguage: language]
+        } else {
+            nil
+        }
+        let attributedTitle = NSMutableAttributedString(string: title, attributes: attributes)
 
         attributedTitle.insert(emojis: emojis, view: label, identityContext: identityContext)
         attributedTitle.resizeAttachments(toLineHeight: label.font.lineHeight)

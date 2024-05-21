@@ -81,19 +81,34 @@ final class AttachmentsView: UIView {
                     type = .unknown
                 }
 
-                var accessibilityLabel = type.accessibilityNames(count: viewModel.attachmentViewModels.count)
+                var accessibilityAttributedLabel = NSMutableAttributedString(string: type.accessibilityNames(count: viewModel.attachmentViewModels.count))
 
                 for attachmentViewModel in viewModel.attachmentViewModels {
                     guard let description = attachmentViewModel.attachment.description,
                           !description.isEmpty
                     else { continue }
 
-                    accessibilityLabel.appendWithSeparator(attachmentViewModel.attachment.type.accessibilityName)
-                    accessibilityLabel.appendWithSeparator(description)
+                    accessibilityAttributedLabel.appendWithSeparator(
+                        attachmentViewModel.attachment.type.accessibilityName
+                    )
+                    if let language = viewModel.language {
+                        accessibilityAttributedLabel.appendWithSeparator(
+                            NSAttributedString(
+                                string: description,
+                                attributes: [
+                                    .accessibilitySpeechLanguage: language
+                                ]
+                            )
+                        )
+                    } else {
+                        accessibilityAttributedLabel.appendWithSeparator(description)
+                    }
                 }
 
-                self.accessibilityLabel = accessibilityLabel
+                accessibilityLabel = nil
+                self.accessibilityAttributedLabel = accessibilityAttributedLabel
             } else {
+                accessibilityAttributedLabel = nil
                 accessibilityLabel = curtainButton.title(for: .normal)
             }
         }

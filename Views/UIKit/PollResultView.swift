@@ -12,6 +12,7 @@ final class PollResultView: UIView {
     private let percentView = UIProgressView()
 
     init(option: Poll.Option,
+         language: String?,
          emojis: [Emoji],
          selected: Bool,
          multipleSelection: Bool,
@@ -50,7 +51,12 @@ final class PollResultView: UIView {
         percentLabel.adjustsFontForContentSizeCategory = true
         percentLabel.setContentHuggingPriority(.required, for: .horizontal)
 
-        let attributedTitle = NSMutableAttributedString(string: option.title)
+        let attributes: [NSAttributedString.Key: Any]? = if let language = language {
+            [.accessibilitySpeechLanguage: language]
+        } else {
+            nil
+        }
+        let attributedTitle = NSMutableAttributedString(string: option.title, attributes: attributes)
 
         attributedTitle.insert(emojis: emojis, view: titleLabel, identityContext: identityContext)
         attributedTitle.resizeAttachments(toLineHeight: titleLabel.font.lineHeight)
