@@ -152,7 +152,8 @@ public extension StatusHistoryViewModel {
                 emojis: [],
                 poll: nil
             )
-        ]
+        ],
+        language: nil
     )
 }
 

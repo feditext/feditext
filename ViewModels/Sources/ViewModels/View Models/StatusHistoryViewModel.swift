@@ -8,6 +8,8 @@ import ServiceLayer
 public struct StatusHistoryViewModel {
     public let identityContext: IdentityContext
     public let versions: [Version]
+    /// Language tag from parent status.
+    public let language: String?
 
     private let navigationService: NavigationService
     private let eventsSubject: PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>
@@ -16,12 +18,14 @@ public struct StatusHistoryViewModel {
         identityContext: IdentityContext,
         navigationService: NavigationService,
         eventsSubject: PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>,
-        history: [StatusEdit]
+        history: [StatusEdit],
+        language: String?
     ) {
         self.identityContext = identityContext
         self.navigationService = navigationService
         self.eventsSubject = eventsSubject
         self.versions = history.enumerated().map { id, edit in Version(id, edit)}
+        self.language = language
     }
 
     public func openURL(_ url: URL) {

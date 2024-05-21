@@ -59,7 +59,7 @@ public struct StatusEditHistoryView: View {
                                     .textSelection(.enabled)
                                 Divider()
                             }
-                            Text(attributedContent(version))
+                            Text(attributedContent(version, language: viewModel.language))
                                 .textSelection(.enabled)
                                 .environment(\.openURL, OpenURLAction { url in
                                     dismiss()
@@ -85,7 +85,7 @@ public struct StatusEditHistoryView: View {
                                         .textSelection(.enabled)
                                     Divider()
                                 }
-                                Text(attributedContent(version))
+                                Text(attributedContent(version, language: viewModel.language))
                                     .textSelection(.enabled)
                                     .environment(\.openURL, OpenURLAction { url in
                                         dismiss()
@@ -116,12 +116,18 @@ public struct StatusEditHistoryView: View {
         }
     }
 
-    private func attributedContent(_ version: StatusHistoryViewModel.Version) -> AttributedString {
+    private func attributedContent(
+        _ version: StatusHistoryViewModel.Version,
+        language: String?
+    ) -> AttributedString {
         var formatted = version.content.formatSiren(.body)
         formatted.swiftUI.foregroundColor = .init(uiColor: .label)
         for (quoteLevel, range) in formatted.runs[\.quoteLevel].reversed() {
             guard let quoteLevel = quoteLevel, quoteLevel > 0 else { continue }
             formatted.characters.insert(contentsOf: String(repeating: "> ", count: quoteLevel), at: range.lowerBound)
+        }
+        if let language = language {
+            formatted.languageIdentifier = language
         }
         return formatted
     }

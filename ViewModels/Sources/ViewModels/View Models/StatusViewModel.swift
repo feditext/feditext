@@ -566,6 +566,7 @@ public extension StatusViewModel {
         let identityContext = identityContext
         let navigationService = statusService.navigationService
         let eventsSubject = eventsSubject
+        let language = statusService.status.displayStatus.language
         eventsSubject.send(
             statusService.history()
                 .map { history in .presentHistory(
@@ -573,7 +574,8 @@ public extension StatusViewModel {
                             identityContext: identityContext,
                             navigationService: navigationService,
                             eventsSubject: eventsSubject,
-                            history: history
+                            history: history,
+                            language: language
                         )
                     )
                 }
