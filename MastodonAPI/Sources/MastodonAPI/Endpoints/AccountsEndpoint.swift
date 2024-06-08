@@ -80,6 +80,7 @@ extension AccountsEndpoint: Endpoint {
                 .firefish: "1.0.0",
                 .iceshrimp: "1.0.0",
                 .pixelfed: .assumeAvailable,
+                .gotosocial: "0.16.0-0"
             ]
         default:
             return nil
