@@ -422,6 +422,18 @@ extension ContentDatabase {
             }
         }
 
+        // This column may have been removed by a migration that had to be rolled back.
+        migrator.registerMigration("1.7.4-account-more-metadata-rollback") { db in
+            do {
+                try db.alter(table: "accountRecord") { t in
+                    t.add(column: "discoverable", .boolean).notNull().defaults(to: false)
+                }
+            } catch {
+                // Ignore this failure, it's expected for users that never ran that migration.
+                // SQLite doesn't support IF NOT EXISTS.
+            }
+        }
+
         return migrator
     }
 }
