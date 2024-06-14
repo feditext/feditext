@@ -6,7 +6,7 @@ Feditext is based on the [Metatext](https://github.com/metabolist/metatext) proj
 
 ## Testers Wanted
 
-If you are interested in joining the TestFlight group, please DM our official Fedi account [@Feditext@fedi.software](https://fedi.software/@Feditext), and follow it for announcements and release notes.
+If you are interested in joining the TestFlight group, please DM our official Fedi account [@Feditext@mastodon.social](https://mastodon.social/@Feditext), and follow it for announcements and release notes.
 
 ## Contributing Bug Reports
 
