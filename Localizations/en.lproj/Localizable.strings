@@ -198,7 +198,7 @@
 "flavor.hometown.name" = "Hometown";
 "flavor.pleroma.name" = "Pleroma";
 "flavor.akkoma.name" = "Akkoma";
-"flavor.gotosocial.name" = "GotoSocial";
+"flavor.gotosocial.name" = "GoToSocial";
 "flavor.calckey.name" = "Calckey";
 "flavor.firefish.name" = "Firefish";
 "followed-tags.new-tag-title" = "Hashtag (without #)";

@@ -1,6 +1,6 @@
 # Feditext
 
-A free, open-source iOS client for [Mastodon](https://joinmastodon.org/), [Glitch](https://glitch-soc.github.io/docs/), [GotoSocial](https://gotosocial.org/), [Firefish](https://joinfirefish.org/), [Akkoma](https://akkoma.social/), and other Mastodon-API-compatible Fediverse instance servers.
+A free, open-source iOS client for [Mastodon](https://joinmastodon.org/), [Glitch](https://glitch-soc.github.io/docs/), [GoToSocial](https://gotosocial.org/), [Firefish](https://joinfirefish.org/), [Akkoma](https://akkoma.social/), and other Mastodon-API-compatible Fediverse instance servers.
 
 Feditext is based on the [Metatext](https://github.com/metabolist/metatext) project, which has concluded and is no longer maintained. Feditext is updated with Mastodon 4 features and better support for non-Mastodon instances.
 
