@@ -225,7 +225,7 @@ public extension CompositionViewModel {
 
     func attach(itemProviders: [NSItemProvider], parentViewModel: ComposeStatusViewModel) {
         Publishers.MergeMany(itemProviders.map {
-            MediaProcessingService.dataAndMimeType(itemProvider: $0)
+            MediaProcessingService.dataAndMimeType(itemProvider: $0, optimizeImages: identityContext.appPreferences.optimizeImagesBeforeUpload)
                 .zip(
                     identityContext.appPreferences.useMediaDescriptionMetadata
                         ? MediaProcessingService.description(itemProvider: $0)
