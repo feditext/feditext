@@ -144,8 +144,10 @@ public class CollectionItemsViewModel: ObservableObject {
                 .store(in: &cancellables)
 
             timelineActionViewModel = .context(contextTimelineActionViewModel)
-        } else {
-            timelineActionViewModel = nil
+        } else if let conversationsService = collectionService as? ConversationsService {
+            Task {
+                timelineActionViewModel = await .conversations(.init(conversationsService))
+            }
         }
     }
 

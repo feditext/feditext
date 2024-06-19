@@ -164,6 +164,7 @@
 "compose-button.accessibility-label.post" = "Compose Post";
 "compose-button.accessibility-label.toot" = "Compose Toot";
 "conversation.unread" = "Unread";
+"conversations.mark-all-as-read.button" = "Mark all as read";
 "dismiss" = "Dismiss";
 "emoji.custom" = "Custom";
 "emoji.default-skin-tone" = "Default skin tone";

@@ -2,11 +2,13 @@
 
 /// Encapsulates actions we can do that are related to a timeline
 /// and need to show UI for in a collection view.
+/// UI is set up mostly in `TableViewController.setupTimelineActionBarButtonItem`.
 public enum TimelineActionViewModel {
     case context(ContextTimelineActionViewModel)
     case tag(TagTimelineActionViewModel)
     case list(ListTimelineActionViewModel)
     case displayFilter(DisplayFilterTimelineActionViewModel)
+    case conversations(ConversationsTimelineActionViewModel)
 
     static func from(
         timeline: Timeline,

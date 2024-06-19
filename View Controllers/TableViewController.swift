@@ -1030,6 +1030,44 @@ private extension TableViewController {
                 }
             )
 
+        case let .conversations(conversationsTimelineActionViewModel):
+            // These don't need `.receive(on: DispatchQueue.main)` because this view model is `@MainActor`.
+            conversationsTimelineActionViewModel.$alertItem
+                .sink(receiveValue: { [weak self] alertItem in
+                    if let alertItem = alertItem {
+                        self?.present(alertItem: alertItem)
+                    }
+                })
+                .store(in: &cancellables)
+
+            conversationsTimelineActionViewModel.$inProgress
+                .sink(receiveValue: { [weak self] inProgress in
+                    if inProgress {
+                        let activityIndicator = UIActivityIndicatorView(style: .medium)
+                        activityIndicator.startAnimating()
+                        self?.navigationItem.rightBarButtonItem = .init(customView: activityIndicator)
+                    } else {
+                        self?.navigationItem.rightBarButtonItem = .init(
+                            title: NSLocalizedString(
+                                "conversations.mark-all-as-read.button",
+                                comment: ""
+                            ),
+                            image: .init(systemName: "checkmark.rectangle.stack"),
+                            primaryAction: .init { [weak self, weak conversationsTimelineActionViewModel] _ in
+                                guard let self = self,
+                                      let conversationsTimelineActionViewModel = conversationsTimelineActionViewModel
+                                else { return }
+
+                                // Detached task so marking can happen in the background.
+                                Task.detached {
+                                    await conversationsTimelineActionViewModel.markAllConversationsAsRead()
+                                }
+                            }
+                        )
+                    }
+                })
+                .store(in: &cancellables)
+
         case .displayFilter:
             // Handled in TimelinesViewController
             return
