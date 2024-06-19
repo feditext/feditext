@@ -139,7 +139,8 @@ private extension CompositionInputAccessoryView {
 
         let visibilityButton = UIBarButtonItem(
             image: UIImage(systemName: parentViewModel.visibility.systemImageName),
-            menu: visibilityMenu(selectedVisibility: parentViewModel.visibility))
+            menu: visibilityMenu()
+        )
         visibilityButton.isEnabled = parentViewModel.canChangeVisibility
 
         let contentWarningButton = UIBarButtonItem(
@@ -277,11 +278,23 @@ private extension CompositionInputAccessoryView {
         parentViewModel.$visibility
             .sink { [weak self] in
                 visibilityButton.image = UIImage(systemName: $0.systemImageName)
-                visibilityButton.menu = self?.visibilityMenu(selectedVisibility: $0)
+                visibilityButton.menu = self?.visibilityMenu()
                 visibilityButton.accessibilityLabel = String.localizedStringWithFormat(
                     NSLocalizedString("compose.visibility-button.accessibility-label-%@", comment: ""),
                     $0.title ?? "")
             }
+            .store(in: &cancellables)
+
+        // Update the visibility menu when interaction options change.
+        parentViewModel.$federated
+            .combineLatest(
+                parentViewModel.$boostable,
+                parentViewModel.$replyable,
+                parentViewModel.$likeable
+            )
+            .sink(receiveValue: { [weak self] _ in
+                visibilityButton.menu = self?.visibilityMenu()
+            })
             .store(in: &cancellables)
     }
 }
@@ -380,16 +393,95 @@ private extension CompositionInputAccessoryView {
         }
     }
 
-    func visibilityMenu(selectedVisibility: Status.Visibility) -> UIMenu {
-        UIMenu(children: Status.Visibility.allCasesExceptUnknown.reversed().map { visibility in
-            UIAction(
-                title: visibility.title ?? "",
-                image: UIImage(systemName: visibility.systemImageName),
-                discoverabilityTitle: visibility.description,
-                state: visibility == selectedVisibility ? .on : .off) { [weak self] _ in
-                self?.parentViewModel.visibility = visibility
-            }
-        })
+    /// Return a menu with visibility options and (if available) interaction controls.
+    func visibilityMenu() -> UIMenu {
+        var groups = [UIMenuElement]()
+
+        let visibilityGroup = UIMenu(
+            options: .displayInline,
+            children: Status.Visibility
+                .allSupportedCases(parentViewModel.identityContext.apiCapabilities)
+                .reversed()
+                .map { visibility in
+                    UIAction(
+                        title: visibility.title ?? "",
+                        image: UIImage(systemName: visibility.systemImageName),
+                        discoverabilityTitle: visibility.description,
+                        state: visibility == parentViewModel.visibility ? .on : .off
+                    ) { [weak self] _ in
+                        self?.parentViewModel.visibility = visibility
+                    }
+                }
+        )
+        groups.append(visibilityGroup)
+
+        var interactionOptions = [UIMenuElement]()
+
+        if parentViewModel.canPostNonFederated,
+           let federated = parentViewModel.federated {
+            interactionOptions.append(
+                UIAction(
+                    title: NSLocalizedString("status.interaction.federated", comment: ""),
+                    image: UIImage(systemName: "arrow.up.left.and.down.right.and.arrow.up.right.and.down.left"),
+                    discoverabilityTitle: NSLocalizedString("status.interaction.federated.description", comment: ""),
+                    state: federated ? .on : .off
+                ) { [weak self] _ in
+                    self?.parentViewModel.federated = !federated
+                }
+            )
+        }
+
+        if parentViewModel.canPostNonReplyable,
+           let replyable = parentViewModel.replyable {
+            interactionOptions.append(
+                UIAction(
+                    title: NSLocalizedString("status.interaction.replyable", comment: ""),
+                    image: UIImage(systemName: "bubble.right"),
+                    discoverabilityTitle: NSLocalizedString("status.interaction.federated.replyable", comment: ""),
+                    state: replyable ? .on : .off
+                ) { [weak self] _ in
+                    self?.parentViewModel.replyable = !replyable
+                }
+            )
+        }
+
+        if parentViewModel.canPostNonBoostable,
+           let boostable = parentViewModel.boostable {
+            interactionOptions.append(
+                UIAction(
+                    title: NSLocalizedString("status.interaction.boostable", comment: ""),
+                    image: UIImage(systemName: "arrow.2.squarepath"),
+                    discoverabilityTitle: NSLocalizedString("status.interaction.federated.boostable", comment: ""),
+                    state: boostable ? .on : .off
+                ) { [weak self] _ in
+                    self?.parentViewModel.boostable = !boostable
+                }
+            )
+        }
+
+        if parentViewModel.canPostNonLikeable,
+           let likeable = parentViewModel.likeable {
+            interactionOptions.append(
+                UIAction(
+                    title: NSLocalizedString("status.interaction.likeable", comment: ""),
+                    image: UIImage(systemName: "star"),
+                    discoverabilityTitle: NSLocalizedString("status.interaction.federated.likeable", comment: ""),
+                    state: likeable ? .on : .off
+                ) { [weak self] _ in
+                    self?.parentViewModel.likeable = !likeable
+                }
+            )
+        }
+
+        if !interactionOptions.isEmpty {
+            let interactionGroup = UIMenu(
+                options: .displayInline,
+                children: interactionOptions.reversed()
+            )
+            groups.append(interactionGroup)
+        }
+
+        return UIMenu(children: groups.reversed())
     }
 
     func languageMenu(selectedTag: PrefsLanguage.Tag?) -> UIMenu {

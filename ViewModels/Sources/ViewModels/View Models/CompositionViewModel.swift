@@ -6,6 +6,10 @@ import Mastodon
 import ServiceLayer
 import UniformTypeIdentifiers
 
+/// View model for composing a single status, with media or poll attachments.
+///
+/// ``ComposeStatusViewModel`` composes a thread of statuses,
+/// which in Feditext holds the visibility/interaction control setting applied to every status.
 public final class CompositionViewModel: AttachmentsRenderingViewModel, ObservableObject, Identifiable {
     public let id = Id()
     public var isPosted = false
@@ -207,7 +211,14 @@ public extension CompositionViewModel {
         }
     }
 
-    func components(inReplyToId: Status.Id?, visibility: Status.Visibility?) -> StatusComponents {
+    func components(
+        inReplyToId: Status.Id?,
+        visibility: Status.Visibility?,
+        federated: Bool?,
+        boostable: Bool?,
+        replyable: Bool?,
+        likeable: Bool?
+    ) -> StatusComponents {
         StatusComponents(
             inReplyToId: inReplyToId,
             text: text,
@@ -218,7 +229,12 @@ public extension CompositionViewModel {
             sensitive: sensitive,
             pollOptions: displayPoll ? pollOptions.map(\.text) : [],
             pollExpiresIn: pollExpiresIn.rawValue,
-            pollMultipleChoice: pollMultipleChoice)
+            pollMultipleChoice: pollMultipleChoice,
+            federated: federated,
+            boostable: boostable,
+            replyable: replyable,
+            likeable: likeable
+        )
     }
 
     func addPollOption() {

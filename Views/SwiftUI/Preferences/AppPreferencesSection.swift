@@ -115,15 +115,14 @@ struct AppPreferencesSection: View {
                        isOn: $identityContext.appPreferences.visibilityIconColors)
                 HStack {
                     Text("preferences.visibility-icon-colors.off")
-                    ForEach(Status.Visibility.allCasesExceptUnknown) { visibility in
+                    ForEach(Status.Visibility.allSupportedCases(viewModel.identityContext.apiCapabilities)) { visibility in
                         Image(systemName: visibility.systemImageName)
                             .foregroundColor(Color(uiColor: .secondaryLabel))
                     }
-
-                    Spacer()
-
+                }
+                HStack {
                     Text("preferences.visibility-icon-colors.on")
-                    ForEach(Status.Visibility.allCasesExceptUnknown) { visibility in
+                    ForEach(Status.Visibility.allSupportedCases(viewModel.identityContext.apiCapabilities)) { visibility in
                         Image(systemName: visibility.systemImageNameForVisibilityIconColors)
                             .renderingMode(.template)
                             .foregroundColor(visibility.tintColor.map(Color.init(uiColor:)))

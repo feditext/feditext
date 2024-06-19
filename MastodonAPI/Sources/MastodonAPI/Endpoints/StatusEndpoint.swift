@@ -40,6 +40,15 @@ public extension StatusEndpoint {
         public let pollExpiresIn: Int
         public let pollMultipleChoice: Bool
 
+        /// GotoSocial only.
+        public let federated: Bool?
+        /// GotoSocial only.
+        public let boostable: Bool?
+        /// GotoSocial only.
+        public let replyable: Bool?
+        /// GotoSocial only.
+        public let likeable: Bool?
+
         public init(
             inReplyToId: Status.Id?,
             text: String,
@@ -50,7 +59,11 @@ public extension StatusEndpoint {
             sensitive: Bool,
             pollOptions: [String],
             pollExpiresIn: Int,
-            pollMultipleChoice: Bool
+            pollMultipleChoice: Bool,
+            federated: Bool?,
+            boostable: Bool?,
+            replyable: Bool?,
+            likeable: Bool?
         ) {
             self.inReplyToId = inReplyToId
             self.text = text
@@ -62,6 +75,10 @@ public extension StatusEndpoint {
             self.pollOptions = pollOptions
             self.pollExpiresIn = pollExpiresIn
             self.pollMultipleChoice = pollMultipleChoice
+            self.federated = federated
+            self.boostable = boostable
+            self.replyable = replyable
+            self.likeable = likeable
         }
     }
 }
@@ -98,6 +115,20 @@ extension StatusEndpoint.Components {
             poll["multiple"] = pollMultipleChoice
 
             params["poll"] = poll
+        }
+
+        // GotoSocial interaction controls.
+        if let federated = federated {
+            params["federated"] = federated
+        }
+        if let boostable = boostable {
+            params["boostable"] = boostable
+        }
+        if let replyable = replyable {
+            params["replyable"] = replyable
+        }
+        if let likeable = likeable {
+            params["likeable"] = likeable
         }
 
         return params
@@ -196,6 +227,19 @@ extension StatusEndpoint: Endpoint {
                 .pleroma: .assumeAvailable,
                 .akkoma: .assumeAvailable
             ]
+
+        case let .post(components):
+            // These are *future* GtS features and have some surprising behavior in 0.16.
+            if components.visibility == .mutualsOnly ||
+                components.federated != nil ||
+                components.replyable != nil ||
+                components.boostable != nil ||
+                components.likeable != nil {
+                return [:]
+            }
+
+            return nil
+
         default:
             return nil
         }

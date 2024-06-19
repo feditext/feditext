@@ -116,7 +116,11 @@ public extension StatusViewModel {
                 sensitive: false,
                 pollOptions: [],
                 pollExpiresIn: 0,
-                pollMultipleChoice: false
+                pollMultipleChoice: false,
+                federated: nil,
+                boostable: nil,
+                replyable: nil,
+                likeable: nil
             )
         )
         .canCallWith(identityContext.apiCapabilities)

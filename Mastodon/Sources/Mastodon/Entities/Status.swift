@@ -7,6 +7,9 @@ public final class Status: Codable, Identifiable {
         case `public`
         case unlisted
         case `private`
+        /// GotoSocial only, and only when authoring statuses:
+        /// when fetching statuses, GtS coerces this to ``private``.
+        case mutualsOnly = "mutuals_only"
         case direct
         case unknown
 

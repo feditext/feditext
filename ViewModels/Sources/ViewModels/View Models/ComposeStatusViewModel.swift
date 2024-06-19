@@ -6,14 +6,26 @@ import Mastodon
 import MastodonAPI
 import ServiceLayer
 
+/// Despite the name, this is actually for composing an entire thread.
+///
+/// ``CompositionViewModel`` is for composing a single status.
 public final class ComposeStatusViewModel: ObservableObject {
     @Published public var visibility: Status.Visibility
+    /// GotoSocial only. Could support Glitch and Hometown in future.
+    @Published public var federated: Bool?
+    /// GotoSocial only.
+    @Published public var boostable: Bool?
+    /// GotoSocial only.
+    @Published public var replyable: Bool?
+    /// GotoSocial only.
+    @Published public var likeable: Bool?
     @Published public private(set) var compositionViewModels = [CompositionViewModel]()
     @Published public private(set) var identityContext: IdentityContext
     @Published public var canPost = false
     @Published public var alertItem: AlertItem?
     @Published public private(set) var postingState = PostingState.composing
     public let canChangeIdentity: Bool
+    /// Also applies to `federated`, `boostable`, `replyable`, `likeable`.
     public let canChangeVisibility: Bool
     public let inReplyToViewModel: StatusViewModel?
     public let events: AnyPublisher<Event, Never>
@@ -137,6 +149,21 @@ public final class ComposeStatusViewModel: ObservableObject {
 
         if let identity = identity {
             setIdentity(identity)
+        }
+
+        // If interaction controls are supported, set them to defaults: all interactions permitted.
+        // Otherwise, leave them unset.
+        if canPostNonFederated {
+            federated = true
+        }
+        if canPostNonBoostable {
+            boostable = true
+        }
+        if canPostNonReplyable {
+            replyable = true
+        }
+        if canPostNonLikeable {
+            likeable = true
         }
     }
 }
@@ -268,6 +295,56 @@ public extension ComposeStatusViewModel {
     var canAttachPoll: Bool {
         PollEndpoint.poll(id: "").canCallWith(identityContext.apiCapabilities)
     }
+
+    /// Used for status endpoint feature checks.
+    private func canCreateStatusWithOptions(
+        federated: Bool? = nil,
+        boostable: Bool? = nil,
+        replyable: Bool? = nil,
+        likeable: Bool? = nil
+    ) -> Bool {
+        StatusEndpoint.post(.init(
+            inReplyToId: nil,
+            text: "",
+            spoilerText: "",
+            mediaIds: [],
+            visibility: nil,
+            language: nil,
+            sensitive: false,
+            pollOptions: [],
+            pollExpiresIn: 0,
+            pollMultipleChoice: false,
+            federated: federated,
+            boostable: boostable,
+            replyable: replyable,
+            likeable: likeable
+        ))
+        .canCallWith(identityContext.apiCapabilities)
+    }
+
+    /// Does the user's instance support non-federated/local-only statuses?
+    /// Controls whether ``federated`` is exposed to UI.
+    var canPostNonFederated: Bool {
+        canCreateStatusWithOptions(federated: false)
+    }
+
+    /// Does the user's instance support non-boostable statuses?
+    /// Controls whether ``boostable`` is exposed to UI.
+    var canPostNonBoostable: Bool {
+        canCreateStatusWithOptions(boostable: false)
+    }
+
+    /// Does the user's instance support non-boostable statuses?
+    /// Controls whether ``replyable`` is exposed to UI.
+    var canPostNonReplyable: Bool {
+        canCreateStatusWithOptions(replyable: false)
+    }
+
+    /// Does the user's instance support non-likeable/non-favable statuses?
+    /// Controls whether ``likeable`` is exposed to UI.
+    var canPostNonLikeable: Bool {
+        canCreateStatusWithOptions(likeable: false)
+    }
 }
 
 private extension ComposeStatusViewModel {
@@ -293,14 +370,22 @@ private extension ComposeStatusViewModel {
                 id: editID,
                 statusComponents: viewModel.components(
                     inReplyToId: nil,
-                    visibility: nil
+                    visibility: nil,
+                    federated: nil,
+                    boostable: nil,
+                    replyable: nil,
+                    likeable: nil
                 )
             )
         } else {
             operation = identityContext.service.post(
                 statusComponents: viewModel.components(
                     inReplyToId: inReplyToId,
-                    visibility: visibility
+                    visibility: visibility,
+                    federated: federated,
+                    boostable: boostable,
+                    replyable: replyable,
+                    likeable: likeable
                 )
             )
         }
