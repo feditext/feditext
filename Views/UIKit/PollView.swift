@@ -16,19 +16,16 @@ final class PollView: UIView {
     private let expiryLabel = UILabel()
     private var selectionCancellable: AnyCancellable?
 
-    // swiftlint:disable force_try
     private static let bugMaxPollOptions = 100
-    private static let bugExplainerText: NSAttributedString = try! NSAttributedString(
-        try! AttributedString(
-            markdown: """
-            ⚠️ Feditext can't handle polls with over a hundred options right now. \
-            We're working on it! \
-            Please see \
-            [issue #422](https://github.com/feditext/feditext/issues/422) \
-            on our issue tracker for details.
-            """
-        ),
-        including: \.all
+    // swiftlint:disable force_try
+    private static let bugExplainerAttrStr = try! AttributedString(
+        markdown: """
+        ⚠️ Feditext can't handle polls with over a hundred options right now. \
+        We're working on it! \
+        Please see \
+        [issue #422](https://github.com/feditext/feditext/issues/422) \
+        on our issue tracker for details.
+        """
     )
     // swiftlint:enable force_try
 
@@ -49,7 +46,9 @@ final class PollView: UIView {
             if viewModel.pollOptions.count > Self.bugMaxPollOptions {
                 let bugLabel = TouchFallthroughTextView()
                 stackView.addArrangedSubview(bugLabel)
-                bugLabel.attributedText = Self.bugExplainerText
+                var styledBugExplainerAttrStr = Self.bugExplainerAttrStr
+                styledBugExplainerAttrStr.uiKit.foregroundColor = .label
+                bugLabel.attributedText = styledBugExplainerAttrStr.nsFormatSiren(.footnote)
                 bugLabel.delegate = self
                 bugLabel.layer.cornerRadius = .defaultCornerRadius
                 bugLabel.layer.borderWidth = .hairline
@@ -214,7 +213,9 @@ extension PollView {
 
             // TODO: (Vyr) issue #422 workaround
             if poll.options.count > bugMaxPollOptions {
-                height += bugExplainerText.string.height(width: width, font: UIFont.preferredFont(forTextStyle: .body))
+                // https://forums.swift.org/t/attributedstring-to-string/61667/2
+                height += String(bugExplainerAttrStr.characters[...])
+                    .height(width: width, font: UIFont.preferredFont(forTextStyle: .body))
             } else {
                 for option in poll.options {
                     if open {
