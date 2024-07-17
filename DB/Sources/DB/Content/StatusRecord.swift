@@ -103,6 +103,13 @@ extension StatusRecord {
 
     static let showAttachmentsToggle = hasOne(StatusShowAttachmentsToggle.self)
 
+    static let showFilteredToggle = hasOne(StatusShowFilteredToggle.self)
+
+    static func filtered(_ filterContext: Filter.Context) -> HasOneAssociation<Self, StatusFiltered> {
+        hasOne(StatusFiltered.self)
+            .filter(StatusFiltered.Columns.context == filterContext.rawValue)
+    }
+
     static let ancestorJoins = hasMany(
         StatusAncestorJoin.self,
         using: ForeignKey([StatusAncestorJoin.Columns.parentId])
@@ -123,11 +130,11 @@ extension StatusRecord {
     )
 
     var ancestors: QueryInterfaceRequest<StatusInfo> {
-        StatusInfo.request(request(for: Self.ancestors))
+        StatusInfo.request(request(for: Self.ancestors), .thread)
     }
 
     var descendants: QueryInterfaceRequest<StatusInfo> {
-        StatusInfo.request(request(for: Self.descendants))
+        StatusInfo.request(request(for: Self.descendants), .thread)
     }
 
     // TODO: (Vyr) filters: should this include attachment alt text?

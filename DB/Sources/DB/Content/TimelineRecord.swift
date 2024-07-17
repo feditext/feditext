@@ -40,12 +40,16 @@ extension TimelineRecord {
     static let account = belongsTo(AccountRecord.self, using: ForeignKey([Columns.accountId]))
     static let loadMores = hasMany(LoadMoreRecord.self)
 
+    var filterContext: Filter.Context? {
+        Timeline(record: self)?.filterContext
+    }
+
     var statuses: QueryInterfaceRequest<StatusInfo> {
-        StatusInfo.request(request(for: Self.statuses))
+        StatusInfo.request(request(for: Self.statuses), filterContext)
     }
 
     var orderedStatuses: QueryInterfaceRequest<StatusInfo> {
-        StatusInfo.request(request(for: Self.orderedStatuses))
+        StatusInfo.request(request(for: Self.orderedStatuses), filterContext)
     }
 
     var loadMores: QueryInterfaceRequest<LoadMoreRecord> {

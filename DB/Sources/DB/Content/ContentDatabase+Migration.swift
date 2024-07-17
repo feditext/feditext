@@ -434,6 +434,24 @@ extension ContentDatabase {
             }
         }
 
+        migrator.registerMigration("1.7.4-statusShowFilteredToggle") { db in
+            try db.create(table: "statusShowFilteredToggle") { t in
+                t.column("statusId", .text).primaryKey()
+                    .references("statusRecord", onDelete: .cascade)
+            }
+        }
+
+        migrator.registerMigration("1.7.4-statusFiltered") { db in
+            try db.create(table: "statusFiltered") { t in
+                t.column("statusId", .text).indexed().notNull()
+                    .references("statusRecord", onDelete: .cascade)
+                t.column("context", .text).indexed().notNull()
+                t.column("filtered", .text)
+
+                t.primaryKey(["statusId", "context"], onConflict: .replace)
+            }
+        }
+
         return migrator
     }
 }

@@ -14,6 +14,7 @@ public struct ContentDatabase {
     private let id: Identity.Id
     private let databaseWriter: DatabaseWriter
     private let useHomeTimelineLastReadId: Bool
+    private let activeFilterMatchersPublisher: AnyPublisher<[Filter.Matcher], Error>
 
     public init(id: Identity.Id,
                 useHomeTimelineLastReadId: Bool,
@@ -40,6 +41,10 @@ public struct ContentDatabase {
         .removeDuplicates()
         .publisher(in: databaseWriter)
         .eraseToAnyPublisher()
+
+        activeFilterMatchersPublisher = activeFiltersPublisher
+            .map { $0.compactMap(\.matcher) }
+            .eraseToAnyPublisher()
     }
 }
 
@@ -57,7 +62,8 @@ public extension ContentDatabase {
     func insert(
         statuses: [Status],
         timeline: Timeline,
-        loadMoreAndDirection: (LoadMore, LoadMore.Direction)? = nil) -> AnyPublisher<Never, Error> {
+        loadMoreAndDirection: (LoadMore, LoadMore.Direction)? = nil
+    ) -> AnyPublisher<Never, Error> {
         databaseWriter.mutatingPublisher {
             let timelineRecord = TimelineRecord(timeline: timeline)
 
@@ -76,6 +82,10 @@ public extension ContentDatabase {
                 try status.save($0)
 
                 try TimelineStatusJoin(timelineId: timeline.id, statusId: status.id, order: order).save($0)
+
+                if let filterContext = timeline.filterContext {
+                    try StatusFiltered.update(status, filterContext, $0)
+                }
 
                 if let presentOrder = order {
                     order = presentOrder + 1
@@ -161,11 +171,13 @@ public extension ContentDatabase {
         databaseWriter.mutatingPublisher {
             for (index, status) in context.ancestors.enumerated() {
                 try status.save($0)
+                try StatusFiltered.update(status, .thread, $0)
                 try StatusAncestorJoin(parentId: parentId, statusId: status.id, order: index).save($0)
             }
 
             for (index, status) in context.descendants.enumerated() {
                 try status.save($0)
+                try StatusFiltered.update(status, .thread, $0)
                 try StatusDescendantJoin(parentId: parentId, statusId: status.id, order: index).save($0)
             }
 
@@ -185,6 +197,7 @@ public extension ContentDatabase {
         databaseWriter.mutatingPublisher {
             for (index, status) in pinnedStatuses.enumerated() {
                 try status.save($0)
+                try StatusFiltered.update(status, .account, $0)
                 try AccountPinnedStatusJoin(accountId: accountId, statusId: status.id, order: index).save($0)
             }
 
@@ -215,6 +228,18 @@ public extension ContentDatabase {
                 try toggle.delete($0)
             } else {
                 try StatusShowAttachmentsToggle(statusId: id).save($0)
+            }
+        }
+    }
+
+    func toggleShowFiltered(id: Status.Id) -> AnyPublisher<Never, Error> {
+        databaseWriter.mutatingPublisher {
+            if let toggle = try StatusShowFilteredToggle
+                .filter(StatusShowFilteredToggle.Columns.statusId == id)
+                .fetchOne($0) {
+                try toggle.delete($0)
+            } else {
+                try StatusShowFilteredToggle(statusId: id).save($0)
             }
         }
     }
@@ -565,10 +590,13 @@ public extension ContentDatabase {
     }
 
     /// Retrieve the contents of a timeline.
-    func timelinePublisher(_ timeline: Timeline) -> AnyPublisher<[CollectionSection], Error> {
+    func timelinePublisher(_ timeline: Timeline, applyV1Filters: Bool) -> AnyPublisher<[CollectionSection], Error> {
         ValueObservation.tracking(
-            TimelineItemsInfo.request(TimelineRecord.filter(TimelineRecord.Columns.id == timeline.id),
-                                      ordered: timeline.ordered).fetchOne)
+            TimelineItemsInfo.request(
+                TimelineRecord.filter(TimelineRecord.Columns.id == timeline.id),
+                timeline.filterContext,
+                ordered: timeline.ordered
+            ).fetchOne)
             .removeDuplicates()
             .publisher(in: databaseWriter)
             .handleEvents(
@@ -586,18 +614,18 @@ public extension ContentDatabase {
                         databaseWriter.asyncWrite(TimelineRecord(timeline: timeline).delete) { _, _ in }
                     }
                 })
-            .combineLatest(activeFiltersPublisher)
-            .compactMap { $0?.items(filters: $1) }
+            .combineLatest(activeFilterMatchersPublisher)
+            .compactMap { $0?.items(matchers: applyV1Filters ? $1 : [], now: .now) }
             .eraseToAnyPublisher()
     }
 
-    func contextPublisher(id: Status.Id) -> AnyPublisher<[CollectionSection], Error> {
+    func contextPublisher(id: Status.Id, applyV1Filters: Bool) -> AnyPublisher<[CollectionSection], Error> {
         ValueObservation.tracking(
             ContextItemsInfo.request(StatusRecord.filter(StatusRecord.Columns.id == id)).fetchOne)
             .removeDuplicates()
             .publisher(in: databaseWriter)
-            .combineLatest(activeFiltersPublisher)
-            .compactMap { $0?.items(filters: $1) }
+            .combineLatest(activeFilterMatchersPublisher)
+            .compactMap { $0?.items(matchers: applyV1Filters ? $1 : [], now: .now) }
             .eraseToAnyPublisher()
     }
 
@@ -673,12 +701,17 @@ public extension ContentDatabase {
         let statusIds = results.statuses.map(\.id)
 
         return ValueObservation.tracking { db -> ([AccountAndRelationshipInfo], [StatusInfo]) in
-            (try AccountAndRelationshipInfo.request(
-                AccountRecord.filter(accountIds.contains(AccountRecord.Columns.id)))
-                .fetchAll(db),
-            try StatusInfo.request(
-                StatusRecord.filter(statusIds.contains(StatusRecord.Columns.id)))
-                .fetchAll(db))
+            (
+                try AccountAndRelationshipInfo
+                    .request(AccountRecord.filter(accountIds.contains(AccountRecord.Columns.id)))
+                    .fetchAll(db),
+                try StatusInfo
+                    .request(
+                        StatusRecord.filter(statusIds.contains(StatusRecord.Columns.id)),
+                        .search
+                    )
+                    .fetchAll(db)
+            )
         }
         .publisher(in: databaseWriter)
         .map { accountAndRelationshipInfos, statusInfos in
@@ -705,8 +738,11 @@ public extension ContentDatabase {
             .map {
                 CollectionItem.status(
                     .init(info: $0),
-                    .init(showContentToggled: $0.showContentToggled,
-                          showAttachmentsToggled: $0.showAttachmentsToggled),
+                    .init(
+                        showContentToggled: $0.showContentToggled,
+                        showAttachmentsToggled: $0.showAttachmentsToggled,
+                        showFilteredToggled: $0.showFilteredToggled
+                    ),
                     $0.reblogInfo?.relationship ?? $0.relationship)
             }
 
@@ -729,6 +765,7 @@ public extension ContentDatabase {
         .eraseToAnyPublisher()
     }
 
+    // TODO: (Vyr) we're probably not filtering these correctly for filters v1 clients
     func notificationsPublisher(
         excludeTypes: Set<MastodonNotification.NotificationType>
     ) -> AnyPublisher<[CollectionSection], Error> {
@@ -744,7 +781,9 @@ public extension ContentDatabase {
                 if $0.record.type == .mention, let statusInfo = $0.statusInfo {
                     configuration = CollectionItem.StatusConfiguration(
                         showContentToggled: statusInfo.showContentToggled,
-                        showAttachmentsToggled: statusInfo.showAttachmentsToggled)
+                        showAttachmentsToggled: statusInfo.showAttachmentsToggled,
+                        showFilteredToggled: statusInfo.showFilteredToggled
+                    )
                 } else {
                     configuration = nil
                 }

@@ -489,6 +489,10 @@
 "status.edit-history.versions" = "Versions";
 "status.edit-history.versions.select" = "Select a version";
 "status.edit-history.view" = "View edit history";
+"status.filtered" = "Hidden by filter";
+"status.filtered.accessibility-label-%@" = "Filtered: %@";
+"status.filtered.show" = "Show filtered";
+"status.filtered.re-hide" = "Re-hide filtered";
 "status.interaction.federated" = "Federated";
 "status.interaction.boostable" = "Boostable";
 "status.interaction.replyable" = "Replyable";

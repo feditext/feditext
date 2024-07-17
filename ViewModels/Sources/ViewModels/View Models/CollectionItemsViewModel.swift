@@ -394,6 +394,12 @@ extension CollectionItemsViewModel: CollectionViewModel {
 
         switch item {
         case let .status(status, _, _):
+            if let statusViewModel = viewModel(indexPath: indexPath) as? StatusViewModel,
+               statusViewModel.shouldFilter {
+                statusViewModel.toggleShowFiltered()
+                return
+            }
+
             send(event: .navigation(.collection(collectionService
                                                     .navigationService
                                                     .contextService(id: status.displayStatus.id))))

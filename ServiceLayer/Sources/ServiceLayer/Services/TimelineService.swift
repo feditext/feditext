@@ -31,13 +31,14 @@ public struct TimelineService {
         self.contentDatabase = contentDatabase
 
         let unfilteredSections: AnyPublisher<[CollectionSection], Error>
+        let applyV1Filters = !mastodonAPIClient.supportsV2Filters
         if case .home = timeline {
             unfilteredSections = contentDatabase.cleanHomeTimelinePublisher()
                 .collect()
-                .flatMap { _ in contentDatabase.timelinePublisher(timeline) }
+                .flatMap { _ in contentDatabase.timelinePublisher(timeline, applyV1Filters: applyV1Filters) }
                 .eraseToAnyPublisher()
         } else {
-            unfilteredSections = contentDatabase.timelinePublisher(timeline)
+            unfilteredSections = contentDatabase.timelinePublisher(timeline, applyV1Filters: applyV1Filters)
         }
         sections = unfilteredSections
             .combineLatest(displayFilterSubject) { sections, displayFilter in

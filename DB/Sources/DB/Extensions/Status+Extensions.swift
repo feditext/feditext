@@ -31,7 +31,8 @@ extension Status {
                 record: quoteInfo.record,
                 account: Account(info: quoteInfo.accountInfo),
                 quote: nil,
-                reblog: nil
+                reblog: nil,
+                filtered: quoteInfo.filtered?.filtered ?? []
             )
         }
 
@@ -41,7 +42,8 @@ extension Status {
                 record: reblogInfo.record,
                 account: Account(info: reblogInfo.accountInfo),
                 quote: nil,
-                reblog: nil
+                reblog: nil,
+                filtered: reblogInfo.filtered?.filtered ?? []
             )
         }
 
@@ -49,13 +51,20 @@ extension Status {
             record: info.record,
             account: Account(info: info.accountInfo),
             quote: quote,
-            reblog: reblog
+            reblog: reblog,
+            filtered: info.filtered?.filtered ?? []
         )
     }
 }
 
 private extension Status {
-    convenience init(record: StatusRecord, account: Account, quote: Status?, reblog: Status?) {
+    convenience init(
+        record: StatusRecord,
+        account: Account,
+        quote: Status?,
+        reblog: Status?,
+        filtered: [Status.FilterResult]
+    ) {
         self.init(
             id: record.id,
             uri: record.uri,
@@ -88,6 +97,7 @@ private extension Status {
             muted: record.muted,
             bookmarked: record.bookmarked,
             pinned: record.pinned,
+            filtered: filtered,
             // Workaround for a problem with Sharkey, which sends both `Status.reactions`
             // and `Status.emojiReactions` with identical data, causing `record.reactions`
             // to contain duplicate entries, which results in a duplicated item crash:

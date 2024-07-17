@@ -50,6 +50,12 @@ public extension StatusService {
         contentDatabase.toggleShowAttachments(id: status.displayStatus.id)
     }
 
+    func toggleShowFiltered() -> AnyPublisher<Never, Error> {
+        contentDatabase.toggleShowFiltered(id: status.displayStatus.id)
+    }
+
+    // For the `contentDatabase.insert` calls below, we can ignore filter cont
+
     func toggleReblogged(identityId: Identity.Id?) -> AnyPublisher<Never, Error> {
         if let identityId = identityId {
             return request(identityId: identityId, endpointClosure: StatusEndpoint.reblog(id:))
@@ -58,7 +64,7 @@ public extension StatusService {
                                                 ? StatusEndpoint.unreblog(id: status.displayStatus.id)
                                                 : StatusEndpoint.reblog(id: status.displayStatus.id))
                 .catch(contentDatabase.catchNotFound)
-                .flatMap(contentDatabase.insert(status:)) .catch(contentDatabase.catchNotFound)
+                .flatMap(contentDatabase.insert(status:))
                 .eraseToAnyPublisher()
         }
     }

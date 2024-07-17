@@ -56,6 +56,12 @@ public final class Status: Codable, Identifiable {
     @DecodableDefault.False public private(set) var muted: Bool
     @DecodableDefault.False public private(set) var bookmarked: Bool
     public let pinned: Bool?
+    /// Server-side filtering results.
+    /// If this is non-empty, the post should be displayed with a warning, or not at all.
+    /// Note that this is context-dependent: the same status retrieved from different filter contexts
+    /// may have different values, and thus it shouldn't be stored with the status.
+    /// Used by Mastodon 4.0 and GotoSocial 0.16.
+    @DecodableDefault.EmptyList public private(set) var filtered: [FilterResult]
 
     /// Used by Glitch PR #2221 and future Firefish.
     @DecodableDefault.EmptyList public private(set) var reactions: [Reaction]
@@ -101,6 +107,7 @@ public final class Status: Codable, Identifiable {
         muted: Bool,
         bookmarked: Bool,
         pinned: Bool?,
+        filtered: [FilterResult],
         reactions: [Reaction]
     ) {
         self.id = id
@@ -134,6 +141,7 @@ public final class Status: Codable, Identifiable {
         self.reblogged = reblogged
         self.muted = muted
         self.bookmarked = bookmarked
+        self.filtered = filtered
         self.reactions = reactions
     }
 }
@@ -195,6 +203,7 @@ public extension Status {
             muted: self.muted,
             bookmarked: self.bookmarked,
             pinned: self.pinned,
+            filtered: self.filtered,
             reactions: self.reactions
         )
     }
@@ -233,10 +242,29 @@ extension Status: Hashable {
             && lhs.muted == rhs.muted
             && lhs.bookmarked == rhs.bookmarked
             && lhs.pinned == rhs.pinned
+            && lhs.filtered == rhs.filtered
             && lhs.reactions == rhs.reactions
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+public extension Status {
+    struct FilterResult: Codable, Hashable {
+        public let filter: FilterV2
+        @DecodableDefault.EmptyList public private(set) var keywordMatches: [String]
+        @DecodableDefault.EmptyList public private(set) var statusMatches: [Status.Id]
+
+        public init(
+            filter: FilterV2,
+            keywordMatches: [String],
+            statusMatches: [Status.Id]
+        ) {
+            self.filter = filter
+            self.keywordMatches = keywordMatches
+            self.statusMatches = statusMatches
+        }
     }
 }

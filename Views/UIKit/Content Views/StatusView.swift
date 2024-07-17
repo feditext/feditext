@@ -36,8 +36,10 @@ final class StatusView: UIView {
     let menuButton = UIButton()
     let buttonsStackView = UIStackView()
     let reportSelectionSwitch = UISwitch()
+    let filterReasonLabel = UILabel()
 
     private let containerStackView = UIStackView()
+    private var unfilteredStatusConstraints = [NSLayoutConstraint]()
     private let sideStackView = UIStackView()
     private let mainStackView = UIStackView()
     private let avatarContainerView = UIView()
@@ -59,6 +61,11 @@ final class StatusView: UIView {
     private var statusConfiguration: StatusContentConfiguration
     private let avatarWidthConstraint: NSLayoutConstraint
     private let avatarHeightConstraint: NSLayoutConstraint
+    private let filterCloakView = UIView()
+    private var filteredStatusConstraints = [NSLayoutConstraint]()
+    private let filterCloakStackView = UIStackView()
+    private var filterCloakStackViewLeadingConstraint: NSLayoutConstraint!
+    private let filterCloakImageView = UIImageView()
     private var cancellables = Set<AnyCancellable>()
 
     init(configuration: StatusContentConfiguration) {
@@ -80,9 +87,16 @@ final class StatusView: UIView {
     }
 
     override func accessibilityActivate() -> Bool {
-        if reportSelectionSwitch.isHidden, !statusConfiguration.viewModel.shouldShowContent {
+        if statusConfiguration.viewModel.shouldFilter {
+            statusConfiguration.viewModel.toggleShowFiltered()
+
+            return true
+        } else if reportSelectionSwitch.isHidden, !statusConfiguration.viewModel.shouldShowContent {
             statusConfiguration.viewModel.toggleShowContent()
-            accessibilityAttributedLabel = accessibilityAttributedLabel(forceShowContent: true)
+            accessibilityAttributedLabel = accessibilityAttributedLabel(
+                viewModel: statusConfiguration.viewModel,
+                forceShowContent: true
+            )
 
             return true
         } else {
@@ -125,7 +139,10 @@ extension StatusView {
     }
 
     func refreshAccessibilityLabel() {
-        accessibilityAttributedLabel = accessibilityAttributedLabel(forceShowContent: false)
+        accessibilityAttributedLabel = accessibilityAttributedLabel(
+            viewModel: statusConfiguration.viewModel,
+            forceShowContent: false
+        )
     }
 }
 
@@ -172,6 +189,14 @@ private extension StatusView {
         addSubview(containerStackView)
         containerStackView.translatesAutoresizingMaskIntoConstraints = false
         containerStackView.spacing = .defaultSpacing
+
+        // These will be switched on when we display an unfiltered status, and off otherwise.
+        unfilteredStatusConstraints = [
+            containerStackView.topAnchor.constraint(equalTo: readableContentGuide.topAnchor),
+            containerStackView.leadingAnchor.constraint(equalTo: readableContentGuide.leadingAnchor),
+            containerStackView.trailingAnchor.constraint(equalTo: readableContentGuide.trailingAnchor),
+            containerStackView.bottomAnchor.constraint(equalTo: readableContentGuide.bottomAnchor),
+        ]
 
         infoIcon.tintColor = .secondaryLabel
         infoIcon.contentMode = .scaleAspectFit
@@ -449,7 +474,7 @@ private extension StatusView {
             addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
             view.backgroundColor = .opaqueSeparator
-            view.widthAnchor.constraint(equalToConstant: .hairline).isActive = true
+            unfilteredStatusConstraints.append(view.widthAnchor.constraint(equalToConstant: .hairline))
         }
 
         containerStackView.addArrangedSubview(reportSelectionSwitch)
@@ -458,11 +483,44 @@ private extension StatusView {
         reportSelectionSwitch.setContentHuggingPriority(.defaultLow, for: .vertical)
         reportSelectionSwitch.isHidden = true
 
+        addSubview(filterCloakView)
+        filterCloakView.translatesAutoresizingMaskIntoConstraints = false
+
+        // These will be switched on when we display a filtered status, and off otherwise.
+        filteredStatusConstraints = [
+            filterCloakView.topAnchor.constraint(equalTo: readableContentGuide.topAnchor),
+            filterCloakView.leadingAnchor.constraint(equalTo: readableContentGuide.leadingAnchor),
+            filterCloakView.trailingAnchor.constraint(equalTo: readableContentGuide.trailingAnchor),
+            filterCloakView.bottomAnchor.constraint(equalTo: readableContentGuide.bottomAnchor),
+        ]
+
+        filterCloakView.addSubview(filterCloakStackView)
+        filterCloakStackView.translatesAutoresizingMaskIntoConstraints = false
+        filterCloakStackView.axis = .horizontal
+        filterCloakStackView.spacing = .defaultSpacing
+
+        filterCloakStackViewLeadingConstraint = filterCloakStackView.leadingAnchor
+            .constraint(equalTo: filterCloakView.leadingAnchor)
+
+        filterCloakStackView.addArrangedSubview(filterCloakImageView)
+        filterCloakImageView.translatesAutoresizingMaskIntoConstraints = false
+        filterCloakImageView.image = UIImage(systemName: "eye.slash")
+        filterCloakImageView.preferredSymbolConfiguration = .init(textStyle: .callout)
+        filterCloakImageView.contentMode = .scaleAspectFit
+        filterCloakImageView.tintColor = .secondaryLabel
+        filterCloakImageView.isAccessibilityElement = true
+        filterCloakImageView.accessibilityLabel = NSLocalizedString("status.filtered", comment: "")
+        filterCloakImageView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        filterCloakImageView.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+
+        filterCloakStackView.addArrangedSubview(filterReasonLabel)
+        filterReasonLabel.translatesAutoresizingMaskIntoConstraints = false
+        filterReasonLabel.font = .preferredFont(forTextStyle: .callout)
+        filterReasonLabel.adjustsFontForContentSizeCategory = true
+        filterReasonLabel.textColor = .secondaryLabel
+        filterReasonLabel.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+
         NSLayoutConstraint.activate([
-            containerStackView.topAnchor.constraint(equalTo: readableContentGuide.topAnchor),
-            containerStackView.leadingAnchor.constraint(equalTo: readableContentGuide.leadingAnchor),
-            containerStackView.trailingAnchor.constraint(equalTo: readableContentGuide.trailingAnchor),
-            containerStackView.bottomAnchor.constraint(equalTo: readableContentGuide.bottomAnchor),
             avatarContainerView.widthAnchor.constraint(equalToConstant: .avatarDimension),
             avatarContainerView.heightAnchor.constraint(equalToConstant: .avatarDimension),
             avatarWidthConstraint,
@@ -489,7 +547,12 @@ private extension StatusView {
             rebloggerButton.leadingAnchor.constraint(equalTo: infoLabel.leadingAnchor),
             rebloggerButton.topAnchor.constraint(equalTo: infoLabel.topAnchor),
             rebloggerButton.trailingAnchor.constraint(equalTo: infoLabel.trailingAnchor),
-            rebloggerButton.bottomAnchor.constraint(equalTo: infoLabel.bottomAnchor)
+            rebloggerButton.bottomAnchor.constraint(equalTo: infoLabel.bottomAnchor),
+
+            filterCloakStackView.topAnchor.constraint(equalTo: filterCloakView.topAnchor),
+            filterCloakStackView.bottomAnchor.constraint(equalTo: filterCloakView.bottomAnchor),
+            filterCloakStackViewLeadingConstraint,
+            filterCloakStackView.trailingAnchor.constraint(equalTo: filterCloakView.trailingAnchor),
         ])
 
         NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)
@@ -553,7 +616,7 @@ private extension StatusView {
             sideStackView.insertArrangedSubview(avatarContainerView, at: 1)
         }
 
-        NSLayoutConstraint.activate([
+        unfilteredStatusConstraints.append(contentsOf: [
             inReplyToView.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
             inReplyToView.topAnchor.constraint(equalTo: topAnchor),
             inReplyToView.bottomAnchor.constraint(equalTo: avatarImageView.topAnchor),
@@ -562,8 +625,8 @@ private extension StatusView {
             hasReplyFollowingView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
 
-        inReplyToView.isHidden = !viewModel.configuration.isReplyInContext
-        hasReplyFollowingView.isHidden = !viewModel.configuration.hasReplyFollowing
+        inReplyToView.isHidden = !viewModel.configuration.isReplyInContext || viewModel.shouldFilter
+        hasReplyFollowingView.isHidden = !viewModel.configuration.hasReplyFollowing || viewModel.shouldFilter
 
         if viewModel.isReblog {
             let attributedTitle = "status.reblogged-by-%@".localizedBolding(
@@ -749,9 +812,26 @@ private extension StatusView {
 
         reportSelectionSwitch.isOn = viewModel.selectedForReport
 
+        filterCloakStackViewLeadingConstraint.constant = isContextParent ? 0 : .avatarDimension + .defaultSpacing
+
+        // If the post is filtered, display the filter cloak view instead of everything else.
+        if viewModel.shouldFilter {
+            NSLayoutConstraint.activate(filteredStatusConstraints)
+            NSLayoutConstraint.deactivate(unfilteredStatusConstraints)
+            filterCloakView.isHidden = false
+            containerStackView.isHidden = true
+
+            filterReasonLabel.text = viewModel.filterReason
+        } else {
+            NSLayoutConstraint.deactivate(filteredStatusConstraints)
+            NSLayoutConstraint.activate(unfilteredStatusConstraints)
+            filterCloakView.isHidden = true
+            containerStackView.isHidden = false
+        }
+
         isAccessibilityElement = !viewModel.configuration.isContextParent
 
-        accessibilityAttributedLabel = accessibilityAttributedLabel(forceShowContent: false)
+        accessibilityAttributedLabel = accessibilityAttributedLabel(viewModel: viewModel, forceShowContent: false)
 
         configureUserInteractionEnabledForAccessibility()
 
@@ -797,6 +877,15 @@ private extension StatusView {
                 title: NSLocalizedString("status.edit-history.view", comment: ""),
                 image: UIImage(systemName: "calendar.day.timeline.left")) { _ in
                 viewModel.presentHistory()
+            })
+        }
+
+        if viewModel.configuration.showFilteredToggled {
+            // This post was filtered but was shown by the user. Let them hide it again.
+            firstSectionItems.append(UIAction(
+                title: NSLocalizedString("status.filtered.re-hide", comment: ""),
+                image: UIImage(systemName: "eye.slash")) { _ in
+                viewModel.toggleShowFiltered()
             })
         }
 
@@ -921,7 +1010,15 @@ private extension StatusView {
     }
     // swiftlint:enable function_body_length
 
-    func accessibilityAttributedLabel(forceShowContent: Bool) -> NSAttributedString {
+    func accessibilityAttributedLabel(viewModel: StatusViewModel, forceShowContent: Bool) -> NSAttributedString {
+        // Filtered statuses only list the reasons they were filtered.
+        if viewModel.shouldFilter {
+            return .init(string: String.localizedStringWithFormat(
+                NSLocalizedString("status.filtered.accessibility-label-%@", comment: ""),
+                viewModel.filterReason
+            ))
+        }
+
         let accessibilityAttributedLabel = NSMutableAttributedString(string: "")
 
         if !reportSelectionSwitch.isHidden, reportSelectionSwitch.isOn {
@@ -1125,6 +1222,19 @@ private extension StatusView {
             return []
         }
 
+        if viewModel.shouldFilter {
+            // Filtered statuses have one custom action to show the filtered status.
+            return [
+                UIAccessibilityCustomAction(
+                    name: NSLocalizedString("status.filtered.show", comment: "")
+                ) { [weak self] _ in
+                    viewModel.toggleShowFiltered()
+
+                    return true
+                },
+            ]
+        }
+
         var actions = bodyView.accessibilityCustomActions ?? []
 
         if replyButton.isEnabled {
@@ -1210,6 +1320,17 @@ private extension StatusView {
                         ? NSLocalizedString("status.unpin", comment: "")
                         : NSLocalizedString("status.pin", comment: "")) { _ in
                     viewModel.togglePinned()
+
+                    return true
+                })
+            }
+
+            if viewModel.configuration.showFilteredToggled {
+                // This post was filtered but was shown by the user. Let them hide it again.
+                actions.append(UIAccessibilityCustomAction(
+                    name: NSLocalizedString("status.filtered.re-hide", comment: "")
+                ) { [weak self] _ in
+                    viewModel.toggleShowFiltered()
 
                     return true
                 })

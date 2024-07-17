@@ -200,6 +200,16 @@ public extension StatusViewModel {
         sensitive || identityContext.identity.preferences.readingExpandMedia == .hideAll
     }
 
+    /// Return whether a filtered-post warning should be shown in place of the entire post.
+    var shouldFilter: Bool {
+        filtered && !configuration.showFilteredToggled
+    }
+
+    /// Concatenated titles of all the filters matched by this status.
+    var filterReason: String {
+        statusService.status.displayStatus.filtered.map(\.filter.title).joined(separator: ", ")
+    }
+
     var id: Status.Id { statusService.status.displayStatus.id }
 
     var accountName: String { "@".appending(statusService.status.displayStatus.account.acct) }
@@ -277,6 +287,9 @@ public extension StatusViewModel {
 
     var muted: Bool { statusService.status.displayStatus.muted }
 
+    /// This post was filtered by the server. See ``shouldFilter`` for whether we should hide it on the client.
+    var filtered: Bool { !statusService.status.displayStatus.filtered.isEmpty }
+
     var sharingURL: URL? {
         guard let urlString = statusService.status.displayStatus.url else { return nil }
 
@@ -345,6 +358,13 @@ public extension StatusViewModel {
     func toggleShowAttachments() {
         eventsSubject.send(
             statusService.toggleShowAttachments()
+                .map { _ in .ignorableOutput }
+                .eraseToAnyPublisher())
+    }
+
+    func toggleShowFiltered() {
+        eventsSubject.send(
+            statusService.toggleShowFiltered()
                 .map { _ in .ignorableOutput }
                 .eraseToAnyPublisher())
     }

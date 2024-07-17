@@ -12,20 +12,20 @@ struct ContextItemsInfo: Codable, Hashable, FetchableRecord {
 
 extension ContextItemsInfo {
     static func addingIncludes<T: DerivableRequest>(_ request: T) -> T where T.RowDecoder == StatusRecord {
-        StatusInfo.addingIncludes(request)
-            .including(all: StatusInfo.addingIncludes(StatusRecord.ancestors).forKey(CodingKeys.ancestors))
-            .including(all: StatusInfo.addingIncludes(StatusRecord.descendants).forKey(CodingKeys.descendants))
+        StatusInfo.addingIncludes(request, .thread)
+            .including(all: StatusInfo.addingIncludes(StatusRecord.ancestors, .thread).forKey(CodingKeys.ancestors))
+            .including(all: StatusInfo.addingIncludes(StatusRecord.descendants, .thread).forKey(CodingKeys.descendants))
     }
 
     static func request(_ request: QueryInterfaceRequest<StatusRecord>) -> QueryInterfaceRequest<Self> {
         addingIncludes(request).asRequest(of: self)
     }
 
-    func items(filters: [Filter]) -> [CollectionSection] {
-        let regularExpression = filters.regularExpression(context: .thread)
+    func items(matchers: [Filter.Matcher], now: Date) -> [CollectionSection] {
 
         return [ancestors, [parent], descendants].map { section in
-            section.filtered(regularExpression: regularExpression)
+            section
+                .filtered(matchers, .thread, now: now)
                 .enumerated()
                 .map { index, statusInfo in
                     let isContextParent = statusInfo.record.id == parent.record.id
@@ -45,11 +45,14 @@ extension ContextItemsInfo {
 
                     return .status(
                         .init(info: statusInfo),
-                        .init(showContentToggled: statusInfo.showContentToggled,
-                              showAttachmentsToggled: statusInfo.showAttachmentsToggled,
-                              isContextParent: isContextParent,
-                              isReplyInContext: isReplyInContext,
-                              hasReplyFollowing: hasReplyFollowing),
+                        .init(
+                            showContentToggled: statusInfo.showContentToggled,
+                            showAttachmentsToggled: statusInfo.showAttachmentsToggled,
+                            showFilteredToggled: statusInfo.showFilteredToggled,
+                            isContextParent: isContextParent,
+                            isReplyInContext: isReplyInContext,
+                            hasReplyFollowing: hasReplyFollowing
+                        ),
                         statusInfo.reblogInfo?.relationship ?? statusInfo.relationship)
                 }
         }
