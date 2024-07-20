@@ -73,8 +73,10 @@ public struct FilterV2: Codable, Identifiable, Hashable {
     public let context: [Filter.Context]
     public let expiresAt: Date?
     public let filterAction: Action
-    public let keywords: [Keyword]
-    public let statuses: [Status]
+    /// Not set by Mastodon when part of a ``Status.FilterResult``.
+    @DecodableDefault.EmptyList public private(set) var keywords: [Keyword]
+    /// Not set by Mastodon when part of a ``Status.FilterResult``.
+    @DecodableDefault.EmptyList public private(set) var statuses: [Status]
 
     public init(
         id: String,
