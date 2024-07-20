@@ -34,7 +34,7 @@ extension FiltersV2Endpoint: Endpoint {
 
     public var requires: APICapabilityRequirements? {
         .mastodonForks("4.0.0") | [
-            .gotosocial: "0.16.0",
+            .gotosocial: "0.16.0-0",
         ]
     }
 

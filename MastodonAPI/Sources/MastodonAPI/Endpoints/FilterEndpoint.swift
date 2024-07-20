@@ -70,12 +70,8 @@ extension FilterEndpoint: Endpoint {
         switch self {
         case .create(_, _, irreversible: true, _, _),
                 .update(_, _, _, irreversible: true, _, _):
-            // FiltersEndpoint.filters.requires without GtS, which doesn't support irreversible filters yet.
-            return .mastodonForks(.assumeAvailable) | [
-                .fedibird: .assumeAvailable,
-                .pleroma: .assumeAvailable,
-                .akkoma: .assumeAvailable,
-            ]
+            // We need a newer GtS version to use irreversible filters.
+            return FiltersEndpoint.filters.requires.map { $0 | [.gotosocial: "0.16.0-0"] }
 
         case .create, .update:
             return FiltersEndpoint.filters.requires
