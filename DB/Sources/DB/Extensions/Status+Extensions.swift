@@ -5,20 +5,26 @@ import GRDB
 import Mastodon
 
 extension Status {
-    func save(_ db: Database) throws {
+    /// Persist a status.
+    /// The filter context tells us how we should store its `.filtered` field, if applicable.
+    func save(_ db: Database, _ filterContext: Filter.Context?) throws {
         try account.save(db)
 
         // Save quotes and reblogs recursively:
         // - Firefish may serve us an entire quote or reblog chain at once.
         // - Mastodon and Akkoma definitely do *not* do this.
         if let quote = quote {
-            try quote.save(db)
+            try quote.save(db, filterContext)
         }
         if let reblog = reblog {
-            try reblog.save(db)
+            try reblog.save(db, filterContext)
         }
 
         try StatusRecord(status: self).save(db)
+
+        if let filterContext = filterContext {
+            try StatusFiltered.update(self, filterContext, db)
+        }
     }
 
     convenience init(info: StatusInfo) {

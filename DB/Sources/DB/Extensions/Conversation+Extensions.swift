@@ -8,8 +8,7 @@ extension Conversation {
     func save(_ db: Database) throws {
         guard let lastStatus = lastStatus else { return }
 
-        // Conversations don't have a filter context, so we don't need to worry about saving `lastStatus.filtered` here.
-        try lastStatus.save(db)
+        try lastStatus.save(db, .conversation)
         try ConversationRecord(conversation: self).save(db)
 
         for account in accounts {

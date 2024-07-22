@@ -54,7 +54,7 @@ public extension ContentDatabase {
     }
 
     func insert(status: Status) -> AnyPublisher<Never, Error> {
-        databaseWriter.mutatingPublisher(updates: status.save)
+        databaseWriter.mutatingPublisher(updates: { try status.save($0, .single) })
     }
 
     // swiftlint:disable function_body_length
@@ -79,13 +79,9 @@ public extension ContentDatabase {
                 : nil
 
             for status in statuses {
-                try status.save($0)
+                try status.save($0, timeline.filterContext)
 
                 try TimelineStatusJoin(timelineId: timeline.id, statusId: status.id, order: order).save($0)
-
-                if let filterContext = timeline.filterContext {
-                    try StatusFiltered.update(status, filterContext, $0)
-                }
 
                 if let presentOrder = order {
                     order = presentOrder + 1
@@ -170,14 +166,12 @@ public extension ContentDatabase {
     func insert(context: Context, parentId: Status.Id) -> AnyPublisher<Never, Error> {
         databaseWriter.mutatingPublisher {
             for (index, status) in context.ancestors.enumerated() {
-                try status.save($0)
-                try StatusFiltered.update(status, .thread, $0)
+                try status.save($0, .thread)
                 try StatusAncestorJoin(parentId: parentId, statusId: status.id, order: index).save($0)
             }
 
             for (index, status) in context.descendants.enumerated() {
-                try status.save($0)
-                try StatusFiltered.update(status, .thread, $0)
+                try status.save($0, .thread)
                 try StatusDescendantJoin(parentId: parentId, statusId: status.id, order: index).save($0)
             }
 
@@ -196,8 +190,7 @@ public extension ContentDatabase {
     func insert(pinnedStatuses: [Status], accountId: Account.Id) -> AnyPublisher<Never, Error> {
         databaseWriter.mutatingPublisher {
             for (index, status) in pinnedStatuses.enumerated() {
-                try status.save($0)
-                try StatusFiltered.update(status, .account, $0)
+                try status.save($0, .account)
                 try AccountPinnedStatusJoin(accountId: accountId, statusId: status.id, order: index).save($0)
             }
 
@@ -584,7 +577,7 @@ public extension ContentDatabase {
             }
 
             for status in results.statuses {
-                try status.save($0)
+                try status.save($0, .search)
             }
         }
     }

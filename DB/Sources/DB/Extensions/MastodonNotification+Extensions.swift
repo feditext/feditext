@@ -8,8 +8,7 @@ extension MastodonNotification {
     func save(_ db: Database) throws {
         try account.save(db)
         if let status = status {
-            try status.save(db)
-            try StatusFiltered.update(status, .notifications, db)
+            try status.save(db, .notifications)
         }
         try report?.save(db)
         try NotificationRecord(notification: self).save(db)
