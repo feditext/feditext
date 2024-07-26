@@ -621,6 +621,7 @@ private extension StatusBodyView {
         )
     }
 
+    // TODO: (Vyr) not used yet
     /// Highlight followed tags in status text with transparent version of tags view link color.
     /// Disabled if high contrast mode is on.
     static var followedTagBackgroundColor: UIColor = .init { traitCollection in
@@ -649,7 +650,9 @@ private extension StatusBodyView {
         var b: CGFloat = 0
         var a: CGFloat = 0
         StatusBodyView.tagsViewLinkColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        
+        let aDivisor = traitCollection.userInterfaceStyle == .dark ? 3.0 : 6.0
 
-        return .init(hue: h, saturation: s, brightness: b, alpha: a / 8)
+        return .init(hue: h, saturation: s, brightness: b, alpha: a / aDivisor)
     }
 }
