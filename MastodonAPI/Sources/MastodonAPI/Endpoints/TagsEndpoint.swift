@@ -53,6 +53,7 @@ extension TagsEndpoint: Endpoint {
         case .followed:
             return .mastodonForks("4.0.0") | [
                 .pixelfed: .assumeAvailable,
+                .gotosocial: "0.17.0-0",
             ]
         }
     }
