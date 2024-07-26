@@ -9,6 +9,10 @@ import MastodonAPI
 import ServiceLayer
 
 public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObject {
+    /// Controls whether followed tag highlights are shown.
+    public let timeline: Timeline?
+    /// List of the user's followed tags.
+    public let followedTags: [FollowedTag]
     public let accountViewModel: AccountViewModel
     /// BCP 47 language tag, if available.
     public let language: String?
@@ -18,6 +22,7 @@ public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObj
     public let isReblog: Bool
     public let rebloggedByDisplayName: String
     public let rebloggedByDisplayNameEmojis: [Emoji]
+    public var rebloggerRelationship: Relationship?
     public let attachmentViewModels: [AttachmentViewModel]
     public let pollEmojis: [Emoji]
     @Published public var pollOptionSelections = Set<Int>()
@@ -29,11 +34,19 @@ public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObj
     private let statusService: StatusService
     private let eventsSubject: PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>
 
-    init(statusService: StatusService,
-         identityContext: IdentityContext,
-         eventsSubject: PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>) {
+    /// ``timeline`` and ``followedTags`` only need to be set for highlighting posts on the home timeline,
+    /// and may be empty for other timelines.
+    init(
+        statusService: StatusService,
+        identityContext: IdentityContext,
+        timeline: Timeline?,
+        followedTags: [FollowedTag],
+        eventsSubject: PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>
+    ) {
         self.statusService = statusService
         self.identityContext = identityContext
+        self.timeline = timeline
+        self.followedTags = followedTags
         self.eventsSubject = eventsSubject
         accountViewModel = AccountViewModel(
             accountService: statusService.navigationService
@@ -72,6 +85,8 @@ public extension StatusViewModel {
         return Self(
             statusService: quotedService,
             identityContext: identityContext,
+            timeline: timeline,
+            followedTags: followedTags,
             eventsSubject: eventsSubject
         )
     }
@@ -100,6 +115,14 @@ public extension StatusViewModel {
         guard let myId = identityContext.identity.account?.id else { return false }
 
         return statusService.status.displayStatus.mentions.contains { $0.id == myId }
+    }
+
+    var followingAuthor: Bool {
+        accountViewModel.relationship?.following ?? false
+    }
+
+    var followingReblogger: Bool {
+        rebloggerRelationship?.following ?? false
     }
 
     /// Does this instance support editing statuses?
@@ -445,11 +468,17 @@ public extension StatusViewModel {
         if let identity = identity {
             let identityContext = self.identityContext
             let configuration = self.configuration.reply()
+            let timeline = timeline
+            let followedTags = followedTags
 
             eventsSubject.send(statusService.asIdentity(id: identity.id).map {
-                let replyViewModel = Self(statusService: $0,
-                                          identityContext: identityContext,
-                                          eventsSubject: .init())
+                let replyViewModel = Self(
+                    statusService: $0,
+                    identityContext: identityContext,
+                    timeline: timeline,
+                    followedTags: followedTags,
+                    eventsSubject: .init()
+                )
 
                 replyViewModel.configuration = configuration
 
@@ -457,9 +486,13 @@ public extension StatusViewModel {
             }
             .eraseToAnyPublisher())
         } else {
-            let replyViewModel = Self(statusService: statusService,
-                                      identityContext: identityContext,
-                                      eventsSubject: .init())
+            let replyViewModel = Self(
+                statusService: statusService,
+                identityContext: identityContext,
+                timeline: timeline,
+                followedTags: followedTags,
+                eventsSubject: .init()
+            )
 
             replyViewModel.configuration = configuration.reply()
 
@@ -660,6 +693,17 @@ public extension StatusViewModel {
                 .eraseToAnyPublisher()
         )
     }
+
+    /// Publish the set of followed tag IDs that put this post on the timeline.
+    var reasonTagIDs: Set<TagViewModel.ID> {
+        if (timeline != .home) || isMine || mentionsMe || followingAuthor || followingReblogger {
+            return []
+        }
+
+        return Set(followedTags.map { followedTag in
+            Tag.normalizeName(followedTag.name)
+        })
+    }
 }
 
 private extension StatusViewModel {
@@ -708,6 +752,8 @@ private extension StatusViewModel {
     func compose(_ operationPublisher: AnyPublisher<ComposeOperation, Error>) {
         let identityContext = identityContext
         let isContextParent = configuration.isContextParent
+        let timeline = timeline
+        let followedTags = followedTags
 
         let eventPublisher = operationPublisher
             .zip(statusService.inReplyTo())
@@ -716,6 +762,8 @@ private extension StatusViewModel {
                     let viewModel = Self(
                         statusService: statusService,
                         identityContext: identityContext,
+                        timeline: timeline,
+                        followedTags: followedTags,
                         eventsSubject: .init()
                     )
                     viewModel.configuration = CollectionItem.StatusConfiguration.default.reply()

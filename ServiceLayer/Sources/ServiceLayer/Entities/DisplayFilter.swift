@@ -20,7 +20,7 @@ public struct DisplayFilter: Codable {
     /// Decide whether or not to show the item.
     public func allow(_ item: CollectionItem) -> Bool {
         switch item {
-        case let .status(status, _, _):
+        case let .status(status, _, _, _):
             if status.account.bot && !showBots {
                 return false
             }

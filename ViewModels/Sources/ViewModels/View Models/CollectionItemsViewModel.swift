@@ -17,6 +17,7 @@ public class CollectionItemsViewModel: ObservableObject {
     private let eventsSubject = PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>()
     private let loadingSubject = PassthroughSubject<Bool, Never>()
     private let searchScopeChangesSubject = PassthroughSubject<SearchScope, Never>()
+    private let followedTagsSubject = CurrentValueSubject<[FollowedTag], Never>([])
     private var topVisibleIndexPath = IndexPath(item: 0, section: 0)
     private let lastReadId = CurrentValueSubject<String?, Never>(nil)
     private var lastSelectedLoadMore: LoadMore?
@@ -52,6 +53,11 @@ public class CollectionItemsViewModel: ObservableObject {
             .flatMap(identityContext.service.requestFamiliarFollowers(ids:))
             .catch { _ in Empty().setFailureType(to: Never.self) }
             .sink { _ in }
+            .store(in: &cancellables)
+
+        identityContext.service.followedTagsPublisher()
+            .replaceError(with: [])
+            .subscribe(followedTagsSubject)
             .store(in: &cancellables)
 
         let debouncedLastReadId = lastReadId
@@ -110,7 +116,7 @@ public class CollectionItemsViewModel: ObservableObject {
                             .map(\.items)
                             .reduce([], +)
                             .compactMap { item -> Status.Id? in
-                                guard case let .status(status, _, _) = item else { return nil }
+                                guard case let .status(status, _, _, _) = item else { return nil }
 
                                 return status.id
                             }
@@ -174,7 +180,7 @@ public class CollectionItemsViewModel: ObservableObject {
         let cachedViewModel = viewModelCache[item]
 
         switch item {
-        case let .status(status, configuration, relationship):
+        case let .status(status, configuration, authorRelationship, rebloggerRelationship):
             let viewModel: StatusViewModel
 
             if let cachedViewModel = cachedViewModel as? StatusViewModel {
@@ -183,12 +189,16 @@ public class CollectionItemsViewModel: ObservableObject {
                 viewModel = .init(
                     statusService: collectionService.navigationService.statusService(status: status),
                     identityContext: identityContext,
-                    eventsSubject: eventsSubject)
+                    timeline: collectionService.positionTimeline,
+                    followedTags: followedTagsSubject.value,
+                    eventsSubject: eventsSubject
+                )
                 viewModelCache[item] = viewModel
             }
 
             viewModel.configuration = configuration
-            viewModel.accountViewModel.relationship = relationship
+            viewModel.accountViewModel.relationship = authorRelationship
+            viewModel.rebloggerRelationship = rebloggerRelationship
 
             return viewModel
 
@@ -237,6 +247,8 @@ public class CollectionItemsViewModel: ObservableObject {
                 let statusViewModel = StatusViewModel(
                     statusService: collectionService.navigationService.statusService(status: status),
                     identityContext: identityContext,
+                    timeline: collectionService.positionTimeline,
+                    followedTags: followedTagsSubject.value,
                     eventsSubject: eventsSubject
                 )
                 statusViewModel.configuration = statusConfiguration
@@ -393,7 +405,7 @@ extension CollectionItemsViewModel: CollectionViewModel {
         let item = lastUpdate.sections[indexPath.section].items[indexPath.item]
 
         switch item {
-        case let .status(status, _, _):
+        case let .status(status, _, _, _):
             if let statusViewModel = viewModel(indexPath: indexPath) as? StatusViewModel,
                statusViewModel.shouldFilter {
                 statusViewModel.toggleShowFiltered()
@@ -542,7 +554,7 @@ extension CollectionItemsViewModel: CollectionViewModel {
 
     public func canSelect(indexPath: IndexPath) -> Bool {
         switch lastUpdate.sections[indexPath.section].items[indexPath.item] {
-        case let .status(_, configuration, _):
+        case let .status(_, configuration, _, _):
             return !configuration.isContextParent
         case .loadMore:
             return !((viewModel(indexPath: indexPath) as? LoadMoreViewModel)?.loading ?? false)
@@ -638,7 +650,7 @@ private extension CollectionItemsViewModel {
         if collectionService is ContextService,
            lastUpdate.sections.isEmpty || lastUpdate.sections.map(\.items.count) == [0, 1, 0],
            let contextParent = newItems.first(where: {
-            guard case let .status(_, configuration, _) = $0 else { return false }
+            guard case let .status(_, configuration, _, _) = $0 else { return false }
 
             return configuration.isContextParent // Maintain scroll position of parent after initial load of context
            }) {
@@ -654,7 +666,7 @@ private extension CollectionItemsViewModel {
                        let direction = (viewModelCache[item] as? LoadMoreViewModel)?.direction,
                        direction == .up,
                        let statusAfterLoadMore = items.first(where: {
-                        guard case let .status(status, _, _) = $0 else { return false }
+                        guard case let .status(status, _, _, _) = $0 else { return false }
 
                         return status.id == loadMore.beforeStatusId
                        }) {

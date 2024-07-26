@@ -45,7 +45,10 @@ public final class NotificationViewModel: ObservableObject {
             statusViewModel = StatusViewModel(
                 statusService: notificationService.navigationService.statusService(status: status),
                 identityContext: identityContext,
-                eventsSubject: eventsSubject)
+                timeline: nil,
+                followedTags: [],
+                eventsSubject: eventsSubject
+            )
         } else {
             statusViewModel = nil
         }

@@ -1,6 +1,7 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
 import AppUrls
+import Combine
 import Foundation
 import Mastodon
 import UIKit
@@ -19,6 +20,11 @@ final class StatusBodyView: UIView {
     let quotedView = UIButton()
     let pollView = PollView()
     let cardView = CardView()
+
+    typealias TagPair = (id: TagViewModel.ID, name: String)
+    private var tagViewTagPairs = [TagPair]()
+
+    private var cancellables = Set<AnyCancellable>()
 
     /// Show this many lines of a folded post as a preview.
     static let numLinesFoldedPreview: Int = 2
@@ -89,27 +95,17 @@ final class StatusBodyView: UIView {
                 : 0
             contentTextView.accessibilityLanguage = viewModel.language
 
-            let tagViewTagPairs = trailingTagPairs + outOfTextTagPairs
+            tagViewTagPairs = trailingTagPairs + outOfTextTagPairs
             tagsView.isHidden = hideContent
                 || (!foldTrailingHashtags && outOfTextTagPairs.isEmpty)
                 || tagViewTagPairs.isEmpty
-            tagsView.attributedText = makeLinkedTagViewText(tagViewTagPairs)
+            // Get the text in there now even if it's not styled right.
+            // Otherwise sometimes the view's height is wrong.
+            updateTagView()
             tagsView.accessibilityValue = NSLocalizedString("search.scope.tags", comment: "")
             tagsView.accessibilityLanguage = viewModel.language
-            tagsView.accessibilityLabel = Self.makeLinkedTagViewAccessibilityLabel(tagViewTagPairs)
             tagsView.accessibilityTraits = .staticText
             tagsView.accessibilityHint = NSLocalizedString("status.accessibility.go-to-hashtags-hint", comment: "")
-            tagsView.accessibilityCustomActions = tagViewTagPairs.map { tagPair in
-                .init(
-                    name: String.localizedStringWithFormat(
-                        NSLocalizedString("status.accessibility.go-to-hashtag-%@", comment: ""),
-                        Self.stripHash(tagPair.name)
-                    )
-                ) { [weak self] _ in
-                    self?.viewModel?.tagSelected(tagPair.id)
-                    return true
-                }
-            }
 
             var accessibilityCustomActions = [UIAccessibilityCustomAction]()
 
@@ -194,29 +190,10 @@ final class StatusBodyView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    /// De-emphasize links in tag view. Disabled if high contrast mode is on.
-    private static var tagsViewLinkColor: UIColor = .init { traitCollection in
-        if traitCollection.accessibilityContrast == .high {
-            return .tintColor
-        }
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
 
-        var h1: CGFloat = 0
-        var s1: CGFloat = 0
-        var b1: CGFloat = 0
-        var a1: CGFloat = 0
-        UIColor.tintColor.getHue(&h1, saturation: &s1, brightness: &b1, alpha: &a1)
-
-        var s2: CGFloat = 0
-        var b2: CGFloat = 0
-        var a2: CGFloat = 0
-        UIColor.secondaryLabel.getHue(nil, saturation: &s2, brightness: &b2, alpha: &a2)
-
-        return .init(
-            hue: h1,
-            saturation: (s1 + s2) / 2,
-            brightness: (b1 + b2) / 2,
-            alpha: (a1 + a2) / 2
-        )
+        updateTagView()
     }
 }
 
@@ -391,7 +368,8 @@ private extension StatusBodyView {
         tagsView.adjustsFontForContentSizeCategory = true
         tagsView.backgroundColor = .clear
         tagsView.delegate = self
-        tagsView.linkTextAttributes[.foregroundColor] = Self.tagsViewLinkColor
+        tagsView.linkTextAttributes.removeValue(forKey: .foregroundColor)
+        tagsView.linkTextAttributes.removeValue(forKey: .underlineStyle)
         stackView.addArrangedSubview(tagsView)
 
         // TODO: (Vyr) quote posts: replace with mini status view
@@ -441,9 +419,11 @@ private extension StatusBodyView {
         isContextParent ? .title3 : .callout
     }
 
+    // TODO: (Vyr) this stuff needs to be moved to StatusViewModel
+
     /// Find any hashtags that are attached to the status but don't appear in the text.
     /// Return their IDs and display text.
-    func findOutOfTextTagPairs() -> [(id: TagViewModel.ID, name: String)] {
+    func findOutOfTextTagPairs() -> [TagPair] {
         guard let viewModel = viewModel else { return [] }
         let tagViewModels = viewModel.tagViewModels
         let content = viewModel.content
@@ -461,9 +441,7 @@ private extension StatusBodyView {
 
     /// Drop trailing hashtags from the string.
     /// Return a list of the tag IDs that were dropped and the original text for each.
-    static func dropTrailingHashtags(
-        _ mutableContent: NSMutableAttributedString
-    ) -> [(id: TagViewModel.ID, name: String)] {
+    static func dropTrailingHashtags(_ mutableContent: NSMutableAttributedString) -> [TagPair] {
         var tagIds = Set<TagViewModel.ID>()
         var tagPairs = [(TagViewModel.ID, String)]()
         var startOfTrailingHashtags: String.Index = mutableContent.string.endIndex
@@ -517,25 +495,75 @@ private extension StatusBodyView {
         return tagPairs.reversed()
     }
 
+    /// Update the tag view when the tag list, the user's list of followed tags, or the accessibility contrast changes.
+    func updateTagView() {
+        tagsView.attributedText = makeLinkedTagViewText()
+        tagsView.accessibilityLabel = Self.makeLinkedTagViewAccessibilityLabel(tagViewTagPairs)
+        tagsView.accessibilityCustomActions = tagViewTagPairs.map { tagPair in
+            .init(
+                name: String.localizedStringWithFormat(
+                    NSLocalizedString("status.accessibility.go-to-hashtag-%@", comment: ""),
+                    Self.stripHash(tagPair.name)
+                )
+            ) { [weak self] _ in
+                self?.viewModel?.tagSelected(tagPair.id)
+                return true
+            }
+        }
+    }
+
     /// Returns text with tappable hashtag links for each trailing or out-of-text tag.
-    func makeLinkedTagViewText(_ tagPairs: [(TagViewModel.ID, String)]) -> NSAttributedString? {
+    func makeLinkedTagViewText() -> NSAttributedString? {
+        guard let viewModel = viewModel else { return nil }
+
         let text = NSMutableAttributedString()
 
         var firstTag = true
-        for (tagId, tagText) in tagPairs {
+        for (tagId, tagText) in tagViewTagPairs {
             if !firstTag {
-                text.mutableString.append(" ")
+                // Explicitly non-attributed text prevents extending attribute runs from previous text.
+                text.append(NSAttributedString(string: " "))
             }
             firstTag = false
 
-            let linkStart = text.length
-            text.mutableString.append(tagText)
-            let linkLength = text.length - linkStart
-            text.addAttribute(
+            let linkAttributedString = NSMutableAttributedString(string: tagText)
+            let linkRange = NSRange(location: 0, length: linkAttributedString.length)
+
+            linkAttributedString.addAttribute(
                 .link,
                 value: AppUrl.tagTimeline(tagId).url,
-                range: NSRange(location: linkStart, length: linkLength)
+                range: linkRange
             )
+            linkAttributedString.addAttribute(
+                .foregroundColor,
+                value: Self.tagsViewLinkColor,
+                range: linkRange
+            )
+
+            if viewModel.reasonTagIDs.contains(tagId) {
+                // Make these tags stand out.
+                if traitCollection.accessibilityContrast == .high {
+                    linkAttributedString.addAttribute(
+                        .underlineStyle,
+                        // Without .rawValue, results in -[_SwiftValue integerValue]: unrecognized selector sent to instance
+                        value: NSUnderlineStyle.single.rawValue,
+                        range: linkRange
+                    )
+                    linkAttributedString.addAttribute(
+                        .underlineColor,
+                        value: UIColor.tintColor,
+                        range: linkRange
+                    )
+                } else {
+                    linkAttributedString.addAttribute(
+                        .backgroundColor,
+                        value: Self.tagsViewFollowedTagBackgroundColor,
+                        range: linkRange
+                    )
+                }
+            }
+
+            text.append(linkAttributedString)
         }
 
         text.addAttribute(
@@ -557,7 +585,7 @@ private extension StatusBodyView {
         return name
     }
 
-    static func makeLinkedTagViewAccessibilityLabel(_ tagPairs: [(id: TagViewModel.ID, name: String)]) -> String? {
+    static func makeLinkedTagViewAccessibilityLabel(_ tagPairs: [TagPair]) -> String? {
         guard !tagPairs.isEmpty else { return nil }
 
         return String(
@@ -565,5 +593,63 @@ private extension StatusBodyView {
                 .map { tagPair in Self.stripHash(tagPair.name) }
                 .joined(separator: ", ")
         )
+    }
+
+    /// De-emphasize links in tag view.
+    /// Disabled if high contrast mode is on.
+    static var tagsViewLinkColor: UIColor = .init { traitCollection in
+        if traitCollection.accessibilityContrast == .high {
+            return .tintColor
+        }
+
+        var h1: CGFloat = 0
+        var s1: CGFloat = 0
+        var b1: CGFloat = 0
+        var a1: CGFloat = 0
+        UIColor.tintColor.getHue(&h1, saturation: &s1, brightness: &b1, alpha: &a1)
+
+        var s2: CGFloat = 0
+        var b2: CGFloat = 0
+        var a2: CGFloat = 0
+        UIColor.secondaryLabel.getHue(nil, saturation: &s2, brightness: &b2, alpha: &a2)
+
+        return .init(
+            hue: h1,
+            saturation: (s1 + s2) / 2,
+            brightness: (b1 + b2) / 2,
+            alpha: (a1 + a2) / 2
+        )
+    }
+
+    /// Highlight followed tags in status text with transparent version of tags view link color.
+    /// Disabled if high contrast mode is on.
+    static var followedTagBackgroundColor: UIColor = .init { traitCollection in
+        if traitCollection.accessibilityContrast == .high {
+            return .clear
+        }
+
+        var h: CGFloat = 0
+        var s: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        UIColor.tintColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+
+        return .init(hue: h, saturation: s, brightness: b, alpha: a / 8)
+    }
+
+    /// Highlight followed tags in tags view with transparent version of tags view link color.
+    /// Disabled if high contrast mode is on.
+    static var tagsViewFollowedTagBackgroundColor: UIColor = .init { traitCollection in
+        if traitCollection.accessibilityContrast == .high {
+            return .clear
+        }
+
+        var h: CGFloat = 0
+        var s: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        StatusBodyView.tagsViewLinkColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+
+        return .init(hue: h, saturation: s, brightness: b, alpha: a / 8)
     }
 }

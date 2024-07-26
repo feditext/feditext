@@ -52,12 +52,14 @@ extension TimelineItemsInfo {
                         showFilteredToggled: $0.showFilteredToggled,
                         isReplyOutOfContext: ($0.reblogInfo?.record ?? $0.record).inReplyToId != nil
                     ),
-                    $0.reblogInfo?.relationship ?? $0.relationship)
+                    authorRelationship: $0.reblogInfo?.relationship ?? $0.relationship,
+                    rebloggerRelationship: $0.relationship
+                )
             }
 
         for loadMoreRecord in loadMoreRecords {
             guard let index = timelineItems.firstIndex(where: {
-                guard case let .status(status, _, _) = $0 else { return false }
+                guard case let .status(status, _, _, _) = $0 else { return false }
 
                 return loadMoreRecord.afterStatusId > status.id
             }) else { continue }
@@ -84,7 +86,9 @@ extension TimelineItemsInfo {
                                     isPinned: true,
                                     isReplyOutOfContext: ($0.reblogInfo?.record ?? $0.record).inReplyToId != nil
                                 ),
-                                $0.reblogInfo?.relationship ?? $0.relationship)
+                                authorRelationship: $0.reblogInfo?.relationship ?? $0.relationship,
+                                rebloggerRelationship: $0.relationship
+                            )
                         }),
                     .init(items: timelineItems)]
         } else {

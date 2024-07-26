@@ -736,7 +736,9 @@ public extension ContentDatabase {
                         showAttachmentsToggled: $0.showAttachmentsToggled,
                         showFilteredToggled: $0.showFilteredToggled
                     ),
-                    $0.reblogInfo?.relationship ?? $0.relationship)
+                    authorRelationship: $0.reblogInfo?.relationship ?? $0.relationship,
+                    rebloggerRelationship: $0.relationship
+                )
             }
 
             if let limit = limit, statuses.count >= limit {

@@ -301,6 +301,7 @@ private extension CompositionInputAccessoryView {
 
 extension CompositionInputAccessoryView {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
         charactersBarItem.setTitleTextAttributes(
             [
                 .foregroundColor: viewModel.remainingCharacters < 0 ? UIColor.systemRed : UIColor.label,

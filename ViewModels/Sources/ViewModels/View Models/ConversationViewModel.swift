@@ -24,7 +24,10 @@ public final class ConversationViewModel: ObservableObject {
             statusViewModel = StatusViewModel(
                 statusService: conversationService.navigationService.statusService(status: status),
                 identityContext: identityContext,
-                eventsSubject: .init())
+                timeline: nil,
+                followedTags: [],
+                eventsSubject: .init()
+            )
         } else {
             statusViewModel = nil
         }

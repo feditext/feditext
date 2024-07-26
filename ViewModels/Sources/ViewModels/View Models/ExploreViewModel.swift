@@ -148,6 +148,8 @@ public extension ExploreViewModel {
         .init(
             statusService: exploreService.navigationService.statusService(status: status),
             identityContext: identityContext,
+            timeline: nil,
+            followedTags: [],
             eventsSubject: statusEventsSubject
         )
     }

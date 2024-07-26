@@ -45,6 +45,7 @@ final class ReportHeaderView: UIView {
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
         updateCategoryButtonStack()
     }
 }

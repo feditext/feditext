@@ -283,6 +283,7 @@ final class AccountHeaderView: UIView {
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
         setupSegmentedControl()
     }
 }

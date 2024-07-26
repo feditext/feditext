@@ -24,6 +24,8 @@ public final class MultiNotificationViewModel: ObservableObject {
             self.statusViewModel = StatusViewModel(
                 statusService: statusService,
                 identityContext: identityContext,
+                timeline: nil,
+                followedTags: [],
                 eventsSubject: eventsSubject
             )
         } else {

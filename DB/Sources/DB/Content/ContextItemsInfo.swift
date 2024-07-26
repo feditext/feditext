@@ -53,7 +53,9 @@ extension ContextItemsInfo {
                             isReplyInContext: isReplyInContext,
                             hasReplyFollowing: hasReplyFollowing
                         ),
-                        statusInfo.reblogInfo?.relationship ?? statusInfo.relationship)
+                        authorRelationship: statusInfo.reblogInfo?.relationship ?? statusInfo.relationship,
+                        rebloggerRelationship: statusInfo.relationship
+                    )
                 }
         }
         .map { CollectionSection(items: $0) }
