@@ -132,7 +132,7 @@ public enum FeditextQuoteLevelAttribute: CodableAttributedStringKey {
 
 public enum FeditextHashtagAttribute: CodableAttributedStringKey {
     public static let name = HTML.Key.hashtag.rawValue
-    public typealias Value = String
+    public typealias Value = Tag.ID
 }
 
 private final class AttributedStringCacheValue {

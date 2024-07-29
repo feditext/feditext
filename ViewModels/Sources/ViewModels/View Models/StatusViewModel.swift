@@ -2,6 +2,7 @@
 
 import AppUrls
 import Combine
+import Common
 import DB
 import Foundation
 import Mastodon
@@ -703,6 +704,95 @@ public extension StatusViewModel {
         return Set(followedTags.map { followedTag in
             Tag.normalizeName(followedTag.name)
         })
+    }
+
+    /// Lightweight tag representation: ID (normalized name) and display text (without `#`).
+    typealias TagPair = (id: Tag.ID, name: String)
+
+    /// Find any hashtags that are attached to the status but don't appear in the text.
+    var outOfTextTags: [TagPair] {
+        let textTagIds = Set(content.runs[\.hashtag].compactMap { $0.0 })
+        return statusService.status.displayStatus.tags
+            .filter { tag in !textTagIds.contains(tag.id) }
+            .map { tag in (tag.id, tag.name) }
+    }
+
+    /// Extract trailing hashtags from the string.
+    /// Return the split index where they start,
+    /// and a list of the tag IDs that were dropped with the original text for each.
+    var splitTrailingHashtags: (AttributedString.Index, [TagPair]) {
+        guard identityContext.appPreferences.foldTrailingHashtags else {
+            return (content.endIndex, [])
+        }
+
+        var tagPairsReversed = [TagPair]()
+        var startOfTrailer = content.endIndex
+        var rangeOfFirstTagInTrailer: Range<AttributedString.Index>?
+        var rangeOfFirstBlockInTrailer: Range<AttributedString.Index>?
+        var tagCountInFirstBlock = 0
+
+    blockLoop:
+        // Start at the end and work backwards within block intents and non-block text.
+        // (At this point, we haven't yet inserted whitespace from <p> tags, etc.,
+        // so blocks have no whitespace separating them and would otherwise run together.)
+        for (_, blockRange) in content.runs[\.presentationIntent].reversed() {
+            rangeOfFirstBlockInTrailer = blockRange
+            tagCountInFirstBlock = 0
+
+            for (tagID, range) in content[blockRange].runs[\.hashtag].reversed() {
+                if let tagID = tagID {
+                    startOfTrailer = range.lowerBound
+                    rangeOfFirstTagInTrailer = range
+                    tagCountInFirstBlock += 1
+
+                    // Get tag name for display, preserving capitalization, etc. but dropping any leading `#`.
+                    var tagNameStart = range.lowerBound
+                    while content.characters[tagNameStart] == "#" && tagNameStart < range.upperBound {
+                        tagNameStart = content.index(afterCharacter: tagNameStart)
+                    }
+                    if tagNameStart < range.upperBound {
+                        let tagName = content.characters[tagNameStart..<range.upperBound]
+                        tagPairsReversed.append((tagID, String(tagName)))
+                    }
+                } else {
+                    // Go back through the non-tag text while there is trailing whitespace.
+                    var i = range.upperBound
+                    while i > range.lowerBound {
+                        i = content.index(beforeCharacter: i)
+                        let c = content.characters[i]
+
+                        if !c.isWhitespace {
+                            break
+                        }
+
+                        startOfTrailer = i
+                    }
+
+                    if i > range.lowerBound {
+                        // Contains non-hashtag, non-whitespace text. Stop here.
+                        break blockLoop
+                    }
+                }
+            }
+        }
+
+        // Special case: if the first hashtag is in the same block or non-block text as the start of the trailer,
+        // and there is only one hashtag in that block,
+        // this is likely someone ending a post with a single hashtag intended to be part of the text,
+        // and we leave the first hashtag where it is.
+        if let rangeOfFirstTagInTrailer = rangeOfFirstTagInTrailer,
+           let rangeOfFirstBlockInTrailer = rangeOfFirstBlockInTrailer,
+           rangeOfFirstTagInTrailer.lowerBound >= rangeOfFirstBlockInTrailer.lowerBound,
+           rangeOfFirstTagInTrailer.upperBound <= rangeOfFirstBlockInTrailer.upperBound,
+           tagCountInFirstBlock == 1 {
+            _ = tagPairsReversed.popLast()
+            startOfTrailer = rangeOfFirstTagInTrailer.upperBound
+        }
+
+        // De-duplicate remaining tags, preserving order.
+        let tagPairs = Array(tagPairsReversed.reversed().unique(by: \.id))
+
+        return (startOfTrailer, tagPairs)
     }
 }
 

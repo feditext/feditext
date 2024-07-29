@@ -21,49 +21,38 @@ final class StatusBodyView: UIView {
     let pollView = PollView()
     let cardView = CardView()
 
-    typealias TagPair = (id: TagViewModel.ID, name: String)
-    private var tagViewTagPairs = [TagPair]()
+    /// Status content styled for this context and with trailing hashtags removed (if applicable),
+    /// but without hashtag styles that may change based on the accessibility contrast.
+    private var content: AttributedString?
+    private var tagViewTagPairs = [StatusViewModel.TagPair]()
 
     private var cancellables = Set<AnyCancellable>()
 
     /// Show this many lines of a folded post as a preview.
     static let numLinesFoldedPreview: Int = 2
 
-    // /// Don't fold hashtags when there are this many or fewer, and they follow post text without an intervening newline.
-    // TODO: (Vyr) implement this: https://github.com/feditext/feditext/issues/305
-
     var viewModel: StatusViewModel? {
         didSet {
             guard let viewModel = viewModel else { return }
 
             let foldTrailingHashtags = viewModel.identityContext.appPreferences.foldTrailingHashtags
-            let outOfTextTagPairs = findOutOfTextTagPairs()
+            let outOfTextTagPairs = viewModel.outOfTextTags
 
-            let mutableContent = NSMutableAttributedString(
-                attributedString: viewModel.content.nsFormatSiren(contentTextStyle)
-            )
-            let trailingTagPairs: [(id: TagViewModel.ID, name: String)]
-            if foldTrailingHashtags {
-                trailingTagPairs = Self.dropTrailingHashtags(mutableContent)
-            } else {
-                trailingTagPairs = []
+            var content = viewModel.content
+            let (trailerStart, trailingTagPairs) = viewModel.splitTrailingHashtags
+            if trailerStart < content.endIndex {
+                content = AttributedString(content[content.startIndex..<trailerStart])
             }
-            let mutableSpoilerText = NSMutableAttributedString(string: viewModel.spoilerText)
-            let mutableSpoilerFont = UIFont.preferredFont(forTextStyle: contentTextStyle).bold()
-            let contentFont = UIFont.preferredFont(forTextStyle: isContextParent ? .title3 : .callout)
-            let contentRange = NSRange(location: 0, length: mutableContent.length)
+            content.foregroundColor = .label
+            self.content = content.formatSiren(contentTextStyle)
+            updateContentView()
 
             contentTextView.shouldFallthrough = !isContextParent
-
-            mutableContent.addAttribute(.foregroundColor, value: UIColor.label, range: contentRange)
-            mutableContent.insert(emojis: viewModel.contentEmojis,
-                                  view: contentTextView,
-                                  identityContext: viewModel.identityContext)
-            mutableContent.resizeAttachments(toLineHeight: contentFont.lineHeight)
-            contentTextView.attributedText = mutableContent
             contentTextView.accessibilityLanguage = viewModel.language
             contentTextView.isHidden = contentTextView.text.isEmpty
 
+            let mutableSpoilerText = NSMutableAttributedString(string: viewModel.spoilerText)
+            let mutableSpoilerFont = UIFont.preferredFont(forTextStyle: contentTextStyle).bold()
             if viewModel.hasSpoiler {
                 mutableSpoilerText.insert(emojis: viewModel.contentEmojis,
                                           view: spoilerTextLabel,
@@ -150,27 +139,30 @@ final class StatusBodyView: UIView {
 
             accessibilityAttributedLabel = accessibilityAttributedLabel(forceShowContent: false)
 
-            mutableContent.enumerateAttribute(
-                .link,
-                in: NSRange(location: 0, length: mutableContent.length),
-                options: []) { attribute, range, _ in
-                guard let url = attribute as? URL else { return }
+            for (url, range) in content.runs[\.link] {
+                guard let url = url else { continue }
 
                 accessibilityCustomActions.append(
                     UIAccessibilityCustomAction(
                         name: String.localizedStringWithFormat(
                             NSLocalizedString("accessibility.activate-link-%@", comment: ""),
-                            mutableContent.attributedSubstring(from: range).string)) { [weak self] _ in
-                        guard let contentTextView = self?.contentTextView else { return false }
+                            String(content[range].characters)
+                        )
+                    ) { [weak self] _ in
+                        guard let contentTextView = self?.contentTextView,
+                              let content = self?.content
+                        else { return false }
 
                         _ = contentTextView.delegate?.textView?(
                             contentTextView,
                             shouldInteractWith: url,
-                            in: range,
-                            interaction: .invokeDefaultAction)
+                            in: NSRange(range, in: content),
+                            interaction: .invokeDefaultAction
+                        )
 
                         return true
-                    })
+                    }
+                )
             }
 
             self.accessibilityCustomActions = accessibilityCustomActions
@@ -193,6 +185,7 @@ final class StatusBodyView: UIView {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
+        updateContentView()
         updateTagView()
     }
 }
@@ -370,6 +363,7 @@ private extension StatusBodyView {
         tagsView.delegate = self
         tagsView.linkTextAttributes.removeValue(forKey: .foregroundColor)
         tagsView.linkTextAttributes.removeValue(forKey: .underlineStyle)
+        tagsView.linkTextAttributes.removeValue(forKey: .underlineColor)
         stackView.addArrangedSubview(tagsView)
 
         // TODO: (Vyr) quote posts: replace with mini status view
@@ -407,7 +401,7 @@ private extension StatusBodyView {
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 
@@ -419,91 +413,46 @@ private extension StatusBodyView {
         isContextParent ? .title3 : .callout
     }
 
-    // TODO: (Vyr) this stuff needs to be moved to StatusViewModel
+    /// Update the content view when the content or the accessibility contrast changes.
+    func updateContentView() {
+        guard var mutableContent = content,
+              let viewModel = viewModel
+        else { return }
 
-    /// Find any hashtags that are attached to the status but don't appear in the text.
-    /// Return their IDs and display text.
-    func findOutOfTextTagPairs() -> [TagPair] {
-        guard let viewModel = viewModel else { return [] }
-        let tagViewModels = viewModel.tagViewModels
-        let content = viewModel.content
+        // Make followed hashtags stand out.
+        for (tagID, range) in mutableContent.runs[\.hashtag] {
+            guard let tagID = tagID else { continue }
 
-        var tagIds = Set(tagViewModels.map { $0.id })
-        for (tagId, _) in content.runs[\.hashtag] {
-            guard let tagId = tagId else { continue }
-            tagIds.remove(tagId)
-        }
-
-        return tagViewModels
-            .filter { tagIds.contains($0.id) }
-            .map { ($0.id, $0.name) }
-    }
-
-    /// Drop trailing hashtags from the string.
-    /// Return a list of the tag IDs that were dropped and the original text for each.
-    static func dropTrailingHashtags(_ mutableContent: NSMutableAttributedString) -> [TagPair] {
-        var tagIds = Set<TagViewModel.ID>()
-        var tagPairs = [(TagViewModel.ID, String)]()
-        var startOfTrailingHashtags: String.Index = mutableContent.string.endIndex
-
-        let entireString = NSRange(location: 0, length: mutableContent.length)
-        mutableContent.enumerateAttribute(
-            HTML.Key.hashtag,
-            in: entireString,
-            options: .reverse
-        ) { val, nsRange, stop in
-            guard let range = Range(nsRange, in: mutableContent.string) else {
-                assertionFailure("Couldn't create range for substring")
-                stop.pointee = true
-                return
-            }
-            let substring = mutableContent.string[range]
-
-            if let tagId = val as? TagViewModel.ID {
-                startOfTrailingHashtags = range.lowerBound
-                let (firstSeen, _) = tagIds.insert(tagId)
-                if firstSeen {
-                    tagPairs.append((tagId, String(substring)))
-                }
-            } else {
-                // Go back through the substring while there is trailing whitespace.
-                var i = substring.endIndex
-                while i > substring.startIndex {
-                    let prevI = substring.index(before: i)
-                    if !substring[prevI].isWhitespace {
-                        break
-                    }
-                    i = prevI
-                }
-                startOfTrailingHashtags = i
-                if i > substring.startIndex {
-                    // Contains non-hashtag, non-whitespace text. Stop here.
-                    stop.pointee = true
+            if viewModel.reasonTagIDs.contains(tagID) {
+                if traitCollection.accessibilityContrast == .high {
+                    mutableContent[range].uiKit.underlineStyle = .single
+                    mutableContent[range].uiKit.underlineColor = .tintColor
+                } else {
+                    mutableContent[range].backgroundColor = Self.followedTagBackgroundColor
                 }
             }
         }
 
-        guard startOfTrailingHashtags < mutableContent.string.endIndex else { return tagPairs }
-
-        mutableContent.deleteCharacters(
-            in: NSRange(
-                startOfTrailingHashtags..<mutableContent.string.endIndex,
-                in: mutableContent.string
-            )
+        let nsMutableContent = (try? NSMutableAttributedString(mutableContent, including: \.all)) ?? .init()
+        nsMutableContent.insert(
+            emojis: viewModel.contentEmojis,
+            view: contentTextView,
+            identityContext: viewModel.identityContext
         )
-
-        return tagPairs.reversed()
+        let contentFont = UIFont.preferredFont(forTextStyle: contentTextStyle)
+        nsMutableContent.resizeAttachments(toLineHeight: contentFont.lineHeight)
+        contentTextView.attributedText = nsMutableContent
     }
 
     /// Update the tag view when the tag list, the user's list of followed tags, or the accessibility contrast changes.
     func updateTagView() {
-        tagsView.attributedText = makeLinkedTagViewText()
-        tagsView.accessibilityLabel = Self.makeLinkedTagViewAccessibilityLabel(tagViewTagPairs)
+        tagsView.attributedText = linkedTagViewText.flatMap { try? NSAttributedString($0, including: \.all) }
+        tagsView.accessibilityLabel = makeLinkedTagViewAccessibilityLabel()
         tagsView.accessibilityCustomActions = tagViewTagPairs.map { tagPair in
             .init(
                 name: String.localizedStringWithFormat(
                     NSLocalizedString("status.accessibility.go-to-hashtag-%@", comment: ""),
-                    Self.stripHash(tagPair.name)
+                    tagPair.name
                 )
             ) { [weak self] _ in
                 self?.viewModel?.tagSelected(tagPair.id)
@@ -513,84 +462,51 @@ private extension StatusBodyView {
     }
 
     /// Returns text with tappable hashtag links for each trailing or out-of-text tag.
-    func makeLinkedTagViewText() -> NSAttributedString? {
-        guard let viewModel = viewModel else { return nil }
+    var linkedTagViewText: AttributedString? {
+        guard let reasonTagIDs = viewModel?.reasonTagIDs else { return nil }
 
-        let text = NSMutableAttributedString()
+        let highContrast = traitCollection.accessibilityContrast == .high
+        var text = tagViewTagPairs.lazy.map { (tagID, tagText) in
+                var part = AttributedString("#" + tagText)
+                part.link = AppUrl.tagTimeline(tagID).url
+                part.foregroundColor = Self.tagsViewLinkColor
 
-        var firstTag = true
-        for (tagId, tagText) in tagViewTagPairs {
-            if !firstTag {
-                // Explicitly non-attributed text prevents extending attribute runs from previous text.
-                text.append(NSAttributedString(string: " "))
-            }
-            firstTag = false
-
-            let linkAttributedString = NSMutableAttributedString(string: tagText)
-            let linkRange = NSRange(location: 0, length: linkAttributedString.length)
-
-            linkAttributedString.addAttribute(
-                .link,
-                value: AppUrl.tagTimeline(tagId).url,
-                range: linkRange
-            )
-            linkAttributedString.addAttribute(
-                .foregroundColor,
-                value: Self.tagsViewLinkColor,
-                range: linkRange
-            )
-
-            if viewModel.reasonTagIDs.contains(tagId) {
-                // Make these tags stand out.
-                if traitCollection.accessibilityContrast == .high {
-                    linkAttributedString.addAttribute(
-                        .underlineStyle,
-                        // Without .rawValue, results in -[_SwiftValue integerValue]: unrecognized selector sent to instance
-                        value: NSUnderlineStyle.single.rawValue,
-                        range: linkRange
-                    )
-                    linkAttributedString.addAttribute(
-                        .underlineColor,
-                        value: UIColor.tintColor,
-                        range: linkRange
-                    )
-                } else {
-                    linkAttributedString.addAttribute(
-                        .backgroundColor,
-                        value: Self.tagsViewFollowedTagBackgroundColor,
-                        range: linkRange
-                    )
+                if reasonTagIDs.contains(tagID) {
+                    // Make followed tags stand out.
+                    if highContrast {
+                        part.uiKit.underlineStyle = .single
+                        part.uiKit.underlineColor = .tintColor
+                    } else {
+                        part.backgroundColor = Self.tagsViewFollowedTagBackgroundColor
+                    }
                 }
+                return part
             }
+            .joined(separator: " ")
 
-            text.append(linkAttributedString)
-        }
-
-        text.addAttribute(
-            .font,
-            value: UIFont.preferredFont(forTextStyle: isContextParent ? .callout : .footnote),
-            range: NSRange(location: 0, length: text.length)
-        )
+        text.font = UIFont.preferredFont(forTextStyle: isContextParent ? .callout : .footnote)
 
         return text
     }
 
-    /// Tag names extracted from links in status content don't necessarily start with a hash.
-    /// Tag names from view models always do.
-    /// Either way, for accessibility, we might need the bare version.
-    static func stripHash(_ name: String) -> String {
-        if name.hasPrefix("#") {
-            return String(name["#".endIndex...])
-        }
-        return name
-    }
-
-    static func makeLinkedTagViewAccessibilityLabel(_ tagPairs: [TagPair]) -> String? {
-        guard !tagPairs.isEmpty else { return nil }
+    /// Return a comma-separated list of hashtags without leading `#`,
+    /// also indicating which ones the user follows.
+    func makeLinkedTagViewAccessibilityLabel() -> String? {
+        guard let viewModel = viewModel,
+              !tagViewTagPairs.isEmpty
+        else { return nil }
 
         return String(
-            tagPairs
-                .map { tagPair in Self.stripHash(tagPair.name) }
+            tagViewTagPairs.lazy.map { tagPair in
+                    if viewModel.reasonTagIDs.contains(tagPair.id) {
+                        String.localizedStringWithFormat(
+                            NSLocalizedString("status.accessibility.followed-hashtag-%@", comment: ""),
+                            tagPair.name
+                        )
+                    } else {
+                        tagPair.name
+                    }
+                }
                 .joined(separator: ", ")
         )
     }
@@ -621,7 +537,6 @@ private extension StatusBodyView {
         )
     }
 
-    // TODO: (Vyr) not used yet
     /// Highlight followed tags in status text with transparent version of tags view link color.
     /// Disabled if high contrast mode is on.
     static var followedTagBackgroundColor: UIColor = .init { traitCollection in
@@ -635,7 +550,9 @@ private extension StatusBodyView {
         var a: CGFloat = 0
         UIColor.tintColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
 
-        return .init(hue: h, saturation: s, brightness: b, alpha: a / 8)
+        let aDivisor = traitCollection.userInterfaceStyle == .dark ? 3.0 : 6.0
+
+        return .init(hue: h, saturation: s, brightness: b, alpha: a / aDivisor)
     }
 
     /// Highlight followed tags in tags view with transparent version of tags view link color.
@@ -650,7 +567,7 @@ private extension StatusBodyView {
         var b: CGFloat = 0
         var a: CGFloat = 0
         StatusBodyView.tagsViewLinkColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-        
+
         let aDivisor = traitCollection.userInterfaceStyle == .dark ? 3.0 : 6.0
 
         return .init(hue: h, saturation: s, brightness: b, alpha: a / aDivisor)

@@ -48,6 +48,7 @@
 		94B5C6D92A741DC40076DB01 /* ActivityPub@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 94B5C6D72A741DC40076DB01 /* ActivityPub@2x.png */; };
 		94B5C6DA2A741DC40076DB01 /* ActivityPub@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 94B5C6D82A741DC40076DB01 /* ActivityPub@3x.png */; };
 		94C282782A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C282772A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift */; };
+		94D77DF92C55C92400B9E8F6 /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 94D77DF82C55C92400B9E8F6 /* Common */; };
 		94D9E1B32BC60B47003C1C18 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 94D9E1B22BC60B47003C1C18 /* PrivacyInfo.xcprivacy */; };
 		94E174AB299AEC2D00D040B3 /* Report+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E174AA299AEC2D00D040B3 /* Report+Extensions.swift */; };
 		94E6C2482991A235003771D1 /* PostingDefaultLanguageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E6C2472991A235003771D1 /* PostingDefaultLanguageView.swift */; };
@@ -418,6 +419,7 @@
 		94B5C6D72A741DC40076DB01 /* ActivityPub@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ActivityPub@2x.png"; sourceTree = "<group>"; };
 		94B5C6D82A741DC40076DB01 /* ActivityPub@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ActivityPub@3x.png"; sourceTree = "<group>"; };
 		94C282772A7EFCF0005E192D /* Identity.Preferences.TintColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity.Preferences.TintColor+Extensions.swift"; sourceTree = "<group>"; };
+		94C733B32C55C61A00BF25FC /* Common */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Common; sourceTree = "<group>"; };
 		94D9E1B22BC60B47003C1C18 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		94E174AA299AEC2D00D040B3 /* Report+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Report+Extensions.swift"; sourceTree = "<group>"; };
 		94E6C2472991A235003771D1 /* PostingDefaultLanguageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingDefaultLanguageView.swift; sourceTree = "<group>"; };
@@ -648,6 +650,7 @@
 				948586062ADE0393005C772B /* AppMetadata in Frameworks */,
 				D06FA32725F0659600C9639A /* BlurHash in Frameworks */,
 				942099F52A4E328B00007663 /* AppUrls in Frameworks */,
+				94D77DF92C55C92400B9E8F6 /* Common in Frameworks */,
 				D04F34B625E42ABE00714251 /* SDWebImage in Frameworks */,
 				D0FE7C8025C4C79F00203957 /* PreviewViewModels in Frameworks */,
 			);
@@ -943,6 +946,7 @@
 				D0C7D45224F76169001EBDBB /* Assets.xcassets */,
 				D0FE1C9625368A15003EF1EB /* Caches */,
 				948586022ADE004B005C772B /* CombineInterop */,
+				94C733B32C55C61A00BF25FC /* Common */,
 				D0A1F4F5252E7D2A004435BF /* Data Sources */,
 				D085C3BB25008DEC008A6C5E /* DB */,
 				9432DE2429A158460007C2BF /* Docs */,
@@ -1227,6 +1231,7 @@
 				D06FA32625F0659600C9639A /* BlurHash */,
 				942099F42A4E328B00007663 /* AppUrls */,
 				948586052ADE0393005C772B /* AppMetadata */,
+				94D77DF82C55C92400B9E8F6 /* Common */,
 			);
 			productName = "Metatext (iOS)";
 			productReference = D047FA8C24C3E21200AF17C5 /* Feditext.app */;
@@ -1356,6 +1361,7 @@
 				D04F34B425E42ABE00714251 /* XCRemoteSwiftPackageReference "SDWebImage" */,
 				D06FA32525F0659600C9639A /* XCRemoteSwiftPackageReference "blurhash" */,
 				948586072ADE03AA005C772B /* XCLocalSwiftPackageReference "AppMetadata" */,
+				94D77DF72C55C92300B9E8F6 /* XCLocalSwiftPackageReference "Common" */,
 			);
 			productRefGroup = D047FA8D24C3E21200AF17C5 /* Products */;
 			projectDirPath = "";
@@ -2292,6 +2298,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = AppMetadata;
 		};
+		94D77DF72C55C92300B9E8F6 /* XCLocalSwiftPackageReference "Common" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Common;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -2325,6 +2335,10 @@
 		948586052ADE0393005C772B /* AppMetadata */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AppMetadata;
+		};
+		94D77DF82C55C92400B9E8F6 /* Common */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Common;
 		};
 		D025B16925C4EB18001C69A8 /* ServiceLayer */ = {
 			isa = XCSwiftPackageProductDependency;

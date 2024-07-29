@@ -470,6 +470,7 @@
 "share-extension-error.no-account-found" = "No account found";
 "status.accessibility.go-to-hashtags-hint" = "Go to hashtags";
 "status.accessibility.go-to-hashtag-%@" = "Go to hashtag: %@";
+"status.accessibility.followed-hashtag-%@" = "%@ (followed)";
 "status.accessibility.view-author-profile" = "View author's profile";
 "status.accessibility.view-reblogger-profile" = "View booster's profile";
 "status.accessibility.part-of-a-thread" = "Part of a thread";
