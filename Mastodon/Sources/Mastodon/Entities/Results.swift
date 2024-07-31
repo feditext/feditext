@@ -15,6 +15,10 @@ public extension Results {
         accounts.isEmpty && statuses.isEmpty && hashtags.isEmpty
     }
 
+    var count: Int {
+        accounts.count + statuses.count + hashtags.count
+    }
+
     /// Search results may contain duplicate entries if there are bugs.
     /// This will result in a crash when the search results table gets multiple cells with the same ID,
     /// so we need to dedupe results before using them for that.

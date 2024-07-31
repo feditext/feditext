@@ -104,7 +104,14 @@ extension SearchService: CollectionService {
             try await contentDatabase.insert(familiarFollowers: familiarFollowers).finished
         }
 
+        let preAppendCount = results.count
         results = results.appending(page)
+        if results.count == preAppendCount {
+            // We haven't added any new results, and should stop here.
+            // Continuing will update the sections publisher and thus the UI,
+            // which will eventually trigger a new update and bring us here again in a loop.
+            return
+        }
 
         sectionsPublisherSubject.send(contentDatabase.publisher(results: results, limit: limit))
     }
