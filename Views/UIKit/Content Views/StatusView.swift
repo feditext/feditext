@@ -1247,7 +1247,7 @@ private extension StatusView {
         }
 
         if viewModel.canBeReblogged, reblogButton.isEnabled {
-            let reblogged = !self.statusConfiguration.viewModel.reblogged
+            let reblogged = self.statusConfiguration.viewModel.reblogged
             actions.append(UIAccessibilityCustomAction(
                 name: Self.reblogButtonAccessibilityLabel(reblogged: reblogged)) { [weak self] _ in
                     self?.reblog()
@@ -1257,7 +1257,7 @@ private extension StatusView {
         }
 
         if favoriteButton.isEnabled {
-            let favorited = !self.statusConfiguration.viewModel.favorited
+            let favorited = self.statusConfiguration.viewModel.favorited
             actions.append(UIAccessibilityCustomAction(
                 name: Self.favoriteButtonAccessibilityLabel(favorited: favorited)) { [weak self] _ in
                 self?.favorite()
