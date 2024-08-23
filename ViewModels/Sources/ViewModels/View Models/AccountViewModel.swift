@@ -14,7 +14,6 @@ public final class AccountViewModel: ObservableObject {
     public internal(set) var relationship: Relationship?
     public internal(set) var familiarFollowers = [Account]()
     public internal(set) var suggestionSource: Suggestion.Source?
-    public internal(set) var identityProofs = [IdentityProof]()
     public internal(set) var featuredTags = [FeaturedTag]()
 
     internal let accountService: AccountService

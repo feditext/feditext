@@ -326,21 +326,6 @@ public extension ContentDatabase {
         }
     }
 
-    func insert(identityProofs: [IdentityProof], id: Account.Id) -> AnyPublisher<Never, Error> {
-        databaseWriter.mutatingPublisher {
-            for identityProof in identityProofs {
-                try IdentityProofRecord(
-                    accountId: id,
-                    provider: identityProof.provider,
-                    providerUsername: identityProof.providerUsername,
-                    profileUrl: identityProof.profileUrl,
-                    proofUrl: identityProof.proofUrl,
-                    updatedAt: identityProof.updatedAt)
-                    .save($0)
-            }
-        }
-    }
-
     func insert(featuredTags: [FeaturedTag], id: Account.Id) -> AnyPublisher<Never, Error> {
         databaseWriter.mutatingPublisher {
             for featuredTag in featuredTags {

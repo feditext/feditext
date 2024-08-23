@@ -57,7 +57,6 @@ extension AccountRecord {
 extension AccountRecord {
     static let moved = belongsTo(AccountRecord.self)
     static let relationship = hasOne(Relationship.self)
-    static let identityProofs = hasMany(IdentityProofRecord.self)
     static let featuredTags = hasMany(FeaturedTagRecord.self)
     static let pinnedStatusJoins = hasMany(AccountPinnedStatusJoin.self)
         .order(AccountPinnedStatusJoin.Columns.order)
