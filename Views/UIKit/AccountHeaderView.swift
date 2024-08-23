@@ -200,6 +200,8 @@ final class AccountHeaderView: UIView {
                     fieldsStackView.addArrangedSubview(fieldView)
                 }
 
+                fieldsStackView.isHidden = accountViewModel.fields.isEmpty
+
                 if let relationshipNote = accountViewModel.relationship?.note, !relationshipNote.isEmpty {
                     relationshipNoteStack.isHidden = false
                     relationshipNotes.text = relationshipNote
