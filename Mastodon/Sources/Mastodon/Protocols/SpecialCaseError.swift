@@ -9,8 +9,15 @@ public protocol SpecialCaseError: Error {
     var specialCase: SpecialErrorCase? { get }
 }
 
-public enum SpecialErrorCase: Sendable {
+public enum SpecialErrorCase: Sendable, Equatable {
+    /// Related to a missing or deleted entity.
     case notFound(_ what: EntityNotFound)
+
+    /// Most API methods require an authenticated user.
+    /// Which ones depend on instance type and federation mode.
+    /// Sometimes we can keep going by skipping them until later authentication,
+    /// or just not using them if we're not going to authenticate.
+    case authRequired
 }
 
 extension SpecialErrorCase: Encodable {
@@ -27,12 +34,14 @@ extension SpecialErrorCase: Encodable {
             try container.encode("notFound", forKey: .case)
             try container.encode(String(reflecting: type(of: what)), forKey: .type)
             try container.encode(what.id, forKey: .id)
+        case .authRequired:
+            try container.encode("authRequired", forKey: .case)
         }
     }
 }
 
 /// The thing we were trying to access is gone (or private) and should be deleted from our DB.
-public enum EntityNotFound: Sendable {
+public enum EntityNotFound: Sendable, Equatable {
     case account(_ id: String)
     case announcement(_ id: String)
     case attachment(_ id: String)

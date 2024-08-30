@@ -22,26 +22,26 @@ struct SecondaryNavigationView: View {
                             Image(systemName: "person.crop.square")
                         }
                     }
-                }
-                if viewModel.hasEditProfile {
-                    Button {
-                        viewModel.navigateToEditProfile()
-                    } label: {
-                        Label {
-                            Text("secondary-navigation.edit-profile").foregroundColor(.primary)
-                        } icon: {
-                            Image(systemName: "pencil")
+                    if viewModel.hasEditProfile {
+                        Button {
+                            viewModel.navigateToEditProfile()
+                        } label: {
+                            Label {
+                                Text("secondary-navigation.edit-profile").foregroundColor(.primary)
+                            } icon: {
+                                Image(systemName: "pencil")
+                            }
                         }
                     }
-                }
-                if viewModel.hasAccountSettings {
-                    Button {
-                        viewModel.navigateToAccountSettings()
-                    } label: {
-                        Label {
-                            Text("secondary-navigation.account-settings").foregroundColor(.primary)
-                        } icon: {
-                            Image(systemName: "person.crop.square.filled.and.at.rectangle")
+                    if viewModel.hasAccountSettings {
+                        Button {
+                            viewModel.navigateToAccountSettings()
+                        } label: {
+                            Label {
+                                Text("secondary-navigation.account-settings").foregroundColor(.primary)
+                            } icon: {
+                                Image(systemName: "person.crop.square.filled.and.at.rectangle")
+                            }
                         }
                     }
                 }

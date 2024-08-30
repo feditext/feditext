@@ -41,6 +41,14 @@ public struct AnnotatedAPIError: Error, AnnotatedError, SpecialCaseError, Locali
     ) {
         let request = target.urlRequest()
         guard let method = request.httpMethod, let url = request.url else { return nil }
+        let specialCase: SpecialErrorCase? = switch response.statusCode {
+        case 401:
+            .authRequired
+        case 404:
+            target.endpoint.notFound.map(SpecialErrorCase.notFound)
+        default:
+            nil
+        }
         self.init(
             apiError: apiError,
             method: method,
@@ -48,9 +56,7 @@ public struct AnnotatedAPIError: Error, AnnotatedError, SpecialCaseError, Locali
             statusCode: response.statusCode,
             requestLocation: requestLocation,
             apiCapabilities: apiCapabilities,
-            specialCase: response.statusCode == 404
-                ? target.endpoint.notFound.map(SpecialErrorCase.notFound)
-                : nil
+            specialCase: specialCase
         )
     }
 
