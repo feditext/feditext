@@ -26,15 +26,23 @@ public struct IdentityService {
         self.environment = environment
         secrets = Secrets(
             identityId: id,
-            keychain: environment.keychain)
+            keychain: environment.keychain
+        )
 
         let instanceURL = try secrets.getInstanceURL()
+        let accessToken: String?
+        do {
+            accessToken = try secrets.getAccessToken()
+        } catch {
+            // Unauthenticated identities (used for browsing instances with public APIs) don't have access tokens.
+            accessToken = nil
+        }
 
         mastodonAPIClient = try MastodonAPIClient(
             session: environment.session,
             instanceURL: instanceURL,
             apiCapabilities: secrets.getAPICapabilities(),
-            accessToken: try secrets.getAccessToken()
+            accessToken: accessToken
         )
 
         nodeInfoClient = try NodeInfoClient(session: environment.session, instanceURL: instanceURL)
@@ -46,12 +54,14 @@ public struct IdentityService {
             useHomeTimelineLastReadId: appPreferences.homeTimelineBehavior == .localRememberPosition,
             inMemory: environment.inMemoryContent,
             appGroup: AppMetadata.appGroup,
-            keychain: environment.keychain)
+            keychain: environment.keychain
+        )
 
         navigationService = NavigationService(
             environment: environment,
             mastodonAPIClient: mastodonAPIClient,
-            contentDatabase: contentDatabase)
+            contentDatabase: contentDatabase
+        )
     }
 }
 
