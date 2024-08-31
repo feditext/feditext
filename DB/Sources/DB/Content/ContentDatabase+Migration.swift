@@ -410,6 +410,10 @@ extension ContentDatabase {
             }
         }
 
+        migrator.registerMigration("1.7.4-identity-proofs") { db in
+            try db.drop(table: "identityProofRecord")
+        }
+
         return migrator
     }
 }

@@ -8,7 +8,6 @@ struct ProfileInfo: Codable, Hashable, FetchableRecord {
     let accountInfo: AccountInfo
     let relationship: Relationship?
     let familiarFollowers: [AccountInfo]
-    let identityProofRecords: [IdentityProofRecord]
     let featuredTagRecords: [FeaturedTagRecord]
 }
 
@@ -17,7 +16,6 @@ extension ProfileInfo {
         AccountInfo.addingIncludes(request)
             .including(optional: AccountRecord.relationship.forKey(CodingKeys.relationship))
             .including(all: AccountRecord.familiarFollowers.forKey(CodingKeys.familiarFollowers))
-            .including(all: AccountRecord.identityProofs.forKey(CodingKeys.identityProofRecords))
             .including(all: AccountRecord.featuredTags.forKey(CodingKeys.featuredTagRecords))
     }
 

@@ -15,7 +15,6 @@ public struct AccountService {
     private let contentDatabase: ContentDatabase
 
     public init(account: Account,
-                identityProofs: [IdentityProof] = [],
                 featuredTags: [FeaturedTag] = [],
                 environment: AppEnvironment,
                 mastodonAPIClient: MastodonAPIClient,

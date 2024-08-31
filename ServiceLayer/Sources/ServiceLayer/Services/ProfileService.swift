@@ -86,16 +86,13 @@ public extension ProfileService {
     }
 
     func fetchProfile() -> AnyPublisher<Never, Error> {
-        Publishers.Merge5(
+        Publishers.Merge4(
             mastodonAPIClient.request(AccountEndpoint.accounts(id: id))
                 .flatMap { contentDatabase.insert(accounts: [$0]) },
             mastodonAPIClient.request(RelationshipsEndpoint.relationships(ids: [id]))
                 .flatMap { contentDatabase.insert(relationships: $0) },
             mastodonAPIClient.request(FamiliarFollowersEndpoint.familiarFollowers(ids: [id]))
                 .flatMap { contentDatabase.insert(familiarFollowers: $0) },
-            mastodonAPIClient.request(IdentityProofsEndpoint.identityProofs(id: id))
-                .catch { _ in Empty() }
-                .flatMap { contentDatabase.insert(identityProofs: $0, id: id) },
             mastodonAPIClient.request(FeaturedTagsEndpoint.featuredTags(id: id))
                 .catch { _ in Empty() }
                 .flatMap { contentDatabase.insert(featuredTags: $0, id: id) })
