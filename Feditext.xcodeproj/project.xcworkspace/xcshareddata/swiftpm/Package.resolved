@@ -39,10 +39,10 @@
     {
       "identity" : "grdb.swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/metabolist/GRDB.swift.git",
+      "location" : "https://github.com/feditext/GRDB.swift.git",
       "state" : {
-        "branch" : "a6ff285",
-        "revision" : "a6ff285eb1b0f8933c610b82e8d6ca7093fd7997"
+        "branch" : "3ceeed29f",
+        "revision" : "3ceeed29f951c3b285c1599d91c92748c24a221c"
       }
     },
     {
