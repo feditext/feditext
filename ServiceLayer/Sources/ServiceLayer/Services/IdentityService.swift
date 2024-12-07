@@ -386,7 +386,7 @@ public extension IdentityService {
     }
 
     func notificationService(pushNotification: PushNotification) -> AnyPublisher<NotificationService, Error> {
-        mastodonAPIClient.request(NotificationEndpoint.notification(id: .init(pushNotification.notificationId)))
+        mastodonAPIClient.request(NotificationEndpoint.notification(id: pushNotification.notificationId))
             .flatMap { notification in
                 contentDatabase.insert(notifications: [notification])
                     .collect()

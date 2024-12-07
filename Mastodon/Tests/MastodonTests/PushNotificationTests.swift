@@ -1,16 +1,40 @@
-//
-//  File.swift
-//  Mastodon
-//
-//  Created by Erica Ehrhardt on 2024-12-07.
-//
+// Copyright © 2024 Vyr Cossont. All rights reserved.
 
-import Foundation
+@testable import Mastodon
+import XCTest
 
-public let accessToken: String
-public let body: String
-public let title: String
-public let icon: UnicodeURL
-@PushNotificationID public var notificationId: String
-public let notificationType: MastodonNotification.NotificationType
-public let preferredLocale: String
+final class PushNotificationTests: XCTestCase {
+    /// Test that we can parse a push notification with an integer ID.
+    func testParseIntID() throws {
+        let json = """
+            {
+                "access_token": "ACCESS_TOKEN",
+                "body": "this is my post",
+                "title": "some account posted",
+                "icon": "https://example.test/icon.png",
+                "notification_id": 123,
+                "notification_type": "status",
+                "preferred_locale": "en-US"
+            }
+            """
+        let pushNotification = try MastodonDecoder().decode(PushNotification.self, from: json.data(using: .utf8)!)
+        XCTAssertEqual(pushNotification.notificationId, "123")
+    }
+  
+    /// Test that we can parse a push notification with a string ID.
+    func testParseStringID() throws {
+        let json = """
+            {
+                "access_token": "ACCESS_TOKEN",
+                "body": "this is my post",
+                "title": "some account posted",
+                "icon": "https://example.test/icon.png",
+                "notification_id": "ABC",
+                "notification_type": "status",
+                "preferred_locale": "en-US"
+            }
+            """
+        let pushNotification = try MastodonDecoder().decode(PushNotification.self, from: json.data(using: .utf8)!)
+        XCTAssertEqual(pushNotification.notificationId, "ABC")
+    }
+}

@@ -1,3 +1,5 @@
+// Copyright © 2024 Vyr Cossont. All rights reserved.
+
 /// Mastodon Web Push notification IDs are actual integers, but other implementations use strings.
 @propertyWrapper
 public struct PushNotificationID: Hashable {

@@ -77,7 +77,7 @@ public extension PushNotificationParsingService {
                 return Fail(error: error).eraseToAnyPublisher()
             }
 
-            let endpoint = NotificationEndpoint.notification(id: String(pushNotification.notificationId))
+            let endpoint = NotificationEndpoint.notification(id: pushNotification.notificationId)
 
             return mastodonAPIClient.request(endpoint)
                 .map {
