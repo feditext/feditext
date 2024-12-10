@@ -1,7 +1,7 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
 "about" = "Acerca de";
-"about.acknowledgments" = "Reconocimientos";
+"about.acknowledgments" = "Agradecimientos";
 "about.made-by-metabolist" = "Basado en Metatext por Metabolist";
 "about.made-by-metabolist.blurb" = "Feditext es una continuación comunitaria del increíble trabajo de Metabolist en Metatext. Por favor, no envíe informes de errores o solicitudes de funciones a Metabolist, ya que el Metatext original ya no se mantiene.";
 "about.maintained-by" = "Mantenido por";
@@ -17,7 +17,7 @@
 "account.add-remove-lists" = "Añadir/eliminar de listas";
 "account.avatar.accessibility-label-%@" = "Avatar: %@";
 "account.block" = "Bloquear";
-"account.block-and-report" = "Bloquear e informar";
+"account.block-and-report" = "Bloquear y reportar";
 "account.block.confirm-%@" = "¿Bloquear a %@?";
 "account.blocked" = "Bloqueado";
 "account.direct-message" = "Mensaje directo";
@@ -49,7 +49,7 @@
 "account.mute.confirm.explanation" = "Esto ocultará sus publicaciones y menciones, pero aún podrá ver tus publicaciones y seguirte.";
 "account.mute.confirm.hide-notifications" = "¿Ocultar notificaciones de este usuario?";
 "account.mute.confirm.duration" = "Duración";
-"account.mute.target-%@" = "Silenciar %@";
+"account.mute.target-%@" = "Silenciar a %@";
 "account.muted" = "Silenciado";
 "account.notify" = "Activar notificaciones";
 "account.note" = "Nota";
@@ -276,7 +276,7 @@
 "main-navigation.explore" = "Explorar";
 "main-navigation.notifications" = "Notificaciones";
 "main-navigation.conversations" = "Mensajes";
-"metatext" = "Metatexto";
+"metatext" = "Metatext";
 "notification.accessibility.view-profile" = "Ver perfil";
 "notification.accessibility.view-profiles" = "Ver perfiles";
 "notification.signed-in-as-%@" = "Sesión iniciada como %@";
@@ -461,7 +461,7 @@
 "search.scope.statuses.post" = "Publicaciones";
 "search.scope.statuses.toot" = "Toots";
 "search.scope.tags" = "Hashtags";
-"selected" = "Seleccionado";
+"selected" = "Seleccionados";
 "send.action" = "Enviar";
 "share" = "Compartir";
 "share-extension-error.no-account-found" = "No se encontró ninguna cuenta";
@@ -472,7 +472,7 @@
 "status.accessibility.view-reblogger-profile" = "Ver perfil del que impulsó";
 "status.accessibility.part-of-a-thread" = "Parte de un hilo";
 "status.bookmark" = "Guardar";
-"status.content-warning-abbreviation" = "AD";
+"status.content-warning-abbreviation" = "AC";
 "status.content-warning.accessibility" = "Advertencia de contenido";
 "status.delete" = "Eliminar";
 "status.delete.confirm.post" = "¿Estás seguro de que quieres eliminar esta publicación?";
