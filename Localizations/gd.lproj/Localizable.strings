@@ -361,3 +361,12 @@
 "timelines.federated" = "Co-naisgte";
 "toot.action" = "Postadh";
 "toot.noun" = "Postaich";
+"account.familiar-followers.1-%@" = "’Ga leantainn le %@";
+"account.relationship.following" = "’Ga leantainn";
+"account.relationship.followed-by" = "’Gad leantainn";
+"error.alert.copy-text" = "Dèan lethbhreac dhen teacsa";
+"preferences.notification-types.admin-report" = "Dèan gearan";
+"preferences.posting-languages.add" = "Cuir ris";
+"preferences.posting-languages.remove" = "Thoir air falbh";
+"status.share-button.accessibility-label" = "Co-roinn";
+"timelines.display-filter.show.reblogs" = "Seall na brosnachaidhean";
