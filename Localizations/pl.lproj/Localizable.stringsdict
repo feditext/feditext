@@ -242,5 +242,25 @@
         <string>%ld załączników</string>
       </dict>
     </dict>
+    <key>notifications.accounts-followed-you-%ld</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@accounts@</string>
+      <key>accounts</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>ld</string>
+        <key>one</key>
+        <string>Śledzi Cię %ld nowe konto.</string>
+        <key>few</key>
+        <string>Śledzą Cię %ld nowe konta.</string>
+        <key>many</key>
+        <string>Śledzi Cię %ld nowych kont.</string>
+        <key>other</key>
+        <string>Śledzi Cię %ld nowych kont.</string>
+      </dict>
+    </dict>
   </dict>
 </plist>
