@@ -42,6 +42,7 @@ extension StatusEditsEndpoint: Endpoint {
             .pleroma: .assumeAvailable,
             .akkoma: .assumeAvailable,
             .pixelfed: .assumeAvailable,
+            .gotosocial: "0.18.0-0",
         ]
     }
 
