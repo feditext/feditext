@@ -41,7 +41,6 @@ final public class ProfileViewModel {
 
                 vm.relationship = $0.relationship
                 vm.familiarFollowers = $0.familiarFollowers
-                vm.identityProofs = $0.identityProofs
                 vm.featuredTags = $0.featuredTags
 
                 return vm
