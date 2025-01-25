@@ -161,8 +161,11 @@
 "registration.password-confirmation-mismatch" = "Hasło i powtórzone hasło się nie zgadzają";
 "secondary-navigation.about" = "O aplikacji";
 "secondary-navigation.account-settings" = "Ustawienia konta";
+"secondary-navigation.about-this-instance" = "O tej instancji";
+"secondary-navigation.about-instance-%@" = "O instancji %@";
 "secondary-navigation.accounts" = "Konta";
 "secondary-navigation.edit-profile" = "Edytuj profil";
+"secondary-navigation.followed-tags" = "Śledzone tagi";
 "secondary-navigation.lists" = "Listy";
 "secondary-navigation.my-profile" = "Mój profil";
 "secondary-navigation.preferences" = "Właściwości";
