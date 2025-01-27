@@ -537,13 +537,13 @@
 "status.unpin" = "Utzi profilean finkatzeari";
 "status.visibility.public" = "Publikoa";
 "status.visibility.unlisted" = "Zerrendatu gabea";
-"status.visibility.private" = "Jarraitzaileentzat soilik";
-"status.visibility.mutuals-only" = "Amankomunak";
+"status.visibility.private" = "Jarraitzaileentzat";
+"status.visibility.mutuals-only" = "Elkarri jarraitzen";
 "status.visibility.direct" = "Zuzena";
 "status.visibility.public.description" = "Denentzat ikusgai, denbora-lerro publikoetan ikusten da";
 "status.visibility.unlisted.description" = "Denentzat ikusgai, baina ez da denbora-lerro publikoetan ikusten";
 "status.visibility.private.description" = "Jarraitzaileentzat soilik ikusgai";
-"status.visibility.mutuals-only.description" = "Elkar jarraitzen badiogu soilik ikusgai";
+"status.visibility.mutuals-only.description" = "Elkarri jarraitzen badiogu soilik ikusgai";
 "status.visibility.direct.description" = "Aipatutako erabiltzaileentzat soilik ikusgai";
 "tag.accessibility-recent-uses-%ld" = "Azken %ld erabilerak";
 "tag.accessibility-hint.post" = "Ikusi joera honi lotutako bidalketak";
