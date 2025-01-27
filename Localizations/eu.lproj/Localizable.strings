@@ -396,8 +396,8 @@
 "preferences.tint-color.red" = "Gorria";
 "preferences.tint-color.teal" = "Berde urdinxka";
 "preferences.tint-color.yellow" = "Horia";
-"preferences.toasts.title" = "Use toasts to display transient errors";
-"preferences.toasts.description" = "If disabled, Feditext will use modal dialogs for all errors.";
+"preferences.toasts.title" = "Erabili toast jakinarazpenak errore iragankorrak erakusteko";
+"preferences.toasts.description" = "Ezgaituz gero, Feditextek popup-ak erakutsiko ditu errore guztietarako.";
 "preferences.trailing-hashtags.fold" = "Kendu garrantzia amaierako traolei";
 "preferences.use-media-description-metadata" = "Bidali metadatuen deskribapena ALT testu edo deskribapen gisa igotzen duzun multimedia fitxategietan";
 "preferences.visibility-icon-colors" = "Koloreztatu ikusgaitasun ikonoak";
