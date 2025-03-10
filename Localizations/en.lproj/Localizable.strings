@@ -351,6 +351,7 @@
 "preferences.notifications.include-pictures" = "Include pictures";
 "preferences.notifications.grouping" = "Group follow, favourite, and boost notifications";
 "preferences.notifications.sounds" = "Sounds";
+"preferences.optimize-images-before-upload" = "Optimize images before upload";
 "preferences.muted-users" = "Muted Users";
 "preferences.home-timeline-position-on-startup" = "Home timeline position on startup";
 "preferences.notifications-position-on-startup" = "Notifications position on startup";

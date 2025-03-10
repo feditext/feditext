@@ -136,6 +136,10 @@ struct AppPreferencesSection: View {
                     }
                 }
             }
+            Group {
+                Toggle("preferences.optimize-images-before-upload",
+                    isOn: $identityContext.appPreferences.optimizeImagesBeforeUpload)
+            }
         }
         Section(header: Text("preferences.app.advanced")) {
             Picker("preferences.api-compatibility-mode", selection: Binding<APICompatibilityMode?>(
