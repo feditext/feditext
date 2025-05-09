@@ -65,7 +65,7 @@ Feditext uses the following third-party artwork:
 
 Feditext is maintained by:
 
-- [@vyr](https://demon.social/@vyr)
+- [@vyr](https://princess.industries/@vyr)
 - [@bdube](https://gotgoat.com/@bdube)
 
 And of course, we wouldn't be here without [Metabolist](https://metabolist.org/)'s incredible work on the original Metatext project.
