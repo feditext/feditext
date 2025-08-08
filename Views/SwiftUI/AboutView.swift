@@ -93,7 +93,7 @@ private extension AboutView {
 
     static let maintainers: [Maintainer] = [
         Maintainer(name: "Brian Dube", emoji: "🐐", url: URL(string: "https://gotgoat.com/@bdube")!),
-        Maintainer(name: "Vyr Cossont", emoji: "😈", url: URL(string: "https://princess.industries/@vyr")!)
+        Maintainer(name: "Vyr Cossont", emoji: "👸🏻", url: URL(string: "https://princess.industries/@vyr")!)
     ]
 
     static let metabolistWebsiteURL = URL(string: "https://metabolist.org")!
