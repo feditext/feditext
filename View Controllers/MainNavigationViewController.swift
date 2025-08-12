@@ -169,14 +169,39 @@ private extension MainNavigationViewController {
             }
         }
         .store(in: &cancellables)
+        
+        let bottomConstraint: NSLayoutConstraint
+        let trailingConstant: CGFloat
+        let isiPadOS18OrHigher = if #available(iOS 18.0, *) {
+            UIDevice.current.userInterfaceIdiom == .pad
+        } else {
+            false
+        }
+        if isiPadOS18OrHigher {
+            // iOS 18 moves the tab bar to the top on iPads,
+            // which resulted in a crash due to the button and the tab bar not having a common ancestor.
+            bottomConstraint = newStatusButtonView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -.defaultSpacing * 2
+            )
+            trailingConstant = -.defaultSpacing * 4.5
+        } else {
+            // Original constraints, still valid on iPhones and older iPads.
+            bottomConstraint = newStatusButtonView.bottomAnchor.constraint(
+                equalTo: tabBar.topAnchor,
+                constant: -.defaultSpacing * 2
+            )
+            trailingConstant = -.defaultSpacing * 2
+        }
 
         NSLayoutConstraint.activate([
             newStatusButtonView.widthAnchor.constraint(equalToConstant: .newStatusButtonDimension),
             newStatusButtonView.heightAnchor.constraint(equalToConstant: .newStatusButtonDimension),
             newStatusButtonView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -.defaultSpacing * 2),
-            newStatusButtonView.bottomAnchor.constraint(equalTo: tabBar.topAnchor, constant: -.defaultSpacing * 2)
+                constant: trailingConstant
+            ),
+            bottomConstraint,
         ])
     }
 
