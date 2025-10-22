@@ -93,16 +93,9 @@ public class CollectionItemsViewModel: ObservableObject {
             timelineActionViewModel = TimelineActionViewModel.from(
                 timeline: timeline,
                 identityContext: identityContext,
+                collectionService: collectionService,
                 collectionItemsViewModel: self
             )
-
-            // Applies to home, local, and federated timelines.
-            if case let .displayFilter(displayFilterTimelineActionViewModel) = timelineActionViewModel,
-                let timelineService = collectionService as? TimelineService {
-                displayFilterTimelineActionViewModel.$displayFilter
-                    .sink { timelineService.apply(displayFilter: $0) }
-                    .store(in: &cancellables)
-            }
         } else if let contextService = collectionService as? ContextService,
                   !identityContext.identity.preferences.readingExpandSpoilers {
             let contextTimelineActionViewModel = ContextTimelineActionViewModel()

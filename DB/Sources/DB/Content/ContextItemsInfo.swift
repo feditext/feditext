@@ -21,8 +21,9 @@ extension ContextItemsInfo {
         addingIncludes(request).asRequest(of: self)
     }
 
+    /// - Note: unlike the related ``TimelineItemsInfo/items``, this doesn't currently accept a ``DisplayFilter``.
+    /// - SeeAlso: ``TimelineItemsInfo``
     func items(matchers: [Filter.Matcher], now: Date) -> [CollectionSection] {
-
         return [ancestors, [parent], descendants].map { section in
             section
                 .filtered(matchers, .thread, now: now)

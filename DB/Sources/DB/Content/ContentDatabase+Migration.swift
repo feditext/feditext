@@ -451,6 +451,16 @@ extension ContentDatabase {
                 t.primaryKey(["statusId", "context"], onConflict: .replace)
             }
         }
+        
+        migrator.registerMigration("1.7.4-persistent-DisplayFilters") { db in
+            try db.create(table: "timelineDisplayFilterRecord") { t in
+                t.column("timelineId", .text).indexed().notNull()
+                    .references("timelineRecord", onDelete: .cascade)
+                t.column("displayFilter", .blob).notNull()
+
+                t.primaryKey(["timelineId"], onConflict: .replace)
+            }
+        }
 
         return migrator
     }

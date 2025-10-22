@@ -19,6 +19,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/groue/CombineExpectations.git", .upToNextMajor(from: "0.7.0")),
         .package(path: "AppUrls"),
         .package(path: "Common"),
@@ -27,7 +28,13 @@ let package = Package(
     targets: [
         .target(
             name: "ViewModels",
-            dependencies: ["AppUrls", "Common", "ServiceLayer"]),
+            dependencies: [
+                "AppUrls",
+                "Common",
+                "ServiceLayer",
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+            ]
+        ),
         .target(
             name: "PreviewViewModels",
             dependencies: ["ViewModels", .product(name: "ServiceLayerMocks", package: "ServiceLayer")]

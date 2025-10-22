@@ -102,7 +102,7 @@ final class TimelinesViewController: UIPageViewController {
             .sink { [weak self] filtering in
                 self?.navigationItem.rightBarButtonItem = .init(
                     title: NSLocalizedString(
-                        "timelines.display-filters.edit",
+                        "timelines.display-filter.edit",
                         comment: ""
                     ),
                     image: UIImage(

@@ -39,9 +39,11 @@ extension TimelineItemsInfo {
         addingIncludes(request, filterContext, ordered: ordered).asRequest(of: self)
     }
 
-    func items(matchers: [Filter.Matcher], now: Date) -> [CollectionSection] {
+    /// - SeeAlso: ``ContextItemsInfo``
+    func items(_ matchers: [Filter.Matcher], _ displayFilter: DisplayFilter, now: Date) -> [CollectionSection] {
         let timeline = Timeline(record: timelineRecord)!
-        var timelineItems = statusInfos
+        var timelineItems =
+            statusInfos
             .filtered(matchers, timeline.filterContext, now: now)
             .map {
                 CollectionItem.status(
@@ -56,43 +58,56 @@ extension TimelineItemsInfo {
                     rebloggerRelationship: $0.relationship
                 )
             }
+            .filter(displayFilter.allow)
 
         for loadMoreRecord in loadMoreRecords {
-            guard let index = timelineItems.firstIndex(where: {
-                guard case let .status(status, _, _, _) = $0 else { return false }
+            guard
+                let index = timelineItems.firstIndex(where: {
+                    guard case .status(let status, _, _, _) = $0 else { return false }
 
-                return loadMoreRecord.afterStatusId > status.id
-            }) else { continue }
+                    return loadMoreRecord.afterStatusId > status.id
+                })
+            else { continue }
 
             timelineItems.insert(
-                .loadMore(LoadMore(
-                            timeline: timeline,
-                            afterStatusId: loadMoreRecord.afterStatusId,
-                            beforeStatusId: loadMoreRecord.beforeStatusId)),
-                at: index)
+                .loadMore(
+                    LoadMore(
+                        timeline: timeline,
+                        afterStatusId: loadMoreRecord.afterStatusId,
+                        beforeStatusId: loadMoreRecord.beforeStatusId
+                    )
+                ),
+                at: index
+            )
         }
 
+        let mainTimelineSection = CollectionSection(items: timelineItems)
         if timelineRecord.profileCollection == .statuses,
-           let pinnedStatusInfos = pinnedStatusesInfo?.pinnedStatusInfos {
-            return [.init(items: pinnedStatusInfos
-                        .filtered(matchers, timeline.filterContext, now: now)
-                        .map {
-                            CollectionItem.status(
-                                .init(info: $0),
-                                .init(
-                                    showContentToggled: $0.showContentToggled,
-                                    showAttachmentsToggled: $0.showAttachmentsToggled,
-                                    showFilteredToggled: $0.showFilteredToggled,
-                                    isPinned: true,
-                                    isReplyOutOfContext: ($0.reblogInfo?.record ?? $0.record).inReplyToId != nil
-                                ),
-                                authorRelationship: $0.reblogInfo?.relationship ?? $0.relationship,
-                                rebloggerRelationship: $0.relationship
-                            )
-                        }),
-                    .init(items: timelineItems)]
+            let pinnedStatusInfos = pinnedStatusesInfo?.pinnedStatusInfos
+        {
+            let pinsSection = CollectionSection(
+                items:
+                    pinnedStatusInfos
+                    .filtered(matchers, timeline.filterContext, now: now)
+                    .map {
+                        CollectionItem.status(
+                            .init(info: $0),
+                            .init(
+                                showContentToggled: $0.showContentToggled,
+                                showAttachmentsToggled: $0.showAttachmentsToggled,
+                                showFilteredToggled: $0.showFilteredToggled,
+                                isPinned: true,
+                                isReplyOutOfContext: ($0.reblogInfo?.record ?? $0.record).inReplyToId != nil
+                            ),
+                            authorRelationship: $0.reblogInfo?.relationship ?? $0.relationship,
+                            rebloggerRelationship: $0.relationship
+                        )
+                    }
+                    .filter(displayFilter.allow)
+            )
+            return [pinsSection, mainTimelineSection]
         } else {
-            return [.init(items: timelineItems)]
+            return [mainTimelineSection]
         }
     }
 }

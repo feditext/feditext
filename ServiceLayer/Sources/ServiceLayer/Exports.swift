@@ -5,6 +5,7 @@ import MastodonAPI
 
 public typealias CollectionItem = DB.CollectionItem
 public typealias CollectionSection = DB.CollectionSection
+public typealias DisplayFilter = DB.DisplayFilter
 public typealias EmojiUse = DB.EmojiUse
 public typealias FollowedTag = DB.FollowedTag
 public typealias Identity = DB.Identity

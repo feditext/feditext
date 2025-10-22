@@ -582,7 +582,7 @@ public extension ContentDatabase {
         }
     }
 
-    /// Retrieve the contents of a timeline.
+    /// Retrieve the filtered contents of a timeline.
     func timelinePublisher(_ timeline: Timeline, applyV1Filters: Bool) -> AnyPublisher<[CollectionSection], Error> {
         ValueObservation.tracking(
             TimelineItemsInfo.request(
@@ -607,11 +607,14 @@ public extension ContentDatabase {
                         databaseWriter.asyncWrite(TimelineRecord(timeline: timeline).delete) { _, _ in }
                     }
                 })
-            .combineLatest(activeFilterMatchersPublisher)
-            .compactMap { $0?.items(matchers: applyV1Filters ? $1 : [], now: .now) }
+            .combineLatest(activeFilterMatchersPublisher, displayFilterPublisher(timeline))
+            .compactMap { timelineItemsInfo, matchers, displayFilter in
+                timelineItemsInfo?.items(applyV1Filters ? matchers : [], displayFilter, now: .now)
+            }
             .eraseToAnyPublisher()
     }
 
+    /// Retrieve a post's context (ancestors and descendants).
     func contextPublisher(id: Status.Id, applyV1Filters: Bool) -> AnyPublisher<[CollectionSection], Error> {
         ValueObservation.tracking(
             ContextItemsInfo.request(StatusRecord.filter(StatusRecord.Columns.id == id)).fetchOne)
@@ -918,6 +921,40 @@ public extension ContentDatabase {
         }
 
         return failurePublisher.eraseToAnyPublisher()
+    }
+    
+    /// Retrieve the display filter associated with a timeline.
+    /// If it has none, an allow-all filter will be returned.
+    func displayFilterPublisher(_ timeline: Timeline) -> AnyPublisher<DisplayFilter, Error>  {
+        guard timeline.hasDisplayFilter else {
+            return Just(DisplayFilter())
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
+        }
+
+        return ValueObservation.tracking(
+            TimelineDisplayFilterRecord
+                .filter(TimelineDisplayFilterRecord.Columns.timelineID == timeline.id)
+                .fetchOne(_:)
+        )
+        .removeDuplicates()
+        .publisher(in: databaseWriter)
+        .map(\.?.displayFilter)
+        .replaceNil(with: DisplayFilter.showAll)
+        .eraseToAnyPublisher()
+    }
+    
+    /// Update the display filter associated with a timeline.
+    func update(_ timeline: Timeline, _ displayFilter: DisplayFilter) -> AnyPublisher<Never, Error> {
+        guard timeline.hasDisplayFilter else {
+            assert(timeline.hasDisplayFilter)
+            return Empty<Never, Error>(completeImmediately: true)
+                .eraseToAnyPublisher()
+        }
+
+        return databaseWriter.mutatingPublisher { db in
+            try TimelineDisplayFilterRecord(timeline, displayFilter).save(db)
+        }
     }
 }
 

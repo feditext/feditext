@@ -14,13 +14,13 @@ public struct TimelineService {
     public let title: AnyPublisher<String, Never>
     public let titleLocalizationComponents: AnyPublisher<[String], Never>
     public let announcesNewItems = true
+    public let displayFilter: AnyPublisher<DisplayFilter, Never>
 
     private let timeline: Timeline
     private let mastodonAPIClient: MastodonAPIClient
     private let contentDatabase: ContentDatabase
     private let nextPageMaxIdSubject = PassthroughSubject<String?, Never>()
     private let accountIdsForRelationshipsSubject = PassthroughSubject<Set<Account.Id>, Never>()
-    private let displayFilterSubject = CurrentValueSubject<DisplayFilter?, Error>(nil)
 
     init(timeline: Timeline,
          environment: AppEnvironment,
@@ -30,34 +30,24 @@ public struct TimelineService {
         self.mastodonAPIClient = mastodonAPIClient
         self.contentDatabase = contentDatabase
 
-        let unfilteredSections: AnyPublisher<[CollectionSection], Error>
         let applyV1Filters = !mastodonAPIClient.supportsV2Filters
         if case .home = timeline {
-            unfilteredSections = contentDatabase.cleanHomeTimelinePublisher()
+            sections = contentDatabase.cleanHomeTimelinePublisher()
                 .collect()
                 .flatMap { _ in contentDatabase.timelinePublisher(timeline, applyV1Filters: applyV1Filters) }
                 .eraseToAnyPublisher()
         } else {
-            unfilteredSections = contentDatabase.timelinePublisher(timeline, applyV1Filters: applyV1Filters)
+            sections = contentDatabase.timelinePublisher(timeline, applyV1Filters: applyV1Filters)
         }
-        sections = unfilteredSections
-            .combineLatest(displayFilterSubject) { sections, displayFilter in
-                guard let displayFilter else { return sections }
-
-                return sections.map { section in
-                    .init(
-                        items: section.items.filter(displayFilter.allow),
-                        searchScope: section.searchScope
-                    )
-                }
-            }
-            .eraseToAnyPublisher()
 
         navigationService = NavigationService(environment: environment,
                                               mastodonAPIClient: mastodonAPIClient,
                                               contentDatabase: contentDatabase)
         nextPageMaxId = nextPageMaxIdSubject.eraseToAnyPublisher()
         accountIdsForRelationships = accountIdsForRelationshipsSubject.eraseToAnyPublisher()
+        displayFilter = contentDatabase.displayFilterPublisher(timeline)
+            .replaceError(with: DisplayFilter.showAll)
+            .eraseToAnyPublisher()
 
         switch timeline {
         case let .list(list):
@@ -78,8 +68,8 @@ public struct TimelineService {
         }
     }
 
-    public func apply(displayFilter: DisplayFilter?) {
-        displayFilterSubject.send(displayFilter)
+    public func apply(_ displayFilter: DisplayFilter) -> AnyPublisher<Never, Error> {
+        contentDatabase.update(timeline, displayFilter)
     }
 }
 

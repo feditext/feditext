@@ -1,5 +1,7 @@
 // Copyright © 2023 Vyr Cossont. All rights reserved.
 
+import ServiceLayer
+
 /// Encapsulates actions we can do that are related to a timeline
 /// and need to show UI for in a collection view.
 /// UI is set up mostly in `TableViewController.setupTimelineActionBarButtonItem`.
@@ -13,6 +15,7 @@ public enum TimelineActionViewModel {
     static func from(
         timeline: Timeline,
         identityContext: IdentityContext,
+        collectionService: CollectionService,
         collectionItemsViewModel: CollectionItemsViewModel
     ) -> Self? {
         switch timeline {
@@ -32,8 +35,12 @@ public enum TimelineActionViewModel {
                 )
             )
         case .home, .local, .federated:
+            guard let timelineService = collectionService as? TimelineService else {
+                assert(collectionService is TimelineService)
+                return nil
+            }
             return .displayFilter(
-                DisplayFilterTimelineActionViewModel()
+                DisplayFilterTimelineActionViewModel(timelineService)
             )
         default:
             return nil
