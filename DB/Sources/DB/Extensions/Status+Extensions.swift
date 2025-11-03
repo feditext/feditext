@@ -13,12 +13,8 @@ extension Status {
         // Save quotes and reblogs recursively:
         // - Firefish may serve us an entire quote or reblog chain at once.
         // - Mastodon and Akkoma definitely do *not* do this.
-        if let quote = quote {
-            try quote.save(db, filterContext)
-        }
-        if let reblog = reblog {
-            try reblog.save(db, filterContext)
-        }
+        try quote?.quotedStatus?.save(db, filterContext)
+        try reblog?.save(db, filterContext)
 
         try StatusRecord(status: self).save(db)
 
@@ -92,7 +88,8 @@ private extension Status {
             url: record.url,
             inReplyToId: record.inReplyToId,
             inReplyToAccountId: record.inReplyToAccountId,
-            quote: quote,
+            // TODO: (Vyr) we're losing info on quote approval here
+            quote: quote.map(Status.QuoteVariants.status),
             reblog: reblog,
             poll: record.poll,
             card: record.card,

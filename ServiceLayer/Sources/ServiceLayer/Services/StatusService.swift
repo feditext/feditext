@@ -32,7 +32,7 @@ public struct StatusService {
 
 public extension StatusService {
     var quoted: Self? {
-        guard let quote = status.quote else { return nil }
+        guard let quote = status.quote?.quotedStatus else { return nil }
 
         return Self(
             environment: environment,

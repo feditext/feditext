@@ -163,7 +163,8 @@ extension StatusRecord {
         url = status.url
         inReplyToId = status.inReplyToId
         inReplyToAccountId = status.inReplyToAccountId
-        quoteId = status.quote?.id
+        // TODO: (Vyr) we're losing info on quote approval here
+        quoteId = status.quote?.quotedStatusId
         reblogId = status.reblog?.id
         poll = status.poll
         card = status.card

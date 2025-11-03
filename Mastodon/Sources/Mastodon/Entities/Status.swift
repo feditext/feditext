@@ -38,11 +38,7 @@ public final class Status: Codable, Identifiable {
     public let url: String?
     public let inReplyToId: Status.Id?
     public let inReplyToAccountId: Account.Id?
-    /// Used by the Treehouse fork of Glitch, Fedibird, and Firefish.
-    /// - See: https://gitea.treehouse.systems/treehouse/mastodon/src/branch/main/app/serializers/rest/status_serializer.rb
-    /// - See: https://github.com/fedibird/mastodon/blob/main/app/serializers/rest/status_serializer.rb
-    /// - See: https://git.joinfirefish.org/firefish/firefish/-/blob/develop/packages/backend/src/server/api/mastodon/converters.ts
-    public let quote: Status?
+    public let quote: QuoteVariants?
     public let reblog: Status?
     public let poll: Poll?
     public let card: Card?
@@ -96,7 +92,7 @@ public final class Status: Codable, Identifiable {
         url: String?,
         inReplyToId: Status.Id?,
         inReplyToAccountId: Account.Id?,
-        quote: Status?,
+        quote: QuoteVariants?,
         reblog: Status?,
         poll: Poll?,
         card: Card?,
@@ -266,5 +262,134 @@ public extension Status {
             self.keywordMatches = keywordMatches
             self.statusMatches = statusMatches
         }
+    }
+}
+
+public extension Status {
+    /// Fedi software doesn't agree on how to represent quotes, so we have to try multiple incompatible variants.
+    enum QuoteVariants: Codable, Equatable {
+        /// A bare status. Used by the Treehouse fork of Glitch, Fedibird, and Firefish.
+        /// - See: https://gitea.treehouse.systems/treehouse/mastodon/src/branch/main/app/serializers/rest/status_serializer.rb
+        /// - See: https://github.com/fedibird/mastodon/blob/main/app/serializers/rest/status_serializer.rb
+        /// - See: https://git.joinfirefish.org/firefish/firefish/-/blob/develop/packages/backend/src/server/api/mastodon/converters.ts
+        case status(Status)
+        /// Mastodon 4.5 normal quote.
+        case quote(Quote)
+        /// Mastodon 4.5 shallow quote.
+        case shallow(ShallowQuote)
+        
+        public enum Error: Swift.Error {
+            case unknownVariant
+        }
+
+        public var quotedStatus: Status? {
+            switch self {
+            case let .status(status):
+                status
+            case let .quote(quote):
+                quote.quotedStatus
+            case let .shallow(shallowQuote):
+                nil
+            }
+        }
+
+        public var quotedStatusId: Status.Id? {
+            switch self {
+            case let .status(status):
+                status.id
+            case let .quote(quote):
+                quote.quotedStatus?.id
+            case let .shallow(shallowQuote):
+                shallowQuote.quotedStatusId
+            }
+        }
+
+        public init(from decoder: Decoder) throws {
+            if let status = try? Status(from: decoder) {
+                self = .status(status)
+            } else if let quote = try? Quote(from: decoder) {
+                self = .quote(quote)
+            } else if let shallowQuote = try? ShallowQuote(from: decoder) {
+                self = .shallow(shallowQuote)
+            } else {
+                throw Error.unknownVariant
+            }
+        }
+        
+        public func encode(to encoder: Encoder) throws {
+            switch self {
+            case let .status(status):
+                try status.encode(to: encoder)
+            case let .quote(quote):
+                try quote.encode(to: encoder)
+            case let .shallow(shallowQuote):
+                try shallowQuote.encode(to: encoder)
+            }
+        }
+    }
+}
+
+/// Mastodon normal quote, which contains a nullable status and a state.
+/// - SeeAlso: <https://docs.joinmastodon.org/entities/Quote/>
+public struct Quote: Codable, Equatable {
+    public let state: State
+    public let quotedStatus: Status?
+    
+    public init(
+        state: State,
+        quotedStatus: Status?
+    ) {
+        self.state = state
+        self.quotedStatus = quotedStatus
+    }
+    
+    /// Approval/display state of the quote.
+    /// - SeeAlso: <https://docs.joinmastodon.org/entities/Quote/#state>
+    public enum State: String, Codable, Unknowable, Identifiable {
+        case pending
+        case accepted
+        case rejected
+        case revoked
+        case deleted
+        case unauthorized
+        case blockedAccount = "blocked_account"
+        case blockedDomain = "blocked_domain"
+        case mutedAccount = "muted_account"
+        
+        /// Mastodon docs say "Unknown values should be treated as `unauthorized`."
+        public static var unknownCase: Self { .unauthorized }
+        
+        public var id: Self { self }
+
+        /// Do we expect this quote to actually have a status attached?
+        public var hasStatus: Bool {
+            switch self {
+                case .accepted,
+                    .blockedAccount,
+                    .blockedDomain,
+                    .mutedAccount:
+                true
+            case .pending,
+                .rejected,
+                .revoked,
+                .deleted,
+                .unauthorized:
+                false
+            }
+        }
+    }
+}
+
+/// Mastodon shallow quote, which contains a nullable status _ID_ and a state.
+public struct ShallowQuote: Codable, Equatable {
+    public let state: Quote.State
+    public let quotedStatusId: Status.Id?
+    
+    public init(
+        state: Quote.State,
+        quotedStatusId: Status.Id?
+    ) {
+        self.state = state
+        self.quotedStatusId = quotedStatusId
     }
 }
