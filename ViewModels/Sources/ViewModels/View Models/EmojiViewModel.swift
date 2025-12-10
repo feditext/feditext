@@ -3,28 +3,28 @@
 import Foundation
 
 public struct EmojiViewModel {
-    let identityContext: IdentityContext
+  let identityContext: IdentityContext
 
-    private let emoji: PickerEmoji
+  private let emoji: PickerEmoji
 
-    public init(emoji: PickerEmoji, identityContext: IdentityContext) {
-        self.emoji = emoji.applyingDefaultSkinTone(identityContext: identityContext)
-        self.identityContext = identityContext
-    }
+  public init(emoji: PickerEmoji, identityContext: IdentityContext) {
+    self.emoji = emoji.applyingDefaultSkinTone(identityContext: identityContext)
+    self.identityContext = identityContext
+  }
 }
 
-public extension EmojiViewModel {
-    var name: String { emoji.name }
+extension EmojiViewModel {
+  public var name: String { emoji.name }
 
-    var system: Bool { emoji.system }
+  public var system: Bool { emoji.system }
 
-    var url: URL? {
-        guard case let .custom(emoji, _) = emoji else { return nil }
+  public var url: URL? {
+    guard case .custom(let emoji, _) = emoji else { return nil }
 
-        if identityContext.appPreferences.animateCustomEmojis {
-            return emoji.url.url
-        } else {
-            return emoji.staticUrl.url
-        }
+    if identityContext.appPreferences.animateCustomEmojis {
+      return emoji.url.url
+    } else {
+      return emoji.staticUrl.url
     }
+  }
 }

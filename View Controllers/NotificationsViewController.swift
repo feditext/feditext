@@ -6,131 +6,141 @@ import UIKit
 import ViewModels
 
 final class NotificationsViewController: UIPageViewController {
-    private let segmentedControl = UISegmentedControl(items: [
-        NSLocalizedString("notifications.all", comment: ""),
-        NSLocalizedString("notifications.mentions", comment: ""),
-        NSLocalizedString("notifications.admin", comment: "")
-    ])
-    private let notificationViewControllers: [TableViewController]
-    private let viewModel: NavigationViewModel
-    private let rootViewModel: RootViewModel
-    private var cancellables = Set<AnyCancellable>()
+  private let segmentedControl = UISegmentedControl(items: [
+    NSLocalizedString("notifications.all", comment: ""),
+    NSLocalizedString("notifications.mentions", comment: ""),
+    NSLocalizedString("notifications.admin", comment: ""),
+  ])
+  private let notificationViewControllers: [TableViewController]
+  private let viewModel: NavigationViewModel
+  private let rootViewModel: RootViewModel
+  private var cancellables = Set<AnyCancellable>()
 
-    init(viewModel: NavigationViewModel, rootViewModel: RootViewModel) {
-        self.viewModel = viewModel
-        self.rootViewModel = rootViewModel
+  init(viewModel: NavigationViewModel, rootViewModel: RootViewModel) {
+    self.viewModel = viewModel
+    self.rootViewModel = rootViewModel
 
-        var excludingAllExceptMentions = Set(MastodonNotification.NotificationType.allCasesExceptUnknown)
-        excludingAllExceptMentions.remove(.mention)
+    var excludingAllExceptMentions = Set(MastodonNotification.NotificationType.allCasesExceptUnknown)
+    excludingAllExceptMentions.remove(.mention)
 
-        var excludingAllExceptAdmin = Set(MastodonNotification.NotificationType.allCasesExceptUnknown)
-        excludingAllExceptAdmin.remove(.adminSignup)
-        excludingAllExceptAdmin.remove(.adminReport)
+    var excludingAllExceptAdmin = Set(MastodonNotification.NotificationType.allCasesExceptUnknown)
+    excludingAllExceptAdmin.remove(.adminSignup)
+    excludingAllExceptAdmin.remove(.adminReport)
 
-        notificationViewControllers = [
-            TableViewController(viewModel: viewModel.notificationsViewModel(excludeTypes: []),
-                                rootViewModel: rootViewModel),
-            TableViewController(viewModel: viewModel.notificationsViewModel(excludeTypes: excludingAllExceptMentions),
-                                rootViewModel: rootViewModel),
-            TableViewController(viewModel: viewModel.notificationsViewModel(excludeTypes: excludingAllExceptAdmin),
-                                rootViewModel: rootViewModel)
-        ]
+    notificationViewControllers = [
+      TableViewController(
+        viewModel: viewModel.notificationsViewModel(excludeTypes: []),
+        rootViewModel: rootViewModel),
+      TableViewController(
+        viewModel: viewModel.notificationsViewModel(excludeTypes: excludingAllExceptMentions),
+        rootViewModel: rootViewModel),
+      TableViewController(
+        viewModel: viewModel.notificationsViewModel(excludeTypes: excludingAllExceptAdmin),
+        rootViewModel: rootViewModel),
+    ]
 
-        super.init(transitionStyle: .scroll,
-                   navigationOrientation: .horizontal,
-                   options: [.interPageSpacing: CGFloat.defaultSpacing])
+    super.init(
+      transitionStyle: .scroll,
+      navigationOrientation: .horizontal,
+      options: [.interPageSpacing: CGFloat.defaultSpacing])
 
-        if let firstViewController = notificationViewControllers.first {
-            setViewControllers([firstViewController], direction: .forward, animated: false)
-        }
-
-        tabBarItem = NavigationViewModel.Tab.notifications.tabBarItem
+    if let firstViewController = notificationViewControllers.first {
+      setViewControllers([firstViewController], direction: .forward, animated: false)
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    tabBarItem = NavigationViewModel.Tab.notifications.tabBarItem
+  }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
 
-        dataSource = self
-        delegate = self
+  override func viewDidLoad() {
+    super.viewDidLoad()
 
-        navigationItem.titleView = segmentedControl
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.addAction(
-            UIAction { [weak self] _ in
-                guard let self = self,
-                      let currentViewController = self.viewControllers?.first as? TableViewController,
-                      let currentIndex = self.notificationViewControllers.firstIndex(of: currentViewController),
-                      self.segmentedControl.selectedSegmentIndex != currentIndex
-                else { return }
+    dataSource = self
+    delegate = self
 
-                self.setViewControllers(
-                    [self.notificationViewControllers[self.segmentedControl.selectedSegmentIndex]],
-                    direction: self.segmentedControl.selectedSegmentIndex > currentIndex ? .forward : .reverse,
-                    animated: !UIAccessibility.isReduceMotionEnabled)
-            },
-            for: .valueChanged)
-    }
+    navigationItem.titleView = segmentedControl
+    segmentedControl.selectedSegmentIndex = 0
+    segmentedControl.addAction(
+      UIAction { [weak self] _ in
+        guard let self = self,
+          let currentViewController = self.viewControllers?.first as? TableViewController,
+          let currentIndex = self.notificationViewControllers.firstIndex(of: currentViewController),
+          self.segmentedControl.selectedSegmentIndex != currentIndex
+        else { return }
+
+        self.setViewControllers(
+          [self.notificationViewControllers[self.segmentedControl.selectedSegmentIndex]],
+          direction: self.segmentedControl.selectedSegmentIndex > currentIndex ? .forward : .reverse,
+          animated: !UIAccessibility.isReduceMotionEnabled)
+      },
+      for: .valueChanged)
+  }
 }
 
 extension NotificationsViewController: NavigationHandling {
-    func handle(navigation: Navigation) {
-        switch navigation {
-        case .notification:
-            guard let firstViewController = notificationViewControllers.first else { return }
+  func handle(navigation: Navigation) {
+    switch navigation {
+    case .notification:
+      guard let firstViewController = notificationViewControllers.first else { return }
 
-            segmentedControl.selectedSegmentIndex = 0
-            setViewControllers([firstViewController], direction: .reverse, animated: false)
-            firstViewController.handle(navigation: navigation)
-        default:
-            (viewControllers?.first as? TableViewController)?.handle(navigation: navigation)
-        }
+      segmentedControl.selectedSegmentIndex = 0
+      setViewControllers([firstViewController], direction: .reverse, animated: false)
+      firstViewController.handle(navigation: navigation)
+    default:
+      (viewControllers?.first as? TableViewController)?.handle(navigation: navigation)
     }
+  }
 }
 
 extension NotificationsViewController: UIPageViewControllerDataSource {
-    func pageViewController(_ pageViewController: UIPageViewController,
-                            viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard
-            let viewController = viewController as? TableViewController,
-            let index = notificationViewControllers.firstIndex(of: viewController),
-            index + 1 < notificationViewControllers.count
-        else { return nil }
+  func pageViewController(
+    _ pageViewController: UIPageViewController,
+    viewControllerAfter viewController: UIViewController
+  ) -> UIViewController? {
+    guard
+      let viewController = viewController as? TableViewController,
+      let index = notificationViewControllers.firstIndex(of: viewController),
+      index + 1 < notificationViewControllers.count
+    else { return nil }
 
-        return notificationViewControllers[index + 1]
-    }
+    return notificationViewControllers[index + 1]
+  }
 
-    func pageViewController(_ pageViewController: UIPageViewController,
-                            viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard
-            let viewController = viewController as? TableViewController,
-            let index = notificationViewControllers.firstIndex(of: viewController),
-            index > 0
-        else { return nil }
+  func pageViewController(
+    _ pageViewController: UIPageViewController,
+    viewControllerBefore viewController: UIViewController
+  ) -> UIViewController? {
+    guard
+      let viewController = viewController as? TableViewController,
+      let index = notificationViewControllers.firstIndex(of: viewController),
+      index > 0
+    else { return nil }
 
-        return notificationViewControllers[index - 1]
-    }
+    return notificationViewControllers[index - 1]
+  }
 }
 
 extension NotificationsViewController: UIPageViewControllerDelegate {
-    func pageViewController(_ pageViewController: UIPageViewController,
-                            didFinishAnimating finished: Bool,
-                            previousViewControllers: [UIViewController],
-                            transitionCompleted completed: Bool) {
-        guard let viewController = viewControllers?.first as? TableViewController,
-              let index = notificationViewControllers.firstIndex(of: viewController)
-        else { return }
+  func pageViewController(
+    _ pageViewController: UIPageViewController,
+    didFinishAnimating finished: Bool,
+    previousViewControllers: [UIViewController],
+    transitionCompleted completed: Bool
+  ) {
+    guard let viewController = viewControllers?.first as? TableViewController,
+      let index = notificationViewControllers.firstIndex(of: viewController)
+    else { return }
 
-        segmentedControl.selectedSegmentIndex = index
-    }
+    segmentedControl.selectedSegmentIndex = index
+  }
 }
 
 extension NotificationsViewController: ScrollableToTop {
-    func scrollToTop(animated: Bool) {
-        (viewControllers?.first as? TableViewController)?.scrollToTop(animated: animated)
-    }
+  func scrollToTop(animated: Bool) {
+    (viewControllers?.first as? TableViewController)?.scrollToTop(animated: animated)
+  }
 }

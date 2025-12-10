@@ -4,12 +4,12 @@ import UIKit
 import ViewModels
 
 final class StatusCollectionViewCell: SeparatorConfiguredCollectionViewListCell {
-    var viewModel: StatusViewModel?
+  var viewModel: StatusViewModel?
 
-    override func updateConfiguration(using state: UICellConfigurationState) {
-        guard let viewModel = viewModel else { return }
+  override func updateConfiguration(using state: UICellConfigurationState) {
+    guard let viewModel = viewModel else { return }
 
-        contentConfiguration = StatusContentConfiguration(viewModel: viewModel).updated(for: state)
-        updateConstraintsIfNeeded()
-    }
+    contentConfiguration = StatusContentConfiguration(viewModel: viewModel).updated(for: state)
+    updateConstraintsIfNeeded()
+  }
 }

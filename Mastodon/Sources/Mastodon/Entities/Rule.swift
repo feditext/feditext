@@ -4,21 +4,21 @@ import Foundation
 
 /// A server rule.
 public struct Rule: Codable, Identifiable, Equatable {
-    public let id: Id
-    public let text: String
+  public let id: Id
+  public let text: String
 
-    public init(id: Id, text: String) {
-        self.id = id
-        self.text = text
-    }
+  public init(id: Id, text: String) {
+    self.id = id
+    self.text = text
+  }
 }
 
-public extension Rule {
-    typealias Id = String
+extension Rule {
+  public typealias Id = String
 }
 
 extension Rule: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
 }

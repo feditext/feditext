@@ -5,8 +5,8 @@ import GRDB
 import Mastodon
 
 extension Suggestion {
-    func save(_ db: Database) throws {
-        try account.save(db)
-        try SuggestionRecord(suggestion: self).save(db)
-    }
+  func save(_ db: Database) throws {
+    try account.save(db)
+    try SuggestionRecord(suggestion: self).save(db)
+  }
 }

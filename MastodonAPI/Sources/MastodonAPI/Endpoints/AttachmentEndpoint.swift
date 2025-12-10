@@ -5,73 +5,73 @@ import HTTP
 import Mastodon
 
 public enum AttachmentEndpoint {
-    case create(data: Data, mimeType: String, description: String?, focus: Attachment.Meta.Focus?)
-    case update(id: Attachment.Id, description: String?, focus: Attachment.Meta.Focus?)
+  case create(data: Data, mimeType: String, description: String?, focus: Attachment.Meta.Focus?)
+  case update(id: Attachment.Id, description: String?, focus: Attachment.Meta.Focus?)
 }
 
 extension AttachmentEndpoint: Endpoint {
-    public typealias ResultType = Attachment
+  public typealias ResultType = Attachment
 
-    public var context: [String] {
-        defaultContext + ["media"]
+  public var context: [String] {
+    defaultContext + ["media"]
+  }
+
+  public var pathComponentsInContext: [String] {
+    switch self {
+    case .create:
+      return []
+    case .update(let id, _, _):
+      return [id]
     }
+  }
 
-    public var pathComponentsInContext: [String] {
-        switch self {
-        case .create:
-            return []
-        case let .update(id, _, _):
-            return [id]
-        }
+  public var multipartFormData: [String: MultipartFormValue]? {
+    switch self {
+    case .create(let data, let mimeType, let description, let focus):
+      var params = [String: MultipartFormValue]()
+
+      params["file"] = .data(data, filename: UUID().uuidString, mimeType: mimeType)
+
+      if let description = description {
+        params["description"] = .string(description)
+      }
+
+      if let x = focus?.x, let y = focus?.y {
+        params["focus"] = .string("\(x),\(y)")
+      }
+
+      return params
+    case .update(_, let description, let focus):
+      var params = [String: MultipartFormValue]()
+
+      if let description = description {
+        params["description"] = .string(description)
+      }
+
+      if let x = focus?.x, let y = focus?.y {
+        params["focus"] = .string("\(x),\(y)")
+      }
+
+      return params
     }
+  }
 
-    public var multipartFormData: [String: MultipartFormValue]? {
-        switch self {
-        case let .create(data, mimeType, description, focus):
-            var params = [String: MultipartFormValue]()
-
-            params["file"] = .data(data, filename: UUID().uuidString, mimeType: mimeType)
-
-            if let description = description {
-                params["description"] = .string(description)
-            }
-
-            if let x = focus?.x, let y = focus?.y {
-                params["focus"] = .string("\(x),\(y)")
-            }
-
-            return params
-        case let .update(_, description, focus):
-            var params = [String: MultipartFormValue]()
-
-            if let description = description {
-                params["description"] = .string(description)
-            }
-
-            if let x = focus?.x, let y = focus?.y {
-                params["focus"] = .string("\(x),\(y)")
-            }
-
-            return params
-        }
+  public var method: HTTPMethod {
+    switch self {
+    case .create:
+      return .post
+    case .update:
+      return .put
     }
+  }
 
-    public var method: HTTPMethod {
-        switch self {
-        case .create:
-            return .post
-        case .update:
-            return .put
-        }
+  public var notFound: EntityNotFound? {
+    switch self {
+    case .create:
+      return nil
+
+    case .update(let id, _, _):
+      return .attachment(id)
     }
-
-    public var notFound: EntityNotFound? {
-        switch self {
-        case .create:
-            return nil
-
-        case .update(let id, _, _):
-            return .attachment(id)
-        }
-    }
+  }
 }

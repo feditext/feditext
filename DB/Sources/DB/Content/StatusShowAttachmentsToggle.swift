@@ -5,11 +5,11 @@ import GRDB
 import Mastodon
 
 struct StatusShowAttachmentsToggle: ContentDatabaseRecord, Hashable {
-    let statusId: Status.Id
+  let statusId: Status.Id
 }
 
 extension StatusShowAttachmentsToggle {
-    enum Columns {
-        static let statusId = Column(CodingKeys.statusId)
-    }
+  enum Columns {
+    static let statusId = Column(CodingKeys.statusId)
+  }
 }

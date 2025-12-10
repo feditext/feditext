@@ -5,36 +5,36 @@ import HTTP
 import Mastodon
 
 public enum AppAuthorizationEndpoint {
-    case apps(clientName: String, redirectURI: String, scopes: String, website: URL?)
+  case apps(clientName: String, redirectURI: String, scopes: String, website: URL?)
 }
 
 extension AppAuthorizationEndpoint: Endpoint {
-    public typealias ResultType = AppAuthorization
+  public typealias ResultType = AppAuthorization
 
-    public var pathComponentsInContext: [String] {
-        switch self {
-        case .apps: return ["apps"]
-        }
+  public var pathComponentsInContext: [String] {
+    switch self {
+    case .apps: return ["apps"]
     }
+  }
 
-    public var method: HTTPMethod {
-        switch self {
-        case .apps: return .post
-        }
+  public var method: HTTPMethod {
+    switch self {
+    case .apps: return .post
     }
+  }
 
-    public var jsonBody: [String: Any]? {
-        switch self {
-        case let .apps(clientName, redirectURI, scopes, website):
-            var params = [
-                "client_name": clientName,
-                "redirect_uris": redirectURI,
-                "scopes": scopes
-            ]
+  public var jsonBody: [String: Any]? {
+    switch self {
+    case .apps(let clientName, let redirectURI, let scopes, let website):
+      var params = [
+        "client_name": clientName,
+        "redirect_uris": redirectURI,
+        "scopes": scopes,
+      ]
 
-            params["website"] = website?.absoluteString
+      params["website"] = website?.absoluteString
 
-            return params
-        }
+      return params
     }
+  }
 }

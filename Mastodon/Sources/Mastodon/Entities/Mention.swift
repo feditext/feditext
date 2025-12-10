@@ -3,14 +3,14 @@
 import Foundation
 
 public struct Mention: Codable, Equatable {
-    public let url: UnicodeURL
-    public let username: String
-    public let acct: String
-    public let id: Account.Id
+  public let url: UnicodeURL
+  public let username: String
+  public let acct: String
+  public let id: Account.Id
 }
 
 extension Mention: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
 }

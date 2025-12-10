@@ -3,16 +3,16 @@
 import MastodonAPI
 
 extension AccountsEndpoint {
-    var configuration: CollectionItem.AccountConfiguration {
-        switch self {
-        case .mutes:
-            return .mute
-        case .blocks:
-            return .block
-        case .followRequests:
-            return .followRequest
-        default:
-            return .withNote
-        }
+  var configuration: CollectionItem.AccountConfiguration {
+    switch self {
+    case .mutes:
+      return .mute
+    case .blocks:
+      return .block
+    case .followRequests:
+      return .followRequest
+    default:
+      return .withNote
     }
+  }
 }

@@ -4,85 +4,85 @@ import SDWebImage
 import UIKit
 
 final class EmojiView: UIView {
-    private let imageView = SDAnimatedImageView()
-    private let emojiLabel = UILabel()
-    private var emojiConfiguration: EmojiContentConfiguration
+  private let imageView = SDAnimatedImageView()
+  private let emojiLabel = UILabel()
+  private var emojiConfiguration: EmojiContentConfiguration
 
-    init(configuration: EmojiContentConfiguration) {
-        emojiConfiguration = configuration
+  init(configuration: EmojiContentConfiguration) {
+    emojiConfiguration = configuration
 
-        super.init(frame: .zero)
+    super.init(frame: .zero)
 
-        initialSetup()
-        setupAccessibility()
-        applyEmojiConfiguration()
-    }
+    initialSetup()
+    setupAccessibility()
+    applyEmojiConfiguration()
+  }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
 }
 
 extension EmojiView: UIContentView {
-    var configuration: UIContentConfiguration {
-        get { emojiConfiguration }
-        set {
-            guard let emojiConfiguration = newValue as? EmojiContentConfiguration else { return }
+  var configuration: UIContentConfiguration {
+    get { emojiConfiguration }
+    set {
+      guard let emojiConfiguration = newValue as? EmojiContentConfiguration else { return }
 
-            self.emojiConfiguration = emojiConfiguration
+      self.emojiConfiguration = emojiConfiguration
 
-            applyEmojiConfiguration()
-        }
+      applyEmojiConfiguration()
     }
+  }
 }
 
-private extension EmojiView {
-    func initialSetup() {
-        layoutMargins = .init(
-            top: .compactSpacing,
-            left: .compactSpacing,
-            bottom: .compactSpacing,
-            right: .compactSpacing)
+extension EmojiView {
+  fileprivate func initialSetup() {
+    layoutMargins = .init(
+      top: .compactSpacing,
+      left: .compactSpacing,
+      bottom: .compactSpacing,
+      right: .compactSpacing)
 
-        addSubview(imageView)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
+    addSubview(imageView)
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    imageView.contentMode = .scaleAspectFit
 
-        addSubview(emojiLabel)
-        emojiLabel.translatesAutoresizingMaskIntoConstraints = false
-        emojiLabel.textAlignment = .center
-        emojiLabel.adjustsFontSizeToFitWidth = true
-        emojiLabel.font = .preferredFont(forTextStyle: .largeTitle)
+    addSubview(emojiLabel)
+    emojiLabel.translatesAutoresizingMaskIntoConstraints = false
+    emojiLabel.textAlignment = .center
+    emojiLabel.adjustsFontSizeToFitWidth = true
+    emojiLabel.font = .preferredFont(forTextStyle: .largeTitle)
 
-        NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            imageView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-            imageView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            imageView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
-            emojiLabel.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            emojiLabel.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-            emojiLabel.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            emojiLabel.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
-        ])
+    NSLayoutConstraint.activate([
+      imageView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+      imageView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+      imageView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+      imageView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
+      emojiLabel.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+      emojiLabel.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+      emojiLabel.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+      emojiLabel.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
+    ])
+  }
+
+  fileprivate func applyEmojiConfiguration() {
+    if emojiConfiguration.viewModel.system {
+      emojiLabel.isHidden = false
+      emojiLabel.text = emojiConfiguration.viewModel.name
+      imageView.isHidden = true
+    } else {
+      emojiLabel.isHidden = true
+      emojiLabel.text = nil
+      imageView.isHidden = false
+      imageView.sd_setImage(with: emojiConfiguration.viewModel.url)
     }
 
-    func applyEmojiConfiguration() {
-        if emojiConfiguration.viewModel.system {
-            emojiLabel.isHidden = false
-            emojiLabel.text = emojiConfiguration.viewModel.name
-            imageView.isHidden = true
-        } else {
-            emojiLabel.isHidden = true
-            emojiLabel.text = nil
-            imageView.isHidden = false
-            imageView.sd_setImage(with: emojiConfiguration.viewModel.url)
-        }
+    accessibilityLabel = emojiConfiguration.viewModel.name
+  }
 
-        accessibilityLabel = emojiConfiguration.viewModel.name
-    }
-
-    func setupAccessibility() {
-        isAccessibilityElement = true
-    }
+  fileprivate func setupAccessibility() {
+    isAccessibilityElement = true
+  }
 }

@@ -7,163 +7,170 @@ import Mastodon
 import MastodonAPI
 
 public enum AuthenticationError: Error {
-    case canceled
+  case canceled
 }
 
 struct AuthenticationService {
-    private let session: URLSession
-    private let instanceURL: URL
+  private let session: URLSession
+  private let instanceURL: URL
 
-    private let mastodonAPIClient: MastodonAPIClient
-    private let webAuthSessionType: WebAuthSession.Type
-    private let webAuthSessionContextProvider = WebAuthSessionContextProvider()
+  private let mastodonAPIClient: MastodonAPIClient
+  private let webAuthSessionType: WebAuthSession.Type
+  private let webAuthSessionContextProvider = WebAuthSessionContextProvider()
 
-    init(url: URL, environment: AppEnvironment, apiCapabilities: APICapabilities) throws {
-        session = environment.session
-        instanceURL = url
-        mastodonAPIClient = try MastodonAPIClient(
-            session: environment.session,
-            instanceURL: url,
-            apiCapabilities: apiCapabilities,
-            accessToken: nil
-        )
-        webAuthSessionType = environment.webAuthSessionType
-    }
+  init(url: URL, environment: AppEnvironment, apiCapabilities: APICapabilities) throws {
+    session = environment.session
+    instanceURL = url
+    mastodonAPIClient = try MastodonAPIClient(
+      session: environment.session,
+      instanceURL: url,
+      apiCapabilities: apiCapabilities,
+      accessToken: nil
+    )
+    webAuthSessionType = environment.webAuthSessionType
+  }
 }
 
 extension AuthenticationService {
-    func authenticate() -> AnyPublisher<(AppAuthorization, AccessToken), Error> {
-        let authorization = appAuthorization(redirectURI: AppUrl.oauthCallback).share()
+  func authenticate() -> AnyPublisher<(AppAuthorization, AccessToken), Error> {
+    let authorization = appAuthorization(redirectURI: AppUrl.oauthCallback).share()
 
-        return authorization
-            .zip(authorization.flatMap(authenticate(appAuthorization:)))
-            .eraseToAnyPublisher()
-    }
+    return
+      authorization
+      .zip(authorization.flatMap(authenticate(appAuthorization:)))
+      .eraseToAnyPublisher()
+  }
 
-    func register(_ registration: Registration,
-                  id: Identity.Id) -> AnyPublisher<(AppAuthorization, AccessToken), Error> {
-        let redirectURI = AppUrl.oauthCallback.appendingPathComponent(id.uuidString)
-        let authorization = appAuthorization(redirectURI: redirectURI)
-            .share()
+  func register(
+    _ registration: Registration,
+    id: Identity.Id
+  ) -> AnyPublisher<(AppAuthorization, AccessToken), Error> {
+    let redirectURI = AppUrl.oauthCallback.appendingPathComponent(id.uuidString)
+    let authorization = appAuthorization(redirectURI: redirectURI)
+      .share()
 
-        return authorization.zip(
-            authorization.flatMap { appAuthorization -> AnyPublisher<AccessToken, Error> in
-                mastodonAPIClient.request(
-                    AccessTokenEndpoint.oauthToken(
-                        clientId: appAuthorization.clientId,
-                        clientSecret: appAuthorization.clientSecret,
-                        grantType: OAuth.registrationGrantType,
-                        scopes: OAuth.scopes,
-                        code: nil,
-                        username: nil,
-                        password: nil,
-                        redirectURI: redirectURI.absoluteString))
-                    .flatMap { accessToken -> AnyPublisher<AccessToken, Error> in
-                        let authenticatedMastodonAPIClient: MastodonAPIClient
-                        do {
-                            authenticatedMastodonAPIClient = try MastodonAPIClient(
-                                session: session,
-                                instanceURL: instanceURL,
-                                apiCapabilities: mastodonAPIClient.apiCapabilities,
-                                accessToken: accessToken.accessToken
-                            )
-                        } catch {
-                            return Fail(outputType: AccessToken.self, failure: error)
-                                .eraseToAnyPublisher()
-                        }
+    return authorization.zip(
+      authorization.flatMap { appAuthorization -> AnyPublisher<AccessToken, Error> in
+        mastodonAPIClient.request(
+          AccessTokenEndpoint.oauthToken(
+            clientId: appAuthorization.clientId,
+            clientSecret: appAuthorization.clientSecret,
+            grantType: OAuth.registrationGrantType,
+            scopes: OAuth.scopes,
+            code: nil,
+            username: nil,
+            password: nil,
+            redirectURI: redirectURI.absoluteString)
+        )
+        .flatMap { accessToken -> AnyPublisher<AccessToken, Error> in
+          let authenticatedMastodonAPIClient: MastodonAPIClient
+          do {
+            authenticatedMastodonAPIClient = try MastodonAPIClient(
+              session: session,
+              instanceURL: instanceURL,
+              apiCapabilities: mastodonAPIClient.apiCapabilities,
+              accessToken: accessToken.accessToken
+            )
+          } catch {
+            return Fail(outputType: AccessToken.self, failure: error)
+              .eraseToAnyPublisher()
+          }
 
-                        return authenticatedMastodonAPIClient.request(AccessTokenEndpoint.accounts(registration))
-                    }
-                    .eraseToAnyPublisher()
-            })
-            .eraseToAnyPublisher()
-    }
+          return authenticatedMastodonAPIClient.request(AccessTokenEndpoint.accounts(registration))
+        }
+        .eraseToAnyPublisher()
+      }
+    )
+    .eraseToAnyPublisher()
+  }
 }
 
-private extension AuthenticationService {
-    struct OAuth {
-        static let clientName = "Feditext"
-        static let scopes = "read write follow push"
-        static let codeCallbackQueryItemName = "code"
-        static let authorizationCodeGrantType = "authorization_code"
-        static let registrationGrantType = "client_credentials"
+extension AuthenticationService {
+  fileprivate struct OAuth {
+    static let clientName = "Feditext"
+    static let scopes = "read write follow push"
+    static let codeCallbackQueryItemName = "code"
+    static let authorizationCodeGrantType = "authorization_code"
+    static let registrationGrantType = "client_credentials"
+  }
+
+  fileprivate enum OAuthError: Error {
+    case codeNotFound
+  }
+
+  fileprivate static func extractCode(oauthCallbackURL: URL) throws -> String {
+    guard
+      let queryItems = URLComponents(
+        url: oauthCallbackURL,
+        resolvingAgainstBaseURL: true)?.queryItems,
+      let code = queryItems.first(where: {
+        $0.name == OAuth.codeCallbackQueryItemName
+      })?.value
+    else { throw OAuthError.codeNotFound }
+
+    return code
+  }
+
+  fileprivate func appAuthorization(redirectURI: URL) -> AnyPublisher<AppAuthorization, Error> {
+    mastodonAPIClient.request(
+      AppAuthorizationEndpoint.apps(
+        clientName: OAuth.clientName,
+        redirectURI: redirectURI.absoluteString,
+        scopes: OAuth.scopes,
+        website: AppUrl.website))
+  }
+
+  fileprivate func authorizationURL(appAuthorization: AppAuthorization) throws -> URL {
+    guard
+      var authorizationURLComponents = URLComponents(
+        url: mastodonAPIClient.instanceURL,
+        resolvingAgainstBaseURL: true)
+    else { throw URLError(.badURL) }
+
+    authorizationURLComponents.path = "/oauth/authorize"
+    authorizationURLComponents.queryItems = [
+      .init(name: "client_id", value: appAuthorization.clientId),
+      .init(name: "scope", value: OAuth.scopes),
+      .init(name: "response_type", value: "code"),
+      .init(name: "redirect_uri", value: AppUrl.oauthCallback.absoluteString),
+    ]
+
+    guard let authorizationURL = authorizationURLComponents.url else {
+      throw URLError(.badURL)
     }
 
-    enum OAuthError: Error {
-        case codeNotFound
-    }
+    return authorizationURL
+  }
 
-    static func extractCode(oauthCallbackURL: URL) throws -> String {
-        guard let queryItems = URLComponents(
-                url: oauthCallbackURL,
-                resolvingAgainstBaseURL: true)?.queryItems,
-              let code = queryItems.first(where: {
-                $0.name == OAuth.codeCallbackQueryItemName
-              })?.value
-        else { throw OAuthError.codeNotFound }
-
-        return code
-    }
-
-    func appAuthorization(redirectURI: URL) -> AnyPublisher<AppAuthorization, Error> {
-        mastodonAPIClient.request(
-            AppAuthorizationEndpoint.apps(
-                clientName: OAuth.clientName,
-                redirectURI: redirectURI.absoluteString,
-                scopes: OAuth.scopes,
-                website: AppUrl.website))
-    }
-
-    func authorizationURL(appAuthorization: AppAuthorization) throws -> URL {
-        guard var authorizationURLComponents = URLComponents(
-                url: mastodonAPIClient.instanceURL,
-                resolvingAgainstBaseURL: true)
-        else { throw URLError(.badURL) }
-
-        authorizationURLComponents.path = "/oauth/authorize"
-        authorizationURLComponents.queryItems = [
-            .init(name: "client_id", value: appAuthorization.clientId),
-            .init(name: "scope", value: OAuth.scopes),
-            .init(name: "response_type", value: "code"),
-            .init(name: "redirect_uri", value: AppUrl.oauthCallback.absoluteString)
-        ]
-
-        guard let authorizationURL = authorizationURLComponents.url else {
-            throw URLError(.badURL)
+  fileprivate func authenticate(appAuthorization: AppAuthorization) -> AnyPublisher<AccessToken, Error> {
+    Just(appAuthorization)
+      .tryMap(authorizationURL(appAuthorization:))
+      .flatMap {
+        webAuthSessionType.publisher(
+          url: $0,
+          callbackURLScheme: AppUrl.scheme,
+          presentationContextProvider: webAuthSessionContextProvider)
+      }
+      .mapError { error -> Error in
+        if (error as? WebAuthSessionError)?.code == .canceledLogin {
+          return AuthenticationError.canceled as Error
         }
 
-        return authorizationURL
-    }
-
-    func authenticate(appAuthorization: AppAuthorization) -> AnyPublisher<AccessToken, Error> {
-        Just(appAuthorization)
-            .tryMap(authorizationURL(appAuthorization:))
-            .flatMap {
-                webAuthSessionType.publisher(
-                    url: $0,
-                    callbackURLScheme: AppUrl.scheme,
-                    presentationContextProvider: webAuthSessionContextProvider)
-            }
-            .mapError { error -> Error in
-                if (error as? WebAuthSessionError)?.code == .canceledLogin {
-                    return AuthenticationError.canceled as Error
-                }
-
-                return error
-            }
-            .tryMap(Self.extractCode(oauthCallbackURL:))
-            .flatMap {
-                mastodonAPIClient.request(
-                    AccessTokenEndpoint.oauthToken(
-                        clientId: appAuthorization.clientId,
-                        clientSecret: appAuthorization.clientSecret,
-                        grantType: OAuth.authorizationCodeGrantType,
-                        scopes: OAuth.scopes,
-                        code: $0,
-                        username: nil,
-                        password: nil,
-                        redirectURI: AppUrl.oauthCallback.absoluteString))
-            }
-            .eraseToAnyPublisher()
-    }
+        return error
+      }
+      .tryMap(Self.extractCode(oauthCallbackURL:))
+      .flatMap {
+        mastodonAPIClient.request(
+          AccessTokenEndpoint.oauthToken(
+            clientId: appAuthorization.clientId,
+            clientSecret: appAuthorization.clientSecret,
+            grantType: OAuth.authorizationCodeGrantType,
+            scopes: OAuth.scopes,
+            code: $0,
+            username: nil,
+            password: nil,
+            redirectURI: AppUrl.oauthCallback.absoluteString))
+      }
+      .eraseToAnyPublisher()
+  }
 }

@@ -11,23 +11,23 @@ import Foundation
 /// - https://docs.gotosocial.org/en/latest/api/swagger/
 /// - https://firefish.social/api-doc (Misskey API only)
 public enum APIFlavor: String, Codable, Hashable, Identifiable, CaseIterable, Sendable {
-    case mastodon
-    case glitch
-    case hometown
-    case fedibird
+  case mastodon
+  case glitch
+  case hometown
+  case fedibird
 
-    case pleroma
-    case akkoma
+  case pleroma
+  case akkoma
 
-    case gotosocial
+  case gotosocial
 
-    case calckey
-    case firefish
-    case iceshrimp
+  case calckey
+  case firefish
+  case iceshrimp
 
-    case snac
+  case snac
 
-    case pixelfed
+  case pixelfed
 
-    public var id: Self { self }
+  public var id: Self { self }
 }

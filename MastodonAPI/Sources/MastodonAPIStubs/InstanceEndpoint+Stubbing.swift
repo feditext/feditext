@@ -5,7 +5,7 @@ import MastodonAPI
 import Stubbing
 
 extension InstanceEndpoint: Stubbing {
-    public func data(url: URL) -> Data? {
-        StubData.instance
-    }
+  public func data(url: URL) -> Data? {
+    StubData.instance
+  }
 }

@@ -7,91 +7,94 @@ import Mastodon
 import MastodonAPI
 
 public struct TimelineService {
-    public let sections: AnyPublisher<[CollectionSection], Error>
-    public let navigationService: NavigationService
-    public let nextPageMaxId: AnyPublisher<String?, Never>
-    public let accountIdsForRelationships: AnyPublisher<Set<Account.Id>, Never>
-    public let title: AnyPublisher<String, Never>
-    public let titleLocalizationComponents: AnyPublisher<[String], Never>
-    public let announcesNewItems = true
-    public let displayFilter: AnyPublisher<DisplayFilter, Never>
+  public let sections: AnyPublisher<[CollectionSection], Error>
+  public let navigationService: NavigationService
+  public let nextPageMaxId: AnyPublisher<String?, Never>
+  public let accountIdsForRelationships: AnyPublisher<Set<Account.Id>, Never>
+  public let title: AnyPublisher<String, Never>
+  public let titleLocalizationComponents: AnyPublisher<[String], Never>
+  public let announcesNewItems = true
+  public let displayFilter: AnyPublisher<DisplayFilter, Never>
 
-    private let timeline: Timeline
-    private let mastodonAPIClient: MastodonAPIClient
-    private let contentDatabase: ContentDatabase
-    private let nextPageMaxIdSubject = PassthroughSubject<String?, Never>()
-    private let accountIdsForRelationshipsSubject = PassthroughSubject<Set<Account.Id>, Never>()
+  private let timeline: Timeline
+  private let mastodonAPIClient: MastodonAPIClient
+  private let contentDatabase: ContentDatabase
+  private let nextPageMaxIdSubject = PassthroughSubject<String?, Never>()
+  private let accountIdsForRelationshipsSubject = PassthroughSubject<Set<Account.Id>, Never>()
 
-    init(timeline: Timeline,
-         environment: AppEnvironment,
-         mastodonAPIClient: MastodonAPIClient,
-         contentDatabase: ContentDatabase) {
-        self.timeline = timeline
-        self.mastodonAPIClient = mastodonAPIClient
-        self.contentDatabase = contentDatabase
+  init(
+    timeline: Timeline,
+    environment: AppEnvironment,
+    mastodonAPIClient: MastodonAPIClient,
+    contentDatabase: ContentDatabase
+  ) {
+    self.timeline = timeline
+    self.mastodonAPIClient = mastodonAPIClient
+    self.contentDatabase = contentDatabase
 
-        let applyV1Filters = !mastodonAPIClient.supportsV2Filters
-        if case .home = timeline {
-            sections = contentDatabase.cleanHomeTimelinePublisher()
-                .collect()
-                .flatMap { _ in contentDatabase.timelinePublisher(timeline, applyV1Filters: applyV1Filters) }
-                .eraseToAnyPublisher()
-        } else {
-            sections = contentDatabase.timelinePublisher(timeline, applyV1Filters: applyV1Filters)
-        }
-
-        navigationService = NavigationService(environment: environment,
-                                              mastodonAPIClient: mastodonAPIClient,
-                                              contentDatabase: contentDatabase)
-        nextPageMaxId = nextPageMaxIdSubject.eraseToAnyPublisher()
-        accountIdsForRelationships = accountIdsForRelationshipsSubject.eraseToAnyPublisher()
-        displayFilter = contentDatabase.displayFilterPublisher(timeline)
-            .replaceError(with: DisplayFilter.showAll)
-            .eraseToAnyPublisher()
-
-        switch timeline {
-        case let .list(list):
-            title = Just(list.title).eraseToAnyPublisher()
-            titleLocalizationComponents = Empty().eraseToAnyPublisher()
-        case let .tag(tag):
-            title = Just("#".appending(tag)).eraseToAnyPublisher()
-            titleLocalizationComponents = Empty().eraseToAnyPublisher()
-        case .favorites:
-            title = Empty().eraseToAnyPublisher()
-            titleLocalizationComponents = Just(["favorites"]).eraseToAnyPublisher()
-        case .bookmarks:
-            title = Empty().eraseToAnyPublisher()
-            titleLocalizationComponents = Just(["bookmarks"]).eraseToAnyPublisher()
-        default:
-            title = Empty().eraseToAnyPublisher()
-            titleLocalizationComponents = Empty().eraseToAnyPublisher()
-        }
+    let applyV1Filters = !mastodonAPIClient.supportsV2Filters
+    if case .home = timeline {
+      sections = contentDatabase.cleanHomeTimelinePublisher()
+        .collect()
+        .flatMap { _ in contentDatabase.timelinePublisher(timeline, applyV1Filters: applyV1Filters) }
+        .eraseToAnyPublisher()
+    } else {
+      sections = contentDatabase.timelinePublisher(timeline, applyV1Filters: applyV1Filters)
     }
 
-    public func apply(_ displayFilter: DisplayFilter) -> AnyPublisher<Never, Error> {
-        contentDatabase.update(timeline, displayFilter)
+    navigationService = NavigationService(
+      environment: environment,
+      mastodonAPIClient: mastodonAPIClient,
+      contentDatabase: contentDatabase)
+    nextPageMaxId = nextPageMaxIdSubject.eraseToAnyPublisher()
+    accountIdsForRelationships = accountIdsForRelationshipsSubject.eraseToAnyPublisher()
+    displayFilter = contentDatabase.displayFilterPublisher(timeline)
+      .replaceError(with: DisplayFilter.showAll)
+      .eraseToAnyPublisher()
+
+    switch timeline {
+    case .list(let list):
+      title = Just(list.title).eraseToAnyPublisher()
+      titleLocalizationComponents = Empty().eraseToAnyPublisher()
+    case .tag(let tag):
+      title = Just("#".appending(tag)).eraseToAnyPublisher()
+      titleLocalizationComponents = Empty().eraseToAnyPublisher()
+    case .favorites:
+      title = Empty().eraseToAnyPublisher()
+      titleLocalizationComponents = Just(["favorites"]).eraseToAnyPublisher()
+    case .bookmarks:
+      title = Empty().eraseToAnyPublisher()
+      titleLocalizationComponents = Just(["bookmarks"]).eraseToAnyPublisher()
+    default:
+      title = Empty().eraseToAnyPublisher()
+      titleLocalizationComponents = Empty().eraseToAnyPublisher()
     }
+  }
+
+  public func apply(_ displayFilter: DisplayFilter) -> AnyPublisher<Never, Error> {
+    contentDatabase.update(timeline, displayFilter)
+  }
 }
 
 extension TimelineService: CollectionService {
-    public var positionTimeline: Timeline? { timeline }
+  public var positionTimeline: Timeline? { timeline }
 
-    public var preferLastPresentIdOverNextPageMaxId: Bool {
-        !timeline.ordered
-    }
+  public var preferLastPresentIdOverNextPageMaxId: Bool {
+    !timeline.ordered
+  }
 
-    public func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error> {
-        mastodonAPIClient.pagedRequest(timeline.endpoint, maxId: maxId, minId: minId)
-            .handleEvents(receiveOutput: {
-                if let maxId = $0.info.maxId {
-                    nextPageMaxIdSubject.send(maxId)
-                }
+  public func request(maxId: String?, minId: String?) -> AnyPublisher<Never, Error> {
+    mastodonAPIClient.pagedRequest(timeline.endpoint, maxId: maxId, minId: minId)
+      .handleEvents(receiveOutput: {
+        if let maxId = $0.info.maxId {
+          nextPageMaxIdSubject.send(maxId)
+        }
 
-                accountIdsForRelationshipsSubject.send(
-                    Set($0.result.map(\.account.id))
-                        .union(Set($0.result.compactMap(\.reblog?.account.id))))
-            })
-            .flatMap { contentDatabase.insert(statuses: $0.result, timeline: timeline) }
-            .eraseToAnyPublisher()
-    }
+        accountIdsForRelationshipsSubject.send(
+          Set($0.result.map(\.account.id))
+            .union(Set($0.result.compactMap(\.reblog?.account.id))))
+      })
+      .flatMap { contentDatabase.insert(statuses: $0.result, timeline: timeline) }
+      .eraseToAnyPublisher()
+  }
 }

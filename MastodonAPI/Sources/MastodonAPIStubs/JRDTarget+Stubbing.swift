@@ -5,7 +5,7 @@ import MastodonAPI
 import Stubbing
 
 extension JRDTarget: Stubbing {
-    public func data(url: URL) -> Data? {
-        StubData.jrd
-    }
+  public func data(url: URL) -> Data? {
+    StubData.jrd
+  }
 }

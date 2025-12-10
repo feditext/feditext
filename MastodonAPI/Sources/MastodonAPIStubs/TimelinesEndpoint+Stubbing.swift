@@ -5,7 +5,7 @@ import MastodonAPI
 import Stubbing
 
 extension StatusesEndpoint: Stubbing {
-    public func data(url: URL) -> Data? {
-        StubData.timeline
-    }
+  public func data(url: URL) -> Data? {
+    StubData.timeline
+  }
 }

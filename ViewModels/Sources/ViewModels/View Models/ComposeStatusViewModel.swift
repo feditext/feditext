@@ -10,419 +10,426 @@ import ServiceLayer
 ///
 /// ``CompositionViewModel`` is for composing a single status.
 public final class ComposeStatusViewModel: ObservableObject {
-    @Published public var visibility: Status.Visibility
-    /// GotoSocial only. Could support Glitch and Hometown in future.
-    @Published public var federated: Bool?
-    /// GotoSocial only.
-    @Published public var boostable: Bool?
-    /// GotoSocial only.
-    @Published public var replyable: Bool?
-    /// GotoSocial only.
-    @Published public var likeable: Bool?
-    @Published public private(set) var compositionViewModels = [CompositionViewModel]()
-    @Published public private(set) var identityContext: IdentityContext
-    @Published public var canPost = false
-    @Published public var alertItem: AlertItem?
-    @Published public private(set) var postingState = PostingState.composing
-    public let canChangeIdentity: Bool
-    /// Also applies to `federated`, `boostable`, `replyable`, `likeable`.
-    public let canChangeVisibility: Bool
-    public let inReplyToViewModel: StatusViewModel?
-    public let events: AnyPublisher<Event, Never>
+  @Published public var visibility: Status.Visibility
+  /// GotoSocial only. Could support Glitch and Hometown in future.
+  @Published public var federated: Bool?
+  /// GotoSocial only.
+  @Published public var boostable: Bool?
+  /// GotoSocial only.
+  @Published public var replyable: Bool?
+  /// GotoSocial only.
+  @Published public var likeable: Bool?
+  @Published public private(set) var compositionViewModels = [CompositionViewModel]()
+  @Published public private(set) var identityContext: IdentityContext
+  @Published public var canPost = false
+  @Published public var alertItem: AlertItem?
+  @Published public private(set) var postingState = PostingState.composing
+  public let canChangeIdentity: Bool
+  /// Also applies to `federated`, `boostable`, `replyable`, `likeable`.
+  public let canChangeVisibility: Bool
+  public let inReplyToViewModel: StatusViewModel?
+  public let events: AnyPublisher<Event, Never>
 
-    private let allIdentitiesService: AllIdentitiesService
-    private let environment: AppEnvironment
-    private let eventsSubject = PassthroughSubject<Event, Never>()
-    private let compositionEventsSubject = PassthroughSubject<CompositionViewModel.Event, Never>()
-    private var cancellables = Set<AnyCancellable>()
-    /// If this is set, we are editing an existing post.
-    private let editID: Status.ID?
+  private let allIdentitiesService: AllIdentitiesService
+  private let environment: AppEnvironment
+  private let eventsSubject = PassthroughSubject<Event, Never>()
+  private let compositionEventsSubject = PassthroughSubject<CompositionViewModel.Event, Never>()
+  private var cancellables = Set<AnyCancellable>()
+  /// If this is set, we are editing an existing post.
+  private let editID: Status.ID?
 
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
-    public init(allIdentitiesService: AllIdentitiesService,
-                identityContext: IdentityContext,
-                environment: AppEnvironment,
-                identity: Identity?,
-                inReplyTo: StatusViewModel?,
-                redraft: Status?,
-                edit: Status?,
-                directMessageTo: AccountViewModel?,
-                extensionContext: NSExtensionContext?) {
-        assert(
-            redraft == nil || edit == nil,
-            "Will never redraft and edit at the same time"
-        )
+  // swiftlint:disable:next cyclomatic_complexity function_body_length
+  public init(
+    allIdentitiesService: AllIdentitiesService,
+    identityContext: IdentityContext,
+    environment: AppEnvironment,
+    identity: Identity?,
+    inReplyTo: StatusViewModel?,
+    redraft: Status?,
+    edit: Status?,
+    directMessageTo: AccountViewModel?,
+    extensionContext: NSExtensionContext?
+  ) {
+    assert(
+      redraft == nil || edit == nil,
+      "Will never redraft and edit at the same time"
+    )
 
-        self.allIdentitiesService = allIdentitiesService
-        self.identityContext = identityContext
-        self.environment = environment
-        inReplyToViewModel = inReplyTo
-        events = eventsSubject.eraseToAnyPublisher()
-        visibility = redraft?.visibility
-            ?? edit?.visibility
-            ?? inReplyTo?.visibility
-            ?? (identity ?? identityContext.identity).preferences.postingDefaultVisibility
+    self.allIdentitiesService = allIdentitiesService
+    self.identityContext = identityContext
+    self.environment = environment
+    inReplyToViewModel = inReplyTo
+    events = eventsSubject.eraseToAnyPublisher()
+    visibility =
+      redraft?.visibility
+      ?? edit?.visibility
+      ?? inReplyTo?.visibility
+      ?? (identity ?? identityContext.identity).preferences.postingDefaultVisibility
 
-        if edit != nil {
-            canChangeIdentity = false
-        } else if let inReplyTo = inReplyTo {
-            switch inReplyTo.visibility {
-            case .public, .unlisted:
-                canChangeIdentity = true
-            default:
-                canChangeIdentity = false
-            }
-        } else {
-            canChangeIdentity = true
-        }
-
-        canChangeVisibility = edit == nil
-        editID = edit?.id
-
-        let compositionViewModel: CompositionViewModel
-
-        if let redraft = redraft {
-            compositionViewModel = CompositionViewModel(
-                eventsSubject: compositionEventsSubject,
-                redraft: redraft,
-                identityContext: identityContext)
-        } else if let edit = edit {
-            // This currently does the same thing as a redraft.
-            compositionViewModel = CompositionViewModel(
-                eventsSubject: compositionEventsSubject,
-                redraft: edit,
-                identityContext: identityContext)
-        } else if let extensionContext = extensionContext {
-            compositionViewModel = CompositionViewModel(
-                eventsSubject: compositionEventsSubject,
-                extensionContext: extensionContext,
-                parentViewModel: self)
-        } else {
-            compositionViewModel = CompositionViewModel(
-                eventsSubject: compositionEventsSubject,
-                identityContext: identityContext
-            )
-        }
-
-        if let inReplyTo = inReplyTo, redraft == nil, edit == nil {
-            var mentions = Set<String>()
-
-            if !inReplyTo.isMine {
-                mentions.insert(inReplyTo.accountName)
-            }
-
-            mentions.formUnion(inReplyTo.mentions.map(\.acct)
-                                .filter { $0 != (identity ?? identityContext.identity).account?.username }
-                                .map("@".appending))
-
-            if !mentions.isEmpty {
-                compositionViewModel.text = mentions.joined(separator: " ").appending(" ")
-            }
-
-            compositionViewModel.contentWarning = inReplyTo.spoilerText
-            compositionViewModel.displayContentWarning = !inReplyTo.spoilerText.isEmpty
-        } else if let directMessageTo = directMessageTo {
-            compositionViewModel.text = directMessageTo.accountName.appending(" ")
-            visibility = .direct
-        }
-
-        compositionViewModels = [compositionViewModel]
-        updateMediaRequired()
-        $compositionViewModels.flatMap { Publishers.MergeMany($0.map(\.$isPostable)) }
-            .receive(on: DispatchQueue.main) // hack to punt to next run loop, consider refactoring
-            .compactMap { [weak self] _ in self?.compositionViewModels.allSatisfy(\.isPostable) }
-            .combineLatest($postingState)
-            .map { $0 && $1 == .composing }
-            .assign(to: &$canPost)
-        compositionEventsSubject
-            .sink { [weak self] in self?.handle(event: $0) }
-            .store(in: &cancellables)
-
-        $identityContext
-            .map { $0.identity.instance?.maxTootChars }
-            .sink { [weak self] maxTootChars in
-                self?.compositionViewModels.forEach { cvm in
-                    cvm.setMaxCharactersOrDefault(maxTootChars)
-                }
-            }
-            .store(in: &cancellables)
-
-        if let identity = identity {
-            setIdentity(identity)
-        }
-
-        // If interaction controls are supported, set them to defaults: all interactions permitted.
-        // Otherwise, leave them unset.
-        if canPostNonFederated {
-            federated = true
-        }
-        if canPostNonBoostable {
-            boostable = true
-        }
-        if canPostNonReplyable {
-            replyable = true
-        }
-        if canPostNonLikeable {
-            likeable = true
-        }
+    if edit != nil {
+      canChangeIdentity = false
+    } else if let inReplyTo = inReplyTo {
+      switch inReplyTo.visibility {
+      case .public, .unlisted:
+        canChangeIdentity = true
+      default:
+        canChangeIdentity = false
+      }
+    } else {
+      canChangeIdentity = true
     }
+
+    canChangeVisibility = edit == nil
+    editID = edit?.id
+
+    let compositionViewModel: CompositionViewModel
+
+    if let redraft = redraft {
+      compositionViewModel = CompositionViewModel(
+        eventsSubject: compositionEventsSubject,
+        redraft: redraft,
+        identityContext: identityContext)
+    } else if let edit = edit {
+      // This currently does the same thing as a redraft.
+      compositionViewModel = CompositionViewModel(
+        eventsSubject: compositionEventsSubject,
+        redraft: edit,
+        identityContext: identityContext)
+    } else if let extensionContext = extensionContext {
+      compositionViewModel = CompositionViewModel(
+        eventsSubject: compositionEventsSubject,
+        extensionContext: extensionContext,
+        parentViewModel: self)
+    } else {
+      compositionViewModel = CompositionViewModel(
+        eventsSubject: compositionEventsSubject,
+        identityContext: identityContext
+      )
+    }
+
+    if let inReplyTo = inReplyTo, redraft == nil, edit == nil {
+      var mentions = Set<String>()
+
+      if !inReplyTo.isMine {
+        mentions.insert(inReplyTo.accountName)
+      }
+
+      mentions.formUnion(
+        inReplyTo.mentions.map(\.acct)
+          .filter { $0 != (identity ?? identityContext.identity).account?.username }
+          .map("@".appending))
+
+      if !mentions.isEmpty {
+        compositionViewModel.text = mentions.joined(separator: " ").appending(" ")
+      }
+
+      compositionViewModel.contentWarning = inReplyTo.spoilerText
+      compositionViewModel.displayContentWarning = !inReplyTo.spoilerText.isEmpty
+    } else if let directMessageTo = directMessageTo {
+      compositionViewModel.text = directMessageTo.accountName.appending(" ")
+      visibility = .direct
+    }
+
+    compositionViewModels = [compositionViewModel]
+    updateMediaRequired()
+    $compositionViewModels.flatMap { Publishers.MergeMany($0.map(\.$isPostable)) }
+      .receive(on: DispatchQueue.main)  // hack to punt to next run loop, consider refactoring
+      .compactMap { [weak self] _ in self?.compositionViewModels.allSatisfy(\.isPostable) }
+      .combineLatest($postingState)
+      .map { $0 && $1 == .composing }
+      .assign(to: &$canPost)
+    compositionEventsSubject
+      .sink { [weak self] in self?.handle(event: $0) }
+      .store(in: &cancellables)
+
+    $identityContext
+      .map { $0.identity.instance?.maxTootChars }
+      .sink { [weak self] maxTootChars in
+        self?.compositionViewModels.forEach { cvm in
+          cvm.setMaxCharactersOrDefault(maxTootChars)
+        }
+      }
+      .store(in: &cancellables)
+
+    if let identity = identity {
+      setIdentity(identity)
+    }
+
+    // If interaction controls are supported, set them to defaults: all interactions permitted.
+    // Otherwise, leave them unset.
+    if canPostNonFederated {
+      federated = true
+    }
+    if canPostNonBoostable {
+      boostable = true
+    }
+    if canPostNonReplyable {
+      replyable = true
+    }
+    if canPostNonLikeable {
+      likeable = true
+    }
+  }
 }
 
-public extension ComposeStatusViewModel {
-    enum Event {
-        case presentMediaPicker(CompositionViewModel)
-        case presentCamera(CompositionViewModel)
-        case presentDocumentPicker(CompositionViewModel)
-        case presentEmojiPicker(Int)
-        case editAttachment(AttachmentViewModel, CompositionViewModel)
-        case changeIdentity(Identity)
+extension ComposeStatusViewModel {
+  public enum Event {
+    case presentMediaPicker(CompositionViewModel)
+    case presentCamera(CompositionViewModel)
+    case presentDocumentPicker(CompositionViewModel)
+    case presentEmojiPicker(Int)
+    case editAttachment(AttachmentViewModel, CompositionViewModel)
+    case changeIdentity(Identity)
+  }
+
+  public enum PostingState {
+    case composing
+    case posting
+    case done
+  }
+
+  public func setIdentity(_ identity: Identity) {
+    let identityService: IdentityService
+
+    do {
+      identityService = try allIdentitiesService.identityService(id: identity.id)
+    } catch {
+      alertItem = AlertItem(error: error)
+
+      return
     }
 
-    enum PostingState {
-        case composing
-        case posting
-        case done
+    identityContext = IdentityContext(
+      identity: identity,
+      publisher: identityService.identityPublisher(immediate: false)
+        .assignErrorsToAlertItem(to: \.alertItem, on: self),
+      service: identityService,
+      environment: environment)
+  }
+
+  public func presentMediaPicker(viewModel: CompositionViewModel) {
+    eventsSubject.send(.presentMediaPicker(viewModel))
+  }
+
+  public func presentCamera(viewModel: CompositionViewModel) {
+    eventsSubject.send(.presentCamera(viewModel))
+  }
+
+  public func presentDocumentPicker(viewModel: CompositionViewModel) {
+    eventsSubject.send(.presentDocumentPicker(viewModel))
+  }
+
+  public func presentEmojiPicker(tag: Int) {
+    eventsSubject.send(.presentEmojiPicker(tag))
+  }
+
+  public func remove(viewModel: CompositionViewModel) {
+    compositionViewModels.removeAll { $0 === viewModel }
+
+    updateMediaRequired()
+  }
+
+  public func insert(after: CompositionViewModel) {
+    guard let index = compositionViewModels.firstIndex(where: { $0 === after })
+    else { return }
+
+    let newViewModel = CompositionViewModel(
+      eventsSubject: compositionEventsSubject,
+      identityContext: identityContext
+    )
+
+    newViewModel.contentWarning = after.contentWarning
+    newViewModel.displayContentWarning = after.displayContentWarning
+
+    let mentions = Self.mentionsRegularExpression.matches(
+      in: after.text,
+      range: NSRange(location: 0, length: after.text.count)
+    )
+    .compactMap { result -> String? in
+      guard let range = Range(result.range, in: after.text) else { return nil }
+
+      return String(after.text[range])
     }
 
-    func setIdentity(_ identity: Identity) {
-        let identityService: IdentityService
-
-        do {
-            identityService = try allIdentitiesService.identityService(id: identity.id)
-        } catch {
-            alertItem = AlertItem(error: error)
-
-            return
-        }
-
-        identityContext = IdentityContext(
-            identity: identity,
-            publisher: identityService.identityPublisher(immediate: false)
-                .assignErrorsToAlertItem(to: \.alertItem, on: self),
-            service: identityService,
-            environment: environment)
+    if !mentions.isEmpty {
+      newViewModel.text = mentions.joined(separator: " ").appending(" ")
     }
 
-    func presentMediaPicker(viewModel: CompositionViewModel) {
-        eventsSubject.send(.presentMediaPicker(viewModel))
+    if index >= compositionViewModels.count - 1 {
+      compositionViewModels.append(newViewModel)
+    } else {
+      compositionViewModels.insert(newViewModel, at: index + 1)
     }
 
-    func presentCamera(viewModel: CompositionViewModel) {
-        eventsSubject.send(.presentCamera(viewModel))
-    }
+    updateMediaRequired()
+  }
 
-    func presentDocumentPicker(viewModel: CompositionViewModel) {
-        eventsSubject.send(.presentDocumentPicker(viewModel))
-    }
+  public func attach(itemProviders: [NSItemProvider], to compositionViewModel: CompositionViewModel) {
+    compositionViewModel.attach(itemProviders: itemProviders, parentViewModel: self)
+  }
 
-    func presentEmojiPicker(tag: Int) {
-        eventsSubject.send(.presentEmojiPicker(tag))
-    }
+  public func post() {
+    guard let unposted = compositionViewModels.first(where: { !$0.isPosted }) else { return }
 
-    func remove(viewModel: CompositionViewModel) {
-        compositionViewModels.removeAll { $0 === viewModel }
+    post(viewModel: unposted, inReplyToId: inReplyToViewModel?.id)
+  }
 
-        updateMediaRequired()
-    }
+  public func changeIdentity(_ identity: Identity) {
+    eventsSubject.send(.changeIdentity(identity))
+  }
 
-    func insert(after: CompositionViewModel) {
-        guard let index = compositionViewModels.firstIndex(where: { $0 === after })
-        else { return }
+  public var editing: Bool {
+    editID != nil
+  }
 
-        let newViewModel = CompositionViewModel(
-            eventsSubject: compositionEventsSubject,
-            identityContext: identityContext
-        )
+  public var defaultLanguageTag: PrefsLanguage.Tag? {
+    identityContext.identity.preferences.postingDefaultLanguage
+  }
 
-        newViewModel.contentWarning = after.contentWarning
-        newViewModel.displayContentWarning = after.displayContentWarning
+  public var postingLanguages: [PrefsLanguage] {
+    identityContext.appPreferences.postingLanguages
+      .map { PrefsLanguage(tag: $0) }
+  }
 
-        let mentions = Self.mentionsRegularExpression.matches(
-            in: after.text,
-            range: NSRange(location: 0, length: after.text.count))
-            .compactMap { result -> String? in
-                guard let range = Range(result.range, in: after.text) else { return nil }
+  /// Is a media attachment required to start a new thread?
+  public var mediaRequiredToStartThread: Bool {
+    identityContext.apiCapabilities.flavor == .pixelfed && inReplyToViewModel == nil
+  }
 
-                return String(after.text[range])
-            }
+  /// Does the user's instance support polls?
+  public var canAttachPoll: Bool {
+    PollEndpoint.poll(id: "").canCallWith(identityContext.apiCapabilities)
+  }
 
-        if !mentions.isEmpty {
-            newViewModel.text = mentions.joined(separator: " ").appending(" ")
-        }
+  /// Used for status endpoint feature checks.
+  private func canCreateStatusWithOptions(
+    federated: Bool? = nil,
+    boostable: Bool? = nil,
+    replyable: Bool? = nil,
+    likeable: Bool? = nil
+  ) -> Bool {
+    StatusEndpoint.post(
+      .init(
+        inReplyToId: nil,
+        text: "",
+        spoilerText: "",
+        mediaIds: [],
+        visibility: nil,
+        language: nil,
+        sensitive: false,
+        pollOptions: [],
+        pollExpiresIn: 0,
+        pollMultipleChoice: false,
+        federated: federated,
+        boostable: boostable,
+        replyable: replyable,
+        likeable: likeable
+      )
+    )
+    .canCallWith(identityContext.apiCapabilities)
+  }
 
-        if index >= compositionViewModels.count - 1 {
-            compositionViewModels.append(newViewModel)
-        } else {
-            compositionViewModels.insert(newViewModel, at: index + 1)
-        }
+  /// Does the user's instance support non-federated/local-only statuses?
+  /// Controls whether ``federated`` is exposed to UI.
+  public var canPostNonFederated: Bool {
+    canCreateStatusWithOptions(federated: false)
+  }
 
-        updateMediaRequired()
-    }
+  /// Does the user's instance support non-boostable statuses?
+  /// Controls whether ``boostable`` is exposed to UI.
+  public var canPostNonBoostable: Bool {
+    canCreateStatusWithOptions(boostable: false)
+  }
 
-    func attach(itemProviders: [NSItemProvider], to compositionViewModel: CompositionViewModel) {
-        compositionViewModel.attach(itemProviders: itemProviders, parentViewModel: self)
-    }
+  /// Does the user's instance support non-boostable statuses?
+  /// Controls whether ``replyable`` is exposed to UI.
+  public var canPostNonReplyable: Bool {
+    canCreateStatusWithOptions(replyable: false)
+  }
 
-    func post() {
-        guard let unposted = compositionViewModels.first(where: { !$0.isPosted }) else { return }
-
-        post(viewModel: unposted, inReplyToId: inReplyToViewModel?.id)
-    }
-
-    func changeIdentity(_ identity: Identity) {
-        eventsSubject.send(.changeIdentity(identity))
-    }
-
-    var editing: Bool {
-        editID != nil
-    }
-
-    var defaultLanguageTag: PrefsLanguage.Tag? {
-        identityContext.identity.preferences.postingDefaultLanguage
-    }
-
-    var postingLanguages: [PrefsLanguage] {
-        identityContext.appPreferences.postingLanguages
-            .map { PrefsLanguage(tag: $0) }
-    }
-
-    /// Is a media attachment required to start a new thread?
-    var mediaRequiredToStartThread: Bool {
-        identityContext.apiCapabilities.flavor == .pixelfed && inReplyToViewModel == nil
-    }
-
-    /// Does the user's instance support polls?
-    var canAttachPoll: Bool {
-        PollEndpoint.poll(id: "").canCallWith(identityContext.apiCapabilities)
-    }
-
-    /// Used for status endpoint feature checks.
-    private func canCreateStatusWithOptions(
-        federated: Bool? = nil,
-        boostable: Bool? = nil,
-        replyable: Bool? = nil,
-        likeable: Bool? = nil
-    ) -> Bool {
-        StatusEndpoint.post(.init(
-            inReplyToId: nil,
-            text: "",
-            spoilerText: "",
-            mediaIds: [],
-            visibility: nil,
-            language: nil,
-            sensitive: false,
-            pollOptions: [],
-            pollExpiresIn: 0,
-            pollMultipleChoice: false,
-            federated: federated,
-            boostable: boostable,
-            replyable: replyable,
-            likeable: likeable
-        ))
-        .canCallWith(identityContext.apiCapabilities)
-    }
-
-    /// Does the user's instance support non-federated/local-only statuses?
-    /// Controls whether ``federated`` is exposed to UI.
-    var canPostNonFederated: Bool {
-        canCreateStatusWithOptions(federated: false)
-    }
-
-    /// Does the user's instance support non-boostable statuses?
-    /// Controls whether ``boostable`` is exposed to UI.
-    var canPostNonBoostable: Bool {
-        canCreateStatusWithOptions(boostable: false)
-    }
-
-    /// Does the user's instance support non-boostable statuses?
-    /// Controls whether ``replyable`` is exposed to UI.
-    var canPostNonReplyable: Bool {
-        canCreateStatusWithOptions(replyable: false)
-    }
-
-    /// Does the user's instance support non-likeable/non-favable statuses?
-    /// Controls whether ``likeable`` is exposed to UI.
-    var canPostNonLikeable: Bool {
-        canCreateStatusWithOptions(likeable: false)
-    }
+  /// Does the user's instance support non-likeable/non-favable statuses?
+  /// Controls whether ``likeable`` is exposed to UI.
+  public var canPostNonLikeable: Bool {
+    canCreateStatusWithOptions(likeable: false)
+  }
 }
 
-private extension ComposeStatusViewModel {
-    // swiftlint:disable:next force_try
-    static let mentionsRegularExpression = try! NSRegularExpression(pattern: #"@\S+"#)
+extension ComposeStatusViewModel {
+  // swiftlint:disable:next force_try
+  fileprivate static let mentionsRegularExpression = try! NSRegularExpression(pattern: #"@\S+"#)
 
-    func handle(event: CompositionViewModel.Event) {
-        switch event {
-        case let .editAttachment(attachmentViewModel, compositionViewModel):
-            eventsSubject.send(.editAttachment(attachmentViewModel, compositionViewModel))
-        case let .updateAttachment(publisher):
-            publisher.assignErrorsToAlertItem(to: \.alertItem, on: self).sink { _ in }.store(in: &cancellables)
-        }
+  fileprivate func handle(event: CompositionViewModel.Event) {
+    switch event {
+    case .editAttachment(let attachmentViewModel, let compositionViewModel):
+      eventsSubject.send(.editAttachment(attachmentViewModel, compositionViewModel))
+    case .updateAttachment(let publisher):
+      publisher.assignErrorsToAlertItem(to: \.alertItem, on: self).sink { _ in }.store(in: &cancellables)
+    }
+  }
+
+  fileprivate func post(viewModel: CompositionViewModel, inReplyToId: Status.Id?) {
+    postingState = .posting
+
+    let operation: AnyPublisher<Status.ID, Error>
+
+    if let editID = editID {
+      operation = identityContext.service.put(
+        id: editID,
+        statusComponents: viewModel.components(
+          inReplyToId: nil,
+          visibility: nil,
+          federated: nil,
+          boostable: nil,
+          replyable: nil,
+          likeable: nil
+        )
+      )
+    } else {
+      operation = identityContext.service.post(
+        statusComponents: viewModel.components(
+          inReplyToId: inReplyToId,
+          visibility: visibility,
+          federated: federated,
+          boostable: boostable,
+          replyable: replyable,
+          likeable: likeable
+        )
+      )
     }
 
-    func post(viewModel: CompositionViewModel, inReplyToId: Status.Id?) {
-        postingState = .posting
+    operation
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] in
+        guard let self = self else { return }
 
-        let operation: AnyPublisher<Status.ID, Error>
-
-        if let editID = editID {
-            operation = identityContext.service.put(
-                id: editID,
-                statusComponents: viewModel.components(
-                    inReplyToId: nil,
-                    visibility: nil,
-                    federated: nil,
-                    boostable: nil,
-                    replyable: nil,
-                    likeable: nil
-                )
-            )
-        } else {
-            operation = identityContext.service.post(
-                statusComponents: viewModel.components(
-                    inReplyToId: inReplyToId,
-                    visibility: visibility,
-                    federated: federated,
-                    boostable: boostable,
-                    replyable: replyable,
-                    likeable: likeable
-                )
-            )
+        switch $0 {
+        case .finished:
+          if self.compositionViewModels.allSatisfy(\.isPosted) {
+            self.postingState = .done
+          }
+        case .failure(let error):
+          self.alertItem = AlertItem(error: error)
+          self.postingState = .composing
         }
+      } receiveValue: { [weak self] in
+        guard let self = self else { return }
 
-        operation
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                guard let self = self else { return }
+        viewModel.isPosted = true
 
-                switch $0 {
-                case .finished:
-                    if self.compositionViewModels.allSatisfy(\.isPosted) {
-                        self.postingState = .done
-                    }
-                case let .failure(error):
-                    self.alertItem = AlertItem(error: error)
-                    self.postingState = .composing
-                }
-            } receiveValue: { [weak self] in
-                guard let self = self else { return }
+        if let unposted = self.compositionViewModels.first(where: { !$0.isPosted }) {
+          self.post(viewModel: unposted, inReplyToId: $0)
+        }
+      }
+      .store(in: &cancellables)
+  }
 
-                viewModel.isPosted = true
-
-                if let unposted = self.compositionViewModels.first(where: { !$0.isPosted }) {
-                    self.post(viewModel: unposted, inReplyToId: $0)
-                }
-            }
-            .store(in: &cancellables)
+  /// Update the `mediaRequired` flags when `compositionViewModels` changes.
+  fileprivate func updateMediaRequired() {
+    if let compositionViewModel = compositionViewModels.first {
+      compositionViewModel.mediaRequired = mediaRequiredToStartThread && inReplyToViewModel == nil
     }
-
-    /// Update the `mediaRequired` flags when `compositionViewModels` changes.
-    func updateMediaRequired() {
-        if let compositionViewModel = compositionViewModels.first {
-            compositionViewModel.mediaRequired = mediaRequiredToStartThread && inReplyToViewModel == nil
-        }
-        for compositionViewModel in compositionViewModels.dropFirst() {
-            compositionViewModel.mediaRequired = false
-        }
+    for compositionViewModel in compositionViewModels.dropFirst() {
+      compositionViewModel.mediaRequired = false
     }
+  }
 }

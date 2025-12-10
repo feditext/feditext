@@ -3,6 +3,6 @@
 import Foundation
 
 public struct Application: Codable, Hashable {
-    public let name: String
-    public let website: String?
+  public let name: String
+  public let website: String?
 }

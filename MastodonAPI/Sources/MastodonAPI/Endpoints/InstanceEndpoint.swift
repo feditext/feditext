@@ -5,21 +5,21 @@ import HTTP
 import Mastodon
 
 public enum InstanceEndpoint {
-    case instance
+  case instance
 }
 
 extension InstanceEndpoint: Endpoint {
-    public typealias ResultType = Instance
+  public typealias ResultType = Instance
 
-    public var pathComponentsInContext: [String] {
-        switch self {
-        case .instance: return ["instance"]
-        }
+  public var pathComponentsInContext: [String] {
+    switch self {
+    case .instance: return ["instance"]
     }
+  }
 
-    public var method: HTTPMethod {
-        switch self {
-        case .instance: return .get
-        }
+  public var method: HTTPMethod {
+    switch self {
+    case .instance: return .get
     }
+  }
 }

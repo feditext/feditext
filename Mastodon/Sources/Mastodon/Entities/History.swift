@@ -7,7 +7,7 @@ import Foundation
 /// https://docs.joinmastodon.org/entities/PreviewCard/#history
 /// https://docs.joinmastodon.org/entities/Admin_EmailDomainBlock/#history
 public struct History: Codable, Hashable {
-    @StringDate public var day: Date
-    @StringInt public var uses: Int
-    @StringInt public var accounts: Int
+  @StringDate public var day: Date
+  @StringInt public var uses: Int
+  @StringInt public var accounts: Int
 }

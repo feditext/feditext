@@ -5,41 +5,41 @@ import GRDB
 import Mastodon
 
 extension Instance {
-    func save(_ db: Database) throws {
-        if let contactAccount = contactAccount {
-            try AccountRecord(account: contactAccount).save(db)
-        }
-
-        try InstanceRecord(instance: self).save(db)
+  func save(_ db: Database) throws {
+    if let contactAccount = contactAccount {
+      try AccountRecord(account: contactAccount).save(db)
     }
 
-    init(info: InstanceInfo, rules: [Rule]) {
-        var contactAccount: Account?
+    try InstanceRecord(instance: self).save(db)
+  }
 
-        if let contactAccountInfo = info.contactAccountInfo {
-            contactAccount = Account(info: contactAccountInfo)
-        }
+  init(info: InstanceInfo, rules: [Rule]) {
+    var contactAccount: Account?
 
-        self.init(record: info.record, contactAccount: contactAccount, rules: rules)
+    if let contactAccountInfo = info.contactAccountInfo {
+      contactAccount = Account(info: contactAccountInfo)
     }
+
+    self.init(record: info.record, contactAccount: contactAccount, rules: rules)
+  }
 }
 
-private extension Instance {
-    init(record: InstanceRecord, contactAccount: Account?, rules: [Rule]) {
-        self.init(
-            uri: record.uri,
-            title: record.title,
-            description: record.description,
-            shortDescription: record.shortDescription,
-            email: record.email,
-            version: record.version,
-            urls: record.urls,
-            stats: record.stats,
-            thumbnail: record.thumbnail,
-            contactAccount: contactAccount,
-            maxTootChars: record.maxTootChars,
-            configuration: record.configuration,
-            rules: rules
-        )
-    }
+extension Instance {
+  fileprivate init(record: InstanceRecord, contactAccount: Account?, rules: [Rule]) {
+    self.init(
+      uri: record.uri,
+      title: record.title,
+      description: record.description,
+      shortDescription: record.shortDescription,
+      email: record.email,
+      version: record.version,
+      urls: record.urls,
+      stats: record.stats,
+      thumbnail: record.thumbnail,
+      contactAccount: contactAccount,
+      maxTootChars: record.maxTootChars,
+      configuration: record.configuration,
+      rules: rules
+    )
+  }
 }

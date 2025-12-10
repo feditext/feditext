@@ -6,73 +6,75 @@ import Mastodon
 import ServiceLayer
 
 public final class NotificationViewModel: ObservableObject {
-    public let accountViewModel: AccountViewModel
-    public let statusViewModel: StatusViewModel?
-    public let reportViewModel: NotificationReportViewModel?
-    public let identityContext: IdentityContext
+  public let accountViewModel: AccountViewModel
+  public let statusViewModel: StatusViewModel?
+  public let reportViewModel: NotificationReportViewModel?
+  public let identityContext: IdentityContext
 
-    private let notificationService: NotificationService
-    private let eventsSubject: PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>
+  private let notificationService: NotificationService
+  private let eventsSubject: PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>
 
-    init(
-        notificationService: NotificationService,
-        rules: [Rule],
-        identityContext: IdentityContext,
-        eventsSubject: PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>
-    ) {
-        self.notificationService = notificationService
-        self.identityContext = identityContext
-        self.eventsSubject = eventsSubject
-        self.accountViewModel = AccountViewModel(
-            accountService: notificationService.navigationService.accountService(
-                account: notificationService.notification.account
-            ),
-            identityContext: identityContext,
-            eventsSubject: eventsSubject
-        )
+  init(
+    notificationService: NotificationService,
+    rules: [Rule],
+    identityContext: IdentityContext,
+    eventsSubject: PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>
+  ) {
+    self.notificationService = notificationService
+    self.identityContext = identityContext
+    self.eventsSubject = eventsSubject
+    self.accountViewModel = AccountViewModel(
+      accountService: notificationService.navigationService.accountService(
+        account: notificationService.notification.account
+      ),
+      identityContext: identityContext,
+      eventsSubject: eventsSubject
+    )
 
-        if let report = notificationService.notification.report {
-            reportViewModel = NotificationReportViewModel(
-                report: report,
-                rules: rules,
-                identityContext: identityContext
-            )
-        } else {
-            reportViewModel = nil
-        }
-
-        if let status = notificationService.notification.status {
-            statusViewModel = StatusViewModel(
-                statusService: notificationService.navigationService.statusService(status: status),
-                identityContext: identityContext,
-                timeline: nil,
-                followedTags: [],
-                eventsSubject: eventsSubject
-            )
-        } else {
-            statusViewModel = nil
-        }
+    if let report = notificationService.notification.report {
+      reportViewModel = NotificationReportViewModel(
+        report: report,
+        rules: rules,
+        identityContext: identityContext
+      )
+    } else {
+      reportViewModel = nil
     }
+
+    if let status = notificationService.notification.status {
+      statusViewModel = StatusViewModel(
+        statusService: notificationService.navigationService.statusService(status: status),
+        identityContext: identityContext,
+        timeline: nil,
+        followedTags: [],
+        eventsSubject: eventsSubject
+      )
+    } else {
+      statusViewModel = nil
+    }
+  }
 }
 
-public extension NotificationViewModel {
-    var type: MastodonNotification.NotificationType {
-        notificationService.notification.type
-    }
+extension NotificationViewModel {
+  public var type: MastodonNotification.NotificationType {
+    notificationService.notification.type
+  }
 
-    var time: String? { notificationService.notification.createdAt.timeAgo }
+  public var time: String? { notificationService.notification.createdAt.timeAgo }
 
-    var accessibilityTime: String? {
-        notificationService.notification.createdAt.accessibilityTimeAgo
-    }
+  public var accessibilityTime: String? {
+    notificationService.notification.createdAt.accessibilityTimeAgo
+  }
 
-    func accountSelected() {
-        eventsSubject.send(
-            Just(.navigation(
-                    .profile(
-                        notificationService.navigationService.profileService(
-                            account: notificationService.notification.account))))
-                .setFailureType(to: Error.self)
-                .eraseToAnyPublisher())
-    }
+  public func accountSelected() {
+    eventsSubject.send(
+      Just(
+        .navigation(
+          .profile(
+            notificationService.navigationService.profileService(
+              account: notificationService.notification.account)))
+      )
+      .setFailureType(to: Error.self)
+      .eraseToAnyPublisher())
+  }
 }

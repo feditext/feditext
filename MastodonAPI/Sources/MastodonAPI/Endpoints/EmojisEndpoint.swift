@@ -5,19 +5,19 @@ import HTTP
 import Mastodon
 
 public enum EmojisEndpoint {
-    case customEmojis
+  case customEmojis
 }
 
 extension EmojisEndpoint: Endpoint {
-    public typealias ResultType = [Emoji]
+  public typealias ResultType = [Emoji]
 
-    public var pathComponentsInContext: [String] {
-        ["custom_emojis"]
-    }
+  public var pathComponentsInContext: [String] {
+    ["custom_emojis"]
+  }
 
-    public var method: HTTPMethod {
-        .get
-    }
+  public var method: HTTPMethod {
+    .get
+  }
 
-    public var fallback: [Emoji]? { [] }
+  public var fallback: [Emoji]? { [] }
 }

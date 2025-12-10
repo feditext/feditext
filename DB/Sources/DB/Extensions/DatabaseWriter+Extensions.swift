@@ -8,22 +8,23 @@ import GRDB
 // https://github.com/groue/GRDB.swift/blob/master/Documentation/SharingADatabase.md#how-to-limit-the-0xdead10cc-exception
 
 extension DatabaseWriter {
-    func mutatingPublisher<Output>(updates: @escaping (Database) throws -> Output) -> AnyPublisher<Never, Error> {
-        let publisher = writePublisher(updates: updates)
+  func mutatingPublisher<Output>(updates: @escaping (Database) throws -> Output) -> AnyPublisher<Never, Error> {
+    let publisher = writePublisher(updates: updates)
 
-        return publisher
-            .tryCatch { error -> AnyPublisher<Output, Error> in
-                if let databaseError = error as? DatabaseError, databaseError.isInterruptionError {
-                    return NotificationCenter.default.publisher(for: Database.resumeNotification)
-                        .timeout(.seconds(1), scheduler: DispatchQueue.global())
-                        .flatMap { _ in publisher }
-                        .eraseToAnyPublisher()
-                } else {
-                    throw error
-                }
-            }
-            .retry(1)
-            .ignoreOutput()
+    return
+      publisher
+      .tryCatch { error -> AnyPublisher<Output, Error> in
+        if let databaseError = error as? DatabaseError, databaseError.isInterruptionError {
+          return NotificationCenter.default.publisher(for: Database.resumeNotification)
+            .timeout(.seconds(1), scheduler: DispatchQueue.global())
+            .flatMap { _ in publisher }
             .eraseToAnyPublisher()
-    }
+        } else {
+          throw error
+        }
+      }
+      .retry(1)
+      .ignoreOutput()
+      .eraseToAnyPublisher()
+  }
 }

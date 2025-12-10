@@ -4,11 +4,11 @@ import UIKit
 import ViewModels
 
 final class IdentityTableViewCell: UITableViewCell {
-    var viewModel: IdentityViewModel?
+  var viewModel: IdentityViewModel?
 
-    override func updateConfiguration(using state: UICellConfigurationState) {
-        guard let viewModel = viewModel else { return }
+  override func updateConfiguration(using state: UICellConfigurationState) {
+    guard let viewModel = viewModel else { return }
 
-        contentConfiguration = IdentityContentConfiguration(viewModel: viewModel)
-    }
+    contentConfiguration = IdentityContentConfiguration(viewModel: viewModel)
+  }
 }

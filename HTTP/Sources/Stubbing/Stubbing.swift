@@ -5,32 +5,33 @@ import Foundation
 public typealias HTTPStub = Result<(HTTPURLResponse, Data), Error>
 
 public protocol Stubbing {
-    func stub(url: URL) -> HTTPStub?
-    func data(url: URL) -> Data?
-    func dataString(url: URL) -> String?
-    func statusCode(url: URL) -> Int?
+  func stub(url: URL) -> HTTPStub?
+  func data(url: URL) -> Data?
+  func dataString(url: URL) -> String?
+  func statusCode(url: URL) -> Int?
 }
 
-public extension Stubbing {
-    func stub(url: URL) -> HTTPStub? {
-        if let data = data(url: url),
-              let statusCode = statusCode(url: url),
-              let response = HTTPURLResponse(
-                url: url,
-                statusCode: statusCode,
-                httpVersion: nil,
-                headerFields: nil) {
-            return .success((response, data))
-        }
-
-        return nil
+extension Stubbing {
+  public func stub(url: URL) -> HTTPStub? {
+    if let data = data(url: url),
+      let statusCode = statusCode(url: url),
+      let response = HTTPURLResponse(
+        url: url,
+        statusCode: statusCode,
+        httpVersion: nil,
+        headerFields: nil)
+    {
+      return .success((response, data))
     }
 
-    func data(url: URL) -> Data? {
-        dataString(url: url)?.data(using: .utf8)
-    }
+    return nil
+  }
 
-    func dataString(url: URL) -> String? { nil }
+  public func data(url: URL) -> Data? {
+    dataString(url: url)?.data(using: .utf8)
+  }
 
-    func statusCode(url: URL) -> Int? { 200 }
+  public func dataString(url: URL) -> String? { nil }
+
+  public func statusCode(url: URL) -> Int? { 200 }
 }

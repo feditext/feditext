@@ -7,43 +7,43 @@ import Mastodon
 import MastodonAPI
 
 public struct ExploreService {
-    public let navigationService: NavigationService
+  public let navigationService: NavigationService
 
-    private let mastodonAPIClient: MastodonAPIClient
-    private let contentDatabase: ContentDatabase
+  private let mastodonAPIClient: MastodonAPIClient
+  private let contentDatabase: ContentDatabase
 
-    init(environment: AppEnvironment, mastodonAPIClient: MastodonAPIClient, contentDatabase: ContentDatabase) {
-        self.mastodonAPIClient = mastodonAPIClient
-        self.contentDatabase = contentDatabase
-        navigationService = NavigationService(
-            environment: environment,
-            mastodonAPIClient: mastodonAPIClient,
-            contentDatabase: contentDatabase
-        )
-    }
+  init(environment: AppEnvironment, mastodonAPIClient: MastodonAPIClient, contentDatabase: ContentDatabase) {
+    self.mastodonAPIClient = mastodonAPIClient
+    self.contentDatabase = contentDatabase
+    navigationService = NavigationService(
+      environment: environment,
+      mastodonAPIClient: mastodonAPIClient,
+      contentDatabase: contentDatabase
+    )
+  }
 }
 
-public extension ExploreService {
-    func fetchTrendingTags() -> AnyPublisher<[Tag], Error> {
-        if TagsEndpoint.trends().canCallWith(mastodonAPIClient.apiCapabilities) {
-            return mastodonAPIClient.request(TagsEndpoint.trends())
-        } else {
-            return mastodonAPIClient.request(TagsEndpoint.trendsLegacy())
-        }
+extension ExploreService {
+  public func fetchTrendingTags() -> AnyPublisher<[Tag], Error> {
+    if TagsEndpoint.trends().canCallWith(mastodonAPIClient.apiCapabilities) {
+      return mastodonAPIClient.request(TagsEndpoint.trends())
+    } else {
+      return mastodonAPIClient.request(TagsEndpoint.trendsLegacy())
     }
+  }
 
-    func fetchTrendingLinks() -> AnyPublisher<[Card], Error> {
-        mastodonAPIClient.request(CardsEndpoint.trends())
-    }
+  public func fetchTrendingLinks() -> AnyPublisher<[Card], Error> {
+    mastodonAPIClient.request(CardsEndpoint.trends())
+  }
 
-    func fetchTrendingStatuses() -> AnyPublisher<[Status], Error> {
-        mastodonAPIClient.request(StatusesEndpoint.trends())
-    }
+  public func fetchTrendingStatuses() -> AnyPublisher<[Status], Error> {
+    mastodonAPIClient.request(StatusesEndpoint.trends())
+  }
 
-    func fetchRecommendedStatuses() -> AnyPublisher<[Status], Error> {
-        // Pixelfed doesn't sort its random daily SFW recommendations, so we have to.
-        return mastodonAPIClient.request(Pixelfed.DiscoverEndpoint.posts)
-            .map { $0.posts.sorted(by: { lhs, rhs in lhs.createdAt > rhs.createdAt }) }
-            .eraseToAnyPublisher()
-    }
+  public func fetchRecommendedStatuses() -> AnyPublisher<[Status], Error> {
+    // Pixelfed doesn't sort its random daily SFW recommendations, so we have to.
+    return mastodonAPIClient.request(Pixelfed.DiscoverEndpoint.posts)
+      .map { $0.posts.sorted(by: { lhs, rhs in lhs.createdAt > rhs.createdAt }) }
+      .eraseToAnyPublisher()
+  }
 }

@@ -4,40 +4,40 @@ import AVFoundation
 import UIKit
 
 protocol ZoomAnimatableView {
-    func transitionView() -> UIView
-    func frame(inView view: UIView) -> CGRect
+  func transitionView() -> UIView
+  func frame(inView view: UIView) -> CGRect
 }
 
 extension UIImageView: ZoomAnimatableView {
-    func transitionView() -> UIView {
-        let transitionView = UIImageView(image: image)
+  func transitionView() -> UIView {
+    let transitionView = UIImageView(image: image)
 
-        transitionView.contentMode = .scaleAspectFill
-        transitionView.clipsToBounds = true
+    transitionView.contentMode = .scaleAspectFill
+    transitionView.clipsToBounds = true
 
-        return transitionView
-    }
+    return transitionView
+  }
 
-    func frame(inView view: UIView) -> CGRect {
-        guard let image = image else { return .zero }
+  func frame(inView view: UIView) -> CGRect {
+    guard let image = image else { return .zero }
 
-        return AVMakeRect(aspectRatio: image.size, insideRect: view.frame)
-    }
+    return AVMakeRect(aspectRatio: image.size, insideRect: view.frame)
+  }
 }
 
 extension PlayerView: ZoomAnimatableView {
-    func transitionView() -> UIView {
-        let transitionView = PlayerView()
+  func transitionView() -> UIView {
+    let transitionView = PlayerView()
 
-        transitionView.videoGravity = .resizeAspectFill
-        transitionView.player = player
+    transitionView.videoGravity = .resizeAspectFill
+    transitionView.player = player
 
-        return transitionView
-    }
+    return transitionView
+  }
 
-    func frame(inView view: UIView) -> CGRect {
-        guard let item = player?.currentItem else { return .zero }
+  func frame(inView view: UIView) -> CGRect {
+    guard let item = player?.currentItem else { return .zero }
 
-        return AVMakeRect(aspectRatio: item.presentationSize, insideRect: view.frame)
-    }
+    return AVMakeRect(aspectRatio: item.presentationSize, insideRect: view.frame)
+  }
 }

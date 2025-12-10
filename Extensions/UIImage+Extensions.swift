@@ -3,17 +3,17 @@
 import UIKit
 
 extension UIImage {
-    var withProperOrientation: UIImage? {
-        guard imageOrientation != .up else { return self }
+  var withProperOrientation: UIImage? {
+    guard imageOrientation != .up else { return self }
 
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+    UIGraphicsBeginImageContextWithOptions(size, false, scale)
 
-        draw(in: .init(origin: .zero, size: size))
+    draw(in: .init(origin: .zero, size: size))
 
-        let image = UIGraphicsGetImageFromCurrentImageContext()
+    let image = UIGraphicsGetImageFromCurrentImageContext()
 
-        UIGraphicsEndImageContext()
+    UIGraphicsEndImageContext()
 
-        return image
-    }
+    return image
+  }
 }

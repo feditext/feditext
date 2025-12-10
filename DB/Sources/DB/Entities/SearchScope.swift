@@ -3,8 +3,8 @@
 import Foundation
 
 public enum SearchScope: Int, CaseIterable {
-    case all
-    case accounts
-    case statuses
-    case tags
+  case all
+  case accounts
+  case statuses
+  case tags
 }

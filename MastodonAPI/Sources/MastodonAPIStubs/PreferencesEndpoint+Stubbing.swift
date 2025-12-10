@@ -5,7 +5,7 @@ import MastodonAPI
 import Stubbing
 
 extension PreferencesEndpoint: Stubbing {
-    public func data(url: URL) -> Data? {
-        StubData.preferences
-    }
+  public func data(url: URL) -> Data? {
+    StubData.preferences
+  }
 }

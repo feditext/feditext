@@ -3,13 +3,13 @@
 import Foundation
 
 public protocol Unknowable: RawRepresentable, CaseIterable where RawValue: Equatable {
-    static var unknownCase: Self { get }
+  static var unknownCase: Self { get }
 }
 
-public extension Unknowable {
-    init(rawValue: RawValue) {
-        self = Self.allCases.first { $0.rawValue == rawValue } ?? Self.unknownCase
-    }
+extension Unknowable {
+  public init(rawValue: RawValue) {
+    self = Self.allCases.first { $0.rawValue == rawValue } ?? Self.unknownCase
+  }
 
-    static var allCasesExceptUnknown: [Self] { allCases.filter { $0 != unknownCase } }
+  public static var allCasesExceptUnknown: [Self] { allCases.filter { $0 != unknownCase } }
 }

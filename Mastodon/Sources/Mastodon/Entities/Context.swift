@@ -3,11 +3,11 @@
 import Foundation
 
 public struct Context: Codable, Hashable {
-    public let ancestors: [Status]
-    public let descendants: [Status]
+  public let ancestors: [Status]
+  public let descendants: [Status]
 
-    public init(ancestors: [Status], descendants: [Status]) {
-        self.ancestors = ancestors
-        self.descendants = descendants
-    }
+  public init(ancestors: [Status], descendants: [Status]) {
+    self.ancestors = ancestors
+    self.descendants = descendants
+  }
 }

@@ -5,18 +5,18 @@ import GRDB
 import Mastodon
 
 struct SuggestionRecord: ContentDatabaseRecord, Hashable {
-    let id: Account.Id
-    let source: Suggestion.Source
+  let id: Account.Id
+  let source: Suggestion.Source
 
-    enum Columns {
-        static let id = Column(CodingKeys.id)
-        static let source = Column(CodingKeys.source)
-    }
+  enum Columns {
+    static let id = Column(CodingKeys.id)
+    static let source = Column(CodingKeys.source)
+  }
 
-    static let account = belongsTo(AccountRecord.self)
+  static let account = belongsTo(AccountRecord.self)
 
-    init(suggestion: Suggestion) {
-        id = suggestion.account.id
-        source = suggestion.source
-    }
+  init(suggestion: Suggestion) {
+    id = suggestion.account.id
+    source = suggestion.source
+  }
 }

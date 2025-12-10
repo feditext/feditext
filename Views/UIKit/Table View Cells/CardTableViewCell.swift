@@ -4,11 +4,11 @@ import UIKit
 import ViewModels
 
 final class CardTableViewCell: SeparatorConfiguredTableViewCell {
-    var viewModel: CardViewModel?
+  var viewModel: CardViewModel?
 
-    override func updateConfiguration(using state: UICellConfigurationState) {
-        guard let viewModel = viewModel else { return }
+  override func updateConfiguration(using state: UICellConfigurationState) {
+    guard let viewModel = viewModel else { return }
 
-        contentConfiguration = CardContentConfiguration(viewModel: viewModel).updated(for: state)
-    }
+    contentConfiguration = CardContentConfiguration(viewModel: viewModel).updated(for: state)
+  }
 }

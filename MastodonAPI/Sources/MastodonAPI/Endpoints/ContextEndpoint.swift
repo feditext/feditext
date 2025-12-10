@@ -5,31 +5,31 @@ import HTTP
 import Mastodon
 
 public enum ContextEndpoint {
-    case context(id: Status.Id)
+  case context(id: Status.Id)
 }
 
 extension ContextEndpoint: Endpoint {
-    public typealias ResultType = Context
+  public typealias ResultType = Context
 
-    public var context: [String] {
-        defaultContext + ["statuses"]
+  public var context: [String] {
+    defaultContext + ["statuses"]
+  }
+
+  public var pathComponentsInContext: [String] {
+    switch self {
+    case .context(let id):
+      return [id, "context"]
     }
+  }
 
-    public var pathComponentsInContext: [String] {
-        switch self {
-        case let .context(id):
-            return [id, "context"]
-        }
+  public var method: HTTPMethod { .get }
+
+  public var fallback: Context? { .init(ancestors: [], descendants: []) }
+
+  public var notFound: EntityNotFound? {
+    switch self {
+    case .context(let id):
+      return .status(id)
     }
-
-    public var method: HTTPMethod { .get }
-
-    public var fallback: Context? { .init(ancestors: [], descendants: []) }
-
-    public var notFound: EntityNotFound? {
-        switch self {
-        case .context(let id):
-            return .status(id)
-        }
-    }
+  }
 }

@@ -7,18 +7,18 @@ import Mastodon
 extension Announcement: ContentDatabaseRecord {}
 
 extension Announcement {
-    enum Columns: String, ColumnExpression {
-        case id
-        case content
-        case startsAt
-        case endsAt
-        case allDay
-        case publishedAt
-        case updatedAt
-        case read
-        case mentions
-        case tags
-        case emojis
-        case reactions
-    }
+  enum Columns: String, ColumnExpression {
+    case id
+    case content
+    case startsAt
+    case endsAt
+    case allDay
+    case publishedAt
+    case updatedAt
+    case read
+    case mentions
+    case tags
+    case emojis
+    case reactions
+  }
 }

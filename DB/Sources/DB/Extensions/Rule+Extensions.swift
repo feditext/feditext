@@ -7,8 +7,8 @@ import Mastodon
 extension Rule: ContentDatabaseRecord {}
 
 extension Rule {
-    enum Columns: String, ColumnExpression {
-        case id
-        case text
-    }
+  enum Columns: String, ColumnExpression {
+    case id
+    case text
+  }
 }

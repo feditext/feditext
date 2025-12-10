@@ -3,11 +3,11 @@
 import Combine
 import ServiceLayer
 
-public extension UserNotificationClient {
-    static let mock = UserNotificationClient(
-        getNotificationSettings: { _ in },
-        requestAuthorization: { _, _ in },
-        add: { _, completion in completion?(nil) },
-        removeDeliveredNotifications: { _ in },
-        delegateEvents: Empty(completeImmediately: false).eraseToAnyPublisher())
+extension UserNotificationClient {
+  public static let mock = UserNotificationClient(
+    getNotificationSettings: { _ in },
+    requestAuthorization: { _, _ in },
+    add: { _, completion in completion?(nil) },
+    removeDeliveredNotifications: { _ in },
+    delegateEvents: Empty(completeImmediately: false).eraseToAnyPublisher())
 }

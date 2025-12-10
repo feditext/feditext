@@ -3,465 +3,465 @@
 import GRDB
 
 extension ContentDatabase {
-    static var migrator: DatabaseMigrator {
-        var migrator = DatabaseMigrator()
+  static var migrator: DatabaseMigrator {
+    var migrator = DatabaseMigrator()
 
-        migrator.registerMigration("0.1.0") { db in
-            try db.create(table: "accountRecord") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("username", .text).notNull()
-                t.column("acct", .text).notNull()
-                t.column("displayName", .text).notNull()
-                t.column("locked", .boolean).notNull()
-                t.column("createdAt", .date).notNull()
-                t.column("followersCount", .integer).notNull()
-                t.column("followingCount", .integer).notNull()
-                t.column("statusesCount", .integer).notNull()
-                t.column("note", .text).notNull()
-                t.column("url", .text).notNull()
-                t.column("avatar", .text).notNull()
-                t.column("avatarStatic", .text).notNull()
-                t.column("header", .text).notNull()
-                t.column("headerStatic", .text).notNull()
-                t.column("fields", .blob).notNull()
-                t.column("emojis", .blob).notNull()
-                t.column("bot", .boolean).notNull()
-                t.column("discoverable", .boolean)
-                t.column("movedId", .text).references("accountRecord", onDelete: .cascade)
-            }
+    migrator.registerMigration("0.1.0") { db in
+      try db.create(table: "accountRecord") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("username", .text).notNull()
+        t.column("acct", .text).notNull()
+        t.column("displayName", .text).notNull()
+        t.column("locked", .boolean).notNull()
+        t.column("createdAt", .date).notNull()
+        t.column("followersCount", .integer).notNull()
+        t.column("followingCount", .integer).notNull()
+        t.column("statusesCount", .integer).notNull()
+        t.column("note", .text).notNull()
+        t.column("url", .text).notNull()
+        t.column("avatar", .text).notNull()
+        t.column("avatarStatic", .text).notNull()
+        t.column("header", .text).notNull()
+        t.column("headerStatic", .text).notNull()
+        t.column("fields", .blob).notNull()
+        t.column("emojis", .blob).notNull()
+        t.column("bot", .boolean).notNull()
+        t.column("discoverable", .boolean)
+        t.column("movedId", .text).references("accountRecord", onDelete: .cascade)
+      }
 
-            try db.create(table: "relationship") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                    .references("accountRecord", onDelete: .cascade)
-                t.column("following", .boolean).notNull()
-                t.column("requested", .boolean).notNull()
-                t.column("endorsed", .boolean).notNull()
-                t.column("followedBy", .boolean).notNull()
-                t.column("muting", .boolean).notNull()
-                t.column("mutingNotifications", .boolean).notNull()
-                t.column("showingReblogs", .boolean).notNull()
-                t.column("blocking", .boolean).notNull()
-                t.column("domainBlocking", .boolean).notNull()
-                t.column("blockedBy", .boolean).notNull()
-                t.column("note", .text).notNull()
-            }
+      try db.create(table: "relationship") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+          .references("accountRecord", onDelete: .cascade)
+        t.column("following", .boolean).notNull()
+        t.column("requested", .boolean).notNull()
+        t.column("endorsed", .boolean).notNull()
+        t.column("followedBy", .boolean).notNull()
+        t.column("muting", .boolean).notNull()
+        t.column("mutingNotifications", .boolean).notNull()
+        t.column("showingReblogs", .boolean).notNull()
+        t.column("blocking", .boolean).notNull()
+        t.column("domainBlocking", .boolean).notNull()
+        t.column("blockedBy", .boolean).notNull()
+        t.column("note", .text).notNull()
+      }
 
-            try db.create(table: "identityProofRecord") { t in
-                t.column("accountId", .text).notNull().references("accountRecord", onDelete: .cascade)
-                t.column("provider", .text).notNull()
-                t.column("providerUsername", .text).notNull()
-                t.column("profileUrl", .text).notNull()
-                t.column("proofUrl", .text).notNull()
-                t.column("updatedAt", .date).notNull()
+      try db.create(table: "identityProofRecord") { t in
+        t.column("accountId", .text).notNull().references("accountRecord", onDelete: .cascade)
+        t.column("provider", .text).notNull()
+        t.column("providerUsername", .text).notNull()
+        t.column("profileUrl", .text).notNull()
+        t.column("proofUrl", .text).notNull()
+        t.column("updatedAt", .date).notNull()
 
-                t.primaryKey(["accountId", "provider"], onConflict: .replace)
-            }
+        t.primaryKey(["accountId", "provider"], onConflict: .replace)
+      }
 
-            try db.create(table: "featuredTagRecord") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("name", .text).notNull()
-                t.column("url", .text).notNull()
-                t.column("statusesCount", .integer).notNull()
-                t.column("lastStatusAt", .date).notNull()
-                t.column("accountId", .text).notNull().references("accountRecord", onDelete: .cascade)
-            }
+      try db.create(table: "featuredTagRecord") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("name", .text).notNull()
+        t.column("url", .text).notNull()
+        t.column("statusesCount", .integer).notNull()
+        t.column("lastStatusAt", .date).notNull()
+        t.column("accountId", .text).notNull().references("accountRecord", onDelete: .cascade)
+      }
 
-            try db.create(table: "statusRecord") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("uri", .text).notNull()
-                t.column("createdAt", .datetime).notNull()
-                t.column("accountId", .text).notNull().references("accountRecord", onDelete: .cascade)
-                t.column("content", .text).notNull()
-                t.column("visibility", .text).notNull()
-                t.column("sensitive", .boolean).notNull()
-                t.column("spoilerText", .text).notNull()
-                t.column("mediaAttachments", .blob).notNull()
-                t.column("mentions", .blob).notNull()
-                t.column("tags", .blob).notNull()
-                t.column("emojis", .blob).notNull()
-                t.column("reblogsCount", .integer).notNull()
-                t.column("favouritesCount", .integer).notNull()
-                t.column("repliesCount", .integer).notNull()
-                t.column("application", .blob)
-                t.column("url", .text)
-                t.column("inReplyToId", .text)
-                t.column("inReplyToAccountId", .text)
-                t.column("reblogId", .text).references("statusRecord", onDelete: .cascade)
-                t.column("poll", .blob)
-                t.column("card", .blob)
-                t.column("language", .text)
-                t.column("text", .text)
-                t.column("favourited", .boolean).notNull()
-                t.column("reblogged", .boolean).notNull()
-                t.column("muted", .boolean).notNull()
-                t.column("bookmarked", .boolean).notNull()
-                t.column("pinned", .boolean)
-            }
+      try db.create(table: "statusRecord") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("uri", .text).notNull()
+        t.column("createdAt", .datetime).notNull()
+        t.column("accountId", .text).notNull().references("accountRecord", onDelete: .cascade)
+        t.column("content", .text).notNull()
+        t.column("visibility", .text).notNull()
+        t.column("sensitive", .boolean).notNull()
+        t.column("spoilerText", .text).notNull()
+        t.column("mediaAttachments", .blob).notNull()
+        t.column("mentions", .blob).notNull()
+        t.column("tags", .blob).notNull()
+        t.column("emojis", .blob).notNull()
+        t.column("reblogsCount", .integer).notNull()
+        t.column("favouritesCount", .integer).notNull()
+        t.column("repliesCount", .integer).notNull()
+        t.column("application", .blob)
+        t.column("url", .text)
+        t.column("inReplyToId", .text)
+        t.column("inReplyToAccountId", .text)
+        t.column("reblogId", .text).references("statusRecord", onDelete: .cascade)
+        t.column("poll", .blob)
+        t.column("card", .blob)
+        t.column("language", .text)
+        t.column("text", .text)
+        t.column("favourited", .boolean).notNull()
+        t.column("reblogged", .boolean).notNull()
+        t.column("muted", .boolean).notNull()
+        t.column("bookmarked", .boolean).notNull()
+        t.column("pinned", .boolean)
+      }
 
-            try db.create(table: "statusShowContentToggle") { t in
-                t.column("statusId", .text).primaryKey().references("statusRecord", onDelete: .cascade)
-            }
+      try db.create(table: "statusShowContentToggle") { t in
+        t.column("statusId", .text).primaryKey().references("statusRecord", onDelete: .cascade)
+      }
 
-            try db.create(table: "statusShowAttachmentsToggle") { t in
-                t.column("statusId", .text).primaryKey().references("statusRecord", onDelete: .cascade)
-            }
+      try db.create(table: "statusShowAttachmentsToggle") { t in
+        t.column("statusId", .text).primaryKey().references("statusRecord", onDelete: .cascade)
+      }
 
-            try db.create(table: "timelineRecord") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("listId", .text)
-                t.column("listTitle", .text).indexed().collate(.localizedCaseInsensitiveCompare)
-                t.column("tag", .text)
-                t.column("accountId", .text)
-                t.column("profileCollection", .text)
-            }
+      try db.create(table: "timelineRecord") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("listId", .text)
+        t.column("listTitle", .text).indexed().collate(.localizedCaseInsensitiveCompare)
+        t.column("tag", .text)
+        t.column("accountId", .text)
+        t.column("profileCollection", .text)
+      }
 
-            try db.create(table: "loadMoreRecord") { t in
-                t.column("timelineId").notNull().references("timelineRecord", onDelete: .cascade)
-                t.column("afterStatusId", .text).notNull()
-                t.column("beforeStatusId", .text).notNull()
+      try db.create(table: "loadMoreRecord") { t in
+        t.column("timelineId").notNull().references("timelineRecord", onDelete: .cascade)
+        t.column("afterStatusId", .text).notNull()
+        t.column("beforeStatusId", .text).notNull()
 
-                t.primaryKey(["timelineId", "afterStatusId"], onConflict: .replace)
-            }
+        t.primaryKey(["timelineId", "afterStatusId"], onConflict: .replace)
+      }
 
-            try db.create(table: "timelineStatusJoin") { t in
-                t.column("timelineId", .text).indexed().notNull()
-                    .references("timelineRecord", onDelete: .cascade)
-                t.column("statusId", .text).indexed().notNull()
-                    .references("statusRecord", onDelete: .cascade)
-                t.column("order", .integer)
+      try db.create(table: "timelineStatusJoin") { t in
+        t.column("timelineId", .text).indexed().notNull()
+          .references("timelineRecord", onDelete: .cascade)
+        t.column("statusId", .text).indexed().notNull()
+          .references("statusRecord", onDelete: .cascade)
+        t.column("order", .integer)
 
-                t.primaryKey(["timelineId", "statusId"], onConflict: .replace)
-            }
+        t.primaryKey(["timelineId", "statusId"], onConflict: .replace)
+      }
 
-            try db.create(table: "filter") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("phrase", .text).notNull()
-                t.column("context", .blob).notNull()
-                t.column("expiresAt", .date).indexed()
-                t.column("irreversible", .boolean).notNull()
-                t.column("wholeWord", .boolean).notNull()
-            }
+      try db.create(table: "filter") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("phrase", .text).notNull()
+        t.column("context", .blob).notNull()
+        t.column("expiresAt", .date).indexed()
+        t.column("irreversible", .boolean).notNull()
+        t.column("wholeWord", .boolean).notNull()
+      }
 
-            try db.create(table: "emoji") { t in
-                t.column("shortcode", .text)
-                    .primaryKey(onConflict: .replace)
-                    .collate(.localizedCaseInsensitiveCompare)
-                    .notNull()
-                t.column("staticUrl", .text).notNull()
-                t.column("url", .text).notNull()
-                t.column("visibleInPicker", .boolean).notNull()
-                t.column("category", .text)
-            }
+      try db.create(table: "emoji") { t in
+        t.column("shortcode", .text)
+          .primaryKey(onConflict: .replace)
+          .collate(.localizedCaseInsensitiveCompare)
+          .notNull()
+        t.column("staticUrl", .text).notNull()
+        t.column("url", .text).notNull()
+        t.column("visibleInPicker", .boolean).notNull()
+        t.column("category", .text)
+      }
 
-            try db.create(table: "emojiUse") { t in
-                t.column("emoji", .text).primaryKey(onConflict: .replace)
-                t.column("system", .boolean).notNull()
-                t.column("lastUse", .datetime).notNull()
-                t.column("count", .integer).notNull()
-            }
+      try db.create(table: "emojiUse") { t in
+        t.column("emoji", .text).primaryKey(onConflict: .replace)
+        t.column("system", .boolean).notNull()
+        t.column("lastUse", .datetime).notNull()
+        t.column("count", .integer).notNull()
+      }
 
-            try db.create(table: "announcement") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("content", .text).notNull()
-                t.column("startsAt", .datetime)
-                t.column("endsAt", .datetime)
-                t.column("allDay", .boolean).notNull()
-                t.column("publishedAt", .datetime).notNull()
-                t.column("updatedAt", .datetime).notNull()
-                t.column("read", .boolean).notNull()
-                t.column("mentions", .blob).notNull()
-                t.column("tags", .blob).notNull()
-                t.column("emojis", .blob).notNull()
-                t.column("reactions", .blob).notNull()
-            }
+      try db.create(table: "announcement") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("content", .text).notNull()
+        t.column("startsAt", .datetime)
+        t.column("endsAt", .datetime)
+        t.column("allDay", .boolean).notNull()
+        t.column("publishedAt", .datetime).notNull()
+        t.column("updatedAt", .datetime).notNull()
+        t.column("read", .boolean).notNull()
+        t.column("mentions", .blob).notNull()
+        t.column("tags", .blob).notNull()
+        t.column("emojis", .blob).notNull()
+        t.column("reactions", .blob).notNull()
+      }
 
-            try db.create(table: "conversationRecord") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("unread", .boolean).notNull()
-                t.column("lastStatusId", .text).references("statusRecord", onDelete: .cascade)
-            }
+      try db.create(table: "conversationRecord") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("unread", .boolean).notNull()
+        t.column("lastStatusId", .text).references("statusRecord", onDelete: .cascade)
+      }
 
-            try db.create(table: "conversationAccountJoin") { t in
-                t.column("conversationId", .text).indexed().notNull()
-                    .references("conversationRecord", onDelete: .cascade)
-                t.column("accountId", .text).indexed().notNull()
-                    .references("accountRecord", onDelete: .cascade)
+      try db.create(table: "conversationAccountJoin") { t in
+        t.column("conversationId", .text).indexed().notNull()
+          .references("conversationRecord", onDelete: .cascade)
+        t.column("accountId", .text).indexed().notNull()
+          .references("accountRecord", onDelete: .cascade)
 
-                t.primaryKey(["conversationId", "accountId"], onConflict: .replace)
-            }
+        t.primaryKey(["conversationId", "accountId"], onConflict: .replace)
+      }
 
-            try db.create(table: "lastReadIdRecord") { t in
-                t.column("markerTimeline", .text).primaryKey(onConflict: .replace)
-                t.column("id", .text).notNull()
-            }
+      try db.create(table: "lastReadIdRecord") { t in
+        t.column("markerTimeline", .text).primaryKey(onConflict: .replace)
+        t.column("id", .text).notNull()
+      }
 
-            try db.create(table: "notificationRecord") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("type", .text).notNull()
-                t.column("accountId", .text).notNull().references("accountRecord", onDelete: .cascade)
-                t.column("createdAt", .datetime).notNull()
-                t.column("statusId").references("statusRecord", onDelete: .cascade)
-            }
+      try db.create(table: "notificationRecord") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("type", .text).notNull()
+        t.column("accountId", .text).notNull().references("accountRecord", onDelete: .cascade)
+        t.column("createdAt", .datetime).notNull()
+        t.column("statusId").references("statusRecord", onDelete: .cascade)
+      }
 
-            try db.create(table: "instanceRecord") { t in
-                t.column("uri", .text).primaryKey(onConflict: .replace)
-                t.column("title", .text).notNull()
-                t.column("description", .text).notNull()
-                t.column("shortDescription", .text)
-                t.column("email", .text).notNull()
-                t.column("version", .text).notNull()
-                t.column("languages", .blob).notNull()
-                t.column("registrations", .boolean).notNull()
-                t.column("approvalRequired", .boolean).notNull()
-                t.column("invitesEnabled", .boolean).notNull()
-                t.column("urls", .blob).notNull()
-                t.column("stats", .blob).notNull()
-                t.column("thumbnail", .text)
-                t.column("contactAccountId", .text).references("accountRecord", onDelete: .cascade)
-                t.column("maxTootChars", .integer)
-            }
+      try db.create(table: "instanceRecord") { t in
+        t.column("uri", .text).primaryKey(onConflict: .replace)
+        t.column("title", .text).notNull()
+        t.column("description", .text).notNull()
+        t.column("shortDescription", .text)
+        t.column("email", .text).notNull()
+        t.column("version", .text).notNull()
+        t.column("languages", .blob).notNull()
+        t.column("registrations", .boolean).notNull()
+        t.column("approvalRequired", .boolean).notNull()
+        t.column("invitesEnabled", .boolean).notNull()
+        t.column("urls", .blob).notNull()
+        t.column("stats", .blob).notNull()
+        t.column("thumbnail", .text)
+        t.column("contactAccountId", .text).references("accountRecord", onDelete: .cascade)
+        t.column("maxTootChars", .integer)
+      }
 
-            try db.create(table: "statusAncestorJoin") { t in
-                t.column("parentId", .text).indexed().notNull()
-                    .references("statusRecord", onDelete: .cascade)
-                t.column("statusId", .text).indexed().notNull()
-                    .references("statusRecord", onDelete: .cascade)
-                t.column("order", .integer).notNull()
+      try db.create(table: "statusAncestorJoin") { t in
+        t.column("parentId", .text).indexed().notNull()
+          .references("statusRecord", onDelete: .cascade)
+        t.column("statusId", .text).indexed().notNull()
+          .references("statusRecord", onDelete: .cascade)
+        t.column("order", .integer).notNull()
 
-                t.primaryKey(["parentId", "statusId"], onConflict: .replace)
-            }
+        t.primaryKey(["parentId", "statusId"], onConflict: .replace)
+      }
 
-            try db.create(table: "statusDescendantJoin") { t in
-                t.column("parentId", .text).indexed().notNull()
-                    .references("statusRecord", onDelete: .cascade)
-                t.column("statusId", .text).indexed().notNull()
-                    .references("statusRecord", onDelete: .cascade)
-                t.column("order", .integer).notNull()
+      try db.create(table: "statusDescendantJoin") { t in
+        t.column("parentId", .text).indexed().notNull()
+          .references("statusRecord", onDelete: .cascade)
+        t.column("statusId", .text).indexed().notNull()
+          .references("statusRecord", onDelete: .cascade)
+        t.column("order", .integer).notNull()
 
-                t.primaryKey(["parentId", "statusId"], onConflict: .replace)
-            }
+        t.primaryKey(["parentId", "statusId"], onConflict: .replace)
+      }
 
-            try db.create(table: "accountPinnedStatusJoin") { t in
-                t.column("accountId", .text).indexed().notNull()
-                    .references("accountRecord", onDelete: .cascade)
-                t.column("statusId", .text).indexed().notNull()
-                    .references("statusRecord", onDelete: .cascade)
-                t.column("order", .integer).notNull()
+      try db.create(table: "accountPinnedStatusJoin") { t in
+        t.column("accountId", .text).indexed().notNull()
+          .references("accountRecord", onDelete: .cascade)
+        t.column("statusId", .text).indexed().notNull()
+          .references("statusRecord", onDelete: .cascade)
+        t.column("order", .integer).notNull()
 
-                t.primaryKey(["accountId", "statusId"], onConflict: .replace)
-            }
-        }
-
-        migrator.registerMigration("1.0.0") { db in
-            try db.create(table: "accountList") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-            }
-
-            try db.create(table: "accountListJoin") { t in
-                t.column("accountListId", .text).indexed().notNull()
-                    .references("accountList", onDelete: .cascade)
-                t.column("accountId", .text).indexed().notNull()
-                    .references("accountRecord", onDelete: .cascade)
-                t.column("order", .integer).notNull()
-
-                t.primaryKey(["accountListId", "accountId", "order"], onConflict: .replace)
-            }
-        }
-
-        migrator.registerMigration("1.0.0-pk-fix") { db in
-            try db.create(table: "new_accountListJoin") { t in
-                t.column("accountListId", .text).indexed().notNull()
-                    .references("accountList", onDelete: .cascade)
-                t.column("accountId", .text).indexed().notNull()
-                    .references("accountRecord", onDelete: .cascade)
-                t.column("order", .integer).notNull()
-
-                t.primaryKey(["accountListId", "accountId"], onConflict: .replace)
-            }
-
-            try db.execute(sql: "INSERT INTO new_accountListJoin SELECT * FROM accountListJoin")
-            try db.drop(table: "accountListJoin")
-            try db.rename(table: "new_accountListJoin", to: "accountListJoin")
-        }
-
-        migrator.registerMigration("1.0.0-lridr-column-rename") { db in
-            try db.alter(table: "lastReadIdRecord") { t in
-                t.rename(column: "markerTimeline", to: "timelineId")
-            }
-        }
-
-        migrator.registerMigration("1.0.0-notifying") { db in
-            try db.alter(table: "relationship") { t in
-                t.add(column: "notifying", .boolean)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-edit-history") { db in
-            try db.alter(table: "statusRecord") { t in
-                t.add(column: "editedAt", .datetime)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-reports-phase-1") { db in
-            try db.create(table: "reportRecord") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("actionTaken", .boolean).notNull()
-            }
-
-            try db.alter(table: "notificationRecord") { t in
-                t.add(column: "reportId", .text)
-                    .references("reportRecord", onDelete: .cascade)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-followed-tags") { db in
-            try db.create(table: "followedTag") { t in
-                t.column("name", .text).primaryKey(onConflict: .replace)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-rules") { db in
-            try db.alter(table: "instanceRecord") { t in
-                t.add(column: "rules", .blob)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-account-group-flag") { db in
-            try db.alter(table: "accountRecord") { t in
-                t.add(column: "group", .boolean).notNull().defaults(to: false)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-familiar-followers") { db in
-            try db.create(table: "familiarFollowersJoin") { t in
-                t.column("followedAccountId", .text).indexed().notNull()
-                    .references("accountRecord", onDelete: .cascade)
-                t.column("followingAccountId", .text).indexed().notNull()
-                    .references("accountRecord", onDelete: .cascade)
-                t.primaryKey(["followedAccountId", "followingAccountId"], onConflict: .replace)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-reports-phase-2") { db in
-            try db.alter(table: "instanceRecord") { t in
-                t.drop(column: "rules")
-            }
-
-            try db.create(table: "rule") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("text", .text).notNull()
-            }
-
-            // Delete all stored notifications because we're about to mess with a table that they join to.
-            try db.execute(sql: "DELETE FROM notificationRecord")
-
-            // Note: it's possible for a report notification to refer to statuses or rules that no longer exist,
-            // so we don't enforce a foreign key constraint on `ruleId`.
-            try db.create(table: "reportRuleJoin") { t in
-                t.column("reportId", .text).indexed().notNull()
-                    .references("reportRecord", onDelete: .cascade)
-                t.column("ruleId", .text).indexed().notNull()
-
-                t.primaryKey(["reportId", "ruleId"], onConflict: .replace)
-            }
-
-            // Drop and re-create this table because we're adding a bunch of non-nullable columns without defaults,
-            // which SQLite won't let you do (even if the table is empty, which it might not be).
-            // See https://www.sqlite.org/lang_altertable.html#alter_table_add_column
-            try db.drop(table: "reportRecord")
-            try db.create(table: "reportRecord") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                t.column("actionTaken", .boolean).notNull()
-                t.column("actionTakenAt", .date)
-                t.column("category", .text).notNull()
-                t.column("comment", .text).notNull()
-                t.column("forwarded", .boolean).notNull()
-                t.column("createdAt", .date).notNull()
-                // We store this as a blob because we don't currently join on it: status IDs are shown only as a count.
-                t.column("statusIds", .blob).notNull()
-                t.column("targetAccountId").indexed().notNull().references("accountRecord", onDelete: .cascade)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-suggested-follows") { db in
-            try db.create(table: "suggestionRecord") { t in
-                t.column("id", .text).primaryKey(onConflict: .replace)
-                    .references("accountRecord", onDelete: .cascade)
-                t.column("source", .text).notNull()
-            }
-        }
-
-        migrator.registerMigration("1.7.4-list-settings") { db in
-            try db.alter(table: "timelineRecord") { t in
-                t.add(column: "listRepliesPolicy", .text)
-                t.add(column: "listExclusive", .boolean)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-reactions") { db in
-            try db.alter(table: "statusRecord") { t in
-                t.add(column: "reactions", .blob)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-instance-configuration") { db in
-            try db.alter(table: "instanceRecord") { t in
-                t.add(column: "configuration", .blob)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-url-indexes") { db in
-            try db.create(index: "accountRecord_on_url", on: "accountRecord", columns: ["url"])
-            try db.create(index: "statusRecord_on_uri", on: "statusRecord", columns: ["uri"])
-            try db.create(index: "statusRecord_on_url", on: "statusRecord", columns: ["url"])
-        }
-
-        migrator.registerMigration("1.7.4-quoteId") { db in
-            try db.alter(table: "statusRecord") { t in
-                t.add(column: "quoteId", .text).references("statusRecord", onDelete: .cascade)
-            }
-        }
-
-        // This column may have been removed by a migration that had to be rolled back.
-        migrator.registerMigration("1.7.4-account-more-metadata-rollback") { db in
-            do {
-                try db.alter(table: "accountRecord") { t in
-                    t.add(column: "discoverable", .boolean).notNull().defaults(to: false)
-                }
-            } catch {
-                // Ignore this failure, it's expected for users that never ran that migration.
-                // SQLite doesn't support IF NOT EXISTS.
-            }
-        }
-
-        migrator.registerMigration("1.7.4-statusShowFilteredToggle") { db in
-            try db.create(table: "statusShowFilteredToggle") { t in
-                t.column("statusId", .text).primaryKey()
-                    .references("statusRecord", onDelete: .cascade)
-            }
-        }
-
-        migrator.registerMigration("1.7.4-statusFiltered") { db in
-            try db.create(table: "statusFiltered") { t in
-                t.column("statusId", .text).indexed().notNull()
-                    .references("statusRecord", onDelete: .cascade)
-                t.column("context", .text).indexed().notNull()
-                t.column("filtered", .text)
-
-                t.primaryKey(["statusId", "context"], onConflict: .replace)
-            }
-        }
-        
-        migrator.registerMigration("1.7.4-persistent-DisplayFilters") { db in
-            try db.create(table: "timelineDisplayFilterRecord") { t in
-                t.column("timelineId", .text).indexed().notNull()
-                    .references("timelineRecord", onDelete: .cascade)
-                t.column("displayFilter", .blob).notNull()
-
-                t.primaryKey(["timelineId"], onConflict: .replace)
-            }
-        }
-
-        return migrator
+        t.primaryKey(["accountId", "statusId"], onConflict: .replace)
+      }
     }
+
+    migrator.registerMigration("1.0.0") { db in
+      try db.create(table: "accountList") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+      }
+
+      try db.create(table: "accountListJoin") { t in
+        t.column("accountListId", .text).indexed().notNull()
+          .references("accountList", onDelete: .cascade)
+        t.column("accountId", .text).indexed().notNull()
+          .references("accountRecord", onDelete: .cascade)
+        t.column("order", .integer).notNull()
+
+        t.primaryKey(["accountListId", "accountId", "order"], onConflict: .replace)
+      }
+    }
+
+    migrator.registerMigration("1.0.0-pk-fix") { db in
+      try db.create(table: "new_accountListJoin") { t in
+        t.column("accountListId", .text).indexed().notNull()
+          .references("accountList", onDelete: .cascade)
+        t.column("accountId", .text).indexed().notNull()
+          .references("accountRecord", onDelete: .cascade)
+        t.column("order", .integer).notNull()
+
+        t.primaryKey(["accountListId", "accountId"], onConflict: .replace)
+      }
+
+      try db.execute(sql: "INSERT INTO new_accountListJoin SELECT * FROM accountListJoin")
+      try db.drop(table: "accountListJoin")
+      try db.rename(table: "new_accountListJoin", to: "accountListJoin")
+    }
+
+    migrator.registerMigration("1.0.0-lridr-column-rename") { db in
+      try db.alter(table: "lastReadIdRecord") { t in
+        t.rename(column: "markerTimeline", to: "timelineId")
+      }
+    }
+
+    migrator.registerMigration("1.0.0-notifying") { db in
+      try db.alter(table: "relationship") { t in
+        t.add(column: "notifying", .boolean)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-edit-history") { db in
+      try db.alter(table: "statusRecord") { t in
+        t.add(column: "editedAt", .datetime)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-reports-phase-1") { db in
+      try db.create(table: "reportRecord") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("actionTaken", .boolean).notNull()
+      }
+
+      try db.alter(table: "notificationRecord") { t in
+        t.add(column: "reportId", .text)
+          .references("reportRecord", onDelete: .cascade)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-followed-tags") { db in
+      try db.create(table: "followedTag") { t in
+        t.column("name", .text).primaryKey(onConflict: .replace)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-rules") { db in
+      try db.alter(table: "instanceRecord") { t in
+        t.add(column: "rules", .blob)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-account-group-flag") { db in
+      try db.alter(table: "accountRecord") { t in
+        t.add(column: "group", .boolean).notNull().defaults(to: false)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-familiar-followers") { db in
+      try db.create(table: "familiarFollowersJoin") { t in
+        t.column("followedAccountId", .text).indexed().notNull()
+          .references("accountRecord", onDelete: .cascade)
+        t.column("followingAccountId", .text).indexed().notNull()
+          .references("accountRecord", onDelete: .cascade)
+        t.primaryKey(["followedAccountId", "followingAccountId"], onConflict: .replace)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-reports-phase-2") { db in
+      try db.alter(table: "instanceRecord") { t in
+        t.drop(column: "rules")
+      }
+
+      try db.create(table: "rule") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("text", .text).notNull()
+      }
+
+      // Delete all stored notifications because we're about to mess with a table that they join to.
+      try db.execute(sql: "DELETE FROM notificationRecord")
+
+      // Note: it's possible for a report notification to refer to statuses or rules that no longer exist,
+      // so we don't enforce a foreign key constraint on `ruleId`.
+      try db.create(table: "reportRuleJoin") { t in
+        t.column("reportId", .text).indexed().notNull()
+          .references("reportRecord", onDelete: .cascade)
+        t.column("ruleId", .text).indexed().notNull()
+
+        t.primaryKey(["reportId", "ruleId"], onConflict: .replace)
+      }
+
+      // Drop and re-create this table because we're adding a bunch of non-nullable columns without defaults,
+      // which SQLite won't let you do (even if the table is empty, which it might not be).
+      // See https://www.sqlite.org/lang_altertable.html#alter_table_add_column
+      try db.drop(table: "reportRecord")
+      try db.create(table: "reportRecord") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("actionTaken", .boolean).notNull()
+        t.column("actionTakenAt", .date)
+        t.column("category", .text).notNull()
+        t.column("comment", .text).notNull()
+        t.column("forwarded", .boolean).notNull()
+        t.column("createdAt", .date).notNull()
+        // We store this as a blob because we don't currently join on it: status IDs are shown only as a count.
+        t.column("statusIds", .blob).notNull()
+        t.column("targetAccountId").indexed().notNull().references("accountRecord", onDelete: .cascade)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-suggested-follows") { db in
+      try db.create(table: "suggestionRecord") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+          .references("accountRecord", onDelete: .cascade)
+        t.column("source", .text).notNull()
+      }
+    }
+
+    migrator.registerMigration("1.7.4-list-settings") { db in
+      try db.alter(table: "timelineRecord") { t in
+        t.add(column: "listRepliesPolicy", .text)
+        t.add(column: "listExclusive", .boolean)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-reactions") { db in
+      try db.alter(table: "statusRecord") { t in
+        t.add(column: "reactions", .blob)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-instance-configuration") { db in
+      try db.alter(table: "instanceRecord") { t in
+        t.add(column: "configuration", .blob)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-url-indexes") { db in
+      try db.create(index: "accountRecord_on_url", on: "accountRecord", columns: ["url"])
+      try db.create(index: "statusRecord_on_uri", on: "statusRecord", columns: ["uri"])
+      try db.create(index: "statusRecord_on_url", on: "statusRecord", columns: ["url"])
+    }
+
+    migrator.registerMigration("1.7.4-quoteId") { db in
+      try db.alter(table: "statusRecord") { t in
+        t.add(column: "quoteId", .text).references("statusRecord", onDelete: .cascade)
+      }
+    }
+
+    // This column may have been removed by a migration that had to be rolled back.
+    migrator.registerMigration("1.7.4-account-more-metadata-rollback") { db in
+      do {
+        try db.alter(table: "accountRecord") { t in
+          t.add(column: "discoverable", .boolean).notNull().defaults(to: false)
+        }
+      } catch {
+        // Ignore this failure, it's expected for users that never ran that migration.
+        // SQLite doesn't support IF NOT EXISTS.
+      }
+    }
+
+    migrator.registerMigration("1.7.4-statusShowFilteredToggle") { db in
+      try db.create(table: "statusShowFilteredToggle") { t in
+        t.column("statusId", .text).primaryKey()
+          .references("statusRecord", onDelete: .cascade)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-statusFiltered") { db in
+      try db.create(table: "statusFiltered") { t in
+        t.column("statusId", .text).indexed().notNull()
+          .references("statusRecord", onDelete: .cascade)
+        t.column("context", .text).indexed().notNull()
+        t.column("filtered", .text)
+
+        t.primaryKey(["statusId", "context"], onConflict: .replace)
+      }
+    }
+
+    migrator.registerMigration("1.7.4-persistent-DisplayFilters") { db in
+      try db.create(table: "timelineDisplayFilterRecord") { t in
+        t.column("timelineId", .text).indexed().notNull()
+          .references("timelineRecord", onDelete: .cascade)
+        t.column("displayFilter", .blob).notNull()
+
+        t.primaryKey(["timelineId"], onConflict: .replace)
+      }
+    }
+
+    return migrator
+  }
 }

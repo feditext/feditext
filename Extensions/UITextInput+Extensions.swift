@@ -3,11 +3,11 @@
 import UIKit
 
 extension UITextInput {
-    var textToSelectedRange: String? {
-        guard let selectedRange = selectedTextRange,
-              let range = textRange(from: beginningOfDocument, to: selectedRange.end)
-        else { return nil }
+  var textToSelectedRange: String? {
+    guard let selectedRange = selectedTextRange,
+      let range = textRange(from: beginningOfDocument, to: selectedRange.end)
+    else { return nil }
 
-        return text(in: range)
-    }
+    return text(in: range)
+  }
 }

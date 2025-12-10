@@ -5,13 +5,13 @@ import Mastodon
 import ServiceLayer
 
 public final class InstanceViewModel: ObservableObject {
-    private let instanceService: InstanceService
+  private let instanceService: InstanceService
 
-    public init(instanceService: InstanceService) {
-        self.instanceService = instanceService
-    }
+  public init(instanceService: InstanceService) {
+    self.instanceService = instanceService
+  }
 }
 
-public extension InstanceViewModel {
-    var instance: Instance { instanceService.instance }
+extension InstanceViewModel {
+  public var instance: Instance { instanceService.instance }
 }

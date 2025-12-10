@@ -4,20 +4,20 @@
 import PackageDescription
 
 let package = Package(
-    name: "AppMetadata",
-    products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "AppMetadata",
-            targets: ["AppMetadata"]),
-    ],
-    targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "AppMetadata"),
-        .testTarget(
-            name: "AppMetadataTests",
-            dependencies: ["AppMetadata"]),
-    ]
+  name: "AppMetadata",
+  products: [
+    // Products define the executables and libraries a package produces, making them visible to other packages.
+    .library(
+      name: "AppMetadata",
+      targets: ["AppMetadata"])
+  ],
+  targets: [
+    // Targets are the basic building blocks of a package, defining a module or a test suite.
+    // Targets can depend on other targets in this package and products from dependencies.
+    .target(
+      name: "AppMetadata"),
+    .testTarget(
+      name: "AppMetadataTests",
+      dependencies: ["AppMetadata"]),
+  ]
 )

@@ -3,9 +3,9 @@
 import Foundation
 
 public struct APIError: Error, Codable {
-    public let error: String
+  public let error: String
 }
 
 extension APIError: LocalizedError {
-    public var errorDescription: String? { error }
+  public var errorDescription: String? { error }
 }

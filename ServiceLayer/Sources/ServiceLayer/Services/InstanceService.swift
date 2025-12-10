@@ -6,12 +6,12 @@ import Mastodon
 import MastodonAPI
 
 public struct InstanceService {
-    public let instance: Instance
+  public let instance: Instance
 
-    private let mastodonAPIClient: MastodonAPIClient
+  private let mastodonAPIClient: MastodonAPIClient
 
-    public init(instance: Instance, mastodonAPIClient: MastodonAPIClient) {
-        self.instance = instance
-        self.mastodonAPIClient = mastodonAPIClient
-    }
+  public init(instance: Instance, mastodonAPIClient: MastodonAPIClient) {
+    self.instance = instance
+    self.mastodonAPIClient = mastodonAPIClient
+  }
 }

@@ -4,12 +4,12 @@ import UIKit
 import ViewModels
 
 final class AccountTableViewCell: SeparatorConfiguredTableViewCell {
-    var viewModel: AccountViewModel?
+  var viewModel: AccountViewModel?
 
-    override func updateConfiguration(using state: UICellConfigurationState) {
-        guard let viewModel = viewModel else { return }
+  override func updateConfiguration(using state: UICellConfigurationState) {
+    guard let viewModel = viewModel else { return }
 
-        contentConfiguration = AccountContentConfiguration(viewModel: viewModel).updated(for: state)
-        accessibilityElements = [contentView]
-    }
+    contentConfiguration = AccountContentConfiguration(viewModel: viewModel).updated(for: state)
+    accessibilityElements = [contentView]
+  }
 }

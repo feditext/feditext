@@ -4,36 +4,36 @@ import Mastodon
 import UIKit
 
 extension UIView {
-    private static let defaultContentsRectSize = CGSize(width: 1, height: 1)
+  private static let defaultContentsRectSize = CGSize(width: 1, height: 1)
 
-    func setContentsRect(focus: Attachment.Meta.Focus, mediaSize: CGSize) {
-        let aspectRatio = mediaSize.width / mediaSize.height
-        let viewAspectRatio = bounds.width / bounds.height
-        var origin = CGPoint.zero
+  func setContentsRect(focus: Attachment.Meta.Focus, mediaSize: CGSize) {
+    let aspectRatio = mediaSize.width / mediaSize.height
+    let viewAspectRatio = bounds.width / bounds.height
+    var origin = CGPoint.zero
 
-        if viewAspectRatio > aspectRatio {
-            let mediaProportionalHeight = mediaSize.height * bounds.width / mediaSize.width
-            let maxPan = (mediaProportionalHeight - bounds.height) / (2 * mediaProportionalHeight)
+    if viewAspectRatio > aspectRatio {
+      let mediaProportionalHeight = mediaSize.height * bounds.width / mediaSize.width
+      let maxPan = (mediaProportionalHeight - bounds.height) / (2 * mediaProportionalHeight)
 
-            origin.y = CGFloat(-(focus.y ?? 0)) * maxPan
-        } else {
-            let mediaProportionalWidth = mediaSize.width * bounds.height / mediaSize.height
-            let maxPan = (mediaProportionalWidth - bounds.width) / (2 * mediaProportionalWidth)
+      origin.y = CGFloat(-(focus.y ?? 0)) * maxPan
+    } else {
+      let mediaProportionalWidth = mediaSize.width * bounds.height / mediaSize.height
+      let maxPan = (mediaProportionalWidth - bounds.width) / (2 * mediaProportionalWidth)
 
-            origin.x = CGFloat(focus.x ?? 0) * maxPan
-        }
-
-        layer.contentsRect = CGRect(origin: origin, size: Self.defaultContentsRectSize)
+      origin.x = CGFloat(focus.x ?? 0) * maxPan
     }
 
-    // http://www.openradar.me/25087688
-    var isHidden_stackViewSafe: Bool {
-        get { isHidden }
-        set {
-            if isHidden != newValue {
-                isHidden = newValue
-                alpha = isHidden ? 0 : 1
-            }
-        }
+    layer.contentsRect = CGRect(origin: origin, size: Self.defaultContentsRectSize)
+  }
+
+  // http://www.openradar.me/25087688
+  var isHidden_stackViewSafe: Bool {
+    get { isHidden }
+    set {
+      if isHidden != newValue {
+        isHidden = newValue
+        alpha = isHidden ? 0 : 1
+      }
     }
+  }
 }

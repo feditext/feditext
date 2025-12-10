@@ -5,58 +5,58 @@ import Mastodon
 
 /// Can have trend history attached.
 public protocol Trendable {
-    var history: [History]? { get }
+  var history: [History]? { get }
 }
 
-public extension Trendable {
-    var accounts: Int? {
-        guard let history = history,
-              var accounts = history.first?.accounts
-        else { return nil }
+extension Trendable {
+  public var accounts: Int? {
+    guard let history = history,
+      var accounts = history.first?.accounts
+    else { return nil }
 
-        if history.count > 1 {
-            accounts += history[1].accounts
-        }
-
-        return accounts
+    if history.count > 1 {
+      accounts += history[1].accounts
     }
 
-    var uses: Int? {
-        guard let history = history,
-              var uses = history.first?.uses
-        else { return nil }
+    return accounts
+  }
 
-        if history.count > 1 {
-            uses += history[1].uses
-        }
+  public var uses: Int? {
+    guard let history = history,
+      var uses = history.first?.uses
+    else { return nil }
 
-        return uses
+    if history.count > 1 {
+      uses += history[1].uses
     }
 
-    var usageHistory: [Int] {
-        history?.compactMap { Int($0.uses) } ?? []
-    }
+    return uses
+  }
 
-    var accountsText: String? {
-        guard let accounts = accounts else { return nil }
-        return String.localizedStringWithFormat(
-            NSLocalizedString("tag.people-talking-%ld", comment: ""),
-            accounts
-        )
-    }
+  public var usageHistory: [Int] {
+    history?.compactMap { Int($0.uses) } ?? []
+  }
 
-    var accessibilityAccountsText: String? { accountsText }
+  public var accountsText: String? {
+    guard let accounts = accounts else { return nil }
+    return String.localizedStringWithFormat(
+      NSLocalizedString("tag.people-talking-%ld", comment: ""),
+      accounts
+    )
+  }
 
-    var recentUsesText: String? {
-        guard let uses = uses else { return nil }
-        return String(uses)
-    }
+  public var accessibilityAccountsText: String? { accountsText }
 
-    var accessibilityRecentUsesText: String? {
-        guard let uses = uses else { return nil }
-        return String.localizedStringWithFormat(
-            NSLocalizedString("tag.accessibility-recent-uses-%ld", comment: ""),
-            uses
-        )
-    }
+  public var recentUsesText: String? {
+    guard let uses = uses else { return nil }
+    return String(uses)
+  }
+
+  public var accessibilityRecentUsesText: String? {
+    guard let uses = uses else { return nil }
+    return String.localizedStringWithFormat(
+      NSLocalizedString("tag.accessibility-recent-uses-%ld", comment: ""),
+      uses
+    )
+  }
 }

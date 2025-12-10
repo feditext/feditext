@@ -5,38 +5,38 @@ import HTTP
 import Mastodon
 
 public enum RulesEndpoint {
-    /// https://docs.joinmastodon.org/methods/instance/#rules
-    case rules
+  /// https://docs.joinmastodon.org/methods/instance/#rules
+  case rules
 }
 
 extension RulesEndpoint: Endpoint {
-    public typealias ResultType = [Rule]
+  public typealias ResultType = [Rule]
 
-    public var context: [String] {
-        defaultContext + ["instance/rules"]
+  public var context: [String] {
+    defaultContext + ["instance/rules"]
+  }
+
+  public var pathComponentsInContext: [String] {
+    switch self {
+    case .rules:
+      return []
     }
+  }
 
-    public var pathComponentsInContext: [String] {
-        switch self {
-        case .rules:
-            return []
-        }
+  public var method: HTTPMethod {
+    switch self {
+    case .rules:
+      return .get
     }
+  }
 
-    public var method: HTTPMethod {
-        switch self {
-        case .rules:
-            return .get
-        }
-    }
+  public var requires: APICapabilityRequirements? {
+    .mastodonForks("3.4.0") | [
+      .fedibird: "0.1.0",
+      .gotosocial: "0.12.0",
+      .pixelfed: .assumeAvailable,
+    ]
+  }
 
-    public var requires: APICapabilityRequirements? {
-        .mastodonForks("3.4.0") | [
-            .fedibird: "0.1.0",
-            .gotosocial: "0.12.0",
-            .pixelfed: .assumeAvailable,
-        ]
-    }
-
-    public var fallback: [Rule]? { [] }
+  public var fallback: [Rule]? { [] }
 }

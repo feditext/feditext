@@ -4,94 +4,98 @@ import UIKit
 import ViewModels
 
 final class ImagePageViewController: UIPageViewController {
-    let imageViewControllers: [ImageViewController]
+  let imageViewControllers: [ImageViewController]
 
-    init(initiallyVisible: AttachmentViewModel, statusViewModel: StatusViewModel) {
-        imageViewControllers = statusViewModel.attachmentViewModels.map { ImageViewController(viewModel: $0) }
+  init(initiallyVisible: AttachmentViewModel, statusViewModel: StatusViewModel) {
+    imageViewControllers = statusViewModel.attachmentViewModels.map { ImageViewController(viewModel: $0) }
 
-        super.init(
-            transitionStyle: .scroll,
-            navigationOrientation: .horizontal,
-            options: [.interPageSpacing: CGFloat.defaultSpacing])
+    super.init(
+      transitionStyle: .scroll,
+      navigationOrientation: .horizontal,
+      options: [.interPageSpacing: CGFloat.defaultSpacing])
 
-        let index = statusViewModel.attachmentViewModels.firstIndex {
-            $0.attachment.id == initiallyVisible.attachment.id
-        }
-
-        setViewControllers([imageViewControllers[index ?? 0]], direction: .forward, animated: false)
+    let index = statusViewModel.attachmentViewModels.firstIndex {
+      $0.attachment.id == initiallyVisible.attachment.id
     }
 
-    init(imageURL: URL) {
-        imageViewControllers = [ImageViewController(imageURL: imageURL)]
+    setViewControllers([imageViewControllers[index ?? 0]], direction: .forward, animated: false)
+  }
 
-        super.init(
-            transitionStyle: .scroll,
-            navigationOrientation: .horizontal,
-            options: [.interPageSpacing: CGFloat.defaultSpacing])
+  init(imageURL: URL) {
+    imageViewControllers = [ImageViewController(imageURL: imageURL)]
 
-        setViewControllers(imageViewControllers, direction: .forward, animated: false)
-    }
+    super.init(
+      transitionStyle: .scroll,
+      navigationOrientation: .horizontal,
+      options: [.interPageSpacing: CGFloat.defaultSpacing])
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    setViewControllers(imageViewControllers, direction: .forward, animated: false)
+  }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
 
-        dataSource = self
-        view.backgroundColor = .secondarySystemBackground
-        view.subviews.compactMap { $0 as? UIScrollView }.first?.bounces = imageViewControllers.count > 1
+  override func viewDidLoad() {
+    super.viewDidLoad()
 
-        navigationItem.leftBarButtonItem = .init(
-            systemItem: .close,
-            primaryAction: UIAction { [weak self] _ in self?.presentingViewController?.dismiss(animated: true) })
+    dataSource = self
+    view.backgroundColor = .secondarySystemBackground
+    view.subviews.compactMap { $0 as? UIScrollView }.first?.bounces = imageViewControllers.count > 1
 
-        navigationItem.rightBarButtonItem = .init(
-            systemItem: .action,
-            primaryAction: UIAction { [weak self] _ in
-                (self?.viewControllers?.first as? ImageViewController)?.presentActivityViewController()
-            })
+    navigationItem.leftBarButtonItem = .init(
+      systemItem: .close,
+      primaryAction: UIAction { [weak self] _ in self?.presentingViewController?.dismiss(animated: true) })
 
-        navigationController?.barHideOnTapGestureRecognizer.addTarget(
-            self,
-            action: #selector(toggleDescriptionVisibility))
-    }
+    navigationItem.rightBarButtonItem = .init(
+      systemItem: .action,
+      primaryAction: UIAction { [weak self] _ in
+        (self?.viewControllers?.first as? ImageViewController)?.presentActivityViewController()
+      })
 
-    override var prefersStatusBarHidden: Bool { navigationController?.isNavigationBarHidden ?? false }
+    navigationController?.barHideOnTapGestureRecognizer.addTarget(
+      self,
+      action: #selector(toggleDescriptionVisibility))
+  }
 
-    override var prefersHomeIndicatorAutoHidden: Bool { navigationController?.isNavigationBarHidden ?? false }
+  override var prefersStatusBarHidden: Bool { navigationController?.isNavigationBarHidden ?? false }
+
+  override var prefersHomeIndicatorAutoHidden: Bool { navigationController?.isNavigationBarHidden ?? false }
 }
 
 extension ImagePageViewController {
-    @objc func toggleDescriptionVisibility() {
-        for controller in imageViewControllers {
-            controller.toggleDescriptionVisibility()
-        }
+  @objc func toggleDescriptionVisibility() {
+    for controller in imageViewControllers {
+      controller.toggleDescriptionVisibility()
     }
+  }
 }
 
 extension ImagePageViewController: UIPageViewControllerDataSource {
-    func pageViewController(_ pageViewController: UIPageViewController,
-                            viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard
-            let imageViewController = viewController as? ImageViewController,
-            let index = imageViewControllers.firstIndex(of: imageViewController),
-            index + 1 < imageViewControllers.count
-        else { return nil }
+  func pageViewController(
+    _ pageViewController: UIPageViewController,
+    viewControllerAfter viewController: UIViewController
+  ) -> UIViewController? {
+    guard
+      let imageViewController = viewController as? ImageViewController,
+      let index = imageViewControllers.firstIndex(of: imageViewController),
+      index + 1 < imageViewControllers.count
+    else { return nil }
 
-        return imageViewControllers[index + 1]
-    }
+    return imageViewControllers[index + 1]
+  }
 
-    func pageViewController(_ pageViewController: UIPageViewController,
-                            viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard
-            let imageViewController = viewController as? ImageViewController,
-            let index = imageViewControllers.firstIndex(of: imageViewController),
-            index > 0
-        else { return nil }
+  func pageViewController(
+    _ pageViewController: UIPageViewController,
+    viewControllerBefore viewController: UIViewController
+  ) -> UIViewController? {
+    guard
+      let imageViewController = viewController as? ImageViewController,
+      let index = imageViewControllers.firstIndex(of: imageViewController),
+      index > 0
+    else { return nil }
 
-        return imageViewControllers[index - 1]
-    }
+    return imageViewControllers[index - 1]
+  }
 }

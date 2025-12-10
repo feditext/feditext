@@ -4,12 +4,12 @@ import UIKit
 import ViewModels
 
 final class MultiNotificationTableViewCell: SeparatorConfiguredTableViewCell {
-    var viewModel: MultiNotificationViewModel?
+  var viewModel: MultiNotificationViewModel?
 
-    override func updateConfiguration(using state: UICellConfigurationState) {
-        guard let viewModel = viewModel else { return }
+  override func updateConfiguration(using state: UICellConfigurationState) {
+    guard let viewModel = viewModel else { return }
 
-        contentConfiguration = MultiNotificationContentConfiguration(viewModel: viewModel).updated(for: state)
-        accessibilityElements = [contentView]
-    }
+    contentConfiguration = MultiNotificationContentConfiguration(viewModel: viewModel).updated(for: state)
+    accessibilityElements = [contentView]
+  }
 }

@@ -5,39 +5,39 @@ import HTTP
 import Mastodon
 
 public enum FiltersEndpoint {
-    case filters
+  case filters
 }
 
 extension FiltersEndpoint: Endpoint {
-    public typealias ResultType = [Filter]
+  public typealias ResultType = [Filter]
 
-    public var context: [String] {
-        defaultContext + ["filters"]
+  public var context: [String] {
+    defaultContext + ["filters"]
+  }
+
+  public var pathComponentsInContext: [String] {
+    switch self {
+    case .filters:
+      return []
     }
+  }
 
-    public var pathComponentsInContext: [String] {
-        switch self {
-        case .filters:
-            return []
-        }
+  public var method: HTTPMethod {
+    switch self {
+    case .filters:
+      return .get
     }
+  }
 
-    public var method: HTTPMethod {
-        switch self {
-        case .filters:
-            return .get
-        }
-    }
+  public var requires: APICapabilityRequirements? {
+    .mastodonForks(.assumeAvailable) | [
+      .fedibird: .assumeAvailable,
+      .pleroma: .assumeAvailable,
+      .akkoma: .assumeAvailable,
+      .gotosocial: "0.15.0-0",
+    ]
+    // Stubbed in Pixelfed 0.11.
+  }
 
-    public var requires: APICapabilityRequirements? {
-        .mastodonForks(.assumeAvailable) | [
-            .fedibird: .assumeAvailable,
-            .pleroma: .assumeAvailable,
-            .akkoma: .assumeAvailable,
-            .gotosocial: "0.15.0-0",
-        ]
-        // Stubbed in Pixelfed 0.11.
-    }
-
-    public var fallback: [Filter]? { [] }
+  public var fallback: [Filter]? { [] }
 }

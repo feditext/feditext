@@ -5,38 +5,38 @@ import HTTP
 import Mastodon
 
 public enum ConversationEndpoint {
-    case read(id: Conversation.Id)
+  case read(id: Conversation.Id)
 }
 
 extension ConversationEndpoint: Endpoint {
-    public typealias ResultType = Conversation
+  public typealias ResultType = Conversation
 
-    public var context: [String] {
-        defaultContext + ["conversations"]
-    }
+  public var context: [String] {
+    defaultContext + ["conversations"]
+  }
 
-    public var pathComponentsInContext: [String] {
-        switch self {
-        case let .read(id):
-            return [id, "read"]
-        }
+  public var pathComponentsInContext: [String] {
+    switch self {
+    case .read(let id):
+      return [id, "read"]
     }
+  }
 
-    public var method: HTTPMethod {
-        switch self {
-        case .read:
-            return .post
-        }
+  public var method: HTTPMethod {
+    switch self {
+    case .read:
+      return .post
     }
+  }
 
-    public var requires: APICapabilityRequirements? {
-        ConversationsEndpoint.conversations.requires
-    }
+  public var requires: APICapabilityRequirements? {
+    ConversationsEndpoint.conversations.requires
+  }
 
-    public var notFound: EntityNotFound? {
-        switch self {
-        case .read(let id):
-            return .conversation(id)
-        }
+  public var notFound: EntityNotFound? {
+    switch self {
+    case .read(let id):
+      return .conversation(id)
     }
+  }
 }

@@ -4,15 +4,15 @@ import UIKit
 import ViewModels
 
 struct MultiNotificationContentConfiguration {
-    let viewModel: MultiNotificationViewModel
+  let viewModel: MultiNotificationViewModel
 }
 
 extension MultiNotificationContentConfiguration: UIContentConfiguration {
-    func makeContentView() -> UIView & UIContentView {
-        MultiNotificationView(configuration: self)
-    }
+  func makeContentView() -> UIView & UIContentView {
+    MultiNotificationView(configuration: self)
+  }
 
-    func updated(for state: UIConfigurationState) -> MultiNotificationContentConfiguration {
-        self
-    }
+  func updated(for state: UIConfigurationState) -> MultiNotificationContentConfiguration {
+    self
+  }
 }

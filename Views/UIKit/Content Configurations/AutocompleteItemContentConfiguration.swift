@@ -4,16 +4,16 @@ import UIKit
 import ViewModels
 
 struct AutocompleteItemContentConfiguration {
-    let item: AutocompleteItem
-    let identityContext: IdentityContext
+  let item: AutocompleteItem
+  let identityContext: IdentityContext
 }
 
 extension AutocompleteItemContentConfiguration: UIContentConfiguration {
-    func makeContentView() -> UIView & UIContentView {
-        AutocompleteItemView(configuration: self)
-    }
+  func makeContentView() -> UIView & UIContentView {
+    AutocompleteItemView(configuration: self)
+  }
 
-    func updated(for state: UIConfigurationState) -> AutocompleteItemContentConfiguration {
-        self
-    }
+  func updated(for state: UIConfigurationState) -> AutocompleteItemContentConfiguration {
+    self
+  }
 }

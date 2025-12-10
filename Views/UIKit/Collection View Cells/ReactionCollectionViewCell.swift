@@ -4,19 +4,19 @@ import UIKit
 import ViewModels
 
 final class ReactionCollectionViewCell: UICollectionViewCell {
-    var viewModel: ReactionViewModel?
+  var viewModel: ReactionViewModel?
 
-    override func updateConfiguration(using state: UICellConfigurationState) {
-        contentConfiguration = ReactionContentConfiguration(viewModel: viewModel)
+  override func updateConfiguration(using state: UICellConfigurationState) {
+    contentConfiguration = ReactionContentConfiguration(viewModel: viewModel)
 
-        var backgroundConfiguration = UIBackgroundConfiguration.listPlainCell().updated(for: state)
+    var backgroundConfiguration = UIBackgroundConfiguration.listPlainCell().updated(for: state)
 
-        if !state.isHighlighted && !state.isSelected {
-            backgroundConfiguration.backgroundColor = .clear
-        }
-
-        backgroundConfiguration.cornerRadius = .defaultCornerRadius
-
-        self.backgroundConfiguration = backgroundConfiguration
+    if !state.isHighlighted && !state.isSelected {
+      backgroundConfiguration.backgroundColor = .clear
     }
+
+    backgroundConfiguration.cornerRadius = .defaultCornerRadius
+
+    self.backgroundConfiguration = backgroundConfiguration
+  }
 }

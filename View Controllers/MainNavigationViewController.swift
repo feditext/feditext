@@ -5,266 +5,273 @@ import SwiftUI
 import ViewModels
 
 final class MainNavigationViewController: UITabBarController {
-    private let viewModel: NavigationViewModel
-    private let rootViewModel: RootViewModel
-    private var cancellables = Set<AnyCancellable>()
+  private let viewModel: NavigationViewModel
+  private let rootViewModel: RootViewModel
+  private var cancellables = Set<AnyCancellable>()
 
-    init(viewModel: NavigationViewModel, rootViewModel: RootViewModel) {
-        self.viewModel = viewModel
-        self.rootViewModel = rootViewModel
+  init(viewModel: NavigationViewModel, rootViewModel: RootViewModel) {
+    self.viewModel = viewModel
+    self.rootViewModel = rootViewModel
 
-        super.init(nibName: nil, bundle: nil)
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+
+    delegate = self
+
+    viewModel.$presentedComposeStatusViewModel.sink { [weak self] in
+      if let composeStatusViewModel = $0 {
+        self?.presentComposeStatus(composeStatusViewModel: composeStatusViewModel)
+      } else {
+        self?.dismissComposeStatus()
+      }
     }
+    .store(in: &cancellables)
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    viewModel.$presentingSecondaryNavigation.sink { [weak self] in
+      if $0 {
+        self?.presentSecondaryNavigation()
+      } else {
+        self?.dismissSecondaryNavigation()
+      }
     }
+    .store(in: &cancellables)
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    viewModel.identityContext.$identity.map(\.pending)
+      .removeDuplicates()
+      .sink { [weak self] in self?.setupViewControllers(pending: $0) }
+      .store(in: &cancellables)
 
-        delegate = self
+    viewModel.navigations
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] in self?.handle(navigation: $0) }
+      .store(in: &cancellables)
 
-        viewModel.$presentedComposeStatusViewModel.sink { [weak self] in
-            if let composeStatusViewModel = $0 {
-                self?.presentComposeStatus(composeStatusViewModel: composeStatusViewModel)
-            } else {
-                self?.dismissComposeStatus()
-            }
-        }
-        .store(in: &cancellables)
+    NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)
+      .debounce(for: .seconds(Self.refreshFromBackgroundDebounceInterval), scheduler: DispatchQueue.main)
+      .sink { [weak self] _ in self?.viewModel.refreshIdentity() }
+      .store(in: &cancellables)
+  }
 
-        viewModel.$presentingSecondaryNavigation.sink { [weak self] in
-            if $0 {
-                self?.presentSecondaryNavigation()
-            } else {
-                self?.dismissSecondaryNavigation()
-            }
-        }
-        .store(in: &cancellables)
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
 
-        viewModel.identityContext.$identity.map(\.pending)
-            .removeDuplicates()
-            .sink { [weak self] in self?.setupViewControllers(pending: $0) }
-            .store(in: &cancellables)
-
-        viewModel.navigations
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] in self?.handle(navigation: $0) }
-            .store(in: &cancellables)
-
-        NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)
-            .debounce(for: .seconds(Self.refreshFromBackgroundDebounceInterval), scheduler: DispatchQueue.main)
-            .sink { [weak self] _ in self?.viewModel.refreshIdentity() }
-            .store(in: &cancellables)
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        viewModel.refreshIdentity()
-    }
+    viewModel.refreshIdentity()
+  }
 }
 
 extension MainNavigationViewController: UITabBarControllerDelegate {
-    func tabBarController(_ tabBarController: UITabBarController,
-                          shouldSelect viewController: UIViewController) -> Bool {
-        if viewController === selectedViewController,
-           let navigationController = viewController as? UINavigationController,
-           navigationController.viewControllers.count == 1 {
-            (navigationController.viewControllers.first as? ScrollableToTop)?.scrollToTop(animated: true)
-        }
-
-        return true
+  func tabBarController(
+    _ tabBarController: UITabBarController,
+    shouldSelect viewController: UIViewController
+  ) -> Bool {
+    if viewController === selectedViewController,
+      let navigationController = viewController as? UINavigationController,
+      navigationController.viewControllers.count == 1
+    {
+      (navigationController.viewControllers.first as? ScrollableToTop)?.scrollToTop(animated: true)
     }
+
+    return true
+  }
 }
 
 extension MainNavigationViewController: NavigationHandling {
-    func handle(navigation: Navigation) {
-        switch navigation {
-        case .notification:
-            let index = NavigationViewModel.Tab.notifications.rawValue
+  func handle(navigation: Navigation) {
+    switch navigation {
+    case .notification:
+      let index = NavigationViewModel.Tab.notifications.rawValue
 
-            guard let viewControllers = viewControllers,
-                  viewControllers.count > index,
-                let notificationsNavigationController = viewControllers[index] as? UINavigationController,
-                let notificationsViewController =
-                    notificationsNavigationController.viewControllers.first as? NotificationsViewController
-            else { break }
+      guard let viewControllers = viewControllers,
+        viewControllers.count > index,
+        let notificationsNavigationController = viewControllers[index] as? UINavigationController,
+        let notificationsViewController =
+          notificationsNavigationController.viewControllers.first as? NotificationsViewController
+      else { break }
 
-            selectedIndex = index
-            notificationsNavigationController.popToRootViewController(animated: false)
-            notificationsViewController.handle(navigation: navigation)
-        default:
-            ((selectedViewController as? UINavigationController)?
-                .topViewController as? NavigationHandling)?
-                .handle(navigation: navigation)
-        }
+      selectedIndex = index
+      notificationsNavigationController.popToRootViewController(animated: false)
+      notificationsViewController.handle(navigation: navigation)
+    default:
+      ((selectedViewController as? UINavigationController)?
+        .topViewController as? NavigationHandling)?
+        .handle(navigation: navigation)
     }
+  }
 }
 
-private extension MainNavigationViewController {
-    static let secondaryNavigationViewTag = UUID().hashValue
-    static let composeStatusViewTag = UUID().hashValue
-    static let refreshFromBackgroundDebounceInterval: TimeInterval = 30
+extension MainNavigationViewController {
+  fileprivate static let secondaryNavigationViewTag = UUID().hashValue
+  fileprivate static let composeStatusViewTag = UUID().hashValue
+  fileprivate static let refreshFromBackgroundDebounceInterval: TimeInterval = 30
 
-    func setupViewControllers(pending: Bool) {
-        var controllers: [UIViewController] = [
-            TimelinesViewController(
-                viewModel: viewModel,
-                rootViewModel: rootViewModel)
-        ]
+  fileprivate func setupViewControllers(pending: Bool) {
+    var controllers: [UIViewController] = [
+      TimelinesViewController(
+        viewModel: viewModel,
+        rootViewModel: rootViewModel)
+    ]
 
-        if viewModel.identityContext.identity.authenticated && !pending {
-            tabBar.isHidden = false
-            controllers.append(ExploreViewController(viewModel: viewModel.exploreViewModel(),
-                                                     rootViewModel: rootViewModel))
-            controllers.append(NotificationsViewController(viewModel: viewModel, rootViewModel: rootViewModel))
+    if viewModel.identityContext.identity.authenticated && !pending {
+      tabBar.isHidden = false
+      controllers.append(
+        ExploreViewController(
+          viewModel: viewModel.exploreViewModel(),
+          rootViewModel: rootViewModel))
+      controllers.append(NotificationsViewController(viewModel: viewModel, rootViewModel: rootViewModel))
 
-            if viewModel.canListConversations {
-                let conversationsViewController = TableViewController(
-                    viewModel: viewModel.conversationsViewModel(),
-                    rootViewModel: rootViewModel)
+      if viewModel.canListConversations {
+        let conversationsViewController = TableViewController(
+          viewModel: viewModel.conversationsViewModel(),
+          rootViewModel: rootViewModel)
 
-                conversationsViewController.tabBarItem = NavigationViewModel.Tab.messages.tabBarItem
-                conversationsViewController.navigationItem.title = NavigationViewModel.Tab.messages.title
+        conversationsViewController.tabBarItem = NavigationViewModel.Tab.messages.tabBarItem
+        conversationsViewController.navigationItem.title = NavigationViewModel.Tab.messages.title
 
-                controllers.append(conversationsViewController)
-            }
+        controllers.append(conversationsViewController)
+      }
 
-            setupNewStatusButton()
-        } else {
-            tabBar.isHidden = true
-        }
-
-        let secondaryNavigationButton = SecondaryNavigationButton(viewModel: viewModel, rootViewModel: rootViewModel)
-
-        for controller in controllers {
-            controller.navigationItem.leftBarButtonItem = secondaryNavigationButton
-        }
-
-        viewControllers = controllers.map(SwipeableNavigationController.init(rootViewController:))
+      setupNewStatusButton()
+    } else {
+      tabBar.isHidden = true
     }
 
-    func setupNewStatusButton() {
-        let newStatusButtonView = NewStatusButtonView(primaryAction: UIAction { [weak self] _ in
-            guard let self = self else { return }
+    let secondaryNavigationButton = SecondaryNavigationButton(viewModel: viewModel, rootViewModel: rootViewModel)
 
-            self.viewModel.presentedComposeStatusViewModel =
-                self.rootViewModel.composeStatusViewModel(identityContext: self.viewModel.identityContext)
-        })
-
-        view.addSubview(newStatusButtonView)
-        newStatusButtonView.translatesAutoresizingMaskIntoConstraints = false
-
-        viewModel.identityContext.$appPreferences.map(\.statusWord).removeDuplicates().sink {
-            switch $0 {
-            case .toot:
-                newStatusButtonView.button.accessibilityLabel =
-                    NSLocalizedString("compose-button.accessibility-label.toot", comment: "")
-            case.post:
-                newStatusButtonView.button.accessibilityLabel =
-                    NSLocalizedString("compose-button.accessibility-label.post", comment: "")
-            }
-        }
-        .store(in: &cancellables)
-        
-        let bottomConstraint: NSLayoutConstraint
-        let trailingConstant: CGFloat
-        let isiPadOS18OrHigher = if #available(iOS 18.0, *) {
-            UIDevice.current.userInterfaceIdiom == .pad
-        } else {
-            false
-        }
-        if isiPadOS18OrHigher {
-            // iOS 18 moves the tab bar to the top on iPads,
-            // which resulted in a crash due to the button and the tab bar not having a common ancestor.
-            bottomConstraint = newStatusButtonView.bottomAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                constant: -.defaultSpacing * 2
-            )
-            trailingConstant = -.defaultSpacing * 4.5
-        } else {
-            // Original constraints, still valid on iPhones and older iPads.
-            bottomConstraint = newStatusButtonView.bottomAnchor.constraint(
-                equalTo: tabBar.topAnchor,
-                constant: -.defaultSpacing * 2
-            )
-            trailingConstant = -.defaultSpacing * 2
-        }
-
-        NSLayoutConstraint.activate([
-            newStatusButtonView.widthAnchor.constraint(equalToConstant: .newStatusButtonDimension),
-            newStatusButtonView.heightAnchor.constraint(equalToConstant: .newStatusButtonDimension),
-            newStatusButtonView.trailingAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: trailingConstant
-            ),
-            bottomConstraint,
-        ])
+    for controller in controllers {
+      controller.navigationItem.leftBarButtonItem = secondaryNavigationButton
     }
 
-    func presentSecondaryNavigation() {
-        if let presentedViewController = presentedViewController {
-            if presentedViewController.view.tag == Self.secondaryNavigationViewTag {
-                return
-            } else {
-                dismiss(animated: true)
-            }
-        }
+    viewControllers = controllers.map(SwipeableNavigationController.init(rootViewController:))
+  }
 
-        let secondaryNavigationView = SecondaryNavigationView(viewModel: viewModel)
-            .environmentObject(rootViewModel)
-        let hostingController = UIHostingController(rootView: secondaryNavigationView)
+  fileprivate func setupNewStatusButton() {
+    let newStatusButtonView = NewStatusButtonView(
+      primaryAction: UIAction { [weak self] _ in
+        guard let self = self else { return }
 
-        hostingController.navigationItem.leftBarButtonItem = UIBarButtonItem(
-            systemItem: .close,
-            primaryAction: UIAction { [weak self] _ in self?.viewModel.presentingSecondaryNavigation = false })
-        hostingController.navigationItem.titleView = SecondaryNavigationTitleView(viewModel: viewModel)
+        self.viewModel.presentedComposeStatusViewModel =
+          self.rootViewModel.composeStatusViewModel(identityContext: self.viewModel.identityContext)
+      })
 
-        let navigationController = UINavigationController(rootViewController: hostingController)
+    view.addSubview(newStatusButtonView)
+    newStatusButtonView.translatesAutoresizingMaskIntoConstraints = false
 
-        navigationController.view.tag = Self.secondaryNavigationViewTag
+    viewModel.identityContext.$appPreferences.map(\.statusWord).removeDuplicates().sink {
+      switch $0 {
+      case .toot:
+        newStatusButtonView.button.accessibilityLabel =
+          NSLocalizedString("compose-button.accessibility-label.toot", comment: "")
+      case .post:
+        newStatusButtonView.button.accessibilityLabel =
+          NSLocalizedString("compose-button.accessibility-label.post", comment: "")
+      }
+    }
+    .store(in: &cancellables)
 
-        present(navigationController, animated: true)
+    let bottomConstraint: NSLayoutConstraint
+    let trailingConstant: CGFloat
+    let isiPadOS18OrHigher =
+      if #available(iOS 18.0, *) {
+        UIDevice.current.userInterfaceIdiom == .pad
+      } else {
+        false
+      }
+    if isiPadOS18OrHigher {
+      // iOS 18 moves the tab bar to the top on iPads,
+      // which resulted in a crash due to the button and the tab bar not having a common ancestor.
+      bottomConstraint = newStatusButtonView.bottomAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+        constant: -.defaultSpacing * 2
+      )
+      trailingConstant = -.defaultSpacing * 4.5
+    } else {
+      // Original constraints, still valid on iPhones and older iPads.
+      bottomConstraint = newStatusButtonView.bottomAnchor.constraint(
+        equalTo: tabBar.topAnchor,
+        constant: -.defaultSpacing * 2
+      )
+      trailingConstant = -.defaultSpacing * 2
     }
 
-    func dismissSecondaryNavigation() {
-        if presentedViewController?.view.tag == Self.secondaryNavigationViewTag {
-            dismiss(animated: true)
-        }
+    NSLayoutConstraint.activate([
+      newStatusButtonView.widthAnchor.constraint(equalToConstant: .newStatusButtonDimension),
+      newStatusButtonView.heightAnchor.constraint(equalToConstant: .newStatusButtonDimension),
+      newStatusButtonView.trailingAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+        constant: trailingConstant
+      ),
+      bottomConstraint,
+    ])
+  }
+
+  fileprivate func presentSecondaryNavigation() {
+    if let presentedViewController = presentedViewController {
+      if presentedViewController.view.tag == Self.secondaryNavigationViewTag {
+        return
+      } else {
+        dismiss(animated: true)
+      }
     }
 
-    func presentComposeStatus(composeStatusViewModel: ComposeStatusViewModel) {
-        if let presentedViewController = presentedViewController {
-            if presentedViewController.view.tag == Self.composeStatusViewTag {
-                return
-            } else {
-                dismiss(animated: true)
-            }
-        }
+    let secondaryNavigationView = SecondaryNavigationView(viewModel: viewModel)
+      .environmentObject(rootViewModel)
+    let hostingController = UIHostingController(rootView: secondaryNavigationView)
 
-        let composeStatusViewController = ComposeStatusViewController(
-            viewModel: composeStatusViewModel,
-            rootViewModel: rootViewModel
-        )
-        let navigationController = UINavigationController(rootViewController: composeStatusViewController)
+    hostingController.navigationItem.leftBarButtonItem = UIBarButtonItem(
+      systemItem: .close,
+      primaryAction: UIAction { [weak self] _ in self?.viewModel.presentingSecondaryNavigation = false })
+    hostingController.navigationItem.titleView = SecondaryNavigationTitleView(viewModel: viewModel)
 
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            navigationController.modalPresentationStyle = .overFullScreen
-        } else {
-            navigationController.isModalInPresentation = true
-        }
+    let navigationController = UINavigationController(rootViewController: hostingController)
 
-        navigationController.view.tag = Self.composeStatusViewTag
+    navigationController.view.tag = Self.secondaryNavigationViewTag
 
-        present(navigationController, animated: true)
+    present(navigationController, animated: true)
+  }
+
+  fileprivate func dismissSecondaryNavigation() {
+    if presentedViewController?.view.tag == Self.secondaryNavigationViewTag {
+      dismiss(animated: true)
+    }
+  }
+
+  fileprivate func presentComposeStatus(composeStatusViewModel: ComposeStatusViewModel) {
+    if let presentedViewController = presentedViewController {
+      if presentedViewController.view.tag == Self.composeStatusViewTag {
+        return
+      } else {
+        dismiss(animated: true)
+      }
     }
 
-    func dismissComposeStatus() {
-        if presentedViewController?.view.tag == Self.composeStatusViewTag {
-            dismiss(animated: true)
-        }
+    let composeStatusViewController = ComposeStatusViewController(
+      viewModel: composeStatusViewModel,
+      rootViewModel: rootViewModel
+    )
+    let navigationController = UINavigationController(rootViewController: composeStatusViewController)
+
+    if UIDevice.current.userInterfaceIdiom == .phone {
+      navigationController.modalPresentationStyle = .overFullScreen
+    } else {
+      navigationController.isModalInPresentation = true
     }
+
+    navigationController.view.tag = Self.composeStatusViewTag
+
+    present(navigationController, animated: true)
+  }
+
+  fileprivate func dismissComposeStatus() {
+    if presentedViewController?.view.tag == Self.composeStatusViewTag {
+      dismiss(animated: true)
+    }
+  }
 }

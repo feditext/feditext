@@ -5,43 +5,43 @@ import Foundation
 import ServiceLayer
 
 public enum ShareExtensionError: Error {
-    case noAccountFound
+  case noAccountFound
 }
 
 public final class ShareExtensionNavigationViewModel: ObservableObject {
-    @Published public var alertItem: AlertItem?
+  @Published public var alertItem: AlertItem?
 
-    private let environment: AppEnvironment
+  private let environment: AppEnvironment
 
-    public init(environment: AppEnvironment) {
-        self.environment = environment
-    }
+  public init(environment: AppEnvironment) {
+    self.environment = environment
+  }
 }
 
-public extension ShareExtensionNavigationViewModel {
-    func composeStatusViewModel(extensionContext: NSExtensionContext?) throws -> ComposeStatusViewModel {
-        let allIdentitiesService = try AllIdentitiesService(environment: environment)
+extension ShareExtensionNavigationViewModel {
+  public func composeStatusViewModel(extensionContext: NSExtensionContext?) throws -> ComposeStatusViewModel {
+    let allIdentitiesService = try AllIdentitiesService(environment: environment)
 
-        guard let identity = try allIdentitiesService.mostRecentAuthenticatedIdentity()
-        else { throw ShareExtensionError.noAccountFound }
+    guard let identity = try allIdentitiesService.mostRecentAuthenticatedIdentity()
+    else { throw ShareExtensionError.noAccountFound }
 
-        let identityService = try allIdentitiesService.identityService(id: identity.id)
-        let identityContext = IdentityContext(
-            identity: identity,
-            publisher: identityService.identityPublisher(immediate: false)
-                .assignErrorsToAlertItem(to: \.alertItem, on: self),
-            service: identityService,
-            environment: environment)
+    let identityService = try allIdentitiesService.identityService(id: identity.id)
+    let identityContext = IdentityContext(
+      identity: identity,
+      publisher: identityService.identityPublisher(immediate: false)
+        .assignErrorsToAlertItem(to: \.alertItem, on: self),
+      service: identityService,
+      environment: environment)
 
-        return ComposeStatusViewModel(
-            allIdentitiesService: allIdentitiesService,
-            identityContext: identityContext,
-            environment: environment,
-            identity: nil,
-            inReplyTo: nil,
-            redraft: nil,
-            edit: nil,
-            directMessageTo: nil,
-            extensionContext: extensionContext)
-    }
+    return ComposeStatusViewModel(
+      allIdentitiesService: allIdentitiesService,
+      identityContext: identityContext,
+      environment: environment,
+      identity: nil,
+      inReplyTo: nil,
+      redraft: nil,
+      edit: nil,
+      directMessageTo: nil,
+      extensionContext: extensionContext)
+  }
 }

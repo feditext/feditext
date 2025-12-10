@@ -4,15 +4,15 @@ import UIKit
 import ViewModels
 
 struct EmojiContentConfiguration {
-    let viewModel: EmojiViewModel
+  let viewModel: EmojiViewModel
 }
 
 extension EmojiContentConfiguration: UIContentConfiguration {
-    func makeContentView() -> UIView & UIContentView {
-        EmojiView(configuration: self)
-    }
+  func makeContentView() -> UIView & UIContentView {
+    EmojiView(configuration: self)
+  }
 
-    func updated(for state: UIConfigurationState) -> EmojiContentConfiguration {
-        self
-    }
+  func updated(for state: UIConfigurationState) -> EmojiContentConfiguration {
+    self
+  }
 }

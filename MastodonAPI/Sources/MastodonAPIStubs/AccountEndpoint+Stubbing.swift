@@ -5,7 +5,7 @@ import MastodonAPI
 import Stubbing
 
 extension AccountEndpoint: Stubbing {
-    public func data(url: URL) -> Data? {
-        StubData.account
-    }
+  public func data(url: URL) -> Data? {
+    StubData.account
+  }
 }

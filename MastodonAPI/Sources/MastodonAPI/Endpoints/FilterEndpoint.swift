@@ -5,106 +5,111 @@ import HTTP
 import Mastodon
 
 public enum FilterEndpoint {
-    case create(
-            phrase: String,
-            context: [Filter.Context],
-            irreversible: Bool,
-            wholeWord: Bool,
-            expiresIn: Date?)
-    case update(
-            id: Filter.Id,
-            phrase: String,
-            context: [Filter.Context],
-            irreversible: Bool,
-            wholeWord: Bool,
-            expiresIn: Date?)
+  case create(
+    phrase: String,
+    context: [Filter.Context],
+    irreversible: Bool,
+    wholeWord: Bool,
+    expiresIn: Date?)
+  case update(
+    id: Filter.Id,
+    phrase: String,
+    context: [Filter.Context],
+    irreversible: Bool,
+    wholeWord: Bool,
+    expiresIn: Date?)
 }
 
 extension FilterEndpoint: Endpoint {
-    public typealias ResultType = Filter
+  public typealias ResultType = Filter
 
-    public var context: [String] {
-        defaultContext + ["filters"]
+  public var context: [String] {
+    defaultContext + ["filters"]
+  }
+
+  public var pathComponentsInContext: [String] {
+    switch self {
+    case .create:
+      return []
+    case .update(let id, _, _, _, _, _):
+      return [id]
     }
+  }
 
-    public var pathComponentsInContext: [String] {
-        switch self {
-        case .create:
-            return []
-        case let .update(id, _, _, _, _, _):
-            return [id]
-        }
+  public var jsonBody: [String: Any]? {
+    switch self {
+    case .create(let phrase, let context, let irreversible, let wholeWord, let expiresIn):
+      return params(
+        phrase: phrase,
+        context: context,
+        irreversible: irreversible,
+        wholeWord: wholeWord,
+        expiresIn: expiresIn)
+    case .update(let id, let phrase, let context, let irreversible, let wholeWord, let expiresIn):
+      var params = self.params(
+        phrase: phrase,
+        context: context,
+        irreversible: irreversible,
+        wholeWord: wholeWord,
+        expiresIn: expiresIn)
+
+      params["id"] = id
+
+      return params
     }
+  }
 
-    public var jsonBody: [String: Any]? {
-        switch self {
-        case let .create(phrase, context, irreversible, wholeWord, expiresIn):
-            return params(phrase: phrase,
-                          context: context,
-                          irreversible: irreversible,
-                          wholeWord: wholeWord,
-                          expiresIn: expiresIn)
-        case let .update(id, phrase, context, irreversible, wholeWord, expiresIn):
-            var params = self.params(phrase: phrase,
-                                     context: context,
-                                     irreversible: irreversible,
-                                     wholeWord: wholeWord,
-                                     expiresIn: expiresIn)
-
-            params["id"] = id
-
-            return params
-        }
+  public var method: HTTPMethod {
+    switch self {
+    case .create:
+      return .post
+    case .update:
+      return .put
     }
+  }
 
-    public var method: HTTPMethod {
-        switch self {
-        case .create:
-            return .post
-        case .update:
-            return .put
-        }
+  public var requires: APICapabilityRequirements? {
+    switch self {
+    case .create(_, _, irreversible: true, _, _),
+      .update(_, _, _, irreversible: true, _, _):
+      // We need a newer GtS version to use irreversible filters.
+      return FiltersEndpoint.filters.requires.map { $0 | [.gotosocial: "0.16.0-0"] }
+
+    case .create, .update:
+      return FiltersEndpoint.filters.requires
     }
+  }
 
-    public var requires: APICapabilityRequirements? {
-        switch self {
-        case .create(_, _, irreversible: true, _, _),
-                .update(_, _, _, irreversible: true, _, _):
-            // We need a newer GtS version to use irreversible filters.
-            return FiltersEndpoint.filters.requires.map { $0 | [.gotosocial: "0.16.0-0"] }
+  public var notFound: EntityNotFound? {
+    switch self {
+    case .create:
+      return nil
 
-        case .create, .update:
-            return FiltersEndpoint.filters.requires
-        }
+    case .update(let id, _, _, _, _, _):
+      return .filter(id)
     }
-
-    public var notFound: EntityNotFound? {
-        switch self {
-        case .create:
-            return nil
-
-        case .update(id: let id, _, _, _, _, _):
-            return .filter(id)
-        }
-    }
+  }
 }
 
-private extension FilterEndpoint {
-    func params(phrase: String,
-                context: [Filter.Context],
-                irreversible: Bool,
-                wholeWord: Bool,
-                expiresIn: Date?) -> [String: Any] {
-        var params: [String: Any] = [
-            "phrase": phrase,
-            "context": context.map(\.rawValue),
-            "irreversible": irreversible,
-            "whole_word": wholeWord]
+extension FilterEndpoint {
+  fileprivate func params(
+    phrase: String,
+    context: [Filter.Context],
+    irreversible: Bool,
+    wholeWord: Bool,
+    expiresIn: Date?
+  ) -> [String: Any] {
+    var params: [String: Any] = [
+      "phrase": phrase,
+      "context": context.map(\.rawValue),
+      "irreversible": irreversible,
+      "whole_word": wholeWord,
+    ]
 
-        if let expiresIn = expiresIn {
-            params["expires_in"] = Int(expiresIn.timeIntervalSinceNow)
-        }
-
-        return params
+    if let expiresIn = expiresIn {
+      params["expires_in"] = Int(expiresIn.timeIntervalSinceNow)
     }
+
+    return params
+  }
 }

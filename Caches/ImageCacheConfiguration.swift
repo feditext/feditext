@@ -6,40 +6,42 @@ import SDWebImage
 import ServiceLayer
 
 struct ImageCacheConfiguration {
-    private let environment: AppEnvironment
+  private let environment: AppEnvironment
 
-    init(environment: AppEnvironment) {
-        self.environment = environment
-    }
+  init(environment: AppEnvironment) {
+    self.environment = environment
+  }
 }
 
 extension ImageCacheConfiguration {
-    func configure() throws {
-        SDImageCache.defaultDiskCacheDirectory = Self.imageCacheDirectoryURL?.path
-        ImageDiskCache.service = try ImageSerializationService(environment: environment)
-        SDImageCacheConfig.default.diskCacheClass = ImageDiskCache.self
-        SDWebImageManager.shared.optionsProcessor = SDWebImageOptionsProcessor { _, options, context in
-            var mutableOptions = options
+  func configure() throws {
+    SDImageCache.defaultDiskCacheDirectory = Self.imageCacheDirectoryURL?.path
+    ImageDiskCache.service = try ImageSerializationService(environment: environment)
+    SDImageCacheConfig.default.diskCacheClass = ImageDiskCache.self
+    SDWebImageManager.shared.optionsProcessor = SDWebImageOptionsProcessor { _, options, context in
+      var mutableOptions = options
 
-            mutableOptions.insert(.retryFailed)
-            mutableOptions.insert(.continueInBackground)
+      mutableOptions.insert(.retryFailed)
+      mutableOptions.insert(.continueInBackground)
 
-            return SDWebImageOptionsResult(options: options, context: context)
-        }
-
-        if let legacyImageCacheDirectoryURL = Self.legacyImageCacheDirectoryURL,
-           FileManager.default.fileExists(atPath: legacyImageCacheDirectoryURL.path) {
-            try? FileManager.default.removeItem(at: legacyImageCacheDirectoryURL)
-        }
+      return SDWebImageOptionsResult(options: options, context: context)
     }
+
+    if let legacyImageCacheDirectoryURL = Self.legacyImageCacheDirectoryURL,
+      FileManager.default.fileExists(atPath: legacyImageCacheDirectoryURL.path)
+    {
+      try? FileManager.default.removeItem(at: legacyImageCacheDirectoryURL)
+    }
+  }
 }
 
-private extension ImageCacheConfiguration {
-    static let cachesDirectoryURL = FileManager.default.containerURL(
-        forSecurityApplicationGroupIdentifier: AppMetadata.appGroup)?
-        .appendingPathComponent("Library")
-        .appendingPathComponent("Caches")
-    static let imageCacheDirectoryURL = cachesDirectoryURL?.appendingPathComponent("com.metabolist.metatext.images")
-    static let legacyImageCacheDirectoryURL =
-        cachesDirectoryURL?.appendingPathComponent("com.onevcat.Kingfisher.ImageCache.Images")
+extension ImageCacheConfiguration {
+  fileprivate static let cachesDirectoryURL = FileManager.default.containerURL(
+    forSecurityApplicationGroupIdentifier: AppMetadata.appGroup)?
+    .appendingPathComponent("Library")
+    .appendingPathComponent("Caches")
+  fileprivate static let imageCacheDirectoryURL = cachesDirectoryURL?.appendingPathComponent(
+    "com.metabolist.metatext.images")
+  fileprivate static let legacyImageCacheDirectoryURL =
+    cachesDirectoryURL?.appendingPathComponent("com.onevcat.Kingfisher.ImageCache.Images")
 }

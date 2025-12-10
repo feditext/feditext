@@ -7,14 +7,14 @@ import ViewModels
 
 /// Edit list settings.
 public struct EditDisplayFilterView: View {
-    @ObservedObject var viewModel: DisplayFilterTimelineActionViewModel
+  @ObservedObject var viewModel: DisplayFilterTimelineActionViewModel
 
-    public var body: some View {
-        Group {
-            Toggle("timelines.display-filter.show.bots", isOn: $viewModel.showBots)
-            Toggle("timelines.display-filter.show.reblogs", isOn: $viewModel.showReblogs)
-            Toggle("timelines.display-filter.show.replies", isOn: $viewModel.showReplies)
-        }
-        .scenePadding()
+  public var body: some View {
+    Group {
+      Toggle("timelines.display-filter.show.bots", isOn: $viewModel.showBots)
+      Toggle("timelines.display-filter.show.reblogs", isOn: $viewModel.showReblogs)
+      Toggle("timelines.display-filter.show.replies", isOn: $viewModel.showReplies)
     }
+    .scenePadding()
+  }
 }

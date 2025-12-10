@@ -3,5 +3,5 @@
 import Foundation
 
 public struct MoreResults: Hashable {
-    public let scope: SearchScope
+  public let scope: SearchScope
 }

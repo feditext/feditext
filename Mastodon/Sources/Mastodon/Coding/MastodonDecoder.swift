@@ -3,38 +3,40 @@
 import Foundation
 
 public final class MastodonDecoder: JSONDecoder {
-    public override init() {
-        super.init()
+  public override init() {
+    super.init()
 
-        keyDecodingStrategy = .convertFromSnakeCase
-        dateDecodingStrategy = .custom { decoder in
-            let container = try decoder.singleValueContainer()
-            let dateString = try container.decode(String.self)
+    keyDecodingStrategy = .convertFromSnakeCase
+    dateDecodingStrategy = .custom { decoder in
+      let container = try decoder.singleValueContainer()
+      let dateString = try container.decode(String.self)
 
-            guard let date = Self.dateFormatter.date(from: dateString)
-                    ?? Self.dateFormatterWithoutFractionalSeconds.date(from: dateString) else {
-                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unable to parse ISO8601 date")
-            }
+      guard
+        let date = Self.dateFormatter.date(from: dateString)
+          ?? Self.dateFormatterWithoutFractionalSeconds.date(from: dateString)
+      else {
+        throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unable to parse ISO8601 date")
+      }
 
-            return date
-        }
+      return date
     }
+  }
 }
 
-public extension MastodonDecoder {
-    static let dateFormatter: ISO8601DateFormatter = {
-        let dateFormatter = ISO8601DateFormatter()
+extension MastodonDecoder {
+  public static let dateFormatter: ISO8601DateFormatter = {
+    let dateFormatter = ISO8601DateFormatter()
 
-        dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
 
-        return dateFormatter
-    }()
+    return dateFormatter
+  }()
 
-    static let dateFormatterWithoutFractionalSeconds: ISO8601DateFormatter = {
-        let dateFormatter = ISO8601DateFormatter()
+  public static let dateFormatterWithoutFractionalSeconds: ISO8601DateFormatter = {
+    let dateFormatter = ISO8601DateFormatter()
 
-        dateFormatter.formatOptions = [.withInternetDateTime]
+    dateFormatter.formatOptions = [.withInternetDateTime]
 
-        return dateFormatter
-    }()
+    return dateFormatter
+  }()
 }

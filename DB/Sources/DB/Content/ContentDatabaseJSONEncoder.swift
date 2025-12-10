@@ -4,15 +4,15 @@ import Foundation
 import Mastodon
 
 final class ContentDatabaseJSONEncoder: JSONEncoder {
-    override init() {
-        super.init()
+  override init() {
+    super.init()
 
-        keyEncodingStrategy = .convertToSnakeCase
-        outputFormatting = .sortedKeys
-        dateEncodingStrategy = .custom { date, encoder in
-            var container = encoder.singleValueContainer()
+    keyEncodingStrategy = .convertToSnakeCase
+    outputFormatting = .sortedKeys
+    dateEncodingStrategy = .custom { date, encoder in
+      var container = encoder.singleValueContainer()
 
-            try container.encode(MastodonDecoder.dateFormatter.string(from: date))
-        }
+      try container.encode(MastodonDecoder.dateFormatter.string(from: date))
     }
+  }
 }

@@ -5,102 +5,105 @@ import UIKit
 import ViewModels
 
 final class PollResultView: UIView {
-    let titleLabel = AnimatedAttachmentLabel()
-    let percentLabel = UILabel()
-    private let verticalStackView = UIStackView()
-    private let horizontalStackView = UIStackView()
-    private let percentView = UIProgressView()
+  let titleLabel = AnimatedAttachmentLabel()
+  let percentLabel = UILabel()
+  private let verticalStackView = UIStackView()
+  private let horizontalStackView = UIStackView()
+  private let percentView = UIProgressView()
 
-    init(option: Poll.Option,
-         language: String?,
-         emojis: [Emoji],
-         selected: Bool,
-         multipleSelection: Bool,
-         votersCount: Int,
-         identityContext: IdentityContext) {
-        super.init(frame: .zero)
+  init(
+    option: Poll.Option,
+    language: String?,
+    emojis: [Emoji],
+    selected: Bool,
+    multipleSelection: Bool,
+    votersCount: Int,
+    identityContext: IdentityContext
+  ) {
+    super.init(frame: .zero)
 
-        addSubview(verticalStackView)
-        verticalStackView.translatesAutoresizingMaskIntoConstraints = false
-        verticalStackView.axis = .vertical
-        verticalStackView.spacing = .compactSpacing
+    addSubview(verticalStackView)
+    verticalStackView.translatesAutoresizingMaskIntoConstraints = false
+    verticalStackView.axis = .vertical
+    verticalStackView.spacing = .compactSpacing
 
-        verticalStackView.addArrangedSubview(horizontalStackView)
-        horizontalStackView.spacing = .compactSpacing
+    verticalStackView.addArrangedSubview(horizontalStackView)
+    horizontalStackView.spacing = .compactSpacing
 
-        verticalStackView.addArrangedSubview(percentView)
+    verticalStackView.addArrangedSubview(percentView)
 
-        if selected {
-            let imageView = UIImageView(
-                image: UIImage(
-                    systemName: multipleSelection ? "checkmark.square" : "checkmark.circle",
-                    withConfiguration: UIImage.SymbolConfiguration(scale: .medium)))
+    if selected {
+      let imageView = UIImageView(
+        image: UIImage(
+          systemName: multipleSelection ? "checkmark.square" : "checkmark.circle",
+          withConfiguration: UIImage.SymbolConfiguration(scale: .medium)))
 
-            imageView.contentMode = .scaleAspectFit
-            imageView.setContentHuggingPriority(.required, for: .horizontal)
-            horizontalStackView.addArrangedSubview(imageView)
-        }
-
-        horizontalStackView.addArrangedSubview(titleLabel)
-        titleLabel.font = .preferredFont(forTextStyle: .callout)
-        titleLabel.adjustsFontForContentSizeCategory = true
-        titleLabel.numberOfLines = 0
-
-        horizontalStackView.addArrangedSubview(percentLabel)
-        percentLabel.font = .preferredFont(forTextStyle: .callout)
-        percentLabel.adjustsFontForContentSizeCategory = true
-        percentLabel.setContentHuggingPriority(.required, for: .horizontal)
-
-        let attributes: [NSAttributedString.Key: Any]? = if let language = language {
-            [.accessibilitySpeechLanguage: language]
-        } else {
-            nil
-        }
-        let attributedTitle = NSMutableAttributedString(string: option.title, attributes: attributes)
-
-        attributedTitle.insert(emojis: emojis, view: titleLabel, identityContext: identityContext)
-        attributedTitle.resizeAttachments(toLineHeight: titleLabel.font.lineHeight)
-        titleLabel.attributedText = attributedTitle
-
-        let percent: Float
-
-        if votersCount == 0 {
-            percent = 0
-        } else {
-            percent = Float(option.votesCount) / Float(votersCount)
-        }
-
-        percentLabel.text = Self.percentFormatter.string(from: NSNumber(value: percent))
-        percentView.progress = percent
-
-        NSLayoutConstraint.activate([
-            verticalStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            verticalStackView.topAnchor.constraint(equalTo: topAnchor),
-            verticalStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+      imageView.contentMode = .scaleAspectFit
+      imageView.setContentHuggingPriority(.required, for: .horizontal)
+      horizontalStackView.addArrangedSubview(imageView)
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    horizontalStackView.addArrangedSubview(titleLabel)
+    titleLabel.font = .preferredFont(forTextStyle: .callout)
+    titleLabel.adjustsFontForContentSizeCategory = true
+    titleLabel.numberOfLines = 0
+
+    horizontalStackView.addArrangedSubview(percentLabel)
+    percentLabel.font = .preferredFont(forTextStyle: .callout)
+    percentLabel.adjustsFontForContentSizeCategory = true
+    percentLabel.setContentHuggingPriority(.required, for: .horizontal)
+
+    let attributes: [NSAttributedString.Key: Any]? =
+      if let language = language {
+        [.accessibilitySpeechLanguage: language]
+      } else {
+        nil
+      }
+    let attributedTitle = NSMutableAttributedString(string: option.title, attributes: attributes)
+
+    attributedTitle.insert(emojis: emojis, view: titleLabel, identityContext: identityContext)
+    attributedTitle.resizeAttachments(toLineHeight: titleLabel.font.lineHeight)
+    titleLabel.attributedText = attributedTitle
+
+    let percent: Float
+
+    if votersCount == 0 {
+      percent = 0
+    } else {
+      percent = Float(option.votesCount) / Float(votersCount)
     }
+
+    percentLabel.text = Self.percentFormatter.string(from: NSNumber(value: percent))
+    percentView.progress = percent
+
+    NSLayoutConstraint.activate([
+      verticalStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+      verticalStackView.topAnchor.constraint(equalTo: topAnchor),
+      verticalStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+      verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+    ])
+  }
+
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
 }
 
 extension PollResultView {
-    static func estimatedHeight(width: CGFloat, title: String) -> CGFloat {
-        title.height(width: width, font: .preferredFont(forTextStyle: .callout))
-            + .compactSpacing
-            + 4 // progress view height
-    }
+  static func estimatedHeight(width: CGFloat, title: String) -> CGFloat {
+    title.height(width: width, font: .preferredFont(forTextStyle: .callout))
+      + .compactSpacing
+      + 4  // progress view height
+  }
 }
 
-private extension PollResultView {
-    private static var percentFormatter: NumberFormatter = {
-        let percentageFormatter = NumberFormatter()
+extension PollResultView {
+  private static var percentFormatter: NumberFormatter = {
+    let percentageFormatter = NumberFormatter()
 
-        percentageFormatter.numberStyle = .percent
+    percentageFormatter.numberStyle = .percent
 
-        return percentageFormatter
-    }()
+    return percentageFormatter
+  }()
 }

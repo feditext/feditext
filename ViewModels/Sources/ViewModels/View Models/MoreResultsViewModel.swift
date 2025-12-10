@@ -4,13 +4,13 @@ import Combine
 import ServiceLayer
 
 public final class MoreResultsViewModel: ObservableObject {
-    private let moreResults: MoreResults
+  private let moreResults: MoreResults
 
-    init(moreResults: MoreResults) {
-        self.moreResults = moreResults
-    }
+  init(moreResults: MoreResults) {
+    self.moreResults = moreResults
+  }
 }
 
-public extension MoreResultsViewModel {
-    var scope: SearchScope { moreResults.scope }
+extension MoreResultsViewModel {
+  public var scope: SearchScope { moreResults.scope }
 }

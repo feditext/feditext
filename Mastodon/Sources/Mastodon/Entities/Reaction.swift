@@ -6,23 +6,23 @@ import Foundation
 /// - See: https://docs.joinmastodon.org/entities/Reaction/
 /// - See: https://codeberg.org/firefish/firefish/src/branch/develop/packages/megalodon/src/entities/reaction.ts
 public struct Reaction: Codable, Hashable {
-    public let name: String
-    public let count: Int
-    public let me: Bool
-    public let url: UnicodeURL?
-    public let staticUrl: UnicodeURL?
+  public let name: String
+  public let count: Int
+  public let me: Bool
+  public let url: UnicodeURL?
+  public let staticUrl: UnicodeURL?
 
-    public init(
-        name: String,
-        count: Int,
-        me: Bool,
-        url: UnicodeURL?,
-        staticUrl: UnicodeURL?
-    ) {
-        self.name = name
-        self.count = count
-        self.me = me
-        self.url = url
-        self.staticUrl = staticUrl
-    }
+  public init(
+    name: String,
+    count: Int,
+    me: Bool,
+    url: UnicodeURL?,
+    staticUrl: UnicodeURL?
+  ) {
+    self.name = name
+    self.count = count
+    self.me = me
+    self.url = url
+    self.staticUrl = staticUrl
+  }
 }

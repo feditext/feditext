@@ -3,12 +3,12 @@
 import MastodonAPI
 
 extension AnnotatedAPIError: ToastableError {
-    public var toastable: Bool {
-        switch specialCase {
-        case .notFound:
-            return true
-        default:
-            return false
-        }
+  public var toastable: Bool {
+    switch specialCase {
+    case .notFound:
+      return true
+    default:
+      return false
     }
+  }
 }

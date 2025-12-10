@@ -5,93 +5,94 @@ import GRDB
 import Mastodon
 
 struct TimelineRecord: ContentDatabaseRecord, Hashable {
-    let id: Timeline.Id
-    let listId: List.Id?
-    let listTitle: String?
-    let listRepliesPolicy: List.RepliesPolicy?
-    let listExclusive: Bool?
-    let tag: String?
-    let accountId: Account.Id?
-    let profileCollection: ProfileCollection?
+  let id: Timeline.Id
+  let listId: List.Id?
+  let listTitle: String?
+  let listRepliesPolicy: List.RepliesPolicy?
+  let listExclusive: Bool?
+  let tag: String?
+  let accountId: Account.Id?
+  let profileCollection: ProfileCollection?
 }
 
 extension TimelineRecord {
-    enum Columns {
-        static let id = Column(CodingKeys.id)
-        static let listId = Column(CodingKeys.listId)
-        static let listTitle = Column(CodingKeys.listTitle)
-        static let listRepliesPolicy = Column(CodingKeys.listRepliesPolicy)
-        static let listExclusive = Column(CodingKeys.listExclusive)
-        static let tag = Column(CodingKeys.tag)
-        static let accountId = Column(CodingKeys.accountId)
-        static let profileCollection = Column(CodingKeys.profileCollection)
+  enum Columns {
+    static let id = Column(CodingKeys.id)
+    static let listId = Column(CodingKeys.listId)
+    static let listTitle = Column(CodingKeys.listTitle)
+    static let listRepliesPolicy = Column(CodingKeys.listRepliesPolicy)
+    static let listExclusive = Column(CodingKeys.listExclusive)
+    static let tag = Column(CodingKeys.tag)
+    static let accountId = Column(CodingKeys.accountId)
+    static let profileCollection = Column(CodingKeys.profileCollection)
+  }
+
+  static let statusJoins = hasMany(TimelineStatusJoin.self)
+  static let statuses = hasMany(
+    StatusRecord.self,
+    through: statusJoins,
+    using: TimelineStatusJoin.status
+  )
+  .order(StatusRecord.Columns.id.desc)
+  static let orderedStatuses = hasMany(
+    StatusRecord.self,
+    through: statusJoins.order(TimelineStatusJoin.Columns.order),
+    using: TimelineStatusJoin.status)
+  static let account = belongsTo(AccountRecord.self, using: ForeignKey([Columns.accountId]))
+  static let loadMores = hasMany(LoadMoreRecord.self)
+
+  var filterContext: Filter.Context? {
+    Timeline(record: self)?.filterContext
+  }
+
+  var statuses: QueryInterfaceRequest<StatusInfo> {
+    StatusInfo.request(request(for: Self.statuses), filterContext)
+  }
+
+  var orderedStatuses: QueryInterfaceRequest<StatusInfo> {
+    StatusInfo.request(request(for: Self.orderedStatuses), filterContext)
+  }
+
+  var loadMores: QueryInterfaceRequest<LoadMoreRecord> {
+    request(for: Self.loadMores)
+  }
+
+  init(timeline: Timeline) {
+    id = timeline.id
+
+    switch timeline {
+    case .home, .local, .federated, .favorites, .bookmarks:
+      listId = nil
+      listTitle = nil
+      listRepliesPolicy = nil
+      listExclusive = nil
+      tag = nil
+      accountId = nil
+      profileCollection = nil
+    case .list(let list):
+      listId = list.id
+      listTitle = list.title
+      listRepliesPolicy = list.repliesPolicy
+      listExclusive = list.exclusive
+      tag = nil
+      accountId = nil
+      profileCollection = nil
+    case .tag(let tag):
+      listId = nil
+      listTitle = nil
+      listRepliesPolicy = nil
+      listExclusive = nil
+      self.tag = tag
+      accountId = nil
+      profileCollection = nil
+    case .profile(let accountId, let profileCollection):
+      listId = nil
+      listTitle = nil
+      listRepliesPolicy = nil
+      listExclusive = nil
+      tag = nil
+      self.accountId = accountId
+      self.profileCollection = profileCollection
     }
-
-    static let statusJoins = hasMany(TimelineStatusJoin.self)
-    static let statuses = hasMany(
-        StatusRecord.self,
-        through: statusJoins,
-        using: TimelineStatusJoin.status)
-        .order(StatusRecord.Columns.id.desc)
-    static let orderedStatuses = hasMany(
-        StatusRecord.self,
-        through: statusJoins.order(TimelineStatusJoin.Columns.order),
-        using: TimelineStatusJoin.status)
-    static let account = belongsTo(AccountRecord.self, using: ForeignKey([Columns.accountId]))
-    static let loadMores = hasMany(LoadMoreRecord.self)
-
-    var filterContext: Filter.Context? {
-        Timeline(record: self)?.filterContext
-    }
-
-    var statuses: QueryInterfaceRequest<StatusInfo> {
-        StatusInfo.request(request(for: Self.statuses), filterContext)
-    }
-
-    var orderedStatuses: QueryInterfaceRequest<StatusInfo> {
-        StatusInfo.request(request(for: Self.orderedStatuses), filterContext)
-    }
-
-    var loadMores: QueryInterfaceRequest<LoadMoreRecord> {
-        request(for: Self.loadMores)
-    }
-
-    init(timeline: Timeline) {
-        id = timeline.id
-
-        switch timeline {
-        case .home, .local, .federated, .favorites, .bookmarks:
-            listId = nil
-            listTitle = nil
-            listRepliesPolicy = nil
-            listExclusive = nil
-            tag = nil
-            accountId = nil
-            profileCollection = nil
-        case let .list(list):
-            listId = list.id
-            listTitle = list.title
-            listRepliesPolicy = list.repliesPolicy
-            listExclusive = list.exclusive
-            tag = nil
-            accountId = nil
-            profileCollection = nil
-        case let .tag(tag):
-            listId = nil
-            listTitle = nil
-            listRepliesPolicy = nil
-            listExclusive = nil
-            self.tag = tag
-            accountId = nil
-            profileCollection = nil
-        case let .profile(accountId, profileCollection):
-            listId = nil
-            listTitle = nil
-            listRepliesPolicy = nil
-            listExclusive = nil
-            tag = nil
-            self.accountId = accountId
-            self.profileCollection = profileCollection
-        }
-    }
+  }
 }

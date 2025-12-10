@@ -3,8 +3,8 @@
 import Foundation
 
 public enum ProfileCollection: String, Codable, CaseIterable {
-    case statuses
-    case statusesAndReplies
-    case statusesAndBoosts
-    case media
+  case statuses
+  case statusesAndReplies
+  case statusesAndBoosts
+  case media
 }

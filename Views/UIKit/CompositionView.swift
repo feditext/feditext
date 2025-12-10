@@ -6,416 +6,433 @@ import UIKit
 import ViewModels
 
 final class CompositionView: UIView {
-    let avatarImageView = SDAnimatedImageView()
-    let changeIdentityButton = UIButton()
-    let spoilerTextField = UITextField()
-    let textView = ImagePastableTextView()
-    let textViewPlaceholder = UILabel()
-    let removeButton = UIButton(type: .close)
-    let inReplyToView = UIView()
-    let hasReplyFollowingView = UIView()
-    let attachmentsView = AttachmentsView()
-    let attachmentUploadsStackView = UIStackView()
-    let pollView: CompositionPollView
-    let markAttachmentsSensitiveView: MarkAttachmentsSensitiveView
+  let avatarImageView = SDAnimatedImageView()
+  let changeIdentityButton = UIButton()
+  let spoilerTextField = UITextField()
+  let textView = ImagePastableTextView()
+  let textViewPlaceholder = UILabel()
+  let removeButton = UIButton(type: .close)
+  let inReplyToView = UIView()
+  let hasReplyFollowingView = UIView()
+  let attachmentsView = AttachmentsView()
+  let attachmentUploadsStackView = UIStackView()
+  let pollView: CompositionPollView
+  let markAttachmentsSensitiveView: MarkAttachmentsSensitiveView
 
-    private let viewModel: CompositionViewModel
-    private let parentViewModel: ComposeStatusViewModel
-    private var cancellables = Set<AnyCancellable>()
+  private let viewModel: CompositionViewModel
+  private let parentViewModel: ComposeStatusViewModel
+  private var cancellables = Set<AnyCancellable>()
 
-    init(viewModel: CompositionViewModel, parentViewModel: ComposeStatusViewModel) {
-        self.viewModel = viewModel
-        self.parentViewModel = parentViewModel
+  init(viewModel: CompositionViewModel, parentViewModel: ComposeStatusViewModel) {
+    self.viewModel = viewModel
+    self.parentViewModel = parentViewModel
 
-        markAttachmentsSensitiveView = MarkAttachmentsSensitiveView(viewModel: viewModel)
-        pollView = CompositionPollView(viewModel: viewModel, parentViewModel: parentViewModel)
+    markAttachmentsSensitiveView = MarkAttachmentsSensitiveView(viewModel: viewModel)
+    pollView = CompositionPollView(viewModel: viewModel, parentViewModel: parentViewModel)
 
-        super.init(frame: .zero)
+    super.init(frame: .zero)
 
-        initialSetup()
-    }
+    initialSetup()
+  }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
 }
 
 extension CompositionView {
-    var id: CompositionViewModel.Id { viewModel.id }
+  var id: CompositionViewModel.Id { viewModel.id }
 }
 
 extension CompositionView: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        viewModel.text = textView.text
+  func textViewDidChange(_ textView: UITextView) {
+    viewModel.text = textView.text
 
-        if let textToSelectedRange = textView.textToSelectedRange {
-            viewModel.textToSelectedRange = textToSelectedRange
-        }
+    if let textToSelectedRange = textView.textToSelectedRange {
+      viewModel.textToSelectedRange = textToSelectedRange
     }
+  }
 }
 
-private extension CompositionView {
-    static let attachmentCollectionViewHeight: CGFloat = 200
+extension CompositionView {
+  fileprivate static let attachmentCollectionViewHeight: CGFloat = 200
 
-    // swiftlint:disable:next function_body_length
-    func initialSetup() {
-        tag = viewModel.id.hashValue
+  // swiftlint:disable:next function_body_length
+  fileprivate func initialSetup() {
+    tag = viewModel.id.hashValue
 
-        addSubview(avatarImageView)
-        avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-        avatarImageView.layer.cornerRadius = .avatarDimension / 2
-        avatarImageView.clipsToBounds = true
-        avatarImageView.setContentHuggingPriority(.required, for: .horizontal)
+    addSubview(avatarImageView)
+    avatarImageView.translatesAutoresizingMaskIntoConstraints = false
+    avatarImageView.layer.cornerRadius = .avatarDimension / 2
+    avatarImageView.clipsToBounds = true
+    avatarImageView.setContentHuggingPriority(.required, for: .horizontal)
 
-        changeIdentityButton.translatesAutoresizingMaskIntoConstraints = false
-        avatarImageView.addSubview(changeIdentityButton)
-        avatarImageView.isUserInteractionEnabled = true
-        changeIdentityButton.setBackgroundImage(.highlightedButtonBackground, for: .highlighted)
-        changeIdentityButton.showsMenuAsPrimaryAction = true
-        changeIdentityButton.menu =
-            changeIdentityMenu(identities: parentViewModel.identityContext.authenticatedOtherIdentities)
+    changeIdentityButton.translatesAutoresizingMaskIntoConstraints = false
+    avatarImageView.addSubview(changeIdentityButton)
+    avatarImageView.isUserInteractionEnabled = true
+    changeIdentityButton.setBackgroundImage(.highlightedButtonBackground, for: .highlighted)
+    changeIdentityButton.showsMenuAsPrimaryAction = true
+    changeIdentityButton.menu =
+      changeIdentityMenu(identities: parentViewModel.identityContext.authenticatedOtherIdentities)
 
-        let stackView = UIStackView()
+    let stackView = UIStackView()
 
-        addSubview(stackView)
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
-        stackView.spacing = .defaultSpacing
+    addSubview(stackView)
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    stackView.axis = .vertical
+    stackView.spacing = .defaultSpacing
 
-        let spoilerTextinputAccessoryView = CompositionInputAccessoryView(
-            viewModel: viewModel,
-            parentViewModel: parentViewModel,
-            autocompleteQueryPublisher: viewModel.$contentWarningAutocompleteQuery.eraseToAnyPublisher())
+    let spoilerTextinputAccessoryView = CompositionInputAccessoryView(
+      viewModel: viewModel,
+      parentViewModel: parentViewModel,
+      autocompleteQueryPublisher: viewModel.$contentWarningAutocompleteQuery.eraseToAnyPublisher())
 
-        stackView.addArrangedSubview(spoilerTextField)
-        spoilerTextField.borderStyle = .roundedRect
-        spoilerTextField.adjustsFontForContentSizeCategory = true
-        spoilerTextField.font = .preferredFont(forTextStyle: .body)
-        spoilerTextField.placeholder = NSLocalizedString("status.spoiler-text-placeholder", comment: "")
-        spoilerTextField.inputAccessoryView = spoilerTextinputAccessoryView
-        spoilerTextField.tag = spoilerTextinputAccessoryView.tagForInputView
-        spoilerTextField.isHidden_stackViewSafe = !viewModel.displayContentWarning
-        spoilerTextField.addAction(
-            UIAction { [weak self] _ in self?.spoilerTextFieldEditingChanged() },
-            for: .editingChanged)
+    stackView.addArrangedSubview(spoilerTextField)
+    spoilerTextField.borderStyle = .roundedRect
+    spoilerTextField.adjustsFontForContentSizeCategory = true
+    spoilerTextField.font = .preferredFont(forTextStyle: .body)
+    spoilerTextField.placeholder = NSLocalizedString("status.spoiler-text-placeholder", comment: "")
+    spoilerTextField.inputAccessoryView = spoilerTextinputAccessoryView
+    spoilerTextField.tag = spoilerTextinputAccessoryView.tagForInputView
+    spoilerTextField.isHidden_stackViewSafe = !viewModel.displayContentWarning
+    spoilerTextField.addAction(
+      UIAction { [weak self] _ in self?.spoilerTextFieldEditingChanged() },
+      for: .editingChanged)
 
-        let textViewFont = UIFont.preferredFont(forTextStyle: .body)
-        let textInputAccessoryView = CompositionInputAccessoryView(
-            viewModel: viewModel,
-            parentViewModel: parentViewModel,
-            autocompleteQueryPublisher: viewModel.$autocompleteQuery.eraseToAnyPublisher())
+    let textViewFont = UIFont.preferredFont(forTextStyle: .body)
+    let textInputAccessoryView = CompositionInputAccessoryView(
+      viewModel: viewModel,
+      parentViewModel: parentViewModel,
+      autocompleteQueryPublisher: viewModel.$autocompleteQuery.eraseToAnyPublisher())
 
-        stackView.addArrangedSubview(textView)
-        textView.keyboardType = parentViewModel.identityContext.appPreferences.keyboardType == .twitter
-            ? .twitter
-            : .default
-        textView.isScrollEnabled = false
-        textView.adjustsFontForContentSizeCategory = true
-        textView.font = textViewFont
-        textView.textContainerInset = .zero
-        textView.textContainer.lineFragmentPadding = 0
-        textView.inputAccessoryView = textInputAccessoryView
-        textView.tag = textInputAccessoryView.tagForInputView
-        textView.inputAccessoryView?.sizeToFit()
-        textView.delegate = self
+    stackView.addArrangedSubview(textView)
+    textView.keyboardType =
+      parentViewModel.identityContext.appPreferences.keyboardType == .twitter
+      ? .twitter
+      : .default
+    textView.isScrollEnabled = false
+    textView.adjustsFontForContentSizeCategory = true
+    textView.font = textViewFont
+    textView.textContainerInset = .zero
+    textView.textContainer.lineFragmentPadding = 0
+    textView.inputAccessoryView = textInputAccessoryView
+    textView.tag = textInputAccessoryView.tagForInputView
+    textView.inputAccessoryView?.sizeToFit()
+    textView.delegate = self
 
-        textView.addSubview(textViewPlaceholder)
-        textViewPlaceholder.translatesAutoresizingMaskIntoConstraints = false
-        textViewPlaceholder.adjustsFontForContentSizeCategory = true
-        textViewPlaceholder.font = .preferredFont(forTextStyle: .body)
-        textViewPlaceholder.textColor = .secondaryLabel
+    textView.addSubview(textViewPlaceholder)
+    textViewPlaceholder.translatesAutoresizingMaskIntoConstraints = false
+    textViewPlaceholder.adjustsFontForContentSizeCategory = true
+    textViewPlaceholder.font = .preferredFont(forTextStyle: .body)
+    textViewPlaceholder.textColor = .secondaryLabel
 
-        stackView.addArrangedSubview(attachmentsView)
-        attachmentsView.isHidden_stackViewSafe = true
-        stackView.addArrangedSubview(attachmentUploadsStackView)
-        attachmentUploadsStackView.axis = .vertical
-        attachmentUploadsStackView.isHidden_stackViewSafe = true
-        stackView.addArrangedSubview(markAttachmentsSensitiveView)
-        markAttachmentsSensitiveView.isHidden_stackViewSafe = true
-        stackView.addArrangedSubview(pollView)
-        pollView.isHidden_stackViewSafe = true
+    stackView.addArrangedSubview(attachmentsView)
+    attachmentsView.isHidden_stackViewSafe = true
+    stackView.addArrangedSubview(attachmentUploadsStackView)
+    attachmentUploadsStackView.axis = .vertical
+    attachmentUploadsStackView.isHidden_stackViewSafe = true
+    stackView.addArrangedSubview(markAttachmentsSensitiveView)
+    markAttachmentsSensitiveView.isHidden_stackViewSafe = true
+    stackView.addArrangedSubview(pollView)
+    pollView.isHidden_stackViewSafe = true
 
-        addSubview(removeButton)
-        removeButton.translatesAutoresizingMaskIntoConstraints = false
-        removeButton.showsMenuAsPrimaryAction = true
-        removeButton.menu = UIMenu(
-            children: [
-                UIAction(
-                    title: NSLocalizedString("remove", comment: ""),
-                    image: UIImage(systemName: "trash"),
-                    attributes: .destructive) { [weak self] _ in
-                    guard let self = self else { return }
+    addSubview(removeButton)
+    removeButton.translatesAutoresizingMaskIntoConstraints = false
+    removeButton.showsMenuAsPrimaryAction = true
+    removeButton.menu = UIMenu(
+      children: [
+        UIAction(
+          title: NSLocalizedString("remove", comment: ""),
+          image: UIImage(systemName: "trash"),
+          attributes: .destructive
+        ) { [weak self] _ in
+          guard let self = self else { return }
 
-                    self.parentViewModel.remove(viewModel: self.viewModel)
-                }])
-        removeButton.setContentHuggingPriority(.required, for: .horizontal)
-        removeButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+          self.parentViewModel.remove(viewModel: self.viewModel)
+        }
+      ])
+    removeButton.setContentHuggingPriority(.required, for: .horizontal)
+    removeButton.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        for view in [inReplyToView, hasReplyFollowingView] {
-            addSubview(view)
-            view.translatesAutoresizingMaskIntoConstraints = false
-            view.backgroundColor = .opaqueSeparator
-            view.widthAnchor.constraint(equalToConstant: .hairline).isActive = true
+    for view in [inReplyToView, hasReplyFollowingView] {
+      addSubview(view)
+      view.translatesAutoresizingMaskIntoConstraints = false
+      view.backgroundColor = .opaqueSeparator
+      view.widthAnchor.constraint(equalToConstant: .hairline).isActive = true
+    }
+
+    textView.text = viewModel.text
+    spoilerTextField.text = viewModel.contentWarning
+
+    let textViewBaselineConstraint = textView.topAnchor.constraint(
+      lessThanOrEqualTo: avatarImageView.centerYAnchor,
+      constant: -textViewFont.lineHeight / 2)
+
+    viewModel.$text.map(\.isEmpty)
+      .sink { [weak self] in self?.textViewPlaceholder.isHidden_stackViewSafe = !$0 }
+      .store(in: &cancellables)
+
+    viewModel.$displayContentWarning
+      .throttle(
+        for: .seconds(TimeInterval.zeroIfReduceMotion(.shortAnimationDuration)),
+        scheduler: DispatchQueue.main,
+        latest: true
+      )
+      .sink { [weak self] displayContentWarning in
+        guard let self = self else { return }
+
+        if self.spoilerTextField.isHidden && self.textView.isFirstResponder && displayContentWarning {
+          self.spoilerTextField.becomeFirstResponder()
+        } else if !self.spoilerTextField.isHidden
+          && self.spoilerTextField.isFirstResponder
+          && !displayContentWarning
+        {
+          self.textView.becomeFirstResponder()
         }
 
-        textView.text = viewModel.text
-        spoilerTextField.text = viewModel.contentWarning
-
-        let textViewBaselineConstraint = textView.topAnchor.constraint(
-            lessThanOrEqualTo: avatarImageView.centerYAnchor,
-            constant: -textViewFont.lineHeight / 2)
-
-        viewModel.$text.map(\.isEmpty)
-            .sink { [weak self] in self?.textViewPlaceholder.isHidden_stackViewSafe = !$0 }
-            .store(in: &cancellables)
-
-        viewModel.$displayContentWarning
-            .throttle(for: .seconds(TimeInterval.zeroIfReduceMotion(.shortAnimationDuration)),
-                      scheduler: DispatchQueue.main,
-                      latest: true)
-            .sink { [weak self] displayContentWarning in
-                guard let self = self else { return }
-
-                if self.spoilerTextField.isHidden && self.textView.isFirstResponder && displayContentWarning {
-                    self.spoilerTextField.becomeFirstResponder()
-                } else if !self.spoilerTextField.isHidden
-                            && self.spoilerTextField.isFirstResponder
-                            && !displayContentWarning {
-                    self.textView.becomeFirstResponder()
-                }
-
-                UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
-                    self.spoilerTextField.isHidden_stackViewSafe = !displayContentWarning
-                    textViewBaselineConstraint.isActive = !displayContentWarning
-                }
-            }
-            .store(in: &cancellables)
-
-        parentViewModel.$identityContext
-            .sink { [weak self] in
-                guard let self = self else { return }
-
-                let avatarURL = $0.appPreferences.animateAvatars == .everywhere
-                    ? $0.identity.account?.avatar
-                    : $0.identity.account?.avatarStatic
-
-                self.avatarImageView.sd_setImage(with: avatarURL?.url)
-                self.changeIdentityButton.accessibilityLabel = $0.identity.handle
-                self.changeIdentityButton.accessibilityHint =
-                    NSLocalizedString("compose.change-identity-button.accessibility-hint", comment: "")
-
-                $0.$authenticatedOtherIdentities
-                    .sink { [weak self] authenticatedOtherIdentities in
-                        self?.changeIdentityButton.menu =
-                            self?.changeIdentityMenu(identities: authenticatedOtherIdentities)
-                    }
-                    .store(in: &self.cancellables)
-            }
-            .store(in: &cancellables)
-
-        viewModel.$attachmentViewModels
-            .throttle(for: .seconds(TimeInterval.zeroIfReduceMotion(.shortAnimationDuration)),
-                      scheduler: DispatchQueue.main,
-                      latest: true)
-            .sink { [weak self] attachmentViewModels in
-                UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
-                    self?.attachmentsView.viewModel = self?.viewModel
-                    self?.attachmentsView.isHidden_stackViewSafe = attachmentViewModels.isEmpty
-                    self?.markAttachmentsSensitiveView.isHidden_stackViewSafe = attachmentViewModels.isEmpty
-                }
-            }
-            .store(in: &cancellables)
-
-        viewModel.$canAddAttachment
-            .sink { [weak self] in self?.textView.canPasteImage = $0 }
-            .store(in: &cancellables)
-
-        viewModel.$attachmentUploadViewModels
-            .throttle(for: .seconds(TimeInterval.zeroIfReduceMotion(.shortAnimationDuration)),
-                      scheduler: DispatchQueue.main,
-                      latest: true)
-            .sink { [weak self] attachmentUploadViewModels in
-                UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
-                    self?.attachmentUploadsStackView.isHidden_stackViewSafe = attachmentUploadViewModels.isEmpty
-                    self?.update(attachmentUploadViewModels: attachmentUploadViewModels)
-                }
-            }
-            .store(in: &cancellables)
-
-        textView.pastedItemProviders.sink { [weak self] in
-            guard let self = self else { return }
-
-            self.viewModel.attach(itemProviders: [$0],
-                                  parentViewModel: self.parentViewModel)
+        UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
+          self.spoilerTextField.isHidden_stackViewSafe = !displayContentWarning
+          textViewBaselineConstraint.isActive = !displayContentWarning
         }
-        .store(in: &cancellables)
+      }
+      .store(in: &cancellables)
 
-        viewModel.$displayPoll
-            .throttle(for: .seconds(TimeInterval.zeroIfReduceMotion(.shortAnimationDuration)),
-                      scheduler: DispatchQueue.main,
-                      latest: true)
-            .sink { [weak self] displayPoll in
-                if !displayPoll {
-                    self?.textView.becomeFirstResponder()
-                }
+    parentViewModel.$identityContext
+      .sink { [weak self] in
+        guard let self = self else { return }
 
-                UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
-                    self?.pollView.isHidden_stackViewSafe = !displayPoll
-                }
-            }
-            .store(in: &cancellables)
+        let avatarURL =
+          $0.appPreferences.animateAvatars == .everywhere
+          ? $0.identity.account?.avatar
+          : $0.identity.account?.avatarStatic
 
-        viewModel.$mediaRequired
-            .sink(receiveValue: { [weak self] mediaRequired in
-                if mediaRequired {
-                    self?.textViewPlaceholder.text = NSLocalizedString("compose.prompt.media-required", comment: "")
-                } else {
-                    self?.textViewPlaceholder.text = NSLocalizedString("compose.prompt", comment: "")
-                }
-            })
-            .store(in: &cancellables)
+        self.avatarImageView.sd_setImage(with: avatarURL?.url)
+        self.changeIdentityButton.accessibilityLabel = $0.identity.handle
+        self.changeIdentityButton.accessibilityHint =
+          NSLocalizedString("compose.change-identity-button.accessibility-hint", comment: "")
 
-        textInputAccessoryView.autocompleteSelections
-            .sink { [weak self] in self?.autocompleteSelected($0) }
-            .store(in: &cancellables)
+        $0.$authenticatedOtherIdentities
+          .sink { [weak self] authenticatedOtherIdentities in
+            self?.changeIdentityButton.menu =
+              self?.changeIdentityMenu(identities: authenticatedOtherIdentities)
+          }
+          .store(in: &self.cancellables)
+      }
+      .store(in: &cancellables)
 
-        spoilerTextinputAccessoryView.autocompleteSelections
-            .sink { [weak self] in self?.spoilerTextAutocompleteSelected($0) }
-            .store(in: &cancellables)
-
-        let guide = UIDevice.current.userInterfaceIdiom == .pad ? readableContentGuide : layoutMarginsGuide
-        let constraints = [
-            avatarImageView.heightAnchor.constraint(equalToConstant: .avatarDimension),
-            avatarImageView.widthAnchor.constraint(equalToConstant: .avatarDimension),
-            avatarImageView.topAnchor.constraint(equalTo: guide.topAnchor),
-            avatarImageView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
-            avatarImageView.bottomAnchor.constraint(lessThanOrEqualTo: guide.bottomAnchor),
-            changeIdentityButton.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
-            changeIdentityButton.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
-            changeIdentityButton.bottomAnchor.constraint(equalTo: avatarImageView.bottomAnchor),
-            changeIdentityButton.trailingAnchor.constraint(equalTo: avatarImageView.trailingAnchor),
-            stackView.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: .defaultSpacing),
-            stackView.topAnchor.constraint(greaterThanOrEqualTo: guide.topAnchor),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: guide.bottomAnchor),
-            textViewPlaceholder.leadingAnchor.constraint(equalTo: textView.leadingAnchor),
-            textViewPlaceholder.topAnchor.constraint(equalTo: textView.topAnchor),
-            textViewPlaceholder.trailingAnchor.constraint(equalTo: textView.trailingAnchor),
-            removeButton.leadingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: .defaultSpacing),
-            removeButton.topAnchor.constraint(equalTo: guide.topAnchor),
-            removeButton.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
-            inReplyToView.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
-            inReplyToView.topAnchor.constraint(equalTo: topAnchor),
-            inReplyToView.bottomAnchor.constraint(equalTo: avatarImageView.topAnchor),
-            hasReplyFollowingView.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
-            hasReplyFollowingView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor),
-            hasReplyFollowingView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ]
-
-        NSLayoutConstraint.activate(constraints)
-    }
-
-    func changeIdentityMenu(identities: [Identity]) -> UIMenu {
-        let imageTransformer = SDImageRoundCornerTransformer(
-            radius: .greatestFiniteMagnitude,
-            corners: .allCorners,
-            borderWidth: 0,
-            borderColor: nil)
-
-        return UIMenu(children: identities.map { identity in
-            UIDeferredMenuElement { completion in
-                let action = UIAction(title: identity.handle) { [weak self] _ in
-                    self?.parentViewModel.changeIdentity(identity)
-                }
-
-                if let image = identity.image {
-                    SDWebImageManager.shared.loadImage(
-                        with: image,
-                        options: [.transformAnimatedImage],
-                        context: [.imageTransformer: imageTransformer],
-                        progress: nil) { (image, _, _, _, _, _) in
-                        action.image = image
-
-                        completion([action])
-                    }
-                } else {
-                    completion([action])
-                }
-            }
-        })
-    }
-
-    func spoilerTextFieldEditingChanged() {
-        guard let text = spoilerTextField.text else { return }
-
-        viewModel.contentWarning = text
-
-        if let textToSelectedRange = spoilerTextField.textToSelectedRange {
-            viewModel.contentWarningTextToSelectedRange = textToSelectedRange
+    viewModel.$attachmentViewModels
+      .throttle(
+        for: .seconds(TimeInterval.zeroIfReduceMotion(.shortAnimationDuration)),
+        scheduler: DispatchQueue.main,
+        latest: true
+      )
+      .sink { [weak self] attachmentViewModels in
+        UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
+          self?.attachmentsView.viewModel = self?.viewModel
+          self?.attachmentsView.isHidden_stackViewSafe = attachmentViewModels.isEmpty
+          self?.markAttachmentsSensitiveView.isHidden_stackViewSafe = attachmentViewModels.isEmpty
         }
+      }
+      .store(in: &cancellables)
+
+    viewModel.$canAddAttachment
+      .sink { [weak self] in self?.textView.canPasteImage = $0 }
+      .store(in: &cancellables)
+
+    viewModel.$attachmentUploadViewModels
+      .throttle(
+        for: .seconds(TimeInterval.zeroIfReduceMotion(.shortAnimationDuration)),
+        scheduler: DispatchQueue.main,
+        latest: true
+      )
+      .sink { [weak self] attachmentUploadViewModels in
+        UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
+          self?.attachmentUploadsStackView.isHidden_stackViewSafe = attachmentUploadViewModels.isEmpty
+          self?.update(attachmentUploadViewModels: attachmentUploadViewModels)
+        }
+      }
+      .store(in: &cancellables)
+
+    textView.pastedItemProviders.sink { [weak self] in
+      guard let self = self else { return }
+
+      self.viewModel.attach(
+        itemProviders: [$0],
+        parentViewModel: self.parentViewModel)
     }
+    .store(in: &cancellables)
 
-    func autocompleteSelected(_ autocompleteText: String) {
-        guard let autocompleteQuery = viewModel.autocompleteQuery,
-              let queryRange = viewModel.textToSelectedRange.range(of: autocompleteQuery, options: .backwards),
-              let textToSelectedRangeRange = viewModel.text.range(of: viewModel.textToSelectedRange)
-        else { return }
-
-        let replaced = viewModel.textToSelectedRange.replacingOccurrences(
-            of: autocompleteQuery,
-            with: autocompleteText.appending(" "),
-            range: queryRange)
-
-        textView.text = viewModel.text.replacingOccurrences(
-            of: viewModel.textToSelectedRange,
-            with: replaced,
-            range: textToSelectedRangeRange)
-        textViewDidChange(textView)
-    }
-
-    func spoilerTextAutocompleteSelected(_ autocompleteText: String) {
-        guard let autocompleteQuery = viewModel.contentWarningAutocompleteQuery,
-              let queryRange =
-                viewModel.contentWarningTextToSelectedRange.range(of: autocompleteQuery, options: .backwards),
-              let textToSelectedRangeRange =
-                viewModel.contentWarning.range(of: viewModel.contentWarningTextToSelectedRange)
-        else { return }
-
-        let replaced = viewModel.contentWarningTextToSelectedRange.replacingOccurrences(
-            of: autocompleteQuery,
-            with: autocompleteText.appending(" "),
-            range: queryRange)
-
-        spoilerTextField.text = viewModel.contentWarning.replacingOccurrences(
-            of: viewModel.contentWarningTextToSelectedRange,
-            with: replaced,
-            range: textToSelectedRangeRange)
-        spoilerTextFieldEditingChanged()
-    }
-
-    func update(attachmentUploadViewModels: [AttachmentUploadViewModel]) {
-        let diff = attachmentUploadViewModels.map(\.id)
-            .difference(from: attachmentUploadsStackView
-                            .arrangedSubviews
-                            .compactMap { ($0 as? AttachmentUploadView)?.id })
-
-        for insertion in diff.insertions {
-            guard case let .insert(index, id, _) = insertion,
-                  let attachmentUploadViewModel = attachmentUploadViewModels.first(where: { $0.id == id })
-                  else { continue }
-
-            let attachmentUploadView = AttachmentUploadView(viewModel: attachmentUploadViewModel)
-
-            attachmentUploadsStackView.insertArrangedSubview(attachmentUploadView, at: index)
+    viewModel.$displayPoll
+      .throttle(
+        for: .seconds(TimeInterval.zeroIfReduceMotion(.shortAnimationDuration)),
+        scheduler: DispatchQueue.main,
+        latest: true
+      )
+      .sink { [weak self] displayPoll in
+        if !displayPoll {
+          self?.textView.becomeFirstResponder()
         }
 
-        for removal in diff.removals {
-            guard case let .remove(_, id, _) = removal,
-                  let index = attachmentUploadsStackView.arrangedSubviews
-                    .firstIndex(where: { ($0 as? AttachmentUploadView)?.id == id })
-            else { continue }
-
-            attachmentUploadsStackView.arrangedSubviews[index].removeFromSuperview()
+        UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
+          self?.pollView.isHidden_stackViewSafe = !displayPoll
         }
+      }
+      .store(in: &cancellables)
+
+    viewModel.$mediaRequired
+      .sink(receiveValue: { [weak self] mediaRequired in
+        if mediaRequired {
+          self?.textViewPlaceholder.text = NSLocalizedString("compose.prompt.media-required", comment: "")
+        } else {
+          self?.textViewPlaceholder.text = NSLocalizedString("compose.prompt", comment: "")
+        }
+      })
+      .store(in: &cancellables)
+
+    textInputAccessoryView.autocompleteSelections
+      .sink { [weak self] in self?.autocompleteSelected($0) }
+      .store(in: &cancellables)
+
+    spoilerTextinputAccessoryView.autocompleteSelections
+      .sink { [weak self] in self?.spoilerTextAutocompleteSelected($0) }
+      .store(in: &cancellables)
+
+    let guide = UIDevice.current.userInterfaceIdiom == .pad ? readableContentGuide : layoutMarginsGuide
+    let constraints = [
+      avatarImageView.heightAnchor.constraint(equalToConstant: .avatarDimension),
+      avatarImageView.widthAnchor.constraint(equalToConstant: .avatarDimension),
+      avatarImageView.topAnchor.constraint(equalTo: guide.topAnchor),
+      avatarImageView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
+      avatarImageView.bottomAnchor.constraint(lessThanOrEqualTo: guide.bottomAnchor),
+      changeIdentityButton.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
+      changeIdentityButton.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
+      changeIdentityButton.bottomAnchor.constraint(equalTo: avatarImageView.bottomAnchor),
+      changeIdentityButton.trailingAnchor.constraint(equalTo: avatarImageView.trailingAnchor),
+      stackView.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: .defaultSpacing),
+      stackView.topAnchor.constraint(greaterThanOrEqualTo: guide.topAnchor),
+      stackView.bottomAnchor.constraint(lessThanOrEqualTo: guide.bottomAnchor),
+      textViewPlaceholder.leadingAnchor.constraint(equalTo: textView.leadingAnchor),
+      textViewPlaceholder.topAnchor.constraint(equalTo: textView.topAnchor),
+      textViewPlaceholder.trailingAnchor.constraint(equalTo: textView.trailingAnchor),
+      removeButton.leadingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: .defaultSpacing),
+      removeButton.topAnchor.constraint(equalTo: guide.topAnchor),
+      removeButton.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
+      inReplyToView.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
+      inReplyToView.topAnchor.constraint(equalTo: topAnchor),
+      inReplyToView.bottomAnchor.constraint(equalTo: avatarImageView.topAnchor),
+      hasReplyFollowingView.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
+      hasReplyFollowingView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor),
+      hasReplyFollowingView.bottomAnchor.constraint(equalTo: bottomAnchor),
+    ]
+
+    NSLayoutConstraint.activate(constraints)
+  }
+
+  fileprivate func changeIdentityMenu(identities: [Identity]) -> UIMenu {
+    let imageTransformer = SDImageRoundCornerTransformer(
+      radius: .greatestFiniteMagnitude,
+      corners: .allCorners,
+      borderWidth: 0,
+      borderColor: nil)
+
+    return UIMenu(
+      children: identities.map { identity in
+        UIDeferredMenuElement { completion in
+          let action = UIAction(title: identity.handle) { [weak self] _ in
+            self?.parentViewModel.changeIdentity(identity)
+          }
+
+          if let image = identity.image {
+            SDWebImageManager.shared.loadImage(
+              with: image,
+              options: [.transformAnimatedImage],
+              context: [.imageTransformer: imageTransformer],
+              progress: nil
+            ) { (image, _, _, _, _, _) in
+              action.image = image
+
+              completion([action])
+            }
+          } else {
+            completion([action])
+          }
+        }
+      })
+  }
+
+  fileprivate func spoilerTextFieldEditingChanged() {
+    guard let text = spoilerTextField.text else { return }
+
+    viewModel.contentWarning = text
+
+    if let textToSelectedRange = spoilerTextField.textToSelectedRange {
+      viewModel.contentWarningTextToSelectedRange = textToSelectedRange
     }
+  }
+
+  fileprivate func autocompleteSelected(_ autocompleteText: String) {
+    guard let autocompleteQuery = viewModel.autocompleteQuery,
+      let queryRange = viewModel.textToSelectedRange.range(of: autocompleteQuery, options: .backwards),
+      let textToSelectedRangeRange = viewModel.text.range(of: viewModel.textToSelectedRange)
+    else { return }
+
+    let replaced = viewModel.textToSelectedRange.replacingOccurrences(
+      of: autocompleteQuery,
+      with: autocompleteText.appending(" "),
+      range: queryRange)
+
+    textView.text = viewModel.text.replacingOccurrences(
+      of: viewModel.textToSelectedRange,
+      with: replaced,
+      range: textToSelectedRangeRange)
+    textViewDidChange(textView)
+  }
+
+  fileprivate func spoilerTextAutocompleteSelected(_ autocompleteText: String) {
+    guard let autocompleteQuery = viewModel.contentWarningAutocompleteQuery,
+      let queryRange =
+        viewModel.contentWarningTextToSelectedRange.range(of: autocompleteQuery, options: .backwards),
+      let textToSelectedRangeRange =
+        viewModel.contentWarning.range(of: viewModel.contentWarningTextToSelectedRange)
+    else { return }
+
+    let replaced = viewModel.contentWarningTextToSelectedRange.replacingOccurrences(
+      of: autocompleteQuery,
+      with: autocompleteText.appending(" "),
+      range: queryRange)
+
+    spoilerTextField.text = viewModel.contentWarning.replacingOccurrences(
+      of: viewModel.contentWarningTextToSelectedRange,
+      with: replaced,
+      range: textToSelectedRangeRange)
+    spoilerTextFieldEditingChanged()
+  }
+
+  fileprivate func update(attachmentUploadViewModels: [AttachmentUploadViewModel]) {
+    let diff = attachmentUploadViewModels.map(\.id)
+      .difference(
+        from: attachmentUploadsStackView
+          .arrangedSubviews
+          .compactMap { ($0 as? AttachmentUploadView)?.id })
+
+    for insertion in diff.insertions {
+      guard case .insert(let index, let id, _) = insertion,
+        let attachmentUploadViewModel = attachmentUploadViewModels.first(where: { $0.id == id })
+      else { continue }
+
+      let attachmentUploadView = AttachmentUploadView(viewModel: attachmentUploadViewModel)
+
+      attachmentUploadsStackView.insertArrangedSubview(attachmentUploadView, at: index)
+    }
+
+    for removal in diff.removals {
+      guard case .remove(_, let id, _) = removal,
+        let index = attachmentUploadsStackView.arrangedSubviews
+          .firstIndex(where: { ($0 as? AttachmentUploadView)?.id == id })
+      else { continue }
+
+      attachmentUploadsStackView.arrangedSubviews[index].removeFromSuperview()
+    }
+  }
 }
