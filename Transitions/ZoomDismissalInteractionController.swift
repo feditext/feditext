@@ -85,7 +85,7 @@ final class ZoomDismissalInteractionController: NSObject {
           transitionView.alpha = 0
         }
 
-        transitionView.layer.contentsRect = toReferenceView?.layer.contentsRect ?? .defaultContentsRect
+        transitionView.layer.contentsRect = toReferenceView?.layer.contentsRect ?? .defaultContents
         transitionView.layer.cornerRadius = toReferenceView?.layer.cornerRadius ?? 0
 
         toVC.tabBarController?.tabBar.alpha = 1

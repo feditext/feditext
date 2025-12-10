@@ -49,7 +49,7 @@ extension ResultsEndpoint.Search {
 extension ResultsEndpoint: Endpoint {
   public typealias ResultType = Results
 
-  public var APIVersion: String {
+  public var apiVersion: String {
     switch self {
     case .search:
       return "v2"

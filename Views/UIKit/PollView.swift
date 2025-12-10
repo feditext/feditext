@@ -297,7 +297,7 @@ extension PollView {
 extension PollView: UITextViewDelegate {
   func textView(
     _ textView: UITextView,
-    shouldInteractWith URL: URL,
+    shouldInteractWith url: URL,
     in characterRange: NSRange,
     interaction: UITextItemInteraction
   ) -> Bool {
@@ -306,7 +306,7 @@ extension PollView: UITextViewDelegate {
     }
     switch interaction {
     case .invokeDefaultAction:
-      viewModel?.urlSelected(URL)
+      viewModel?.urlSelected(url)
       return false
     case .preview: return false
     case .presentActions: return false

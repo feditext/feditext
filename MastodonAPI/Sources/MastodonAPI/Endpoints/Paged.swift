@@ -25,7 +25,7 @@ public struct Paged<T: Endpoint> {
 extension Paged: Endpoint {
   public typealias ResultType = T.ResultType
 
-  public var APIVersion: String { endpoint.APIVersion }
+  public var apiVersion: String { endpoint.apiVersion }
 
   public var context: [String] { endpoint.context }
 

@@ -742,7 +742,7 @@ extension StatusViewModel {
     var rangeOfFirstBlockInTrailer: Range<AttributedString.Index>?
     var tagCountInFirstBlock = 0
 
-    blockLoop: // Start at the end and work backwards within block intents and non-block text.
+    blockLoop:  // Start at the end and work backwards within block intents and non-block text.
     // (At this point, we haven't yet inserted whitespace from <p> tags, etc.,
     // so blocks have no whitespace separating them and would otherwise run together.)
     for (_, blockRange) in content.runs[\.presentationIntent].reversed() {

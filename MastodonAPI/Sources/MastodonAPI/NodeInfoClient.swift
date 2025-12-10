@@ -59,10 +59,10 @@ public struct NodeInfoClient: Sendable {
   ///
   /// - See: https://github.com/jhass/nodeinfo/blob/main/PROTOCOL.md#discovery
   enum Version: String, Comparable {
-    case v_1_0 = "http://nodeinfo.diaspora.software/ns/schema/1.0"
-    case v_1_1 = "http://nodeinfo.diaspora.software/ns/schema/1.1"
-    case v_2_0 = "http://nodeinfo.diaspora.software/ns/schema/2.0"
-    case v_2_1 = "http://nodeinfo.diaspora.software/ns/schema/2.1"
+    case v1Point0 = "http://nodeinfo.diaspora.software/ns/schema/1.0"
+    case v1Point1 = "http://nodeinfo.diaspora.software/ns/schema/1.1"
+    case v2Point0 = "http://nodeinfo.diaspora.software/ns/schema/2.0"
+    case v2Point1 = "http://nodeinfo.diaspora.software/ns/schema/2.1"
 
     /// - Invariant: assumes relation URLs are comparable lexically so that newer versions sort higher.
     public static func < (lhs: Version, rhs: Version) -> Bool {

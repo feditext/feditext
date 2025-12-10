@@ -332,13 +332,13 @@ extension StatusBodyView {
 extension StatusBodyView: UITextViewDelegate {
   func textView(
     _ textView: UITextView,
-    shouldInteractWith URL: URL,
+    shouldInteractWith url: URL,
     in characterRange: NSRange,
     interaction: UITextItemInteraction
   ) -> Bool {
     switch interaction {
     case .invokeDefaultAction:
-      viewModel?.urlSelected(URL)
+      viewModel?.urlSelected(url)
       return false
     case .preview: return false
     case .presentActions: return false

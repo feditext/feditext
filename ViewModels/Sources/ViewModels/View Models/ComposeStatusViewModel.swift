@@ -145,7 +145,8 @@ public final class ComposeStatusViewModel: ObservableObject {
     $identityContext
       .map { $0.identity.instance?.maxTootChars }
       .sink { [weak self] maxTootChars in
-        self?.compositionViewModels.forEach { cvm in
+        guard let self else { return }
+        for cvm in self.compositionViewModels {
           cvm.setMaxCharactersOrDefault(maxTootChars)
         }
       }

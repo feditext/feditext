@@ -95,7 +95,7 @@ extension CompositionView {
     spoilerTextField.placeholder = NSLocalizedString("status.spoiler-text-placeholder", comment: "")
     spoilerTextField.inputAccessoryView = spoilerTextinputAccessoryView
     spoilerTextField.tag = spoilerTextinputAccessoryView.tagForInputView
-    spoilerTextField.isHidden_stackViewSafe = !viewModel.displayContentWarning
+    spoilerTextField.isHiddenStackViewSafe = !viewModel.displayContentWarning
     spoilerTextField.addAction(
       UIAction { [weak self] _ in self?.spoilerTextFieldEditingChanged() },
       for: .editingChanged)
@@ -128,14 +128,14 @@ extension CompositionView {
     textViewPlaceholder.textColor = .secondaryLabel
 
     stackView.addArrangedSubview(attachmentsView)
-    attachmentsView.isHidden_stackViewSafe = true
+    attachmentsView.isHiddenStackViewSafe = true
     stackView.addArrangedSubview(attachmentUploadsStackView)
     attachmentUploadsStackView.axis = .vertical
-    attachmentUploadsStackView.isHidden_stackViewSafe = true
+    attachmentUploadsStackView.isHiddenStackViewSafe = true
     stackView.addArrangedSubview(markAttachmentsSensitiveView)
-    markAttachmentsSensitiveView.isHidden_stackViewSafe = true
+    markAttachmentsSensitiveView.isHiddenStackViewSafe = true
     stackView.addArrangedSubview(pollView)
-    pollView.isHidden_stackViewSafe = true
+    pollView.isHiddenStackViewSafe = true
 
     addSubview(removeButton)
     removeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -170,7 +170,7 @@ extension CompositionView {
       constant: -textViewFont.lineHeight / 2)
 
     viewModel.$text.map(\.isEmpty)
-      .sink { [weak self] in self?.textViewPlaceholder.isHidden_stackViewSafe = !$0 }
+      .sink { [weak self] in self?.textViewPlaceholder.isHiddenStackViewSafe = !$0 }
       .store(in: &cancellables)
 
     viewModel.$displayContentWarning
@@ -192,7 +192,7 @@ extension CompositionView {
         }
 
         UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
-          self.spoilerTextField.isHidden_stackViewSafe = !displayContentWarning
+          self.spoilerTextField.isHiddenStackViewSafe = !displayContentWarning
           textViewBaselineConstraint.isActive = !displayContentWarning
         }
       }
@@ -230,8 +230,8 @@ extension CompositionView {
       .sink { [weak self] attachmentViewModels in
         UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
           self?.attachmentsView.viewModel = self?.viewModel
-          self?.attachmentsView.isHidden_stackViewSafe = attachmentViewModels.isEmpty
-          self?.markAttachmentsSensitiveView.isHidden_stackViewSafe = attachmentViewModels.isEmpty
+          self?.attachmentsView.isHiddenStackViewSafe = attachmentViewModels.isEmpty
+          self?.markAttachmentsSensitiveView.isHiddenStackViewSafe = attachmentViewModels.isEmpty
         }
       }
       .store(in: &cancellables)
@@ -248,7 +248,7 @@ extension CompositionView {
       )
       .sink { [weak self] attachmentUploadViewModels in
         UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
-          self?.attachmentUploadsStackView.isHidden_stackViewSafe = attachmentUploadViewModels.isEmpty
+          self?.attachmentUploadsStackView.isHiddenStackViewSafe = attachmentUploadViewModels.isEmpty
           self?.update(attachmentUploadViewModels: attachmentUploadViewModels)
         }
       }
@@ -275,7 +275,7 @@ extension CompositionView {
         }
 
         UIView.animate(withDuration: .zeroIfReduceMotion(.shortAnimationDuration)) {
-          self?.pollView.isHidden_stackViewSafe = !displayPoll
+          self?.pollView.isHiddenStackViewSafe = !displayPoll
         }
       }
       .store(in: &cancellables)

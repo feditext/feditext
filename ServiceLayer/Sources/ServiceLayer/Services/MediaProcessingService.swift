@@ -53,7 +53,7 @@ extension MediaProcessingService {
       dataPublisher = fileRepresentationDataPublisher(itemProvider: itemProvider, type: type)
     } else if registeredTypes == [UTType.image], let pngMIMEType = UTType.png.preferredMIMEType {  // screenshot
       mimeType = pngMIMEType
-      dataPublisher = UIImagePNGDataPublisher(itemProvider: itemProvider)
+      dataPublisher = uiImagePNGDataPublisher(itemProvider: itemProvider)
     } else {
       return Fail(error: MediaProcessingError.invalidMimeType).eraseToAnyPublisher()
     }
@@ -135,7 +135,7 @@ extension MediaProcessingService {
     .eraseToAnyPublisher()
   }
 
-  fileprivate static func UIImagePNGDataPublisher(itemProvider: NSItemProvider) -> AnyPublisher<Data, Error> {
+  fileprivate static func uiImagePNGDataPublisher(itemProvider: NSItemProvider) -> AnyPublisher<Data, Error> {
     #if canImport(UIKit)
       return Future<Data, Error> { promise in
         itemProvider.loadItem(forTypeIdentifier: UTType.image.identifier, options: nil) { lookup, error in

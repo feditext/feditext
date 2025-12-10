@@ -182,7 +182,7 @@ extension AttachmentView {
       let placeholderImage: UIImage?
 
       if let blurHash = viewModel.attachment.blurhash {
-        placeholderImage = UIImage(blurHash: blurHash, size: .blurHashSize)
+        placeholderImage = UIImage(blurHash: blurHash, size: .blurHash)
       } else {
         placeholderImage = nil
       }

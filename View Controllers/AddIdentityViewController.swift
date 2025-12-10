@@ -115,7 +115,7 @@ extension AddIdentityViewController {
     instanceStackView.translatesAutoresizingMaskIntoConstraints = false
     instanceStackView.axis = .vertical
     instanceStackView.spacing = .compactSpacing
-    instanceStackView.isHidden_stackViewSafe = true
+    instanceStackView.isHiddenStackViewSafe = true
 
     instanceTitleLabel.numberOfLines = 0
     instanceTitleLabel.textAlignment = .center
@@ -147,13 +147,13 @@ extension AddIdentityViewController {
       for: .touchUpInside)
 
     joinButton.addAction(UIAction { [weak self] _ in self?.join() }, for: .touchUpInside)
-    joinButton.isHidden_stackViewSafe = true
+    joinButton.isHiddenStackViewSafe = true
 
     browseButton.setTitle(NSLocalizedString("add-identity.browse", comment: ""), for: .normal)
     browseButton.addAction(
       UIAction { [weak self] _ in self?.viewModel.browseTapped() },
       for: .touchUpInside)
-    browseButton.isHidden_stackViewSafe = true
+    browseButton.isHiddenStackViewSafe = true
 
     whatIsMastodonBackgroundView.backgroundColor = .secondarySystemBackground
     whatIsMastodonBackgroundView.clipsToBounds = true
@@ -309,7 +309,7 @@ extension AddIdentityViewController {
         }
       }
     } else {
-      welcomeLabel.isHidden_stackViewSafe = true
+      welcomeLabel.isHiddenStackViewSafe = true
       urlTextField.becomeFirstResponder()
     }
   }
@@ -322,13 +322,13 @@ extension AddIdentityViewController {
     }
 
     UIView.animate(withDuration: .zeroIfReduceMotion(.defaultAnimationDuration)) {
-      self.logInButton.isHidden_stackViewSafe = loading
+      self.logInButton.isHiddenStackViewSafe = loading
 
       if let instance = instance {
         self.instanceTitleLabel.text = instance.title
         self.instanceURLLabel.text = instance.domain
         self.instanceImageView.sd_setImage(with: instance.thumbnail?.url)
-        self.instanceStackView.isHidden_stackViewSafe = false
+        self.instanceStackView.isHiddenStackViewSafe = false
 
         if instance.registrations {
           let joinButtonTitle: String
@@ -340,16 +340,16 @@ extension AddIdentityViewController {
           }
 
           self.joinButton.setTitle(joinButtonTitle, for: .normal)
-          self.joinButton.isHidden_stackViewSafe = loading
+          self.joinButton.isHiddenStackViewSafe = loading
         } else {
-          self.joinButton.isHidden_stackViewSafe = true
+          self.joinButton.isHiddenStackViewSafe = true
         }
 
-        self.browseButton.isHidden_stackViewSafe = !isPublicTimelineAvailable || loading
+        self.browseButton.isHiddenStackViewSafe = !isPublicTimelineAvailable || loading
       } else {
-        self.instanceStackView.isHidden_stackViewSafe = true
-        self.joinButton.isHidden_stackViewSafe = true
-        self.browseButton.isHidden_stackViewSafe = true
+        self.instanceStackView.isHiddenStackViewSafe = true
+        self.joinButton.isHiddenStackViewSafe = true
+        self.browseButton.isHiddenStackViewSafe = true
       }
     }
   }

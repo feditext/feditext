@@ -89,7 +89,7 @@ final class ComposeStatusViewController: UIViewController {
 
         statusView.isUserInteractionEnabled = false
         statusView.bodyView.alpha = 0.5
-        statusView.buttonsStackView.isHidden_stackViewSafe = true
+        statusView.buttonsStackView.isHiddenStackViewSafe = true
 
         stackView.addArrangedSubview(statusView)
       }
@@ -229,11 +229,11 @@ extension ComposeStatusViewController {
     }
 
     for compositionView in stackView.arrangedSubviews.compactMap({ $0 as? CompositionView }) {
-      compositionView.removeButton.isHidden_stackViewSafe = compositionViewModels.count == 1
-      compositionView.inReplyToView.isHidden_stackViewSafe =
+      compositionView.removeButton.isHiddenStackViewSafe = compositionViewModels.count == 1
+      compositionView.inReplyToView.isHiddenStackViewSafe =
         compositionView === stackView.arrangedSubviews.first
         && viewModel.inReplyToViewModel == nil
-      compositionView.hasReplyFollowingView.isHidden_stackViewSafe =
+      compositionView.hasReplyFollowingView.isHiddenStackViewSafe =
         compositionView === stackView.arrangedSubviews.last
     }
   }

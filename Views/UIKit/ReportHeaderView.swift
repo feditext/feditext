@@ -204,9 +204,9 @@ extension ReportHeaderView {
               ruleCheckbox.configuration?.image = .init(systemName: "square")
             }
           }
-          self.rulesHintLabel.isHidden_stackViewSafe = notViolation
+          self.rulesHintLabel.isHiddenStackViewSafe = notViolation
           for ruleCheckbox in self.ruleCheckboxes {
-            ruleCheckbox.isHidden_stackViewSafe = notViolation
+            ruleCheckbox.isHiddenStackViewSafe = notViolation
           }
 
           // Required to get correct layout after rules are shown or hidden.
@@ -241,7 +241,7 @@ extension ReportHeaderView {
     }
     ruleCheckboxes = []
 
-    rulesHintLabel.isHidden_stackViewSafe = viewModel.elements.category != .violation || rules.isEmpty
+    rulesHintLabel.isHiddenStackViewSafe = viewModel.elements.category != .violation || rules.isEmpty
 
     guard let rulesHintLabelIndex = stackView.arrangedSubviews.firstIndex(of: rulesHintLabel) else {
       assertionFailure("Can't find rules hint label to insert rules after")
@@ -278,7 +278,7 @@ extension ReportHeaderView {
       stackView.insertArrangedSubview(ruleCheckbox, at: insertionPoint)
       insertionPoint += 1
       ruleCheckbox.changesSelectionAsPrimaryAction = true
-      ruleCheckbox.isHidden_stackViewSafe = true
+      ruleCheckbox.isHiddenStackViewSafe = true
     }
   }
 }

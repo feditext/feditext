@@ -13,7 +13,7 @@ extension SuggestionsEndpoint: Endpoint {
   public typealias ResultType = [Suggestion]
   public var pathComponentsInContext: [String] { ["suggestions"] }
   public var method: HTTPMethod { .get }
-  public var APIVersion: String { "v2" }
+  public var apiVersion: String { "v2" }
 
   public var queryParameters: [URLQueryItem] {
     switch self {

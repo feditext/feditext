@@ -11,7 +11,7 @@ public enum FilterV2StatusEndpoint {
 extension FilterV2StatusEndpoint: Endpoint {
   public typealias ResultType = FilterV2.Status
 
-  public var APIVersion: String { "v2" }
+  public var apiVersion: String { "v2" }
 
   public var context: [String] {
     defaultContext + ["filters"]

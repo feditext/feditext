@@ -27,7 +27,7 @@ extension UIView {
   }
 
   // http://www.openradar.me/25087688
-  var isHidden_stackViewSafe: Bool {
+  var isHiddenStackViewSafe: Bool {
     get { isHidden }
     set {
       if isHidden != newValue {

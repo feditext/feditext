@@ -6,7 +6,7 @@ import Mastodon
 
 public protocol Endpoint {
   associatedtype ResultType: Decodable
-  var APIVersion: String { get }
+  var apiVersion: String { get }
   var context: [String] { get }
   var pathComponentsInContext: [String] { get }
   var method: HTTPMethod { get }
@@ -24,10 +24,10 @@ public protocol Endpoint {
 
 extension Endpoint {
   public var defaultContext: [String] {
-    ["api", APIVersion]
+    ["api", apiVersion]
   }
 
-  public var APIVersion: String { "v1" }
+  public var apiVersion: String { "v1" }
 
   public var context: [String] {
     defaultContext

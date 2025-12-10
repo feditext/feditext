@@ -166,13 +166,13 @@ extension StatusView: UIContentView {
 extension StatusView: UITextViewDelegate {
   func textView(
     _ textView: UITextView,
-    shouldInteractWith URL: URL,
+    shouldInteractWith url: URL,
     in characterRange: NSRange,
     interaction: UITextItemInteraction
   ) -> Bool {
     switch interaction {
     case .invokeDefaultAction:
-      statusConfiguration.viewModel.urlSelected(URL)
+      statusConfiguration.viewModel.urlSelected(url)
       return false
     case .preview: return false
     case .presentActions: return false

@@ -70,7 +70,7 @@ extension ZoomAnimator {
       options: [.transitionCrossDissolve]
     ) {
       self.transitionView?.frame = finalTransitionFrame
-      self.transitionView?.layer.contentsRect = .defaultContentsRect
+      self.transitionView?.layer.contentsRect = .defaultContents
       self.transitionView?.layer.cornerRadius = 0
       toVC.view.alpha = 1.0
       fromVC.tabBarController?.tabBar.alpha = 0
@@ -122,7 +122,7 @@ extension ZoomAnimator {
         self.transitionView?.alpha = 0
       }
 
-      self.transitionView?.layer.contentsRect = toReferenceView?.layer.contentsRect ?? .defaultContentsRect
+      self.transitionView?.layer.contentsRect = toReferenceView?.layer.contentsRect ?? .defaultContents
       self.transitionView?.layer.cornerRadius = toReferenceView?.layer.cornerRadius ?? 0
 
       toVC.tabBarController?.tabBar.alpha = 1

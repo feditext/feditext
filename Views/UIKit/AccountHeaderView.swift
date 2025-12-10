@@ -295,7 +295,7 @@ final class AccountHeaderView: UIView {
 extension AccountHeaderView: UITextViewDelegate {
   func textView(
     _ textView: UITextView,
-    shouldInteractWith URL: URL,
+    shouldInteractWith url: URL,
     in characterRange: NSRange,
     interaction: UITextItemInteraction
   ) -> Bool {
@@ -304,7 +304,7 @@ extension AccountHeaderView: UITextViewDelegate {
     }
     switch interaction {
     case .invokeDefaultAction:
-      viewModel.accountViewModel?.urlSelected(URL)
+      viewModel.accountViewModel?.urlSelected(url)
       return false
     case .preview: return false
     case .presentActions: return false
