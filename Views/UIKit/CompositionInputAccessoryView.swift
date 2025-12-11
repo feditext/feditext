@@ -66,8 +66,12 @@ final class CompositionInputAccessoryView: UIView {
 extension CompositionInputAccessoryView {
   fileprivate static let autocompleteCollectionViewMaxHeight: CGFloat = 150
 
+  /// This constraint is applied by iOS when this view is set as an input accessory view, and controls its total height.
   fileprivate var heightConstraint: NSLayoutConstraint? {
-    superview?.constraints.first(where: { $0.identifier == "accessoryHeight" })
+    // iOS 18+
+    constraints.first(where: { $0.identifier == "accessoryHeight" })
+      // iOS 15–17
+      ?? superview?.constraints.first(where: { $0.identifier == "accessoryHeight" })
   }
 
   // swiftlint:disable:next function_body_length
