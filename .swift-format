@@ -21,7 +21,7 @@
     ]
   },
   "prioritizeKeepingFunctionOutputTogether" : false,
-  "reflowMultilineStringLiterals" : "never",
+  "reflowMultilineStringLiterals" : "onlyLinesOverLength",
   "respectsExistingLineBreaks" : true,
   "rules" : {
     "AllPublicDeclarationsHaveDocumentation" : false,
