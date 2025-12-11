@@ -42,7 +42,7 @@ extension ExploreService {
 
   public func fetchRecommendedStatuses() -> AnyPublisher<[Status], Error> {
     // Pixelfed doesn't sort its random daily SFW recommendations, so we have to.
-    return mastodonAPIClient.request(Pixelfed.DiscoverEndpoint.posts)
+    mastodonAPIClient.request(Pixelfed.DiscoverEndpoint.posts)
       .map { $0.posts.sorted(by: { lhs, rhs in lhs.createdAt > rhs.createdAt }) }
       .eraseToAnyPublisher()
   }

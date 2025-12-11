@@ -62,7 +62,7 @@ public struct AnnotatedAPIError: Error, AnnotatedError, SpecialCaseError, Locali
   }
 
   public var errorDescription: String? {
-    return "\(method) \(url.absoluteString)\n\n\(apiError.error)"
+    "\(method) \(url.absoluteString)\n\n\(apiError.error)"
   }
 
   public var failQuietly: Bool { false }

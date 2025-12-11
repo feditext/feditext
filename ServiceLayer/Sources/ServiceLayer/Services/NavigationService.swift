@@ -185,7 +185,7 @@ extension NavigationService {
 
   /// Open a report in the web interface.
   public func report(id: Report.Id) -> Navigation {
-    return .authenticatedWebView(
+    .authenticatedWebView(
       AuthenticatedWebViewService(environment: environment),
       mastodonAPIClient.instanceURL.appendingPathComponents("admin", "reports", id)
     )

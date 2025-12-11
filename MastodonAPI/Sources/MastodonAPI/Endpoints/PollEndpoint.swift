@@ -44,7 +44,7 @@ extension PollEndpoint: Endpoint {
   }
 
   public var requires: APICapabilityRequirements? {
-    return .mastodonForks(.assumeAvailable) | [
+    .mastodonForks(.assumeAvailable) | [
       .fedibird: .assumeAvailable,
       .pleroma: .assumeAvailable,
       .akkoma: .assumeAvailable,

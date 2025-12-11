@@ -92,7 +92,7 @@ final class TouchFallthroughTextView: UITextView, EmojiInsertable {
   }
 
   override var intrinsicContentSize: CGSize {
-    return text.isEmpty ? .zero : super.intrinsicContentSize
+    text.isEmpty ? .zero : super.intrinsicContentSize
   }
 
   func urlAndRect(at point: CGPoint) -> (URL, CGRect)? {
@@ -162,7 +162,7 @@ final class TouchFallthroughTextView: UITextView, EmojiInsertable {
 
   override var attributedText: NSAttributedString! {
     get {
-      return super.attributedText
+      super.attributedText
     }
 
     set {
@@ -191,7 +191,7 @@ extension TouchFallthroughTextView {
 
   /// Returns a dynamic color that darkens the system background color in light mode and brightens it in dark mode.
   fileprivate static func backgroundColor(for quoteLevel: Int) -> UIColor {
-    return .init { traitCollection in
+    .init { traitCollection in
       var h: CGFloat = 0
       var s: CGFloat = 0
       var b: CGFloat = 0

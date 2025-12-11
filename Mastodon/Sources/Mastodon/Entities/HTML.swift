@@ -89,10 +89,10 @@ extension AttributeScopes {
 
 extension AttributeDynamicLookup {
   public subscript<T: AttributedStringKey>(dynamicMember keyPath: KeyPath<AttributeScopes.FeditextAttributes, T>) -> T {
-    return self[T.self]
+    self[T.self]
   }
   public subscript<T: AttributedStringKey>(dynamicMember keyPath: KeyPath<AttributeScopes.AllAttributes, T>) -> T {
-    return self[T.self]
+    self[T.self]
   }
 }
 

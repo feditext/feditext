@@ -141,7 +141,7 @@ extension ExploreViewModel {
   }
 
   public func viewModel(tag: Tag) -> TagViewModel {
-    return .init(tag: tag, identityContext: identityContext)
+    .init(tag: tag, identityContext: identityContext)
   }
 
   public func viewModel(card: Card) -> CardViewModel {

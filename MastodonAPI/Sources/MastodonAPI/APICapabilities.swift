@@ -137,7 +137,7 @@ public struct APICapabilityRequirements {
   /// Set min versions for all Mastodon forks that closely track it.
   /// - Note: Fedibird uses its own versioning scheme in NodeInfo.
   public static func mastodonForks(_ minVersion: Semver) -> Self {
-    return [
+    [
       .mastodon: minVersion,
       .glitch: minVersion,
       .hometown: minVersion,

@@ -132,7 +132,7 @@ extension StatusService {
   }
 
   public func deleteAndRedraft() -> AnyPublisher<Status, Error> {
-    return mastodonAPIClient.request(StatusEndpoint.delete(id: status.displayStatus.id))
+    mastodonAPIClient.request(StatusEndpoint.delete(id: status.displayStatus.id))
       .flatMap { status in contentDatabase.delete(id: status.id).collect().map { _ in status } }
       .eraseToAnyPublisher()
   }

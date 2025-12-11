@@ -13,7 +13,7 @@ extension FamiliarFollowersEndpoint: Endpoint {
   public typealias ResultType = [FamiliarFollowers]
 
   public var context: [String] {
-    return defaultContext + ["accounts", "familiar_followers"]
+    defaultContext + ["accounts", "familiar_followers"]
   }
 
   public var pathComponentsInContext: [String] {

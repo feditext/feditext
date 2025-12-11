@@ -82,7 +82,7 @@ extension AttributeScopes {
 
 extension AttributeDynamicLookup {
   public subscript<T: AttributedStringKey>(dynamicMember keyPath: KeyPath<AttributeScopes.SirenAttributes, T>) -> T {
-    return self[T.self]
+    self[T.self]
   }
 }
 

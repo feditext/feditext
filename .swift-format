@@ -50,7 +50,7 @@
     "NoParensAroundConditions": true,
     "NoPlaygroundLiterals": true,
     "NoVoidReturnOnFunctionSignature": true,
-    "OmitExplicitReturns": false,
+    "OmitExplicitReturns": true,
     "OneCasePerLine": true,
     "OneVariableDeclarationPerLine": true,
     "OnlyOneTrailingClosureArgument": true,

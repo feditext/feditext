@@ -23,7 +23,7 @@ extension Results {
   /// This will result in a crash when the search results table gets multiple cells with the same ID,
   /// so we need to dedupe results before using them for that.
   public func dedupe() -> Self {
-    return Self(
+    Self(
       accounts: accounts.dedupe(),
       statuses: statuses.dedupe(),
       hashtags: hashtags.dedupe()
@@ -31,7 +31,7 @@ extension Results {
   }
 
   public func appending(_ results: Self) -> Self {
-    return Self(
+    Self(
       accounts: accounts + results.accounts,
       statuses: statuses + results.statuses,
       hashtags: hashtags + results.hashtags

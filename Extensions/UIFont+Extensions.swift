@@ -9,10 +9,10 @@ extension UIFont {
   }
 
   func bold() -> UIFont {
-    return withTraits(traits: .traitBold)
+    withTraits(traits: .traitBold)
   }
 
   func italic() -> UIFont {
-    return withTraits(traits: .traitItalic)
+    withTraits(traits: .traitItalic)
   }
 }

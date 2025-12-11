@@ -503,7 +503,7 @@ extension ContentDatabase {
   }
 
   public func setFollowedTags(_ tags: [FollowedTag]) -> AnyPublisher<Never, Error> {
-    return databaseWriter.mutatingPublisher {
+    databaseWriter.mutatingPublisher {
       for tag in tags {
         try tag.save($0)
       }
@@ -515,11 +515,11 @@ extension ContentDatabase {
   }
 
   public func createFollowedTag(_ tag: FollowedTag) -> AnyPublisher<Never, Error> {
-    return databaseWriter.mutatingPublisher { try tag.save($0) }
+    databaseWriter.mutatingPublisher { try tag.save($0) }
   }
 
   public func deleteFollowedTag(_ tag: FollowedTag) -> AnyPublisher<Never, Error> {
-    return databaseWriter.mutatingPublisher(
+    databaseWriter.mutatingPublisher(
       updates:
         FollowedTag
         .filter(FollowedTag.Columns.name == tag.name)

@@ -35,7 +35,7 @@ public struct PrefsLanguage: Identifiable, Equatable, Comparable, Hashable {
   }
 
   public static func < (lhs: PrefsLanguage, rhs: PrefsLanguage) -> Bool {
-    return lhs.localized.localizedCaseInsensitiveCompare(rhs.localized) == .orderedAscending
+    lhs.localized.localizedCaseInsensitiveCompare(rhs.localized) == .orderedAscending
   }
 
   public func hash(into hasher: inout Hasher) {

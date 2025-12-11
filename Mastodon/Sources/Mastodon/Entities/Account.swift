@@ -105,7 +105,7 @@ extension Account {
 
 extension Account: Hashable {
   public static func == (lhs: Account, rhs: Account) -> Bool {
-    return lhs.id == rhs.id && lhs.username == rhs.username && lhs.acct == rhs.acct
+    lhs.id == rhs.id && lhs.username == rhs.username && lhs.acct == rhs.acct
       && lhs.displayName == rhs.displayName && lhs.locked == rhs.locked && lhs.createdAt == rhs.createdAt
       && lhs.followersCount == rhs.followersCount && lhs.followingCount == rhs.followingCount
       && lhs.statusesCount == rhs.statusesCount && lhs.note == rhs.note && lhs.url == rhs.url

@@ -34,7 +34,7 @@ extension AttributedString {
 
   /// Return a copy of this string, formatted with Siren for a given text style.
   func nsFormatSiren(_ textStyle: UIFont.TextStyle) -> NSAttributedString {
-    return (try? NSAttributedString(formatSiren(textStyle), including: \.all)) ?? .init()
+    (try? NSAttributedString(formatSiren(textStyle), including: \.all)) ?? .init()
   }
 
   /// Remove trailing whitespace, which is common from `<p>` tags but makes posts look funny.
