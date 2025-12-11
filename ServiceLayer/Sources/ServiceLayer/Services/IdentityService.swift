@@ -339,18 +339,19 @@ extension IdentityService {
       .appendingPathComponent(deviceToken.base16EncodedString())
       .appendingPathComponent(id.uuidString)
 
-    return mastodonAPIClient.request(
-      PushSubscriptionEndpoint.create(
-        endpoint: endpoint,
-        publicKey: publicKey,
-        auth: auth,
-        alerts: alerts,
-        policy: policy
+    return
+      mastodonAPIClient.request(
+        PushSubscriptionEndpoint.create(
+          endpoint: endpoint,
+          publicKey: publicKey,
+          auth: auth,
+          alerts: alerts,
+          policy: policy
+        )
       )
-    )
-    .map { ($0.alerts, $0.policy, deviceToken, id) }
-    .flatMap(identityDatabase.updatePushSubscription(alerts:policy:deviceToken:id:))
-    .eraseToAnyPublisher()
+      .map { ($0.alerts, $0.policy, deviceToken, id) }
+      .flatMap(identityDatabase.updatePushSubscription(alerts:policy:deviceToken:id:))
+      .eraseToAnyPublisher()
   }
 
   public func updatePushSubscription(

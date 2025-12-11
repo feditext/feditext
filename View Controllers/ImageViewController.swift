@@ -196,12 +196,14 @@ final class ImageViewController: UIViewController {
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
 
-    let textHeight = descriptionTextView.sizeThatFits(
-      .init(
-        width: descriptionTextView.frame.width,
-        height: .greatestFiniteMagnitude
+    let textHeight =
+      descriptionTextView.sizeThatFits(
+        .init(
+          width: descriptionTextView.frame.width,
+          height: .greatestFiniteMagnitude
+        )
       )
-    ).height
+      .height
     descriptionTextView.isScrollEnabled = textHeight > descriptionTextView.frame.height
   }
 }

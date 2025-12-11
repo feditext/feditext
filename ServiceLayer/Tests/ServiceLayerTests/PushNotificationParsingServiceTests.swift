@@ -21,13 +21,14 @@ final class PushNotificationParsingServiceTests: XCTestCase {
 
     // Note: user agent private key in RFC example is raw format,
     // but Feditext expects X9.63.
-    let privateKeyData = try! P256.KeyAgreement.PrivateKey(
-      rawRepresentation: Data(
-        base64Encoded: "q1dXpw3UpT5VOmu_cf_v6ih07Aems3njxI-JWgLcM94"
-          .urlSafeBase64ToBase64()
-      )!
-    )
-    .x963Representation
+    let privateKeyData = try! P256.KeyAgreement
+      .PrivateKey(
+        rawRepresentation: Data(
+          base64Encoded: "q1dXpw3UpT5VOmu_cf_v6ih07Aems3njxI-JWgLcM94"
+            .urlSafeBase64ToBase64()
+        )!
+      )
+      .x963Representation
 
     let auth = Data(
       base64Encoded: "BTBZMqHH6r4Tts7J_aSIgg"

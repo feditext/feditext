@@ -42,11 +42,12 @@ final class NotificationsViewController: UIPageViewController {
       ),
     ]
 
-    super.init(
-      transitionStyle: .scroll,
-      navigationOrientation: .horizontal,
-      options: [.interPageSpacing: CGFloat.defaultSpacing]
-    )
+    super
+      .init(
+        transitionStyle: .scroll,
+        navigationOrientation: .horizontal,
+        options: [.interPageSpacing: CGFloat.defaultSpacing]
+      )
 
     if let firstViewController = notificationViewControllers.first {
       setViewControllers([firstViewController], direction: .forward, animated: false)

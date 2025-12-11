@@ -41,13 +41,14 @@ final class AutocompleteDataSource: UICollectionViewDiffableDataSource<Autocompl
       $0.viewModel = EmojiViewModel(emoji: $2, identityContext: parentViewModel.identityContext)
     }
 
-    super.init(collectionView: collectionView) {
-      if case .emoji(let emoji) = $2 {
-        return $0.dequeueConfiguredReusableCell(using: emojiRegistration, for: $1, item: emoji)
-      } else {
-        return $0.dequeueConfiguredReusableCell(using: registration, for: $1, item: $2)
+    super
+      .init(collectionView: collectionView) {
+        if case .emoji(let emoji) = $2 {
+          return $0.dequeueConfiguredReusableCell(using: emojiRegistration, for: $1, item: emoji)
+        } else {
+          return $0.dequeueConfiguredReusableCell(using: registration, for: $1, item: $2)
+        }
       }
-    }
 
     queryPublisher
       .replaceNil(with: "")
@@ -115,16 +116,17 @@ extension AutocompleteDataSource {
   fileprivate func apply(searchViewModelUpdate: CollectionUpdate, emojiSections: [PickerEmoji.Category: [PickerEmoji]])
   {
     var newSnapshot = NSDiffableDataSourceSnapshot<AutocompleteSection, AutocompleteItem>()
-    let items: [AutocompleteItem] = searchViewModelUpdate.sections.map(\.items).reduce([], +).compactMap {
-      switch $0 {
-      case .account(let account, _, _, _, _):
-        return .account(account)
-      case .tag(let tag):
-        return .tag(tag)
-      default:
-        return nil
+    let items: [AutocompleteItem] = searchViewModelUpdate.sections.map(\.items).reduce([], +)
+      .compactMap {
+        switch $0 {
+        case .account(let account, _, _, _, _):
+          return .account(account)
+        case .tag(let tag):
+          return .tag(tag)
+        default:
+          return nil
+        }
       }
-    }
     let emojis = emojiSections.sorted { $0.0 < $1.0 }.map(\.value).reduce([], +).map(AutocompleteItem.emoji)
 
     newSnapshot.appendSections([.search])

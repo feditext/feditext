@@ -28,14 +28,15 @@ final class SecondaryNavigationButton: UIBarButtonItem {
       button.heightAnchor.constraint(equalToConstant: .barButtonItemDimension),
     ])
 
-    viewModel.identityContext.$identity.sink {
-      button.sd_setImage(
-        with: $0.image,
-        for: .normal,
-        placeholderImage: UIImage(systemName: "line.horizontal.3")
-      )
-    }
-    .store(in: &cancellables)
+    viewModel.identityContext.$identity
+      .sink {
+        button.sd_setImage(
+          with: $0.image,
+          for: .normal,
+          placeholderImage: UIImage(systemName: "line.horizontal.3")
+        )
+      }
+      .store(in: &cancellables)
 
     let imageTransformer = SDImageRoundCornerTransformer(
       radius: .greatestFiniteMagnitude,
@@ -44,33 +45,34 @@ final class SecondaryNavigationButton: UIBarButtonItem {
       borderColor: nil
     )
 
-    viewModel.$recentIdentities.sink { identities in
-      button.menu = UIMenu(
-        children: identities.map { identity in
-          UIDeferredMenuElement { completion in
-            let action = UIAction(title: identity.handle) { _ in
-              rootViewModel.identitySelected(id: identity.id)
-            }
+    viewModel.$recentIdentities
+      .sink { identities in
+        button.menu = UIMenu(
+          children: identities.map { identity in
+            UIDeferredMenuElement { completion in
+              let action = UIAction(title: identity.handle) { _ in
+                rootViewModel.identitySelected(id: identity.id)
+              }
 
-            if let image = identity.image {
-              SDWebImageManager.shared.loadImage(
-                with: image,
-                options: [.transformAnimatedImage],
-                context: [.imageTransformer: imageTransformer],
-                progress: nil
-              ) { (image, _, _, _, _, _) in
-                action.image = image
+              if let image = identity.image {
+                SDWebImageManager.shared.loadImage(
+                  with: image,
+                  options: [.transformAnimatedImage],
+                  context: [.imageTransformer: imageTransformer],
+                  progress: nil
+                ) { (image, _, _, _, _, _) in
+                  action.image = image
 
+                  completion([action])
+                }
+              } else {
                 completion([action])
               }
-            } else {
-              completion([action])
             }
           }
-        }
-      )
-    }
-    .store(in: &cancellables)
+        )
+      }
+      .store(in: &cancellables)
   }
 
   @available(*, unavailable)

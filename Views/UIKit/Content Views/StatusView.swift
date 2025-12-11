@@ -649,12 +649,13 @@ extension StatusView {
     hasReplyFollowingView.isHidden = !viewModel.configuration.hasReplyFollowing || viewModel.shouldFilter
 
     if viewModel.isReblog {
-      let attributedTitle = "status.reblogged-by-%@".localizedBolding(
-        displayName: viewModel.rebloggedByDisplayName,
-        emojis: viewModel.rebloggedByDisplayNameEmojis,
-        label: infoLabel,
-        identityContext: viewModel.identityContext
-      )
+      let attributedTitle = "status.reblogged-by-%@"
+        .localizedBolding(
+          displayName: viewModel.rebloggedByDisplayName,
+          emojis: viewModel.rebloggedByDisplayNameEmojis,
+          label: infoLabel,
+          identityContext: viewModel.identityContext
+        )
       let highlightedAttributedTitle = NSMutableAttributedString(attributedString: attributedTitle)
 
       highlightedAttributedTitle.addAttribute(
@@ -805,9 +806,11 @@ extension StatusView {
       if isContextParent {
         button.heightAnchor.constraint(equalToConstant: .minimumButtonDimension).isActive = true
       } else {
-        button.heightAnchor.constraint(
-          greaterThanOrEqualToConstant: .minimumButtonDimension * 2 / 3
-        ).isActive = true
+        button.heightAnchor
+          .constraint(
+            greaterThanOrEqualToConstant: .minimumButtonDimension * 2 / 3
+          )
+          .isActive = true
       }
     }
 

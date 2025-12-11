@@ -120,43 +120,44 @@ extension CompositionPollView {
       buttonsStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: .minimumButtonDimension),
     ])
 
-    viewModel.$pollOptions.sink { [weak self] in
-      guard let self = self else { return }
+    viewModel.$pollOptions
+      .sink { [weak self] in
+        guard let self = self else { return }
 
-      addChoiceButton.isEnabled = $0.count < CompositionViewModel.maxPollOptionCount
+        addChoiceButton.isEnabled = $0.count < CompositionViewModel.maxPollOptionCount
 
-      for (index, option) in $0.enumerated()
-      where !self.pollOptionViews.contains(where: { $0.option === option }) {
-        let optionView = CompositionPollOptionView(
-          viewModel: self.viewModel,
-          parentViewModel: self.parentViewModel,
-          option: option
-        )
+        for (index, option) in $0.enumerated()
+        where !self.pollOptionViews.contains(where: { $0.option === option }) {
+          let optionView = CompositionPollOptionView(
+            viewModel: self.viewModel,
+            parentViewModel: self.parentViewModel,
+            option: option
+          )
 
-        optionView.textField.placeholder = String.localizedStringWithFormat(
-          NSLocalizedString("status.poll.option-%ld", comment: ""),
-          index + 1
-        )
-        self.stackView.insertArrangedSubview(optionView, at: index)
-      }
+          optionView.textField.placeholder = String.localizedStringWithFormat(
+            NSLocalizedString("status.poll.option-%ld", comment: ""),
+            index + 1
+          )
+          self.stackView.insertArrangedSubview(optionView, at: index)
+        }
 
-      for (index, optionView) in self.pollOptionViews.enumerated() {
-        optionView.removeButton.isHiddenStackViewSafe = index < CompositionViewModel.minPollOptionCount
+        for (index, optionView) in self.pollOptionViews.enumerated() {
+          optionView.removeButton.isHiddenStackViewSafe = index < CompositionViewModel.minPollOptionCount
 
-        if !$0.contains(where: { $0 === optionView.option }) {
-          if optionView.textField.isFirstResponder {
-            if index > 0 {
-              self.pollOptionViews[index - 1].textField.becomeFirstResponder()
-            } else if self.pollOptionViews.count > index {
-              self.pollOptionViews[index + 1].textField.becomeFirstResponder()
+          if !$0.contains(where: { $0 === optionView.option }) {
+            if optionView.textField.isFirstResponder {
+              if index > 0 {
+                self.pollOptionViews[index - 1].textField.becomeFirstResponder()
+              } else if self.pollOptionViews.count > index {
+                self.pollOptionViews[index + 1].textField.becomeFirstResponder()
+              }
             }
-          }
 
-          optionView.removeFromSuperview()
+            optionView.removeFromSuperview()
+          }
         }
       }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
 
     viewModel.$pollExpiresIn
       .sink { expiresInButton.setTitle(Self.format(expiry: $0), for: .normal) }

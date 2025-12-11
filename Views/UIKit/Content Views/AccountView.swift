@@ -111,7 +111,8 @@ extension AccountView {
     if configuration == .withNote {
       height +=
         .compactSpacing
-        + String(account.note.attrStr.characters).height(
+        + String(account.note.attrStr.characters)
+        .height(
           width: width,
           font: .preferredFont(forTextStyle: .callout)
         )

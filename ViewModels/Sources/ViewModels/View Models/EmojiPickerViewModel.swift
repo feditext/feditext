@@ -45,46 +45,48 @@ final public class EmojiPickerViewModel: ObservableObject {
       .replaceError(with: [:])
       .assign(to: &$systemEmojiAnnotationsAndTags)
 
-    $customEmoji.dropFirst().combineLatest(
-      $systemEmoji.dropFirst(),
-      $query,
-      $locale.combineLatest($systemEmojiAnnotationsAndTags, $emojiUses.dropFirst())
-    )
-    .map {
-      let (customEmoji, systemEmoji, query, (locale, systemEmojiAnnotationsAndTags, emojiUses)) = $0
-      var emojis = customEmoji.merging(systemEmoji) { $1 }
+    $customEmoji.dropFirst()
+      .combineLatest(
+        $systemEmoji.dropFirst(),
+        $query,
+        $locale.combineLatest($systemEmojiAnnotationsAndTags, $emojiUses.dropFirst())
+      )
+      .map {
+        let (customEmoji, systemEmoji, query, (locale, systemEmojiAnnotationsAndTags, emojiUses)) = $0
+        var emojis = customEmoji.merging(systemEmoji) { $1 }
 
-      if !query.isEmpty {
-        let matchingSystemEmojis = Set(
-          systemEmojiAnnotationsAndTags.filter {
-            $0.key.matches(query: query, locale: locale)
-          }.values
-        )
+        if !query.isEmpty {
+          let matchingSystemEmojis = Set(
+            systemEmojiAnnotationsAndTags.filter {
+              $0.key.matches(query: query, locale: locale)
+            }
+            .values
+          )
 
-        emojis = emojis.mapValues {
-          $0.filter {
-            if $0.system {
-              return matchingSystemEmojis.contains($0.name)
-            } else {
-              return $0.name.matches(query: query, locale: locale)
+          emojis = emojis.mapValues {
+            $0.filter {
+              if $0.system {
+                return matchingSystemEmojis.contains($0.name)
+              } else {
+                return $0.name.matches(query: query, locale: locale)
+              }
             }
           }
+        } else if queryOnly {
+          return [:]
         }
-      } else if queryOnly {
-        return [:]
-      }
 
-      if !queryOnly {
-        emojis[.frequentlyUsed] = emojiUses.compactMap { use in
-          emojis.values.reduce([], +)
-            .first { use.system == $0.system && use.emoji == $0.name }
-            .map(\.infrequentlyUsed)
+        if !queryOnly {
+          emojis[.frequentlyUsed] = emojiUses.compactMap { use in
+            emojis.values.reduce([], +)
+              .first { use.system == $0.system && use.emoji == $0.name }
+              .map(\.infrequentlyUsed)
+          }
         }
-      }
 
-      return emojis.filter { !$0.value.isEmpty }
-    }
-    .assign(to: &$emoji)
+        return emojis.filter { !$0.value.isEmpty }
+      }
+      .assign(to: &$emoji)
   }
 }
 

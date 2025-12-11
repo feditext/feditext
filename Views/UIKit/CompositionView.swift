@@ -258,15 +258,16 @@ extension CompositionView {
       }
       .store(in: &cancellables)
 
-    textView.pastedItemProviders.sink { [weak self] in
-      guard let self = self else { return }
+    textView.pastedItemProviders
+      .sink { [weak self] in
+        guard let self = self else { return }
 
-      self.viewModel.attach(
-        itemProviders: [$0],
-        parentViewModel: self.parentViewModel
-      )
-    }
-    .store(in: &cancellables)
+        self.viewModel.attach(
+          itemProviders: [$0],
+          parentViewModel: self.parentViewModel
+        )
+      }
+      .store(in: &cancellables)
 
     viewModel.$displayPoll
       .throttle(

@@ -230,18 +230,20 @@ extension PushNotificationParsingService {
       sharedInfo: HKDFInfo.auth.bytes,
       outputByteCount: pseudoRandomKeyLength
     )
-    let key = HKDF<SHA256>.deriveKey(
-      inputKeyMaterial: pseudoRandomKey,
-      salt: salt,
-      info: keyInfo,
-      outputByteCount: keyLength
-    )
-    let nonce = HKDF<SHA256>.deriveKey(
-      inputKeyMaterial: pseudoRandomKey,
-      salt: salt,
-      info: nonceInfo,
-      outputByteCount: nonceLength
-    )
+    let key = HKDF<SHA256>
+      .deriveKey(
+        inputKeyMaterial: pseudoRandomKey,
+        salt: salt,
+        info: keyInfo,
+        outputByteCount: keyLength
+      )
+    let nonce = HKDF<SHA256>
+      .deriveKey(
+        inputKeyMaterial: pseudoRandomKey,
+        salt: salt,
+        info: nonceInfo,
+        outputByteCount: nonceLength
+      )
 
     let sealedBox = try AES.GCM.SealedBox(combined: nonce.withUnsafeBytes(Array.init) + encryptedMessage)
     let decrypted = try AES.GCM.open(sealedBox, using: key)
@@ -307,19 +309,21 @@ extension PushNotificationParsingService {
     )
 
     // Content encryption key.
-    let key = HKDF<SHA256>.deriveKey(
-      inputKeyMaterial: inputKeyMaterial,
-      salt: salt,
-      info: HKDFInfo.aes128gcm.bytes,
-      outputByteCount: keyLength
-    )
+    let key = HKDF<SHA256>
+      .deriveKey(
+        inputKeyMaterial: inputKeyMaterial,
+        salt: salt,
+        info: HKDFInfo.aes128gcm.bytes,
+        outputByteCount: keyLength
+      )
 
-    let nonce = HKDF<SHA256>.deriveKey(
-      inputKeyMaterial: inputKeyMaterial,
-      salt: salt,
-      info: HKDFInfo.nonce.bytes,
-      outputByteCount: nonceLength
-    )
+    let nonce = HKDF<SHA256>
+      .deriveKey(
+        inputKeyMaterial: inputKeyMaterial,
+        salt: salt,
+        info: HKDFInfo.nonce.bytes,
+        outputByteCount: nonceLength
+      )
 
     let sealedBox = try AES.GCM.SealedBox(
       combined: nonce.withUnsafeBytes(Array.init) + encryptedMessage

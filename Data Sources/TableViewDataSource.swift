@@ -15,46 +15,47 @@ final class TableViewDataSource: UITableViewDiffableDataSource<CollectionSection
       tableView.register(cellClass, forCellReuseIdentifier: String(describing: cellClass))
     }
 
-    super.init(tableView: tableView) { tableView, indexPath, item in
-      let cell = tableView.dequeueReusableCell(
-        withIdentifier: String(describing: item.cellClass),
-        for: indexPath
-      )
+    super
+      .init(tableView: tableView) { tableView, indexPath, item in
+        let cell = tableView.dequeueReusableCell(
+          withIdentifier: String(describing: item.cellClass),
+          for: indexPath
+        )
 
-      switch (cell, viewModel.viewModel(indexPath: indexPath)) {
-      case (let statusCell as StatusTableViewCell, let statusViewModel as StatusViewModel):
-        statusCell.viewModel = statusViewModel
-      case (let accountCell as AccountTableViewCell, let accountViewModel as AccountViewModel):
-        accountCell.viewModel = accountViewModel
-      case (let loadMoreCell as LoadMoreTableViewCell, let loadMoreViewModel as LoadMoreViewModel):
-        loadMoreCell.viewModel = loadMoreViewModel
-      case (let notificationCell as NotificationTableViewCell, let notificationViewModel as NotificationViewModel):
-        notificationCell.viewModel = notificationViewModel
-      case (
-        let multiNotificationCell as MultiNotificationTableViewCell,
-        let multiNotificationViewModel as MultiNotificationViewModel
-      ):
-        multiNotificationCell.viewModel = multiNotificationViewModel
-      case (let conversationCell as ConversationTableViewCell, let conversationViewModel as ConversationViewModel):
-        conversationCell.viewModel = conversationViewModel
-      case (let tagCell as TagTableViewCell, let tagViewModel as TagViewModel):
-        tagCell.viewModel = tagViewModel
-      case (let announcementCell as AnnouncementTableViewCell, let announcementViewModel as AnnouncementViewModel):
-        announcementCell.viewModel = announcementViewModel
-      case (_, let moreResultsViewModel as MoreResultsViewModel):
-        var configuration = cell.defaultContentConfiguration()
-        let statusWord = viewModel.identityContext.appPreferences.statusWord
+        switch (cell, viewModel.viewModel(indexPath: indexPath)) {
+        case (let statusCell as StatusTableViewCell, let statusViewModel as StatusViewModel):
+          statusCell.viewModel = statusViewModel
+        case (let accountCell as AccountTableViewCell, let accountViewModel as AccountViewModel):
+          accountCell.viewModel = accountViewModel
+        case (let loadMoreCell as LoadMoreTableViewCell, let loadMoreViewModel as LoadMoreViewModel):
+          loadMoreCell.viewModel = loadMoreViewModel
+        case (let notificationCell as NotificationTableViewCell, let notificationViewModel as NotificationViewModel):
+          notificationCell.viewModel = notificationViewModel
+        case (
+          let multiNotificationCell as MultiNotificationTableViewCell,
+          let multiNotificationViewModel as MultiNotificationViewModel
+        ):
+          multiNotificationCell.viewModel = multiNotificationViewModel
+        case (let conversationCell as ConversationTableViewCell, let conversationViewModel as ConversationViewModel):
+          conversationCell.viewModel = conversationViewModel
+        case (let tagCell as TagTableViewCell, let tagViewModel as TagViewModel):
+          tagCell.viewModel = tagViewModel
+        case (let announcementCell as AnnouncementTableViewCell, let announcementViewModel as AnnouncementViewModel):
+          announcementCell.viewModel = announcementViewModel
+        case (_, let moreResultsViewModel as MoreResultsViewModel):
+          var configuration = cell.defaultContentConfiguration()
+          let statusWord = viewModel.identityContext.appPreferences.statusWord
 
-        configuration.text = moreResultsViewModel.scope.moreDescription(statusWord: statusWord)
+          configuration.text = moreResultsViewModel.scope.moreDescription(statusWord: statusWord)
 
-        cell.contentConfiguration = configuration
-        cell.accessoryType = .disclosureIndicator
-      default:
-        break
+          cell.contentConfiguration = configuration
+          cell.accessoryType = .disclosureIndicator
+        default:
+          break
+        }
+
+        return cell
       }
-
-      return cell
-    }
   }
 
   override func apply(

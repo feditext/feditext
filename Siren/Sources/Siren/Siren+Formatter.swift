@@ -30,14 +30,17 @@ extension Siren {
       var baselineOffset: CGFloat = 0
 
       // Embiggen font if this run is inside a header.
-      if let headerLevel = run.presentationIntent?.components.lazy.compactMap({ component in
-        switch component.kind {
-        case .header(let level):
-          return level
-        default:
-          return nil
-        }
-      }).first {
+      if let headerLevel = run.presentationIntent?.components.lazy
+        .compactMap({ component in
+          switch component.kind {
+          case .header(let level):
+            return level
+          default:
+            return nil
+          }
+        })
+        .first
+      {
         fontSize *= 1.0 + CGFloat(7 - headerLevel) / 10.0
       }
 

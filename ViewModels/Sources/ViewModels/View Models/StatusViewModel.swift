@@ -493,20 +493,21 @@ extension StatusViewModel {
       let followedTags = followedTags
 
       eventsSubject.send(
-        statusService.asIdentity(id: identity.id).map {
-          let replyViewModel = Self(
-            statusService: $0,
-            identityContext: identityContext,
-            timeline: timeline,
-            followedTags: followedTags,
-            eventsSubject: .init()
-          )
+        statusService.asIdentity(id: identity.id)
+          .map {
+            let replyViewModel = Self(
+              statusService: $0,
+              identityContext: identityContext,
+              timeline: timeline,
+              followedTags: followedTags,
+              eventsSubject: .init()
+            )
 
-          replyViewModel.configuration = configuration
+            replyViewModel.configuration = configuration
 
-          return CollectionItemEvent.compose(identity: identity, inReplyTo: replyViewModel)
-        }
-        .eraseToAnyPublisher()
+            return CollectionItemEvent.compose(identity: identity, inReplyTo: replyViewModel)
+          }
+          .eraseToAnyPublisher()
       )
     } else {
       let replyViewModel = Self(

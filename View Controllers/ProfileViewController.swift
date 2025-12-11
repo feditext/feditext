@@ -19,11 +19,12 @@ final class ProfileViewController: TableViewController {
     self.viewModel = viewModel
     self.identityContext = identityContext
 
-    super.init(
-      viewModel: viewModel,
-      rootViewModel: rootViewModel,
-      parentNavigationController: parentNavigationController
-    )
+    super
+      .init(
+        viewModel: viewModel,
+        rootViewModel: rootViewModel,
+        parentNavigationController: parentNavigationController
+      )
   }
 
   override func viewDidLoad() {
@@ -51,18 +52,19 @@ final class ProfileViewController: TableViewController {
       }
       .store(in: &cancellables)
 
-    viewModel.imagePresentations.sink { [weak self] in
-      guard let self = self else { return }
+    viewModel.imagePresentations
+      .sink { [weak self] in
+        guard let self = self else { return }
 
-      let imagePageViewController = ImagePageViewController(imageURL: $0)
-      let imageNavigationController = ImageNavigationController(imagePageViewController: imagePageViewController)
+        let imagePageViewController = ImagePageViewController(imageURL: $0)
+        let imageNavigationController = ImageNavigationController(imagePageViewController: imagePageViewController)
 
-      imageNavigationController.transitionController.fromDelegate = self
-      self.transitionViewTag = $0.hashValue
+        imageNavigationController.transitionController.fromDelegate = self
+        self.transitionViewTag = $0.hashValue
 
-      self.present(imageNavigationController, animated: true)
-    }
-    .store(in: &cancellables)
+        self.present(imageNavigationController, animated: true)
+      }
+      .store(in: &cancellables)
 
     tableView.tableHeaderView = accountHeaderView
   }

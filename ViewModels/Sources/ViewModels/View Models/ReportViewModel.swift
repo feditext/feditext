@@ -20,15 +20,16 @@ public final class ReportViewModel: CollectionItemsViewModel {
     self.accountService = accountService
     self.elements = ReportElements(accountId: accountService.account.id)
 
-    super.init(
-      collectionService: identityContext.service.navigationService.timelineService(
-        timeline: .profile(
-          accountId: accountService.account.id,
-          profileCollection: .statusesAndBoosts
-        )
-      ),
-      identityContext: identityContext
-    )
+    super
+      .init(
+        collectionService: identityContext.service.navigationService.timelineService(
+          timeline: .profile(
+            accountId: accountService.account.id,
+            profileCollection: .statusesAndBoosts
+          )
+        ),
+        identityContext: identityContext
+      )
 
     identityContext.service
       .rulesPublisher()

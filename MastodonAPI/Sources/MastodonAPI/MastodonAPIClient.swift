@@ -136,7 +136,8 @@ public struct MastodonAPIClient: Sendable {
       file: file,
       line: line,
       function: function
-    ).decoded
+    )
+    .decoded
   }
 
   /// Request something where the complete list of results is paged using `Link` headers.
@@ -165,16 +166,17 @@ public struct MastodonAPIClient: Sendable {
     if let response = response,
       let links = response.value(forHTTPHeaderField: "Link")
     {
-      let queryItems = Self.linkDataDetector.matches(
-        in: links,
-        range: .init(links.startIndex..<links.endIndex, in: links)
-      )
-      .compactMap { match -> [URLQueryItem]? in
-        guard let url = match.url else { return nil }
+      let queryItems = Self.linkDataDetector
+        .matches(
+          in: links,
+          range: .init(links.startIndex..<links.endIndex, in: links)
+        )
+        .compactMap { match -> [URLQueryItem]? in
+          guard let url = match.url else { return nil }
 
-        return URLComponents(url: url, resolvingAgainstBaseURL: true)?.queryItems
-      }
-      .reduce([], +)
+          return URLComponents(url: url, resolvingAgainstBaseURL: true)?.queryItems
+        }
+        .reduce([], +)
 
       maxId = queryItems.first { $0.name == "max_id" }?.value
       minId = queryItems.first { $0.name == "min_id" }?.value

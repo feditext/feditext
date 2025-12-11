@@ -263,10 +263,11 @@ extension StatusBodyView {
 
     if shouldHideDueToSpoiler || shouldHideDueToLongContent {
       // Include Show More button height.
-      height += NSLocalizedString("status.show-more", comment: "").height(
-        width: width,
-        font: .preferredFont(forTextStyle: .headline)
-      )
+      height += NSLocalizedString("status.show-more", comment: "")
+        .height(
+          width: width,
+          font: .preferredFont(forTextStyle: .headline)
+        )
       height += .compactSpacing
     }
 
@@ -488,23 +489,24 @@ extension StatusBodyView {
     guard let reasonTagIDs = viewModel?.reasonTagIDs else { return nil }
 
     let highContrast = traitCollection.accessibilityContrast == .high
-    var text = tagViewTagPairs.lazy.map { (tagID, tagText) in
-      var part = AttributedString("#" + tagText)
-      part.link = AppUrl.tagTimeline(tagID).url
-      part.foregroundColor = Self.tagsViewLinkColor
+    var text = tagViewTagPairs.lazy
+      .map { (tagID, tagText) in
+        var part = AttributedString("#" + tagText)
+        part.link = AppUrl.tagTimeline(tagID).url
+        part.foregroundColor = Self.tagsViewLinkColor
 
-      if reasonTagIDs.contains(tagID) {
-        // Make followed tags stand out.
-        if highContrast {
-          part.uiKit.underlineStyle = .single
-          part.uiKit.underlineColor = .tintColor
-        } else {
-          part.backgroundColor = Self.tagsViewFollowedTagBackgroundColor
+        if reasonTagIDs.contains(tagID) {
+          // Make followed tags stand out.
+          if highContrast {
+            part.uiKit.underlineStyle = .single
+            part.uiKit.underlineColor = .tintColor
+          } else {
+            part.backgroundColor = Self.tagsViewFollowedTagBackgroundColor
+          }
         }
+        return part
       }
-      return part
-    }
-    .joined(separator: " ")
+      .joined(separator: " ")
 
     text.font = UIFont.preferredFont(forTextStyle: isContextParent ? .callout : .footnote)
 
@@ -519,17 +521,18 @@ extension StatusBodyView {
     else { return nil }
 
     return String(
-      tagViewTagPairs.lazy.map { tagPair in
-        if viewModel.reasonTagIDs.contains(tagPair.id) {
-          String.localizedStringWithFormat(
-            NSLocalizedString("status.accessibility.followed-hashtag-%@", comment: ""),
+      tagViewTagPairs.lazy
+        .map { tagPair in
+          if viewModel.reasonTagIDs.contains(tagPair.id) {
+            String.localizedStringWithFormat(
+              NSLocalizedString("status.accessibility.followed-hashtag-%@", comment: ""),
+              tagPair.name
+            )
+          } else {
             tagPair.name
-          )
-        } else {
-          tagPair.name
+          }
         }
-      }
-      .joined(separator: ", ")
+        .joined(separator: ", ")
     )
   }
 

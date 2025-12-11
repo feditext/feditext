@@ -113,11 +113,13 @@ extension StatusRecord {
   static let ancestorJoins = hasMany(
     StatusAncestorJoin.self,
     using: ForeignKey([StatusAncestorJoin.Columns.parentId])
-  ).order(StatusAncestorJoin.Columns.order)
+  )
+  .order(StatusAncestorJoin.Columns.order)
   static let descendantJoins = hasMany(
     StatusDescendantJoin.self,
     using: ForeignKey([StatusDescendantJoin.Columns.parentId])
-  ).order(StatusDescendantJoin.Columns.order)
+  )
+  .order(StatusDescendantJoin.Columns.order)
   static let ancestors = hasMany(
     StatusRecord.self,
     through: ancestorJoins,

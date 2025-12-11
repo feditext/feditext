@@ -41,9 +41,10 @@ extension ImageCacheConfiguration {
   )?
   .appendingPathComponent("Library")
   .appendingPathComponent("Caches")
-  fileprivate static let imageCacheDirectoryURL = cachesDirectoryURL?.appendingPathComponent(
-    "com.metabolist.metatext.images"
-  )
+  fileprivate static let imageCacheDirectoryURL = cachesDirectoryURL?
+    .appendingPathComponent(
+      "com.metabolist.metatext.images"
+    )
   fileprivate static let legacyImageCacheDirectoryURL =
     cachesDirectoryURL?.appendingPathComponent("com.onevcat.Kingfisher.ImageCache.Images")
 }

@@ -7,7 +7,7 @@
   "indentation" : {
     "spaces" : 2
   },
-  "lineBreakAroundMultilineExpressionChainComponents" : false,
+  "lineBreakAroundMultilineExpressionChainComponents" : true,
   "lineBreakBeforeControlFlowKeywords" : false,
   "lineBreakBeforeEachArgument" : true,
   "lineBreakBeforeEachGenericRequirement" : false,

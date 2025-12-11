@@ -189,9 +189,11 @@ extension CompositionViewModel {
 
     guard let inputItem = extensionContext.inputItems.first as? NSExtensionItem else { return }
 
-    if let urlItemProvider = inputItem.attachments?.first(where: {
-      $0.hasItemConformingToTypeIdentifier(UTType.url.identifier)
-    }) {
+    if let urlItemProvider = inputItem.attachments?
+      .first(where: {
+        $0.hasItemConformingToTypeIdentifier(UTType.url.identifier)
+      })
+    {
       urlItemProvider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { result, _ in
         guard let url = result as? URL else { return }
 
@@ -202,9 +204,11 @@ extension CompositionViewModel {
 
         self.text.append(url.absoluteString)
       }
-    } else if let plainTextItemProvider = inputItem.attachments?.first(where: {
-      $0.hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
-    }) {
+    } else if let plainTextItemProvider = inputItem.attachments?
+      .first(where: {
+        $0.hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
+      })
+    {
       plainTextItemProvider.loadItem(forTypeIdentifier: UTType.plainText.identifier, options: nil) { result, _ in
         guard let text = result as? String else { return }
 
@@ -288,12 +292,13 @@ extension CompositionViewModel {
       .sink { [weak self] _ in
         self?.attachmentUploadViewModels.removeAll { $0 === viewModel }
       } receiveValue: { [weak self] in
-        self?.attachmentViewModels.append(
-          AttachmentViewModel(
-            attachment: $0,
-            identityContext: viewModel.parentViewModel.identityContext
+        self?.attachmentViewModels
+          .append(
+            AttachmentViewModel(
+              attachment: $0,
+              identityContext: viewModel.parentViewModel.identityContext
+            )
           )
-        )
       }
   }
 

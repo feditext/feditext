@@ -186,20 +186,22 @@ extension NotificationView {
 
     switch viewModel.type {
     case .follow:
-      typeLabel.attributedText = "notifications.followed-you-%@".localizedBolding(
-        displayName: viewModel.accountViewModel.displayName,
-        emojis: viewModel.accountViewModel.emojis,
-        label: typeLabel,
-        identityContext: viewModel.identityContext
-      )
+      typeLabel.attributedText = "notifications.followed-you-%@"
+        .localizedBolding(
+          displayName: viewModel.accountViewModel.displayName,
+          emojis: viewModel.accountViewModel.emojis,
+          label: typeLabel,
+          identityContext: viewModel.identityContext
+        )
       iconImageView.tintColor = nil
     case .followRequest:
-      typeLabel.attributedText = "notifications.requested-to-follow-you-%@".localizedBolding(
-        displayName: viewModel.accountViewModel.displayName,
-        emojis: viewModel.accountViewModel.emojis,
-        label: typeLabel,
-        identityContext: viewModel.identityContext
-      )
+      typeLabel.attributedText = "notifications.requested-to-follow-you-%@"
+        .localizedBolding(
+          displayName: viewModel.accountViewModel.displayName,
+          emojis: viewModel.accountViewModel.emojis,
+          label: typeLabel,
+          identityContext: viewModel.identityContext
+        )
       iconImageView.tintColor = nil
     case .reblog:
       let stringName: String
@@ -240,12 +242,13 @@ extension NotificationView {
       )
       iconImageView.tintColor = nil
     case .adminSignup:
-      typeLabel.attributedText = "notifications.signed-up-%@".localizedBolding(
-        displayName: viewModel.accountViewModel.displayName,
-        emojis: viewModel.accountViewModel.emojis,
-        label: typeLabel,
-        identityContext: viewModel.identityContext
-      )
+      typeLabel.attributedText = "notifications.signed-up-%@"
+        .localizedBolding(
+          displayName: viewModel.accountViewModel.displayName,
+          emojis: viewModel.accountViewModel.emojis,
+          label: typeLabel,
+          identityContext: viewModel.identityContext
+        )
       iconImageView.tintColor = .systemOrange
     case .adminReport:
       if let statusCount = viewModel.reportViewModel?.report.statusIds?.count, statusCount > 0 {
@@ -264,21 +267,23 @@ extension NotificationView {
           count: statusCount
         )
       } else {
-        typeLabel.attributedText = "notifications.reported-an-account-%@".localizedBolding(
+        typeLabel.attributedText = "notifications.reported-an-account-%@"
+          .localizedBolding(
+            displayName: viewModel.accountViewModel.displayName,
+            emojis: viewModel.accountViewModel.emojis,
+            label: typeLabel,
+            identityContext: viewModel.identityContext
+          )
+      }
+      iconImageView.tintColor = .systemOrange
+    default:
+      typeLabel.attributedText = "notifications.unknown-%@"
+        .localizedBolding(
           displayName: viewModel.accountViewModel.displayName,
           emojis: viewModel.accountViewModel.emojis,
           label: typeLabel,
           identityContext: viewModel.identityContext
         )
-      }
-      iconImageView.tintColor = .systemOrange
-    default:
-      typeLabel.attributedText = "notifications.unknown-%@".localizedBolding(
-        displayName: viewModel.accountViewModel.displayName,
-        emojis: viewModel.accountViewModel.emojis,
-        label: typeLabel,
-        identityContext: viewModel.identityContext
-      )
       iconImageView.tintColor = nil
     }
 

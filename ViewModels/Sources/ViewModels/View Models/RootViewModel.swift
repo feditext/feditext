@@ -154,11 +154,12 @@ extension RootViewModel {
       .catch { [weak self] _ -> Empty<Identity, Never> in
         DispatchQueue.main.async {
           if self?.navigationViewModel?.identityContext.identity.id == id {
-            self?.identitySelected(
-              id: self?.mostRecentlyUsedIdentityId,
-              immediate: false,
-              notify: true
-            )
+            self?
+              .identitySelected(
+                id: self?.mostRecentlyUsedIdentityId,
+                immediate: false,
+                notify: true
+              )
           }
         }
 

@@ -176,17 +176,18 @@ extension AddIdentityViewController {
     getStartedButton.addAction(
       UIAction { [weak self] _ in
         self?.urlTextField.resignFirstResponder()
-        self?.present(
-          UINavigationController(
-            rootViewController: InstancePickerViewController {
-              self?.viewModel.urlFieldText = $1
-              self?.urlTextField.text = $1
-              self?.urlTextField.becomeFirstResponder()
-              self?.dismiss(animated: true)
-            }
-          ),
-          animated: true
-        )
+        self?
+          .present(
+            UINavigationController(
+              rootViewController: InstancePickerViewController {
+                self?.viewModel.urlFieldText = $1
+                self?.urlTextField.text = $1
+                self?.urlTextField.becomeFirstResponder()
+                self?.dismiss(animated: true)
+              }
+            ),
+            animated: true
+          )
       },
       for: .touchUpInside
     )

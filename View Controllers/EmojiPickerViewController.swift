@@ -146,10 +146,11 @@ final class EmojiPickerViewController: UICollectionViewController {
 
     viewModel.$emoji
       .sink { [weak self] in
-        self?.dataSource.apply(
-          $0.snapshot(),
-          animatingDifferences: !UIAccessibility.isReduceMotionEnabled
-        )
+        self?.dataSource
+          .apply(
+            $0.snapshot(),
+            animatingDifferences: !UIAccessibility.isReduceMotionEnabled
+          )
       }
       .store(in: &cancellables)
 
@@ -185,12 +186,13 @@ final class EmojiPickerViewController: UICollectionViewController {
 
     return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
       UIMenu(
-        children: ([emoji] + emoji.skinToneVariations).map { skinToneVariation in
-          UIAction(title: skinToneVariation.emoji) { [weak self] _ in
-            self?.select(emoji: .system(skinToneVariation, infrequentlyUsed: infrequentlyUsed))
-            self?.viewModel.updateUse(emoji: item)
+        children: ([emoji] + emoji.skinToneVariations)
+          .map { skinToneVariation in
+            UIAction(title: skinToneVariation.emoji) { [weak self] _ in
+              self?.select(emoji: .system(skinToneVariation, infrequentlyUsed: infrequentlyUsed))
+              self?.viewModel.updateUse(emoji: item)
+            }
           }
-        }
       )
     }
   }

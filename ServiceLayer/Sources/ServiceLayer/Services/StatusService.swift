@@ -62,14 +62,15 @@ extension StatusService {
     if let identityId = identityId {
       return request(identityId: identityId, endpointClosure: StatusEndpoint.reblog(id:))
     } else {
-      return mastodonAPIClient.request(
-        status.displayStatus.reblogged
-          ? StatusEndpoint.unreblog(id: status.displayStatus.id)
-          : StatusEndpoint.reblog(id: status.displayStatus.id)
-      )
-      .catch(contentDatabase.catchNotFound)
-      .flatMap(contentDatabase.insert(status:))
-      .eraseToAnyPublisher()
+      return
+        mastodonAPIClient.request(
+          status.displayStatus.reblogged
+            ? StatusEndpoint.unreblog(id: status.displayStatus.id)
+            : StatusEndpoint.reblog(id: status.displayStatus.id)
+        )
+        .catch(contentDatabase.catchNotFound)
+        .flatMap(contentDatabase.insert(status:))
+        .eraseToAnyPublisher()
     }
   }
 
@@ -77,14 +78,15 @@ extension StatusService {
     if let identityId = identityId {
       return request(identityId: identityId, endpointClosure: StatusEndpoint.favourite(id:))
     } else {
-      return mastodonAPIClient.request(
-        status.displayStatus.favourited
-          ? StatusEndpoint.unfavourite(id: status.displayStatus.id)
-          : StatusEndpoint.favourite(id: status.displayStatus.id)
-      )
-      .catch(contentDatabase.catchNotFound)
-      .flatMap(contentDatabase.insert(status:))
-      .eraseToAnyPublisher()
+      return
+        mastodonAPIClient.request(
+          status.displayStatus.favourited
+            ? StatusEndpoint.unfavourite(id: status.displayStatus.id)
+            : StatusEndpoint.favourite(id: status.displayStatus.id)
+        )
+        .catch(contentDatabase.catchNotFound)
+        .flatMap(contentDatabase.insert(status:))
+        .eraseToAnyPublisher()
     }
   }
 
@@ -262,21 +264,22 @@ extension StatusService {
   }
 
   public func asIdentity(id: Identity.Id) -> AnyPublisher<Self, Error> {
-    fetchAs(identityId: id).tryMap {
-      Self(
-        environment: environment,
-        status: $0,
-        mastodonAPIClient: try MastodonAPIClient.forIdentity(id: id, environment: environment),
-        contentDatabase: try ContentDatabase(
-          id: id,
-          useHomeTimelineLastReadId: true,
-          inMemory: environment.inMemoryContent,
-          appGroup: AppMetadata.appGroup,
-          keychain: environment.keychain
+    fetchAs(identityId: id)
+      .tryMap {
+        Self(
+          environment: environment,
+          status: $0,
+          mastodonAPIClient: try MastodonAPIClient.forIdentity(id: id, environment: environment),
+          contentDatabase: try ContentDatabase(
+            id: id,
+            useHomeTimelineLastReadId: true,
+            inMemory: environment.inMemoryContent,
+            appGroup: AppMetadata.appGroup,
+            keychain: environment.keychain
+          )
         )
-      )
-    }
-    .eraseToAnyPublisher()
+      }
+      .eraseToAnyPublisher()
   }
 }
 

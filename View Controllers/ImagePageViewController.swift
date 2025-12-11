@@ -9,11 +9,12 @@ final class ImagePageViewController: UIPageViewController {
   init(initiallyVisible: AttachmentViewModel, statusViewModel: StatusViewModel) {
     imageViewControllers = statusViewModel.attachmentViewModels.map { ImageViewController(viewModel: $0) }
 
-    super.init(
-      transitionStyle: .scroll,
-      navigationOrientation: .horizontal,
-      options: [.interPageSpacing: CGFloat.defaultSpacing]
-    )
+    super
+      .init(
+        transitionStyle: .scroll,
+        navigationOrientation: .horizontal,
+        options: [.interPageSpacing: CGFloat.defaultSpacing]
+      )
 
     let index = statusViewModel.attachmentViewModels.firstIndex {
       $0.attachment.id == initiallyVisible.attachment.id
@@ -25,11 +26,12 @@ final class ImagePageViewController: UIPageViewController {
   init(imageURL: URL) {
     imageViewControllers = [ImageViewController(imageURL: imageURL)]
 
-    super.init(
-      transitionStyle: .scroll,
-      navigationOrientation: .horizontal,
-      options: [.interPageSpacing: CGFloat.defaultSpacing]
-    )
+    super
+      .init(
+        transitionStyle: .scroll,
+        navigationOrientation: .horizontal,
+        options: [.interPageSpacing: CGFloat.defaultSpacing]
+      )
 
     setViewControllers(imageViewControllers, direction: .forward, animated: false)
   }
@@ -58,10 +60,11 @@ final class ImagePageViewController: UIPageViewController {
       }
     )
 
-    navigationController?.barHideOnTapGestureRecognizer.addTarget(
-      self,
-      action: #selector(toggleDescriptionVisibility)
-    )
+    navigationController?.barHideOnTapGestureRecognizer
+      .addTarget(
+        self,
+        action: #selector(toggleDescriptionVisibility)
+      )
   }
 
   override var prefersStatusBarHidden: Bool { navigationController?.isNavigationBarHidden ?? false }

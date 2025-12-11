@@ -69,17 +69,19 @@ extension AttachmentView {
 
     let player = PlayerCache.shared.player(url: url)
 
-    playerCancellable = NotificationCenter.default.publisher(
-      for: .AVPlayerItemDidPlayToEndTime,
-      object: player.currentItem
-    )
-    .sink { _ in
-      player.currentItem?.seek(to: .zero) { success in
-        guard success else { return }
+    playerCancellable = NotificationCenter.default
+      .publisher(
+        for: .AVPlayerItemDidPlayToEndTime,
+        object: player.currentItem
+      )
+      .sink { _ in
+        player.currentItem?
+          .seek(to: .zero) { success in
+            guard success else { return }
 
-        player.play()
+            player.play()
+          }
       }
-    }
 
     player.isMuted = true
     player.play()

@@ -10,13 +10,14 @@ extension String {
   }
 
   func height(width: CGFloat, font: UIFont) -> CGFloat {
-    (self as NSString).boundingRect(
-      with: CGSize(width: width, height: .greatestFiniteMagnitude),
-      options: .usesLineFragmentOrigin,
-      attributes: [.font: font],
-      context: nil
-    )
-    .height
+    (self as NSString)
+      .boundingRect(
+        with: CGSize(width: width, height: .greatestFiniteMagnitude),
+        options: .usesLineFragmentOrigin,
+        attributes: [.font: font],
+        context: nil
+      )
+      .height
   }
 
   func countEmphasizedAttributedString(count: Int, highlighted: Bool = false) -> NSAttributedString {

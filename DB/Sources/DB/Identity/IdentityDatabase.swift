@@ -139,10 +139,11 @@ extension IdentityDatabase {
     id: Identity.Id
   ) -> AnyPublisher<Never, Error> {
     databaseWriter.mutatingPublisher {
-      let alertsData = try IdentityRecord.databaseJSONEncoder(
-        for: IdentityRecord.Columns.pushSubscriptionAlerts.name
-      )
-      .encode(alerts)
+      let alertsData =
+        try IdentityRecord.databaseJSONEncoder(
+          for: IdentityRecord.Columns.pushSubscriptionAlerts.name
+        )
+        .encode(alerts)
 
       try IdentityRecord
         .filter(IdentityRecord.Columns.id == id)
@@ -261,9 +262,11 @@ extension IdentityDatabase {
     Void
   {
     {
-      var data = try IdentityRecord.databaseJSONEncoder(
-        for: IdentityRecord.Columns.preferences.name
-      ).encode(preferences)
+      var data =
+        try IdentityRecord.databaseJSONEncoder(
+          for: IdentityRecord.Columns.preferences.name
+        )
+        .encode(preferences)
 
       // Cursed workaround for an apparent GRDB bug: GRDB somehow produces a partially initialized struct
       // if allowed to decode data that does not have a key-value pair for tintColor, leading to weird

@@ -277,27 +277,29 @@ extension ComposeStatusViewController {
         }
       }
       .store(in: &cancellables)
-    viewModel.$visibility.removeDuplicates().sink { [weak self] in
-      guard let self = self else { return }
+    viewModel.$visibility.removeDuplicates()
+      .sink { [weak self] in
+        guard let self = self else { return }
 
-      let postActionTitle = self.postActionTitle(
-        statusWord: self.viewModel.identityContext.appPreferences.statusWord,
-        visibility: $0,
-        editing: self.viewModel.editing
-      )
+        let postActionTitle = self.postActionTitle(
+          statusWord: self.viewModel.identityContext.appPreferences.statusWord,
+          visibility: $0,
+          editing: self.viewModel.editing
+        )
 
-      self.postButton.primaryAction = UIAction(title: postActionTitle) { [weak self] _ in
-        self?.viewModel.post()
+        self.postButton.primaryAction = UIAction(title: postActionTitle) { [weak self] _ in
+          self?.viewModel.post()
+        }
       }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
   }
 
   fileprivate func presentMediaPicker(compositionViewModel: CompositionViewModel) {
-    mediaSelections.first().sink { [weak self] in
-      self?.viewModel.attach(itemProviders: $0.map(\.itemProvider), to: compositionViewModel)
-    }
-    .store(in: &cancellables)
+    mediaSelections.first()
+      .sink { [weak self] in
+        self?.viewModel.attach(itemProviders: $0.map(\.itemProvider), to: compositionViewModel)
+      }
+      .store(in: &cancellables)
 
     var configuration = PHPickerConfiguration()
 
@@ -345,16 +347,17 @@ extension ComposeStatusViewController {
         return
       }
 
-      imagePickerResults.first().sink { [weak self] in
-        guard let self = self, let info = $0 else { return }
+      imagePickerResults.first()
+        .sink { [weak self] in
+          guard let self = self, let info = $0 else { return }
 
-        if let url = info[.mediaURL] as? URL, let itemProvider = NSItemProvider(contentsOf: url) {
-          self.viewModel.attach(itemProviders: [itemProvider], to: compositionViewModel)
-        } else if let image = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage {
-          self.viewModel.attach(itemProviders: [NSItemProvider(object: image)], to: compositionViewModel)
+          if let url = info[.mediaURL] as? URL, let itemProvider = NSItemProvider(contentsOf: url) {
+            self.viewModel.attach(itemProviders: [itemProvider], to: compositionViewModel)
+          } else if let image = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage {
+            self.viewModel.attach(itemProviders: [NSItemProvider(object: image)], to: compositionViewModel)
+          }
         }
-      }
-      .store(in: &cancellables)
+        .store(in: &cancellables)
 
       let picker = UIImagePickerController()
 
@@ -373,22 +376,23 @@ extension ComposeStatusViewController {
   #endif
 
   fileprivate func presentDocumentPicker(compositionViewModel: CompositionViewModel) {
-    documentPickerResults.first().sink { [weak self] in
-      guard let self = self, let results = $0 else { return }
+    documentPickerResults.first()
+      .sink { [weak self] in
+        guard let self = self, let results = $0 else { return }
 
-      let itemProviders = results.compactMap { result -> NSItemProvider? in
-        guard result.startAccessingSecurityScopedResource() else { return nil }
+        let itemProviders = results.compactMap { result -> NSItemProvider? in
+          guard result.startAccessingSecurityScopedResource() else { return nil }
 
-        return NSItemProvider(contentsOf: result)
+          return NSItemProvider(contentsOf: result)
+        }
+
+        self.viewModel.attach(itemProviders: itemProviders, to: compositionViewModel)
+
+        for result in results {
+          result.stopAccessingSecurityScopedResource()
+        }
       }
-
-      self.viewModel.attach(itemProviders: itemProviders, to: compositionViewModel)
-
-      for result in results {
-        result.stopAccessingSecurityScopedResource()
-      }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
 
     let documentPickerController = UIDocumentPickerViewController(forOpeningContentTypes: [.image, .movie, .audio])
 

@@ -22,16 +22,17 @@ final class CapsuleLabel: UILabel {
   }
 
   override func drawText(in rect: CGRect) {
-    super.drawText(
-      in: rect.inset(
-        by: .init(
-          top: .compactSpacing,
-          left: .defaultSpacing,
-          bottom: .compactSpacing,
-          right: .defaultSpacing
+    super
+      .drawText(
+        in: rect.inset(
+          by: .init(
+            top: .compactSpacing,
+            left: .defaultSpacing,
+            bottom: .compactSpacing,
+            right: .defaultSpacing
+          )
         )
       )
-    )
   }
 
   override var intrinsicContentSize: CGSize {

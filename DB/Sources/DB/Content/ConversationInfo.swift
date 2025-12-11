@@ -14,9 +14,10 @@ extension ConversationInfo {
     request
       .including(all: AccountInfo.addingIncludes(ConversationRecord.accounts).forKey(CodingKeys.accountInfos))
       .including(
-        required: StatusInfo.addingIncludes(ConversationRecord.lastStatus, .conversation).forKey(
-          CodingKeys.lastStatusInfo
-        )
+        required: StatusInfo.addingIncludes(ConversationRecord.lastStatus, .conversation)
+          .forKey(
+            CodingKeys.lastStatusInfo
+          )
       )
   }
 

@@ -64,36 +64,37 @@ final class ExploreDataSource: UICollectionViewDiffableDataSource<ExploreViewMod
       $0.accessories = [.disclosureIndicator()]
     }
 
-    super.init(collectionView: collectionView) {
-      switch $2 {
-      case .tag(let tag):
-        return $0.dequeueConfiguredReusableCell(
-          using: tagRegistration,
-          for: $1,
-          item: viewModel.viewModel(tag: tag)
-        )
-      case .link(let card):
-        return $0.dequeueConfiguredReusableCell(
-          using: linkRegistration,
-          for: $1,
-          item: viewModel.viewModel(card: card)
-        )
-      case .status(let status):
-        return $0.dequeueConfiguredReusableCell(
-          using: statusRegistration,
-          for: $1,
-          item: viewModel.viewModel(status: status)
-        )
-      case .instance:
-        return $0.dequeueConfiguredReusableCell(
-          using: instanceRegistration,
-          for: $1,
-          item: viewModel.instanceViewModel
-        )
-      default:
-        return $0.dequeueConfiguredReusableCell(using: itemRegistration, for: $1, item: $2)
+    super
+      .init(collectionView: collectionView) {
+        switch $2 {
+        case .tag(let tag):
+          return $0.dequeueConfiguredReusableCell(
+            using: tagRegistration,
+            for: $1,
+            item: viewModel.viewModel(tag: tag)
+          )
+        case .link(let card):
+          return $0.dequeueConfiguredReusableCell(
+            using: linkRegistration,
+            for: $1,
+            item: viewModel.viewModel(card: card)
+          )
+        case .status(let status):
+          return $0.dequeueConfiguredReusableCell(
+            using: statusRegistration,
+            for: $1,
+            item: viewModel.viewModel(status: status)
+          )
+        case .instance:
+          return $0.dequeueConfiguredReusableCell(
+            using: instanceRegistration,
+            for: $1,
+            item: viewModel.instanceViewModel
+          )
+        default:
+          return $0.dequeueConfiguredReusableCell(using: itemRegistration, for: $1, item: $2)
+        }
       }
-    }
 
     let headerRegistration = UICollectionView.SupplementaryRegistration<ExploreSectionHeaderView>(
       elementKind: UICollectionView.elementKindSectionHeader
@@ -118,14 +119,15 @@ final class ExploreDataSource: UICollectionViewDiffableDataSource<ExploreViewMod
       )
       .sink { [weak self] instanceAnnouncementTagsLinks, statuses, recommendedStatuses in
         let (instanceViewModel, announcementCount, tags, links) = instanceAnnouncementTagsLinks
-        self?.update(
-          instanceViewModel: instanceViewModel,
-          announcementCount: announcementCount,
-          tags: tags,
-          links: links,
-          statuses: statuses,
-          recommendedStatuses: recommendedStatuses
-        )
+        self?
+          .update(
+            instanceViewModel: instanceViewModel,
+            announcementCount: announcementCount,
+            tags: tags,
+            links: links,
+            statuses: statuses,
+            recommendedStatuses: recommendedStatuses
+          )
       }
       .store(in: &cancellables)
   }

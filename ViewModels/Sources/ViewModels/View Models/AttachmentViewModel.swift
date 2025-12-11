@@ -48,17 +48,18 @@ extension AttachmentViewModel {
 
 extension AttachmentViewModel {
   func updated() -> AnyPublisher<AttachmentViewModel, Error> {
-    identityContext.service.updateAttachment(
-      id: attachment.id,
-      description: editingDescription,
-      focus: editingFocus
-    )
-    .compactMap { [weak self] in
-      guard let self = self else { return nil }
+    identityContext.service
+      .updateAttachment(
+        id: attachment.id,
+        description: editingDescription,
+        focus: editingFocus
+      )
+      .compactMap { [weak self] in
+        guard let self = self else { return nil }
 
-      return AttachmentViewModel(attachment: $0, identityContext: self.identityContext, status: self.status)
-    }
-    .eraseToAnyPublisher()
+        return AttachmentViewModel(attachment: $0, identityContext: self.identityContext, status: self.status)
+      }
+      .eraseToAnyPublisher()
   }
 }
 

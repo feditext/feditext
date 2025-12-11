@@ -53,12 +53,13 @@ final class ExploreViewController: UICollectionViewController {
     clearsSelectionOnViewWillAppear = true
 
     collectionView.refreshControl = UIRefreshControl()
-    collectionView.refreshControl?.addAction(
-      UIAction { [weak self] _ in
-        self?.viewModel.refresh()
-      },
-      for: .valueChanged
-    )
+    collectionView.refreshControl?
+      .addAction(
+        UIAction { [weak self] _ in
+          self?.viewModel.refresh()
+        },
+        for: .valueChanged
+      )
 
     navigationItem.title = NSLocalizedString("main-navigation.explore", comment: "")
 
@@ -83,12 +84,13 @@ final class ExploreViewController: UICollectionViewController {
     view.addSubview(webfingerIndicatorView)
     webfingerIndicatorView.translatesAutoresizingMaskIntoConstraints = false
 
-    viewModel.identityContext.$appPreferences.sink { appPreferences in
-      searchController.searchBar.scopeButtonTitles = SearchScope.allCases.map {
-        $0.title(statusWord: appPreferences.statusWord)
+    viewModel.identityContext.$appPreferences
+      .sink { appPreferences in
+        searchController.searchBar.scopeButtonTitles = SearchScope.allCases.map {
+          $0.title(statusWord: appPreferences.statusWord)
+        }
       }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
 
     NSLayoutConstraint.activate([
       webfingerIndicatorView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
@@ -100,22 +102,24 @@ final class ExploreViewController: UICollectionViewController {
       .sink { [weak self] in self?.handle(event: $0) }
       .store(in: &cancellables)
 
-    viewModel.$loading.sink { [weak self] in
-      guard let self = self else { return }
+    viewModel.$loading
+      .sink { [weak self] in
+        guard let self = self else { return }
 
-      let refreshControlVisibile = self.collectionView.refreshControl?.isRefreshing ?? false
+        let refreshControlVisibile = self.collectionView.refreshControl?.isRefreshing ?? false
 
-      if !$0, refreshControlVisibile {
-        self.collectionView.refreshControl?.endRefreshing()
+        if !$0, refreshControlVisibile {
+          self.collectionView.refreshControl?.endRefreshing()
+        }
       }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
 
-    viewModel.searchViewModel.searchScopeChanges.sink { [weak self] in
-      searchController.searchBar.selectedScopeButtonIndex = $0.rawValue
-      self?.updateSearchResults(for: searchController)
-    }
-    .store(in: &cancellables)
+    viewModel.searchViewModel.searchScopeChanges
+      .sink { [weak self] in
+        searchController.searchBar.selectedScopeButtonIndex = $0.rawValue
+        self?.updateSearchResults(for: searchController)
+      }
+      .store(in: &cancellables)
   }
 
   override func viewWillAppear(_ animated: Bool) {

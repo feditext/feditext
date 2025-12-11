@@ -99,9 +99,10 @@ private func formatSpecPositions(_ formatString: String) -> [(Substring, NSRange
       assertionFailure("Regex should always compile")
       return []
     }
-    return formatString.matches(of: regex).map { match in
-      (match.output, NSRange(match.range, in: formatString))
-    }
+    return formatString.matches(of: regex)
+      .map { match in
+        (match.output, NSRange(match.range, in: formatString))
+      }
   } else {
     let regex: NSRegularExpression
     do {
@@ -111,12 +112,13 @@ private func formatSpecPositions(_ formatString: String) -> [(Substring, NSRange
       return []
     }
     let entireString = NSRange(formatString.startIndex..<formatString.endIndex, in: formatString)
-    return regex.matches(in: formatString, range: entireString).compactMap { match in
-      guard let substringRange = Range(match.range, in: formatString) else {
-        assertionFailure("Range should always be valid")
-        return nil
+    return regex.matches(in: formatString, range: entireString)
+      .compactMap { match in
+        guard let substringRange = Range(match.range, in: formatString) else {
+          assertionFailure("Range should always be valid")
+          return nil
+        }
+        return (formatString[substringRange], match.range)
       }
-      return (formatString[substringRange], match.range)
-    }
   }
 }

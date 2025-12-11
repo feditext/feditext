@@ -247,17 +247,25 @@ extension MediaProcessingService {
     let asset = AVAsset(url: url)
     let commonMetadata = try await asset.load(.commonMetadata)
 
-    if let accessibilityDescription = try await AVMetadataItem.metadataItems(
-      from: commonMetadata,
-      filteredByIdentifier: .commonIdentifierAccessibilityDescription
-    ).first?.load(.stringValue) {
+    if let accessibilityDescription = try await AVMetadataItem
+      .metadataItems(
+        from: commonMetadata,
+        filteredByIdentifier: .commonIdentifierAccessibilityDescription
+      )
+      .first?
+      .load(.stringValue)
+    {
       return accessibilityDescription
     }
 
-    if let description = try await AVMetadataItem.metadataItems(
-      from: commonMetadata,
-      filteredByIdentifier: .commonIdentifierDescription
-    ).first?.load(.stringValue) {
+    if let description = try await AVMetadataItem
+      .metadataItems(
+        from: commonMetadata,
+        filteredByIdentifier: .commonIdentifierDescription
+      )
+      .first?
+      .load(.stringValue)
+    {
       return description
     }
 

@@ -35,11 +35,12 @@ final class TimelinesViewController: UIPageViewController {
     self.timelineViewModels = timelineViewModels
     self.timelineViewControllers = timelineViewControllers
 
-    super.init(
-      transitionStyle: .scroll,
-      navigationOrientation: .horizontal,
-      options: [.interPageSpacing: CGFloat.defaultSpacing]
-    )
+    super
+      .init(
+        transitionStyle: .scroll,
+        navigationOrientation: .horizontal,
+        options: [.interPageSpacing: CGFloat.defaultSpacing]
+      )
 
     if let timelineActionViewModel = timelineViewModels.first?.timelineActionViewModel {
       self.setupTimelineActionBarButtonItem(timelineActionViewModel)
@@ -133,12 +134,14 @@ final class TimelinesViewController: UIPageViewController {
                   .custom(resolver: { [weak self] context in
                     guard let self = self else { return .zero }
 
-                    return hostingController.sizeThatFits(
-                      in: .init(
-                        width: view.frame.width,
-                        height: .greatestFiniteMagnitude
+                    return
+                      hostingController.sizeThatFits(
+                        in: .init(
+                          width: view.frame.width,
+                          height: .greatestFiniteMagnitude
+                        )
                       )
-                    ).height
+                      .height
                   })
                 ]
               } else {

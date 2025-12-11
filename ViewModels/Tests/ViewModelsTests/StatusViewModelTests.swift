@@ -37,14 +37,15 @@ final class StatusViewModelTests: XCTestCase {
       keychain: MockKeychain.self
     )
     try wait(
-      for: identityDB.createIdentity(
-        id: identityID,
-        url: instanceURL,
-        authenticated: true,
-        pending: false
-      )
-      .record()
-      .finished,
+      for:
+        identityDB.createIdentity(
+          id: identityID,
+          url: instanceURL,
+          authenticated: true,
+          pending: false
+        )
+        .record()
+        .finished,
       timeout: 1
     )
     guard
@@ -53,7 +54,8 @@ final class StatusViewModelTests: XCTestCase {
           .record()
           .availableElements,
         timeout: 1
-      ).first
+      )
+      .first
     else {
       XCTFail("Couldn't get an identity for the test")
       throw TestError.identity

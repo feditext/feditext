@@ -9,15 +9,17 @@ import XCTest
 /// (SwiftPM tests can apparently only run in the simulator).
 final class HTMLPerfTests: XCTestCase {
   // swiftlint:disable:next force_try
-  static let htmlFragments = try! JSONDecoder().decode(
-    [String].self,
-    from: Data(
-      contentsOf: Bundle(for: HTMLPerfTests.self).url(
-        forResource: "public-timeline-html-fragments",
-        withExtension: "json"
-      )!
+  static let htmlFragments = try! JSONDecoder()
+    .decode(
+      [String].self,
+      from: Data(
+        contentsOf: Bundle(for: HTMLPerfTests.self)
+          .url(
+            forResource: "public-timeline-html-fragments",
+            withExtension: "json"
+          )!
+      )
     )
-  )
 
   func testHtmlPerf() {
     measure {

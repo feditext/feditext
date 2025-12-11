@@ -181,9 +181,10 @@ extension AppPreferences {
   public var notificationSounds: Set<MastodonNotification.NotificationType> {
     get {
       Set(
-        (self[.notificationSounds] as [String]?)?.compactMap {
-          MastodonNotification.NotificationType(rawValue: $0)
-        } ?? MastodonNotification.NotificationType.allCasesExceptUnknown
+        (self[.notificationSounds] as [String]?)?
+          .compactMap {
+            MastodonNotification.NotificationType(rawValue: $0)
+          } ?? MastodonNotification.NotificationType.allCasesExceptUnknown
       )
     }
     set { self[.notificationSounds] = newValue.map { $0.rawValue } }

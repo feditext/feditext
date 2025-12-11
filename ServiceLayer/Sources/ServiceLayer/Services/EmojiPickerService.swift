@@ -21,69 +21,71 @@ public struct EmojiPickerService {
 
 extension EmojiPickerService {
   public func customEmojiPublisher() -> AnyPublisher<[PickerEmoji.Category: [PickerEmoji]], Error> {
-    contentDatabase.pickerEmojisPublisher().map {
-      var typed = [PickerEmoji.Category: [PickerEmoji]]()
+    contentDatabase.pickerEmojisPublisher()
+      .map {
+        var typed = [PickerEmoji.Category: [PickerEmoji]]()
 
-      for emoji in $0 {
-        let category: PickerEmoji.Category
+        for emoji in $0 {
+          let category: PickerEmoji.Category
 
-        if let categoryName = emoji.category {
-          category = .customNamed(categoryName)
-        } else {
-          category = .custom
+          if let categoryName = emoji.category {
+            category = .customNamed(categoryName)
+          } else {
+            category = .custom
+          }
+
+          if typed[category] == nil {
+            typed[category] = [.custom(emoji, infrequentlyUsed: false)]
+          } else {
+            typed[category]?.append(.custom(emoji, infrequentlyUsed: false))
+          }
         }
 
-        if typed[category] == nil {
-          typed[category] = [.custom(emoji, infrequentlyUsed: false)]
-        } else {
-          typed[category]?.append(.custom(emoji, infrequentlyUsed: false))
-        }
+        return typed
       }
-
-      return typed
-    }
-    .eraseToAnyPublisher()
+      .eraseToAnyPublisher()
   }
 
   public func systemEmojiPublisher() -> AnyPublisher<[PickerEmoji.Category: [PickerEmoji]], Error> {
     Future { promise in
-      DispatchQueue.global(qos: .userInteractive).async {
-        guard let url = Bundle.module.url(forResource: "emojis", withExtension: "json") else {
-          promise(.failure(EmojiPickerError.emojisFileMissing))
+      DispatchQueue.global(qos: .userInteractive)
+        .async {
+          guard let url = Bundle.module.url(forResource: "emojis", withExtension: "json") else {
+            promise(.failure(EmojiPickerError.emojisFileMissing))
 
-          return
-        }
-
-        do {
-          let data = try Data(contentsOf: url)
-          let decoded = try JSONDecoder().decode([String: [SystemEmoji]].self, from: data)
-          var typed = [PickerEmoji.Category: [PickerEmoji]]()
-
-          for (groupString, emoji) in decoded {
-            guard let rawValue = Int(groupString),
-              let group = SystemEmoji.Group(rawValue: rawValue)
-            else {
-              promise(.failure(EmojiPickerError.invalidSystemEmojiGroup))
-
-              return
-            }
-
-            typed[.systemGroup(group)] =
-              emoji
-              .filter { !($0.version > Self.maxEmojiVersion) }
-              .map {
-                PickerEmoji.system(
-                  $0.withMaxVersionForSkinToneVariations(Self.maxEmojiVersion),
-                  infrequentlyUsed: false
-                )
-              }
+            return
           }
 
-          return promise(.success(typed))
-        } catch {
-          promise(.failure(error))
+          do {
+            let data = try Data(contentsOf: url)
+            let decoded = try JSONDecoder().decode([String: [SystemEmoji]].self, from: data)
+            var typed = [PickerEmoji.Category: [PickerEmoji]]()
+
+            for (groupString, emoji) in decoded {
+              guard let rawValue = Int(groupString),
+                let group = SystemEmoji.Group(rawValue: rawValue)
+              else {
+                promise(.failure(EmojiPickerError.invalidSystemEmojiGroup))
+
+                return
+              }
+
+              typed[.systemGroup(group)] =
+                emoji
+                .filter { !($0.version > Self.maxEmojiVersion) }
+                .map {
+                  PickerEmoji.system(
+                    $0.withMaxVersionForSkinToneVariations(Self.maxEmojiVersion),
+                    infrequentlyUsed: false
+                  )
+                }
+            }
+
+            return promise(.success(typed))
+          } catch {
+            promise(.failure(error))
+          }
         }
-      }
     }
     .eraseToAnyPublisher()
   }

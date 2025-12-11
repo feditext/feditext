@@ -49,40 +49,41 @@ extension AuthenticationService {
     let authorization = appAuthorization(redirectURI: redirectURI)
       .share()
 
-    return authorization.zip(
-      authorization.flatMap { appAuthorization -> AnyPublisher<AccessToken, Error> in
-        mastodonAPIClient.request(
-          AccessTokenEndpoint.oauthToken(
-            clientId: appAuthorization.clientId,
-            clientSecret: appAuthorization.clientSecret,
-            grantType: OAuth.registrationGrantType,
-            scopes: OAuth.scopes,
-            code: nil,
-            username: nil,
-            password: nil,
-            redirectURI: redirectURI.absoluteString
-          )
-        )
-        .flatMap { accessToken -> AnyPublisher<AccessToken, Error> in
-          let authenticatedMastodonAPIClient: MastodonAPIClient
-          do {
-            authenticatedMastodonAPIClient = try MastodonAPIClient(
-              session: session,
-              instanceURL: instanceURL,
-              apiCapabilities: mastodonAPIClient.apiCapabilities,
-              accessToken: accessToken.accessToken
+    return
+      authorization.zip(
+        authorization.flatMap { appAuthorization -> AnyPublisher<AccessToken, Error> in
+          mastodonAPIClient.request(
+            AccessTokenEndpoint.oauthToken(
+              clientId: appAuthorization.clientId,
+              clientSecret: appAuthorization.clientSecret,
+              grantType: OAuth.registrationGrantType,
+              scopes: OAuth.scopes,
+              code: nil,
+              username: nil,
+              password: nil,
+              redirectURI: redirectURI.absoluteString
             )
-          } catch {
-            return Fail(outputType: AccessToken.self, failure: error)
-              .eraseToAnyPublisher()
-          }
+          )
+          .flatMap { accessToken -> AnyPublisher<AccessToken, Error> in
+            let authenticatedMastodonAPIClient: MastodonAPIClient
+            do {
+              authenticatedMastodonAPIClient = try MastodonAPIClient(
+                session: session,
+                instanceURL: instanceURL,
+                apiCapabilities: mastodonAPIClient.apiCapabilities,
+                accessToken: accessToken.accessToken
+              )
+            } catch {
+              return Fail(outputType: AccessToken.self, failure: error)
+                .eraseToAnyPublisher()
+            }
 
-          return authenticatedMastodonAPIClient.request(AccessTokenEndpoint.accounts(registration))
+            return authenticatedMastodonAPIClient.request(AccessTokenEndpoint.accounts(registration))
+          }
+          .eraseToAnyPublisher()
         }
-        .eraseToAnyPublisher()
-      }
-    )
-    .eraseToAnyPublisher()
+      )
+      .eraseToAnyPublisher()
   }
 }
 
@@ -104,10 +105,12 @@ extension AuthenticationService {
       let queryItems = URLComponents(
         url: oauthCallbackURL,
         resolvingAgainstBaseURL: true
-      )?.queryItems,
+      )?
+      .queryItems,
       let code = queryItems.first(where: {
         $0.name == OAuth.codeCallbackQueryItemName
-      })?.value
+      })?
+      .value
     else { throw OAuthError.codeNotFound }
 
     return code

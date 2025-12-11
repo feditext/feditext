@@ -34,28 +34,29 @@ final class IdentitiesDataSource: UITableViewDiffableDataSource<IdentitiesSectio
       forCellReuseIdentifier: String(describing: IdentityTableViewCell.self)
     )
 
-    super.init(tableView: tableView) { tableView, indexPath, item in
-      let cell = tableView.dequeueReusableCell(
-        withIdentifier: item.cellReuseIdentifier,
-        for: indexPath
-      )
+    super
+      .init(tableView: tableView) { tableView, indexPath, item in
+        let cell = tableView.dequeueReusableCell(
+          withIdentifier: item.cellReuseIdentifier,
+          for: indexPath
+        )
 
-      switch item {
-      case .add:
-        var configuration = cell.defaultContentConfiguration()
+        switch item {
+        case .add:
+          var configuration = cell.defaultContentConfiguration()
 
-        configuration.text = NSLocalizedString("add", comment: "")
-        configuration.image = UIImage(systemName: "plus.circle.fill")
-        cell.contentConfiguration = configuration
-      case .identity(let identity):
-        let viewModel = viewModelProvider(identity)
+          configuration.text = NSLocalizedString("add", comment: "")
+          configuration.image = UIImage(systemName: "plus.circle.fill")
+          cell.contentConfiguration = configuration
+        case .identity(let identity):
+          let viewModel = viewModelProvider(identity)
 
-        (cell as? IdentityTableViewCell)?.viewModel = viewModel
-        cell.accessoryType = identity.id == viewModel.identityContext.identity.id ? .checkmark : .none
+          (cell as? IdentityTableViewCell)?.viewModel = viewModel
+          cell.accessoryType = identity.id == viewModel.identityContext.identity.id ? .checkmark : .none
+        }
+
+        return cell
       }
-
-      return cell
-    }
 
     publisher
       .sink { [weak self] in self?.update(identities: $0) }

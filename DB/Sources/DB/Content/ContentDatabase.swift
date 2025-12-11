@@ -38,12 +38,13 @@ public struct ContentDatabase {
       }
     }
 
-    activeFiltersPublisher = ValueObservation.tracking {
-      try Filter.filter(Filter.Columns.expiresAt == nil || Filter.Columns.expiresAt > Date()).fetchAll($0)
-    }
-    .removeDuplicates()
-    .publisher(in: databaseWriter)
-    .eraseToAnyPublisher()
+    activeFiltersPublisher =
+      ValueObservation.tracking {
+        try Filter.filter(Filter.Columns.expiresAt == nil || Filter.Columns.expiresAt > Date()).fetchAll($0)
+      }
+      .removeDuplicates()
+      .publisher(in: databaseWriter)
+      .eraseToAnyPublisher()
 
     activeFilterMatchersPublisher =
       activeFiltersPublisher
@@ -166,11 +167,13 @@ extension ContentDatabase {
         try StatusRecord.filter(
           Self.statusIdsToDeleteForPositionPreservingClean(db: $0)
             .contains(StatusRecord.Columns.id)
-        ).deleteAll($0)
+        )
+        .deleteAll($0)
         try AccountRecord.filter(
           Self.accountIdsToDeleteForPositionPreservingClean(db: $0)
             .contains(AccountRecord.Columns.id)
-        ).deleteAll($0)
+        )
+        .deleteAll($0)
       } else {
         try TimelineRecord.deleteAll($0)
         try StatusRecord.deleteAll($0)
@@ -362,11 +365,12 @@ extension ContentDatabase {
 
   public func remove(id: Account.Id, from listId: AccountList.Id) -> AnyPublisher<Never, Error> {
     databaseWriter.mutatingPublisher(
-      updates: AccountListJoin.filter(
-        AccountListJoin.Columns.accountId == id
-          && AccountListJoin.Columns.accountListId == listId
-      )
-      .deleteAll
+      updates:
+        AccountListJoin.filter(
+          AccountListJoin.Columns.accountId == id
+            && AccountListJoin.Columns.accountListId == listId
+        )
+        .deleteAll
     )
   }
 
@@ -430,7 +434,8 @@ extension ContentDatabase {
           try FamiliarFollowersJoin(
             followedAccountId: followedAccount.id,
             followingAccountId: followingAccount.id
-          ).save($0)
+          )
+          .save($0)
         }
 
         try FamiliarFollowersJoin
@@ -629,7 +634,8 @@ extension ContentDatabase {
         TimelineRecord.filter(TimelineRecord.Columns.id == timeline.id),
         timeline.filterContext,
         ordered: timeline.ordered
-      ).fetchOne
+      )
+      .fetchOne
     )
     .removeDuplicates()
     .publisher(in: databaseWriter)
@@ -678,15 +684,16 @@ extension ContentDatabase {
     .removeDuplicates()
     .publisher(in: databaseWriter)
     .map {
-      $0?.accountAndRelationshipInfos.map {
-        CollectionItem.account(
-          .init(info: $0.accountInfo),
-          configuration,
-          $0.relationship,
-          $0.familiarFollowers.map { followingAccountInfo in .init(info: followingAccountInfo) },
-          $0.suggestion?.source
-        )
-      }
+      $0?.accountAndRelationshipInfos
+        .map {
+          CollectionItem.account(
+            .init(info: $0.accountInfo),
+            configuration,
+            $0.relationship,
+            $0.familiarFollowers.map { followingAccountInfo in .init(info: followingAccountInfo) },
+            $0.suggestion?.source
+          )
+        }
     }
     .replaceNil(with: [])
     .map { [CollectionSection(items: $0)] }
@@ -742,75 +749,78 @@ extension ContentDatabase {
     let accountIds = results.accounts.map(\.id)
     let statusIds = results.statuses.map(\.id)
 
-    return ValueObservation.tracking { db -> ([AccountAndRelationshipInfo], [StatusInfo]) in
-      (
-        try AccountAndRelationshipInfo
-          .request(AccountRecord.filter(accountIds.contains(AccountRecord.Columns.id)))
-          .fetchAll(db),
-        try StatusInfo
-          .request(
-            StatusRecord.filter(statusIds.contains(StatusRecord.Columns.id)),
-            .search
-          )
-          .fetchAll(db)
-      )
-    }
-    .publisher(in: databaseWriter)
-    .map { accountAndRelationshipInfos, statusInfos in
-      var accounts = accountAndRelationshipInfos.sorted {
-        accountIds.firstIndex(of: $0.accountInfo.record.id) ?? 0
-          < accountIds.firstIndex(of: $1.accountInfo.record.id) ?? 0
-      }
-      .map {
-        CollectionItem.account(
-          .init(info: $0.accountInfo),
-          .withoutNote,
-          $0.relationship,
-          $0.familiarFollowers.map { followingAccountInfo in .init(info: followingAccountInfo) },
-          $0.suggestion?.source
+    return
+      ValueObservation.tracking { db -> ([AccountAndRelationshipInfo], [StatusInfo]) in
+        (
+          try AccountAndRelationshipInfo
+            .request(AccountRecord.filter(accountIds.contains(AccountRecord.Columns.id)))
+            .fetchAll(db),
+          try StatusInfo
+            .request(
+              StatusRecord.filter(statusIds.contains(StatusRecord.Columns.id)),
+              .search
+            )
+            .fetchAll(db)
         )
       }
+      .publisher(in: databaseWriter)
+      .map { accountAndRelationshipInfos, statusInfos in
+        var accounts =
+          accountAndRelationshipInfos.sorted {
+            accountIds.firstIndex(of: $0.accountInfo.record.id) ?? 0
+              < accountIds.firstIndex(of: $1.accountInfo.record.id) ?? 0
+          }
+          .map {
+            CollectionItem.account(
+              .init(info: $0.accountInfo),
+              .withoutNote,
+              $0.relationship,
+              $0.familiarFollowers.map { followingAccountInfo in .init(info: followingAccountInfo) },
+              $0.suggestion?.source
+            )
+          }
 
-      if let limit = limit, accounts.count >= limit {
-        accounts.append(.moreResults(.init(scope: .accounts)))
+        if let limit = limit, accounts.count >= limit {
+          accounts.append(.moreResults(.init(scope: .accounts)))
+        }
+
+        var statuses =
+          statusInfos.sorted {
+            statusIds.firstIndex(of: $0.record.id) ?? 0
+              < statusIds.firstIndex(of: $1.record.id) ?? 0
+          }
+          .map {
+            CollectionItem.status(
+              .init(info: $0),
+              .init(
+                showContentToggled: $0.showContentToggled,
+                showAttachmentsToggled: $0.showAttachmentsToggled,
+                showFilteredToggled: $0.showFilteredToggled
+              ),
+              authorRelationship: $0.reblogInfo?.relationship ?? $0.relationship,
+              rebloggerRelationship: $0.relationship
+            )
+          }
+
+        if let limit = limit, statuses.count >= limit {
+          statuses.append(.moreResults(.init(scope: .statuses)))
+        }
+
+        var hashtags = results.hashtags.map(CollectionItem.tag)
+
+        if let limit = limit, hashtags.count >= limit {
+          hashtags.append(.moreResults(.init(scope: .tags)))
+        }
+
+        return [
+          .init(items: accounts, searchScope: .accounts),
+          .init(items: statuses, searchScope: .statuses),
+          .init(items: hashtags, searchScope: .tags),
+        ]
+        .filter { !$0.items.isEmpty }
       }
-
-      var statuses = statusInfos.sorted {
-        statusIds.firstIndex(of: $0.record.id) ?? 0
-          < statusIds.firstIndex(of: $1.record.id) ?? 0
-      }
-      .map {
-        CollectionItem.status(
-          .init(info: $0),
-          .init(
-            showContentToggled: $0.showContentToggled,
-            showAttachmentsToggled: $0.showAttachmentsToggled,
-            showFilteredToggled: $0.showFilteredToggled
-          ),
-          authorRelationship: $0.reblogInfo?.relationship ?? $0.relationship,
-          rebloggerRelationship: $0.relationship
-        )
-      }
-
-      if let limit = limit, statuses.count >= limit {
-        statuses.append(.moreResults(.init(scope: .statuses)))
-      }
-
-      var hashtags = results.hashtags.map(CollectionItem.tag)
-
-      if let limit = limit, hashtags.count >= limit {
-        hashtags.append(.moreResults(.init(scope: .tags)))
-      }
-
-      return [
-        .init(items: accounts, searchScope: .accounts),
-        .init(items: statuses, searchScope: .statuses),
-        .init(items: hashtags, searchScope: .tags),
-      ]
-      .filter { !$0.items.isEmpty }
-    }
-    .removeDuplicates()
-    .eraseToAnyPublisher()
+      .removeDuplicates()
+      .eraseToAnyPublisher()
   }
 
   // TODO: (Vyr) we're probably not filtering these correctly for filters v1 clients
@@ -821,7 +831,8 @@ extension ContentDatabase {
       NotificationInfo.request(
         NotificationRecord.order(NotificationRecord.Columns.createdAt.desc)
           .filter(!excludeTypes.map(\.rawValue).contains(NotificationRecord.Columns.type))
-      ).fetchAll
+      )
+      .fetchAll
     )
     .removeDuplicates()
     .publisher(in: databaseWriter)
@@ -1000,16 +1011,17 @@ extension ContentDatabase {
         .eraseToAnyPublisher()
     }
 
-    return ValueObservation.tracking(
-      TimelineDisplayFilterRecord
-        .filter(TimelineDisplayFilterRecord.Columns.timelineID == timeline.id)
-        .fetchOne(_:)
-    )
-    .removeDuplicates()
-    .publisher(in: databaseWriter)
-    .map(\.?.displayFilter)
-    .replaceNil(with: DisplayFilter.showAll)
-    .eraseToAnyPublisher()
+    return
+      ValueObservation.tracking(
+        TimelineDisplayFilterRecord
+          .filter(TimelineDisplayFilterRecord.Columns.timelineID == timeline.id)
+          .fetchOne(_:)
+      )
+      .removeDuplicates()
+      .publisher(in: databaseWriter)
+      .map(\.?.displayFilter)
+      .replaceNil(with: DisplayFilter.showAll)
+      .eraseToAnyPublisher()
   }
 
   /// Update the display filter associated with a timeline.

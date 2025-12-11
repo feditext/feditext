@@ -247,15 +247,16 @@ extension ComposeStatusViewModel {
     newViewModel.contentWarning = after.contentWarning
     newViewModel.displayContentWarning = after.displayContentWarning
 
-    let mentions = Self.mentionsRegularExpression.matches(
-      in: after.text,
-      range: NSRange(location: 0, length: after.text.count)
-    )
-    .compactMap { result -> String? in
-      guard let range = Range(result.range, in: after.text) else { return nil }
+    let mentions = Self.mentionsRegularExpression
+      .matches(
+        in: after.text,
+        range: NSRange(location: 0, length: after.text.count)
+      )
+      .compactMap { result -> String? in
+        guard let range = Range(result.range, in: after.text) else { return nil }
 
-      return String(after.text[range])
-    }
+        return String(after.text[range])
+      }
 
     if !mentions.isEmpty {
       newViewModel.text = mentions.joined(separator: " ").appending(" ")

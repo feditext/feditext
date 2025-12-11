@@ -40,12 +40,13 @@ final class CompositionInputAccessoryView: UIView {
       autocompleteCollectionView.heightAnchor.constraint(equalToConstant: .hairline)
     autocompleteSelections = autocompleteSelectionsSubject.eraseToAnyPublisher()
 
-    super.init(
-      frame: .init(
-        origin: .zero,
-        size: .init(width: UIScreen.main.bounds.width, height: .minimumButtonDimension)
+    super
+      .init(
+        frame: .init(
+          origin: .zero,
+          size: .init(width: UIScreen.main.bounds.width, height: .minimumButtonDimension)
+        )
       )
-    )
 
     initialSetup()
   }
@@ -161,36 +162,38 @@ extension CompositionInputAccessoryView {
       primaryAction: UIAction { [weak self] _ in self?.viewModel.displayContentWarning.toggle() }
     )
 
-    viewModel.$displayContentWarning.sink {
-      if $0 {
-        contentWarningButton.accessibilityHint =
-          NSLocalizedString("compose.content-warning-button.remove", comment: "")
-      } else {
-        contentWarningButton.accessibilityHint =
-          NSLocalizedString("compose.content-warning-button.add", comment: "")
+    viewModel.$displayContentWarning
+      .sink {
+        if $0 {
+          contentWarningButton.accessibilityHint =
+            NSLocalizedString("compose.content-warning-button.remove", comment: "")
+        } else {
+          contentWarningButton.accessibilityHint =
+            NSLocalizedString("compose.content-warning-button.add", comment: "")
+        }
       }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
 
     let languageButton = UIBarButtonItem(
       menu: languageMenu(selectedTag: parentViewModel.defaultLanguageTag)
     )
 
-    viewModel.$language.sink {
-      if let tag = $0 {
-        languageButton.title = tag
-        languageButton.accessibilityHint = String.localizedStringWithFormat(
-          NSLocalizedString("compose.language-button.accessibility-label-%@", comment: ""),
-          PrefsLanguage(tag: tag).localized
-        )
-      } else {
-        languageButton.title =
-          NSLocalizedString("compose.language-button.not-selected", comment: "")
-        languageButton.accessibilityHint =
-          NSLocalizedString("compose.language-button.accessibility-label-not-selected", comment: "")
+    viewModel.$language
+      .sink {
+        if let tag = $0 {
+          languageButton.title = tag
+          languageButton.accessibilityHint = String.localizedStringWithFormat(
+            NSLocalizedString("compose.language-button.accessibility-label-%@", comment: ""),
+            PrefsLanguage(tag: tag).localized
+          )
+        } else {
+          languageButton.title =
+            NSLocalizedString("compose.language-button.not-selected", comment: "")
+          languageButton.accessibilityHint =
+            NSLocalizedString("compose.language-button.accessibility-label-not-selected", comment: "")
+        }
       }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
 
     let emojiButton = UIBarButtonItem(
       image: UIImage(systemName: "face.smiling"),
@@ -262,21 +265,22 @@ extension CompositionInputAccessoryView {
       .sink { pollButton.isEnabled = $0.isEmpty && $1.isEmpty }
       .store(in: &cancellables)
 
-    viewModel.$remainingCharacters.sink {
-      charactersBarItem.title = String($0)
-      charactersBarItem.setTitleTextAttributes(
-        [
-          .foregroundColor: $0 < 0 ? UIColor.systemRed : UIColor.label,
-          .font: UIFont.monospacedDigitSystemFont(ofSize: UIFont.labelFontSize, weight: .regular),
-        ],
-        for: .disabled
-      )
-      charactersBarItem.accessibilityHint = String.localizedStringWithFormat(
-        NSLocalizedString("compose.characters-remaining-accessibility-label-%ld", comment: ""),
-        $0
-      )
-    }
-    .store(in: &cancellables)
+    viewModel.$remainingCharacters
+      .sink {
+        charactersBarItem.title = String($0)
+        charactersBarItem.setTitleTextAttributes(
+          [
+            .foregroundColor: $0 < 0 ? UIColor.systemRed : UIColor.label,
+            .font: UIFont.monospacedDigitSystemFont(ofSize: UIFont.labelFontSize, weight: .regular),
+          ],
+          for: .disabled
+        )
+        charactersBarItem.accessibilityHint = String.localizedStringWithFormat(
+          NSLocalizedString("compose.characters-remaining-accessibility-label-%ld", comment: ""),
+          $0
+        )
+      }
+      .store(in: &cancellables)
 
     viewModel.$isPostable
       .sink { addButton.isEnabled = $0 }
@@ -370,12 +374,13 @@ extension CompositionInputAccessoryView: UICollectionViewDelegate {
 
     return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
       UIMenu(
-        children: ([emoji] + emoji.skinToneVariations).map { skinToneVariation in
-          UIAction(title: skinToneVariation.emoji) { [weak self] _ in
-            self?.autocompleteSelectionsSubject.send(skinToneVariation.emoji)
-            self?.autocompleteDataSource.updateUse(emoji: emojiItem)
+        children: ([emoji] + emoji.skinToneVariations)
+          .map { skinToneVariation in
+            UIAction(title: skinToneVariation.emoji) { [weak self] _ in
+              self?.autocompleteSelectionsSubject.send(skinToneVariation.emoji)
+              self?.autocompleteDataSource.updateUse(emoji: emojiItem)
+            }
           }
-        }
       )
     }
   }
@@ -517,15 +522,16 @@ extension CompositionInputAccessoryView {
 
   fileprivate func languageMenu(selectedTag: PrefsLanguage.Tag?) -> UIMenu {
     UIMenu(
-      children: parentViewModel.postingLanguages.reversed().map { prefsLanguage in
-        UIAction(
-          title: prefsLanguage.localized,
-          discoverabilityTitle: prefsLanguage.localized,
-          state: prefsLanguage.tag == selectedTag ? .on : .off
-        ) { [weak self] _ in
-          self?.viewModel.language = prefsLanguage.tag
+      children: parentViewModel.postingLanguages.reversed()
+        .map { prefsLanguage in
+          UIAction(
+            title: prefsLanguage.localized,
+            discoverabilityTitle: prefsLanguage.localized,
+            state: prefsLanguage.tag == selectedTag ? .on : .off
+          ) { [weak self] _ in
+            self?.viewModel.language = prefsLanguage.tag
+          }
         }
-      }
     )
   }
 

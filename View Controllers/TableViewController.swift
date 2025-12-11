@@ -65,12 +65,13 @@ class TableViewController: UITableViewController {
 
     if viewModel.canRefresh {
       refreshControl = UIRefreshControl()
-      refreshControl?.addAction(
-        UIAction { [weak self] _ in
-          self?.refreshIfAble()
-        },
-        for: .valueChanged
-      )
+      refreshControl?
+        .addAction(
+          UIAction { [weak self] _ in
+            self?.refreshIfAble()
+          },
+          for: .valueChanged
+        )
     }
 
     view.addSubview(webfingerIndicatorView)
@@ -410,15 +411,16 @@ extension TableViewController {
   fileprivate func setupViewModelBindings() {
     viewModel.title.sink { [weak self] in self?.navigationItem.title = $0 }.store(in: &cancellables)
 
-    viewModel.titleLocalizationComponents.receive(on: DispatchQueue.main).sink { [weak self] in
-      guard let key = $0.first else { return }
+    viewModel.titleLocalizationComponents.receive(on: DispatchQueue.main)
+      .sink { [weak self] in
+        guard let key = $0.first else { return }
 
-      self?.navigationItem.title = String(
-        format: NSLocalizedString(key, comment: ""),
-        arguments: Array($0.suffix(from: 1))
-      )
-    }
-    .store(in: &cancellables)
+        self?.navigationItem.title = String(
+          format: NSLocalizedString(key, comment: ""),
+          arguments: Array($0.suffix(from: 1))
+        )
+      }
+      .store(in: &cancellables)
 
     viewModel.updates.receive(on: DispatchQueue.main)
       .sink { [weak self] in self?.update($0) }
@@ -651,11 +653,12 @@ extension TableViewController {
 
   fileprivate func navigate(toNotification: MastodonNotification) {
     guard
-      let item = dataSource.snapshot().itemIdentifiers.first(where: {
-        guard case .notification(let notification, _, _) = $0 else { return false }
+      let item = dataSource.snapshot().itemIdentifiers
+        .first(where: {
+          guard case .notification(let notification, _, _) = $0 else { return false }
 
-        return notification.id == toNotification.id
-      }),
+          return notification.id == toNotification.id
+        }),
       let indexPath = dataSource.indexPath(for: item)
     else { return }
 
@@ -763,14 +766,15 @@ extension TableViewController {
       navigationController?.popViewController(animated: true)
     }
 
-    rootViewModel?.navigationViewModel?.presentedComposeStatusViewModel = rootViewModel?.composeStatusViewModel(
-      identityContext: viewModel.identityContext,
-      identity: identity,
-      inReplyTo: inReplyToViewModel,
-      redraft: redraft,
-      edit: edit,
-      directMessageTo: directMessageTo
-    )
+    rootViewModel?.navigationViewModel?.presentedComposeStatusViewModel = rootViewModel?
+      .composeStatusViewModel(
+        identityContext: viewModel.identityContext,
+        identity: identity,
+        inReplyTo: inReplyToViewModel,
+        redraft: redraft,
+        edit: edit,
+        directMessageTo: directMessageTo
+      )
   }
 
   fileprivate func confirmDelete(statusViewModel: StatusViewModel, redraft: Bool) {

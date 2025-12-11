@@ -26,23 +26,25 @@ final class MainNavigationViewController: UITabBarController {
 
     delegate = self
 
-    viewModel.$presentedComposeStatusViewModel.sink { [weak self] in
-      if let composeStatusViewModel = $0 {
-        self?.presentComposeStatus(composeStatusViewModel: composeStatusViewModel)
-      } else {
-        self?.dismissComposeStatus()
+    viewModel.$presentedComposeStatusViewModel
+      .sink { [weak self] in
+        if let composeStatusViewModel = $0 {
+          self?.presentComposeStatus(composeStatusViewModel: composeStatusViewModel)
+        } else {
+          self?.dismissComposeStatus()
+        }
       }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
 
-    viewModel.$presentingSecondaryNavigation.sink { [weak self] in
-      if $0 {
-        self?.presentSecondaryNavigation()
-      } else {
-        self?.dismissSecondaryNavigation()
+    viewModel.$presentingSecondaryNavigation
+      .sink { [weak self] in
+        if $0 {
+          self?.presentSecondaryNavigation()
+        } else {
+          self?.dismissSecondaryNavigation()
+        }
       }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
 
     viewModel.identityContext.$identity.map(\.pending)
       .removeDuplicates()
@@ -169,17 +171,18 @@ extension MainNavigationViewController {
     view.addSubview(newStatusButtonView)
     newStatusButtonView.translatesAutoresizingMaskIntoConstraints = false
 
-    viewModel.identityContext.$appPreferences.map(\.statusWord).removeDuplicates().sink {
-      switch $0 {
-      case .toot:
-        newStatusButtonView.button.accessibilityLabel =
-          NSLocalizedString("compose-button.accessibility-label.toot", comment: "")
-      case .post:
-        newStatusButtonView.button.accessibilityLabel =
-          NSLocalizedString("compose-button.accessibility-label.post", comment: "")
+    viewModel.identityContext.$appPreferences.map(\.statusWord).removeDuplicates()
+      .sink {
+        switch $0 {
+        case .toot:
+          newStatusButtonView.button.accessibilityLabel =
+            NSLocalizedString("compose-button.accessibility-label.toot", comment: "")
+        case .post:
+          newStatusButtonView.button.accessibilityLabel =
+            NSLocalizedString("compose-button.accessibility-label.post", comment: "")
+        }
       }
-    }
-    .store(in: &cancellables)
+      .store(in: &cancellables)
 
     let bottomConstraint: NSLayoutConstraint
     let trailingConstant: CGFloat
