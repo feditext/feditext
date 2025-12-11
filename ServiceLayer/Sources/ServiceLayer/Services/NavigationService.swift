@@ -258,7 +258,11 @@ extension NavigationService {
   fileprivate static var navigationCache = NSCache<NavigationCacheKey, NavigationCacheValue>()
 
   /// Look up a URL in the navigation cache, content database, and WebFinger.
-  fileprivate func lookup(url: URL, identityId: Identity.Id, type: Search.SearchType?) -> AnyPublisher<
+  fileprivate func lookup(
+    url: URL,
+    identityId: Identity.Id,
+    type: Search.SearchType?
+  ) -> AnyPublisher<
     Navigation, Never
   > {
     let cacheKey = NavigationCacheKey(identityId: identityId, url: url)

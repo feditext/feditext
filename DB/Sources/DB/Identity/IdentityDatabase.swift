@@ -32,7 +32,12 @@ public struct IdentityDatabase {
 }
 
 extension IdentityDatabase {
-  public func createIdentity(id: Identity.Id, url: URL, authenticated: Bool, pending: Bool) -> AnyPublisher<
+  public func createIdentity(
+    id: Identity.Id,
+    url: URL,
+    authenticated: Bool,
+    pending: Bool
+  ) -> AnyPublisher<
     Never, Error
   > {
     databaseWriter.mutatingPublisher {
@@ -249,7 +254,10 @@ extension IdentityDatabase {
 }
 
 extension IdentityDatabase {
-  fileprivate static func writePreferences(_ preferences: Identity.Preferences, id: Identity.Id) -> (Database) throws ->
+  fileprivate static func writePreferences(
+    _ preferences: Identity.Preferences,
+    id: Identity.Id
+  ) -> (Database) throws ->
     Void
   {
     {

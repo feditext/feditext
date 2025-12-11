@@ -20,7 +20,7 @@
       "XCTAssertNoThrow"
     ]
   },
-  "prioritizeKeepingFunctionOutputTogether" : false,
+  "prioritizeKeepingFunctionOutputTogether" : true,
   "reflowMultilineStringLiterals" : "onlyLinesOverLength",
   "respectsExistingLineBreaks" : true,
   "rules" : {

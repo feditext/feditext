@@ -1080,7 +1080,10 @@ extension StatusView {
   }
   // swiftlint:enable function_body_length
 
-  fileprivate func accessibilityAttributedLabel(viewModel: StatusViewModel, forceShowContent: Bool)
+  fileprivate func accessibilityAttributedLabel(
+    viewModel: StatusViewModel,
+    forceShowContent: Bool
+  )
     -> NSAttributedString
   {
     // Filtered statuses only list the reasons they were filtered.

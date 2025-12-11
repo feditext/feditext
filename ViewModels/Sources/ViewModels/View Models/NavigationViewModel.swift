@@ -234,7 +234,9 @@ extension NavigationViewModel {
     return exploreViewModel
   }
 
-  public func notificationsViewModel(excludeTypes: Set<MastodonNotification.NotificationType>)
+  public func notificationsViewModel(
+    excludeTypes: Set<MastodonNotification.NotificationType>
+  )
     -> CollectionItemsViewModel
   {
     let viewModel = CollectionItemsViewModel(

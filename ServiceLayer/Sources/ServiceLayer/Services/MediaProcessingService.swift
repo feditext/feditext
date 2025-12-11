@@ -36,7 +36,9 @@ enum AltTextError: String, Error {
 public enum MediaProcessingService {}
 
 extension MediaProcessingService {
-  public static func dataAndMimeType(itemProvider: NSItemProvider) -> AnyPublisher<
+  public static func dataAndMimeType(
+    itemProvider: NSItemProvider
+  ) -> AnyPublisher<
     (data: Data, mimeType: String), Error
   > {
     let registeredTypes = itemProvider.registeredTypeIdentifiers.compactMap(UTType.init)

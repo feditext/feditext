@@ -22,7 +22,9 @@ final class StatusViewModelTests: XCTestCase {
 
   // TODO: (Vyr) this is a horror but most of it can be extracted for use with other tests like this one
   /// Create a status view model from status content HTML and split off the trailing hashtags.
-  func splitTrailingHashtags(_ raw: String) throws -> (
+  func splitTrailingHashtags(
+    _ raw: String
+  ) throws -> (
     AttributedString,
     AttributedString.Index,
     [StatusViewModel.TagPair]
