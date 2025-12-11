@@ -16,8 +16,11 @@ enum AutocompleteItem: Hashable {
   case emoji(PickerEmoji)
 }
 
+/// Data source for autocompleting hashtags, accounts, and emoji in the post composer.
 final class AutocompleteDataSource: UICollectionViewDiffableDataSource<AutocompleteSection, AutocompleteItem> {
+  /// Used to search tags only.
   @Published private var searchViewModel: SearchViewModel
+  @Published private var accountSearchViewModel: AccountSearchViewModel
   @Published private var emojiPickerViewModel: EmojiPickerViewModel
 
   private let updateQueue =
@@ -30,6 +33,7 @@ final class AutocompleteDataSource: UICollectionViewDiffableDataSource<Autocompl
     parentViewModel: ComposeStatusViewModel
   ) {
     searchViewModel = SearchViewModel(identityContext: parentViewModel.identityContext, .compositionAutocomplete)
+    accountSearchViewModel = AccountSearchViewModel(identityContext: parentViewModel.identityContext)
     emojiPickerViewModel = EmojiPickerViewModel(identityContext: parentViewModel.identityContext, queryOnly: true)
 
     let registration = UICollectionView.CellRegistration<AutocompleteItemCollectionViewCell, AutocompleteItem> {
@@ -50,18 +54,25 @@ final class AutocompleteDataSource: UICollectionViewDiffableDataSource<Autocompl
         }
       }
 
+    searchViewModel.scope = .tags
+
     queryPublisher
       .replaceNil(with: "")
       .removeDuplicates()
-      .combineLatest($searchViewModel, $emojiPickerViewModel)
-      .sink(receiveValue: Self.combine(query:searchViewModel:emojiPickerViewModel:))
+      .combineLatest($searchViewModel, $accountSearchViewModel, $emojiPickerViewModel)
+      .sink(receiveValue: Self.combine(query:searchViewModel:accountSearchViewModel:emojiPickerViewModel:))
       .store(in: &cancellables)
 
     $searchViewModel.map(\.updates)
       .switchToLatest()
-      .combineLatest($emojiPickerViewModel.map(\.$emoji).switchToLatest())
+      .combineLatest(
+        $accountSearchViewModel.map(\.updates).switchToLatest(),
+        $emojiPickerViewModel.map(\.$emoji).switchToLatest()
+      )
       .receive(on: DispatchQueue.main)
-      .sink { [weak self] in self?.apply(searchViewModelUpdate: $0, emojiSections: $1) }
+      .sink { [weak self] in
+        self?.apply(searchViewModelUpdate: $0, accountSearchViewModelUpdate: $1, emojiSections: $2)
+      }
       .store(in: &cancellables)
 
     parentViewModel.$identityContext
@@ -69,7 +80,8 @@ final class AutocompleteDataSource: UICollectionViewDiffableDataSource<Autocompl
       .sink { [weak self] in
         guard let self = self else { return }
 
-        self.searchViewModel = SearchViewModel(identityContext: $0, .compositionAutocomplete)
+        searchViewModel = SearchViewModel(identityContext: $0, .compositionAutocomplete)
+        searchViewModel.scope = .tags
         self.emojiPickerViewModel = EmojiPickerViewModel(identityContext: $0, queryOnly: true)
       }
       .store(in: &cancellables)
@@ -96,33 +108,44 @@ extension AutocompleteDataSource {
   fileprivate static func combine(
     query: String,
     searchViewModel: SearchViewModel,
+    accountSearchViewModel: AccountSearchViewModel,
     emojiPickerViewModel: EmojiPickerViewModel
   ) {
     if query.starts(with: ":") {
       searchViewModel.query = ""
+      accountSearchViewModel.query = ""
       emojiPickerViewModel.query = String(query.dropFirst())
-    } else {
-      if query.starts(with: "@") {
-        searchViewModel.scope = .accounts
-      } else if query.starts(with: "#") {
-        searchViewModel.scope = .tags
-      }
-
+    } else if query.starts(with: "@") {
+      searchViewModel.query = ""
+      accountSearchViewModel.query = String(query.dropFirst())
+      emojiPickerViewModel.query = ""
+    } else if query.starts(with: "#") {
       searchViewModel.query = String(query.dropFirst())
+      accountSearchViewModel.query = ""
       emojiPickerViewModel.query = ""
     }
   }
 
-  fileprivate func apply(searchViewModelUpdate: CollectionUpdate, emojiSections: [PickerEmoji.Category: [PickerEmoji]])
-  {
+  fileprivate func apply(
+    searchViewModelUpdate: CollectionUpdate,
+    accountSearchViewModelUpdate: CollectionUpdate,
+    emojiSections: [PickerEmoji.Category: [PickerEmoji]]
+  ) {
     var newSnapshot = NSDiffableDataSourceSnapshot<AutocompleteSection, AutocompleteItem>()
-    let items: [AutocompleteItem] = searchViewModelUpdate.sections.map(\.items).reduce([], +)
+    let tagItems: [AutocompleteItem] = searchViewModelUpdate.sections.map(\.items).reduce([], +)
+      .compactMap {
+        switch $0 {
+        case .tag(let tag):
+          return .tag(tag)
+        default:
+          return nil
+        }
+      }
+    let accountItems: [AutocompleteItem] = accountSearchViewModelUpdate.sections.map(\.items).reduce([], +)
       .compactMap {
         switch $0 {
         case .account(let account, _, _, _, _):
           return .account(account)
-        case .tag(let tag):
-          return .tag(tag)
         default:
           return nil
         }
@@ -131,8 +154,10 @@ extension AutocompleteDataSource {
 
     newSnapshot.appendSections([.search])
 
-    if !items.isEmpty {
-      newSnapshot.appendItems(items, toSection: .search)
+    if !tagItems.isEmpty {
+      newSnapshot.appendItems(tagItems, toSection: .search)
+    } else if !accountItems.isEmpty {
+      newSnapshot.appendItems(accountItems, toSection: .search)
     } else if !emojis.isEmpty {
       newSnapshot.appendSections([.emoji])
       newSnapshot.appendItems(emojis, toSection: .emoji)

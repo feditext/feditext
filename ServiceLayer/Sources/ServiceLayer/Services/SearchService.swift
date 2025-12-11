@@ -6,6 +6,8 @@ import Foundation
 import Mastodon
 import MastodonAPI
 
+/// Service for the main search API.
+/// - SeeAlso: ``AccountSearchService``
 public class SearchService: ObservableObject {
   public let sections: AnyPublisher<[CollectionSection], Error>
   public let navigationService: NavigationService
@@ -94,6 +96,7 @@ extension SearchService: CollectionService {
 
     try await contentDatabase.insert(results: page).finished
 
+    // TODO: (Vyr) why doesn't this use `CollectionService.accountIdsForRelationships`?
     let accountIDs = page.accounts.map(\.id)
     if !accountIDs.isEmpty {
       let relationships = try await mastodonAPIClient.request(

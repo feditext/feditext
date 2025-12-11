@@ -5,6 +5,8 @@ import DB
 import Foundation
 import ServiceLayer
 
+/// View model for Explore tab searches. Also used for autocompleting tags.
+/// - SeeAlso: ``AccountSearchViewModel``
 public final class SearchViewModel: CollectionItemsViewModel {
   @Published public var query = ""
   @Published public var scope = SearchScope.all

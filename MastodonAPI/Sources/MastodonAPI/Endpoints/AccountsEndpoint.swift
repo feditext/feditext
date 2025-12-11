@@ -15,6 +15,15 @@ public enum AccountsEndpoint {
   case followRequests
   /// https://docs.joinmastodon.org/methods/directory/
   case directory(local: Bool)
+  /// Account search by username or display name only.
+  /// - SeeAlso: <https://docs.joinmastodon.org/methods/accounts/#search>
+  case search(
+    _ q: String,
+    resolve: Bool = false,
+    following: Bool = false,
+    limit: Int? = nil,
+    offset: Int? = nil
+  )
 }
 
 extension AccountsEndpoint: Endpoint {
@@ -26,7 +35,7 @@ extension AccountsEndpoint: Endpoint {
       return defaultContext + ["statuses"]
     case .mutes, .blocks, .followRequests, .directory:
       return defaultContext
-    case .accountsFollowers, .accountsFollowing:
+    case .accountsFollowers, .accountsFollowing, .search:
       return defaultContext + ["accounts"]
     }
   }
@@ -49,15 +58,38 @@ extension AccountsEndpoint: Endpoint {
       return ["follow_requests"]
     case .directory:
       return ["directory"]
+    case .search:
+      return ["search"]
     }
   }
 
   public var queryParameters: [URLQueryItem] {
     switch self {
+    case .rebloggedBy,
+      .favouritedBy,
+      .mutes,
+      .blocks,
+      .accountsFollowers,
+      .accountsFollowing,
+      .followRequests:
+      return []
     case .directory(let local):
       return [.init(name: "local", value: String(local))]
-    default:
-      return []
+    case .search(let q, let resolve, let following, let limit, let offset):
+      var params = [URLQueryItem(name: "q", value: q)]
+      if resolve {
+        params.append(.init(name: "resolve", value: "\(resolve)"))
+      }
+      if following {
+        params.append(.init(name: "following", value: "\(following)"))
+      }
+      if let limit {
+        params.append(.init(name: "limit", value: "\(limit)"))
+      }
+      if let offset {
+        params.append(.init(name: "offset", value: "\(offset)"))
+      }
+      return params
     }
   }
 

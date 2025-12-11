@@ -441,6 +441,14 @@ extension IdentityService {
     SearchService(environment: environment, mastodonAPIClient: mastodonAPIClient, contentDatabase: contentDatabase)
   }
 
+  public func accountSearchService() -> AccountSearchService {
+    AccountSearchService(
+      environment: environment,
+      mastodonAPIClient: mastodonAPIClient,
+      contentDatabase: contentDatabase
+    )
+  }
+
   public func notificationsService(excludeTypes: Set<MastodonNotification.NotificationType>) -> NotificationsService {
     NotificationsService(
       excludeTypes: excludeTypes,
