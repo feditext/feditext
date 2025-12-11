@@ -83,7 +83,7 @@ extension CompositionView {
     stackView.axis = .vertical
     stackView.spacing = .defaultSpacing
 
-    let spoilerTextinputAccessoryView = CompositionInputAccessoryView(
+    let spoilerTextInputAccessoryView = CompositionInputAccessoryView(
       viewModel: viewModel,
       parentViewModel: parentViewModel,
       autocompleteQueryPublisher: viewModel.$contentWarningAutocompleteQuery.eraseToAnyPublisher()
@@ -94,8 +94,8 @@ extension CompositionView {
     spoilerTextField.adjustsFontForContentSizeCategory = true
     spoilerTextField.font = .preferredFont(forTextStyle: .body)
     spoilerTextField.placeholder = NSLocalizedString("status.spoiler-text-placeholder", comment: "")
-    spoilerTextField.inputAccessoryView = spoilerTextinputAccessoryView
-    spoilerTextField.tag = spoilerTextinputAccessoryView.tagForInputView
+    spoilerTextField.inputAccessoryView = spoilerTextInputAccessoryView
+    spoilerTextField.tag = spoilerTextInputAccessoryView.tagForInputView
     spoilerTextField.isHiddenStackViewSafe = !viewModel.displayContentWarning
     spoilerTextField.addAction(
       UIAction { [weak self] _ in self?.spoilerTextFieldEditingChanged() },
@@ -300,7 +300,7 @@ extension CompositionView {
       .sink { [weak self] in self?.autocompleteSelected($0) }
       .store(in: &cancellables)
 
-    spoilerTextinputAccessoryView.autocompleteSelections
+    spoilerTextInputAccessoryView.autocompleteSelections
       .sink { [weak self] in self?.spoilerTextAutocompleteSelected($0) }
       .store(in: &cancellables)
 
