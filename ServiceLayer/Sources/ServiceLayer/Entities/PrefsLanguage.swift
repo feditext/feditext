@@ -93,10 +93,7 @@ extension PrefsLanguage {
     }
 
     // Add extended languages. They don't currently have regions or scripts.
-    for (tag, localized) in extendedLanguageTagsAndLocalizedStrings {
-      guard !tags.contains(tag) else {
-        continue
-      }
+    for (tag, localized) in extendedLanguageTagsAndLocalizedStrings where !tags.contains(tag) {
       tertiaryList.append(PrefsLanguage(tag: tag, localized: localized))
     }
 
