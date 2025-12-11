@@ -49,12 +49,14 @@ extension CompositionPollOptionView {
     let textInputAccessoryView = CompositionInputAccessoryView(
       viewModel: viewModel,
       parentViewModel: parentViewModel,
-      autocompleteQueryPublisher: option.$autocompleteQuery.eraseToAnyPublisher())
+      autocompleteQueryPublisher: option.$autocompleteQuery.eraseToAnyPublisher()
+    )
     textField.inputAccessoryView = textInputAccessoryView
     textField.tag = textInputAccessoryView.tagForInputView
     textField.addAction(
       UIAction { [weak self] _ in self?.textFieldEditingChanged() },
-      for: .editingChanged)
+      for: .editingChanged
+    )
     textField.text = option.text
 
     stackView.addArrangedSubview(remainingCharactersLabel)
@@ -117,12 +119,14 @@ extension CompositionPollOptionView {
     let replaced = option.textToSelectedRange.replacingOccurrences(
       of: autocompleteQuery,
       with: autocompleteText.appending(" "),
-      range: queryRange)
+      range: queryRange
+    )
 
     textField.text = option.text.replacingOccurrences(
       of: option.textToSelectedRange,
       with: replaced,
-      range: textToSelectedRangeRange)
+      range: textToSelectedRangeRange
+    )
     textFieldEditingChanged()
   }
 }

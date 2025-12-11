@@ -8,7 +8,8 @@ public protocol WebAuthSession: AnyObject {
   init(
     url URL: URL,
     callbackURLScheme: String?,
-    completionHandler: @escaping WebAuthSessionCompletionHandler)
+    completionHandler: @escaping WebAuthSessionCompletionHandler
+  )
   var presentationContextProvider: WebAuthPresentationContextProviding? { get set }
   @discardableResult func start() -> Bool
 }

@@ -70,7 +70,8 @@ final class ComposeStatusViewController: UIViewController {
 
     navigationItem.leftBarButtonItem = UIBarButtonItem(
       systemItem: .cancel,
-      primaryAction: UIAction { [weak self] _ in self?.dismiss() })
+      primaryAction: UIAction { [weak self] _ in self?.dismiss() }
+    )
     navigationItem.rightBarButtonItem = postButton
 
     let postActionTitle = self.postActionTitle(
@@ -166,7 +167,8 @@ extension ComposeStatusViewController {
     case .editAttachment(let attachmentViewModel, let compositionViewModel):
       presentAttachmentEditor(
         attachmentViewModel: attachmentViewModel,
-        compositionViewModel: compositionViewModel)
+        compositionViewModel: compositionViewModel
+      )
     case .changeIdentity(let identity):
       changeIdentity(identity)
     }
@@ -199,7 +201,8 @@ extension ComposeStatusViewController {
 
       let compositionView = CompositionView(
         viewModel: compositionViewModel,
-        parentViewModel: viewModel)
+        parentViewModel: viewModel
+      )
       let adjustedIndex = viewModel.inReplyToViewModel == nil ? index : index + 1
 
       stackView.insertArrangedSubview(compositionView, at: adjustedIndex)
@@ -208,7 +211,8 @@ extension ComposeStatusViewController {
       DispatchQueue.main.async {
         self.scrollView.scrollRectToVisible(
           self.scrollView.convert(compositionView.frame, from: self.stackView),
-          animated: true)
+          animated: true
+        )
       }
     }
 
@@ -321,7 +325,8 @@ extension ComposeStatusViewController {
         let alertController = UIAlertController(
           title: NSLocalizedString("camera-access.title", comment: ""),
           message: NSLocalizedString("camera-access.description", comment: ""),
-          preferredStyle: .alert)
+          preferredStyle: .alert
+        )
 
         let openSystemSettingsAction = UIAlertAction(
           title: NSLocalizedString("camera-access.open-system-settings", comment: ""),
@@ -438,7 +443,8 @@ extension ComposeStatusViewController {
   }
 
   fileprivate func presentAttachmentEditor(
-    attachmentViewModel: AttachmentViewModel, compositionViewModel: CompositionViewModel
+    attachmentViewModel: AttachmentViewModel,
+    compositionViewModel: CompositionViewModel
   ) {
     let editAttachmentsView = EditAttachmentView { (attachmentViewModel, compositionViewModel) }
     let editAttachmentViewController = UIHostingController(rootView: editAttachmentsView)
@@ -453,7 +459,8 @@ extension ComposeStatusViewController {
       let alertController = UIAlertController(
         title: nil,
         message: NSLocalizedString("compose.attachments-will-be-discarded", comment: ""),
-        preferredStyle: .alert)
+        preferredStyle: .alert
+      )
 
       let okAction = UIAlertAction(
         title: NSLocalizedString("ok", comment: ""),

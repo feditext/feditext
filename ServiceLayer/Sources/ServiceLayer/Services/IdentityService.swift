@@ -238,7 +238,8 @@ extension IdentityService {
         context: filter.context,
         irreversible: filter.irreversible,
         wholeWord: filter.wholeWord,
-        expiresIn: filter.expiresAt)
+        expiresIn: filter.expiresAt
+      )
     )
     .flatMap(contentDatabase.createFilter(_:))
     .eraseToAnyPublisher()
@@ -252,7 +253,8 @@ extension IdentityService {
         context: filter.context,
         irreversible: filter.irreversible,
         wholeWord: filter.wholeWord,
-        expiresIn: filter.expiresAt)
+        expiresIn: filter.expiresAt
+      )
     )
     .flatMap(contentDatabase.createFilter(_:))
     .eraseToAnyPublisher()
@@ -404,7 +406,8 @@ extension IdentityService {
               notification: notification,
               environment: environment,
               mastodonAPIClient: mastodonAPIClient,
-              contentDatabase: contentDatabase)
+              contentDatabase: contentDatabase
+            )
           }
       }
       .eraseToAnyPublisher()
@@ -452,7 +455,8 @@ extension IdentityService {
     ConversationsService(
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func domainBlocksService() -> DomainBlocksService {
@@ -463,7 +467,8 @@ extension IdentityService {
     AnnouncementsService(
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func emojiPickerService() -> EmojiPickerService {

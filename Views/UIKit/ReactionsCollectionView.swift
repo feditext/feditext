@@ -34,11 +34,13 @@ extension ReactionsCollectionView {
   fileprivate static func layout() -> UICollectionViewLayout {
     let itemSize = NSCollectionLayoutSize(
       widthDimension: .estimated(.minimumButtonDimension),
-      heightDimension: .estimated(.minimumButtonDimension))
+      heightDimension: .estimated(.minimumButtonDimension)
+    )
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     let groupSize = NSCollectionLayoutSize(
       widthDimension: .fractionalWidth(1),
-      heightDimension: .estimated(.minimumButtonDimension))
+      heightDimension: .estimated(.minimumButtonDimension)
+    )
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
     group.interItemSpacing = .flexible(.defaultSpacing)

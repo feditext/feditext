@@ -22,7 +22,8 @@ public struct AllIdentitiesService {
       ?? IdentityDatabase(
         inMemory: environment.inMemoryContent,
         appGroup: AppMetadata.appGroup,
-        keychain: environment.keychain)
+        keychain: environment.keychain
+      )
     identitiesCreated = identitiesCreatedSubject.eraseToAnyPublisher()
   }
 }

@@ -26,7 +26,8 @@ public struct AccountService {
     navigationService = NavigationService(
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
     self.environment = environment
     self.mastodonAPIClient = mastodonAPIClient
     self.contentDatabase = contentDatabase
@@ -151,7 +152,8 @@ extension AccountService {
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
       contentDatabase: contentDatabase,
-      titleComponents: ["account.followed-by-%@", "@".appending(account.acct)])
+      titleComponents: ["account.followed-by-%@", "@".appending(account.acct)]
+    )
   }
 
   public func followersService() -> AccountListService {
@@ -160,7 +162,8 @@ extension AccountService {
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
       contentDatabase: contentDatabase,
-      titleComponents: ["account.%@-followers", "@".appending(account.acct)])
+      titleComponents: ["account.%@-followers", "@".appending(account.acct)]
+    )
   }
 }
 

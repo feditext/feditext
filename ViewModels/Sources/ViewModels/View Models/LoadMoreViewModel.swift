@@ -31,6 +31,7 @@ extension LoadMoreViewModel {
           receiveCompletion: { [weak self] _ in self?.loading = false }
         )
         .map { _ in CollectionItemEvent.ignorableOutput }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 }

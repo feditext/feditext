@@ -116,7 +116,8 @@ extension MainNavigationViewController {
     var controllers: [UIViewController] = [
       TimelinesViewController(
         viewModel: viewModel,
-        rootViewModel: rootViewModel)
+        rootViewModel: rootViewModel
+      )
     ]
 
     if viewModel.identityContext.identity.authenticated && !pending {
@@ -124,13 +125,16 @@ extension MainNavigationViewController {
       controllers.append(
         ExploreViewController(
           viewModel: viewModel.exploreViewModel(),
-          rootViewModel: rootViewModel))
+          rootViewModel: rootViewModel
+        )
+      )
       controllers.append(NotificationsViewController(viewModel: viewModel, rootViewModel: rootViewModel))
 
       if viewModel.canListConversations {
         let conversationsViewController = TableViewController(
           viewModel: viewModel.conversationsViewModel(),
-          rootViewModel: rootViewModel)
+          rootViewModel: rootViewModel
+        )
 
         conversationsViewController.tabBarItem = NavigationViewModel.Tab.messages.tabBarItem
         conversationsViewController.navigationItem.title = NavigationViewModel.Tab.messages.title
@@ -159,7 +163,8 @@ extension MainNavigationViewController {
 
         self.viewModel.presentedComposeStatusViewModel =
           self.rootViewModel.composeStatusViewModel(identityContext: self.viewModel.identityContext)
-      })
+      }
+    )
 
     view.addSubview(newStatusButtonView)
     newStatusButtonView.translatesAutoresizingMaskIntoConstraints = false
@@ -227,7 +232,8 @@ extension MainNavigationViewController {
 
     hostingController.navigationItem.leftBarButtonItem = UIBarButtonItem(
       systemItem: .close,
-      primaryAction: UIAction { [weak self] _ in self?.viewModel.presentingSecondaryNavigation = false })
+      primaryAction: UIAction { [weak self] _ in self?.viewModel.presentingSecondaryNavigation = false }
+    )
     hostingController.navigationItem.titleView = SecondaryNavigationTitleView(viewModel: viewModel)
 
     let navigationController = UINavigationController(rootViewController: hostingController)

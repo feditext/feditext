@@ -70,22 +70,26 @@ final class ExploreDataSource: UICollectionViewDiffableDataSource<ExploreViewMod
         return $0.dequeueConfiguredReusableCell(
           using: tagRegistration,
           for: $1,
-          item: viewModel.viewModel(tag: tag))
+          item: viewModel.viewModel(tag: tag)
+        )
       case .link(let card):
         return $0.dequeueConfiguredReusableCell(
           using: linkRegistration,
           for: $1,
-          item: viewModel.viewModel(card: card))
+          item: viewModel.viewModel(card: card)
+        )
       case .status(let status):
         return $0.dequeueConfiguredReusableCell(
           using: statusRegistration,
           for: $1,
-          item: viewModel.viewModel(status: status))
+          item: viewModel.viewModel(status: status)
+        )
       case .instance:
         return $0.dequeueConfiguredReusableCell(
           using: instanceRegistration,
           for: $1,
-          item: viewModel.instanceViewModel)
+          item: viewModel.instanceViewModel
+        )
       default:
         return $0.dequeueConfiguredReusableCell(using: itemRegistration, for: $1, item: $2)
       }

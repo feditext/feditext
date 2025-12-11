@@ -187,7 +187,8 @@ extension NotificationsService {
                   newest.date,
                   newest.mastodonNotification.status
                 )
-              ))
+              )
+            )
           } else {
             // Pass through non-groupable notifications and single groupable notifications.
             for notification in forType {
@@ -199,7 +200,8 @@ extension NotificationsService {
                     notification.rules,
                     notification.statusConfiguration
                   )
-                ))
+                )
+              )
             }
           }
         }

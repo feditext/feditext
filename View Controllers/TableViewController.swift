@@ -69,7 +69,8 @@ class TableViewController: UITableViewController {
         UIAction { [weak self] _ in
           self?.refreshIfAble()
         },
-        for: .valueChanged)
+        for: .valueChanged
+      )
     }
 
     view.addSubview(webfingerIndicatorView)
@@ -83,7 +84,8 @@ class TableViewController: UITableViewController {
     newItemsViewHiddenConstraint?.isActive = true
     newItemsViewVisibleConstraint = newItemsView.topAnchor.constraint(
       equalTo: view.safeAreaLayoutGuide.topAnchor,
-      constant: .defaultSpacing)
+      constant: .defaultSpacing
+    )
 
     NSLayoutConstraint.activate([
       webfingerIndicatorView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
@@ -96,7 +98,8 @@ class TableViewController: UITableViewController {
         self?.newItemsTapped()
         self?.hideNewItemsView()
       },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     newItemsView.button.accessibilityCustomActions = [
       UIAccessibilityCustomAction(name: NSLocalizedString("dismiss", comment: "")) { [weak self] _ in
         self?.hideNewItemsView()
@@ -177,7 +180,8 @@ class TableViewController: UITableViewController {
     return cellHeightCaches[tableView.frame.width]?[item]
       ?? item.estimatedHeight(
         width: tableView.readableContentGuide.layoutFrame.width,
-        identityContext: viewModel.identityContext)
+        identityContext: viewModel.identityContext
+      )
   }
 
   override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
@@ -236,7 +240,8 @@ extension TableViewController {
       let size = headerView.systemLayoutSizeFitting(
         CGSize(width: tableView.frame.width, height: .greatestFiniteMagnitude),
         withHorizontalFittingPriority: .required,
-        verticalFittingPriority: .fittingSizeLevel)
+        verticalFittingPriority: .fittingSizeLevel
+      )
 
       if headerView.frame.size.height != size.height {
         headerView.frame.size.height = size.height
@@ -251,7 +256,8 @@ extension TableViewController {
       let size = footerView.systemLayoutSizeFitting(
         CGSize(width: tableView.frame.width, height: .greatestFiniteMagnitude),
         withHorizontalFittingPriority: .required,
-        verticalFittingPriority: .fittingSizeLevel)
+        verticalFittingPriority: .fittingSizeLevel
+      )
 
       if footerView.frame.size.height != size.height {
         footerView.frame.size.height = size.height
@@ -269,9 +275,11 @@ extension TableViewController: NavigationHandling {
       let vc = TableViewController(
         viewModel: CollectionItemsViewModel(
           collectionService: collectionService,
-          identityContext: viewModel.identityContext),
+          identityContext: viewModel.identityContext
+        ),
         rootViewModel: rootViewModel,
-        parentNavigationController: parentNavigationController)
+        parentNavigationController: parentNavigationController
+      )
 
       if let parentNavigationController = parentNavigationController {
         parentNavigationController.pushViewController(vc, animated: true)
@@ -284,10 +292,12 @@ extension TableViewController: NavigationHandling {
       let vc = ProfileViewController(
         viewModel: ProfileViewModel(
           profileService: profileService,
-          identityContext: viewModel.identityContext),
+          identityContext: viewModel.identityContext
+        ),
         rootViewModel: rootViewModel,
         identityContext: viewModel.identityContext,
-        parentNavigationController: parentNavigationController)
+        parentNavigationController: parentNavigationController
+      )
 
       if let parentNavigationController = parentNavigationController {
         parentNavigationController.pushViewController(vc, animated: true)
@@ -405,7 +415,8 @@ extension TableViewController {
 
       self?.navigationItem.title = String(
         format: NSLocalizedString(key, comment: ""),
-        arguments: Array($0.suffix(from: 1)))
+        arguments: Array($0.suffix(from: 1))
+      )
     }
     .store(in: &cancellables)
 
@@ -426,7 +437,8 @@ extension TableViewController {
     $loading.combineLatest(
       $loading.debounce(
         for: .seconds(Self.loadingFooterDebounceInterval),
-        scheduler: DispatchQueue.main)
+        scheduler: DispatchQueue.main
+      )
     )
     .sink { [weak self] loading, debouncedLoading in
       guard let self = self else { return }
@@ -544,7 +556,8 @@ extension TableViewController {
           self.tableView.contentInset.bottom = max(
             self.tableView.safeAreaLayoutGuide.layoutFrame.height
               - self.tableView.rectForRow(at: indexPath).height,
-            self.bottomInset)
+            self.bottomInset
+          )
         }
 
         self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
@@ -590,14 +603,21 @@ extension TableViewController {
     case .attachment(let attachmentViewModel, let statusViewModel):
       present(attachmentViewModel: attachmentViewModel, statusViewModel: statusViewModel)
     case .compose(
-      let identity, let inReplyToViewModel, let redraft, let edit, let wasContextParent, let directMessageTo):
+      let identity,
+      let inReplyToViewModel,
+      let redraft,
+      let edit,
+      let wasContextParent,
+      let directMessageTo
+    ):
       compose(
         identity: identity,
         inReplyToViewModel: inReplyToViewModel,
         redraft: redraft,
         edit: edit,
         wasContextParent: wasContextParent,
-        directMessageTo: directMessageTo)
+        directMessageTo: directMessageTo
+      )
     case .confirmDelete(let statusViewModel, let redraft):
       confirmDelete(statusViewModel: statusViewModel, redraft: redraft)
     case .confirmUnfollow(let accountViewModel):
@@ -664,12 +684,14 @@ extension TableViewController {
         self?.dismiss(animated: true)
       },
       deletionAction: nil,
-      searchPresentationAction: nil)
+      searchPresentationAction: nil
+    )
     let navigationController = UINavigationController(rootViewController: emojiPickerController)
 
     navigationController.preferredContentSize = .init(
       width: view.readableContentGuide.layoutFrame.width,
-      height: view.frame.height / 2)
+      height: view.frame.height / 2
+    )
     navigationController.modalPresentationStyle = .popover
     navigationController.popoverPresentationController?.delegate = self
     navigationController.popoverPresentationController?.sourceView = fromView
@@ -708,7 +730,8 @@ extension TableViewController {
     case .image, .gifv:
       let imagePageViewController = ImagePageViewController(
         initiallyVisible: attachmentViewModel,
-        statusViewModel: statusViewModel)
+        statusViewModel: statusViewModel
+      )
       let imageNavigationController = ImageNavigationController(imagePageViewController: imagePageViewController)
 
       imageNavigationController.transitionController.fromDelegate = self
@@ -768,7 +791,8 @@ extension TableViewController {
       message: redraft
         ? deleteAndRedraftConfirmMessage
         : deleteConfirmMessage,
-      preferredStyle: .alert)
+      preferredStyle: .alert
+    )
 
     let deleteAction = UIAlertAction(
       title: redraft
@@ -790,7 +814,8 @@ extension TableViewController {
     confirm(
       message: String.localizedStringWithFormat(
         NSLocalizedString("account.unfollow.confirm-%@", comment: ""),
-        accountViewModel.accountName)
+        accountViewModel.accountName
+      )
     ) {
       accountViewModel.unfollow()
     }
@@ -800,7 +825,8 @@ extension TableViewController {
     confirm(
       message: String.localizedStringWithFormat(
         NSLocalizedString("account.hide-reblogs.confirm-%@", comment: ""),
-        accountViewModel.accountName)
+        accountViewModel.accountName
+      )
     ) {
       accountViewModel.hideReblogs()
     }
@@ -810,7 +836,8 @@ extension TableViewController {
     confirm(
       message: String.localizedStringWithFormat(
         NSLocalizedString("account.show-reblogs.confirm-%@", comment: ""),
-        accountViewModel.accountName)
+        accountViewModel.accountName
+      )
     ) {
       accountViewModel.showReblogs()
     }
@@ -827,7 +854,8 @@ extension TableViewController {
     confirm(
       message: String.localizedStringWithFormat(
         NSLocalizedString("account.unmute.confirm-%@", comment: ""),
-        accountViewModel.accountName)
+        accountViewModel.accountName
+      )
     ) {
       accountViewModel.unmute()
     }
@@ -838,7 +866,10 @@ extension TableViewController {
       title: nil,
       message: String.localizedStringWithFormat(
         NSLocalizedString("account.block.confirm-%@", comment: ""),
-        accountViewModel.accountName), preferredStyle: .alert)
+        accountViewModel.accountName
+      ),
+      preferredStyle: .alert
+    )
     let blockAction = UIAlertAction(
       title: NSLocalizedString("account.block", comment: ""),
       style: .destructive
@@ -865,7 +896,8 @@ extension TableViewController {
     confirm(
       message: String.localizedStringWithFormat(
         NSLocalizedString("account.unblock.confirm-%@", comment: ""),
-        accountViewModel.accountName)
+        accountViewModel.accountName
+      )
     ) {
       accountViewModel.unblock()
     }
@@ -877,7 +909,8 @@ extension TableViewController {
     confirm(
       message: String.localizedStringWithFormat(
         NSLocalizedString("account.domain-block.confirm-%@", comment: ""),
-        domain),
+        domain
+      ),
       style: .destructive
     ) {
       accountViewModel.domainBlock()
@@ -890,7 +923,8 @@ extension TableViewController {
     confirm(
       message: String.localizedStringWithFormat(
         NSLocalizedString("account.domain-unblock.confirm-%@", comment: ""),
-        domain)
+        domain
+      )
     ) {
       accountViewModel.domainUnblock()
     }
@@ -913,7 +947,8 @@ extension TableViewController {
   fileprivate func share(url: URL) {
     let activityViewController = UIActivityViewController(
       activityItems: [url],
-      applicationActivities: [OpenInDefaultBrowserActivity()])
+      applicationActivities: [OpenInDefaultBrowserActivity()]
+    )
 
     if UIDevice.current.userInterfaceIdiom == .pad {
       guard let sourceView = tableView.viewWithTag(url.hashValue) else { return }

@@ -88,18 +88,21 @@ public final class ComposeStatusViewModel: ObservableObject {
       compositionViewModel = CompositionViewModel(
         eventsSubject: compositionEventsSubject,
         redraft: redraft,
-        identityContext: identityContext)
+        identityContext: identityContext
+      )
     } else if let edit = edit {
       // This currently does the same thing as a redraft.
       compositionViewModel = CompositionViewModel(
         eventsSubject: compositionEventsSubject,
         redraft: edit,
-        identityContext: identityContext)
+        identityContext: identityContext
+      )
     } else if let extensionContext = extensionContext {
       compositionViewModel = CompositionViewModel(
         eventsSubject: compositionEventsSubject,
         extensionContext: extensionContext,
-        parentViewModel: self)
+        parentViewModel: self
+      )
     } else {
       compositionViewModel = CompositionViewModel(
         eventsSubject: compositionEventsSubject,
@@ -117,7 +120,8 @@ public final class ComposeStatusViewModel: ObservableObject {
       mentions.formUnion(
         inReplyTo.mentions.map(\.acct)
           .filter { $0 != (identity ?? identityContext.identity).account?.username }
-          .map("@".appending))
+          .map("@".appending)
+      )
 
       if !mentions.isEmpty {
         compositionViewModel.text = mentions.joined(separator: " ").appending(" ")
@@ -205,7 +209,8 @@ extension ComposeStatusViewModel {
       publisher: identityService.identityPublisher(immediate: false)
         .assignErrorsToAlertItem(to: \.alertItem, on: self),
       service: identityService,
-      environment: environment)
+      environment: environment
+    )
   }
 
   public func presentMediaPicker(viewModel: CompositionViewModel) {

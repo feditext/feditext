@@ -56,7 +56,8 @@ extension MultiNotificationView {
         width: bodyWidth,
         identityContext: identityContext,
         status: status,
-        configuration: .default)
+        configuration: .default
+      )
     } else {
       statusHeight = 0
     }
@@ -189,7 +190,8 @@ extension MultiNotificationView {
         avatarButton.trailingAnchor.constraint(equalTo: avatarStackView.trailingAnchor),
         sideStackView.widthAnchor.constraint(equalToConstant: .avatarDimension),
         iconImageView.centerYAnchor.constraint(equalTo: typeLabel.centerYAnchor),
-      ] + avatarConstraints)
+      ] + avatarConstraints
+    )
 
     isAccessibilityElement = true
   }
@@ -255,7 +257,8 @@ extension MultiNotificationView {
 
     iconImageView.image = UIImage(
       systemName: viewModel.type.systemImageName,
-      withConfiguration: UIImage.SymbolConfiguration(scale: .medium))
+      withConfiguration: UIImage.SymbolConfiguration(scale: .medium)
+    )
 
     let accessibilityAttributedLabel = NSMutableAttributedString(string: "")
 

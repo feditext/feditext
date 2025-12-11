@@ -86,7 +86,8 @@ extension CompositionView {
     let spoilerTextinputAccessoryView = CompositionInputAccessoryView(
       viewModel: viewModel,
       parentViewModel: parentViewModel,
-      autocompleteQueryPublisher: viewModel.$contentWarningAutocompleteQuery.eraseToAnyPublisher())
+      autocompleteQueryPublisher: viewModel.$contentWarningAutocompleteQuery.eraseToAnyPublisher()
+    )
 
     stackView.addArrangedSubview(spoilerTextField)
     spoilerTextField.borderStyle = .roundedRect
@@ -98,13 +99,15 @@ extension CompositionView {
     spoilerTextField.isHiddenStackViewSafe = !viewModel.displayContentWarning
     spoilerTextField.addAction(
       UIAction { [weak self] _ in self?.spoilerTextFieldEditingChanged() },
-      for: .editingChanged)
+      for: .editingChanged
+    )
 
     let textViewFont = UIFont.preferredFont(forTextStyle: .body)
     let textInputAccessoryView = CompositionInputAccessoryView(
       viewModel: viewModel,
       parentViewModel: parentViewModel,
-      autocompleteQueryPublisher: viewModel.$autocompleteQuery.eraseToAnyPublisher())
+      autocompleteQueryPublisher: viewModel.$autocompleteQuery.eraseToAnyPublisher()
+    )
 
     stackView.addArrangedSubview(textView)
     textView.keyboardType =
@@ -167,7 +170,8 @@ extension CompositionView {
 
     let textViewBaselineConstraint = textView.topAnchor.constraint(
       lessThanOrEqualTo: avatarImageView.centerYAnchor,
-      constant: -textViewFont.lineHeight / 2)
+      constant: -textViewFont.lineHeight / 2
+    )
 
     viewModel.$text.map(\.isEmpty)
       .sink { [weak self] in self?.textViewPlaceholder.isHiddenStackViewSafe = !$0 }
@@ -259,7 +263,8 @@ extension CompositionView {
 
       self.viewModel.attach(
         itemProviders: [$0],
-        parentViewModel: self.parentViewModel)
+        parentViewModel: self.parentViewModel
+      )
     }
     .store(in: &cancellables)
 
@@ -334,7 +339,8 @@ extension CompositionView {
       radius: .greatestFiniteMagnitude,
       corners: .allCorners,
       borderWidth: 0,
-      borderColor: nil)
+      borderColor: nil
+    )
 
     return UIMenu(
       children: identities.map { identity in
@@ -358,7 +364,8 @@ extension CompositionView {
             completion([action])
           }
         }
-      })
+      }
+    )
   }
 
   fileprivate func spoilerTextFieldEditingChanged() {
@@ -380,12 +387,14 @@ extension CompositionView {
     let replaced = viewModel.textToSelectedRange.replacingOccurrences(
       of: autocompleteQuery,
       with: autocompleteText.appending(" "),
-      range: queryRange)
+      range: queryRange
+    )
 
     textView.text = viewModel.text.replacingOccurrences(
       of: viewModel.textToSelectedRange,
       with: replaced,
-      range: textToSelectedRangeRange)
+      range: textToSelectedRangeRange
+    )
     textViewDidChange(textView)
   }
 
@@ -400,12 +409,14 @@ extension CompositionView {
     let replaced = viewModel.contentWarningTextToSelectedRange.replacingOccurrences(
       of: autocompleteQuery,
       with: autocompleteText.appending(" "),
-      range: queryRange)
+      range: queryRange
+    )
 
     spoilerTextField.text = viewModel.contentWarning.replacingOccurrences(
       of: viewModel.contentWarningTextToSelectedRange,
       with: replaced,
-      range: textToSelectedRangeRange)
+      range: textToSelectedRangeRange
+    )
     spoilerTextFieldEditingChanged()
   }
 
@@ -414,7 +425,8 @@ extension CompositionView {
       .difference(
         from: attachmentUploadsStackView
           .arrangedSubviews
-          .compactMap { ($0 as? AttachmentUploadView)?.id })
+          .compactMap { ($0 as? AttachmentUploadView)?.id }
+      )
 
     for insertion in diff.insertions {
       guard case .insert(let index, let id, _) = insertion,

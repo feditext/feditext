@@ -11,21 +11,26 @@ let package = Package(
   products: [
     .library(
       name: "HTTP",
-      targets: ["HTTP"]),
+      targets: ["HTTP"]
+    ),
     .library(
       name: "Stubbing",
-      targets: ["Stubbing"]),
+      targets: ["Stubbing"]
+    ),
   ],
   dependencies: [],
   targets: [
     .target(
       name: "HTTP",
-      dependencies: []),
+      dependencies: []
+    ),
     .target(
       name: "Stubbing",
-      dependencies: ["HTTP"]),
+      dependencies: ["HTTP"]
+    ),
     .testTarget(
       name: "HTTPTests",
-      dependencies: ["HTTP"]),
+      dependencies: ["HTTP"]
+    ),
   ]
 )

@@ -10,7 +10,8 @@ extension URL {
       let colonUnescaped = escaped.replacingOccurrences(
         of: "%3A",
         with: ":",
-        range: escaped.range(of: "%3A"))
+        range: escaped.range(of: "%3A")
+      )
 
       if let url = URL(string: colonUnescaped) {
         self = url

@@ -44,11 +44,13 @@ public final class SuccessfulMockWebAuthSession: MockWebAuthSession {
   ) {
     redirectURL = Foundation.URL(
       string: URLComponents(url: URL, resolvingAgainstBaseURL: true)!
-        .queryItems!.first(where: { $0.name == "redirect_uri" })!.value!)!
+        .queryItems!.first(where: { $0.name == "redirect_uri" })!.value!
+    )!
     super.init(
       url: URL,
       callbackURLScheme: callbackURLScheme,
-      completionHandler: completionHandler)
+      completionHandler: completionHandler
+    )
   }
 
   override var completionHandlerURL: URL? {

@@ -11,7 +11,8 @@ final class IdentitiesViewController: UITableViewController {
     .init(
       tableView: tableView,
       publisher: viewModel.$identities.eraseToAnyPublisher(),
-      viewModelProvider: viewModel.viewModel(identity:))
+      viewModelProvider: viewModel.viewModel(identity:)
+    )
   }()
 
   init(viewModel: IdentitiesViewModel, rootViewModel: RootViewModel) {

@@ -76,6 +76,7 @@ extension UserNotificationClient {
       delegateEvents:
         subject
         .handleEvents(receiveCancel: { delegate = nil })
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 }

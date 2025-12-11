@@ -31,7 +31,8 @@ public final class PreferencesViewModel: ObservableObject {
       .flatMap {
         identityContext.service.updatePreferences(
           $0,
-          authenticated: identityContext.identity.authenticated)
+          authenticated: identityContext.identity.authenticated
+        )
       }
       .assignErrorsToAlertItem(to: \.alertItem, on: self)
       .sink { _ in }
@@ -47,13 +48,15 @@ extension PreferencesViewModel {
   public func mutedUsersViewModel() -> CollectionViewModel {
     CollectionItemsViewModel(
       collectionService: identityContext.service.service(accountList: .mutes),
-      identityContext: identityContext)
+      identityContext: identityContext
+    )
   }
 
   public func blockedUsersViewModel() -> CollectionViewModel {
     CollectionItemsViewModel(
       collectionService: identityContext.service.service(accountList: .blocks),
-      identityContext: identityContext)
+      identityContext: identityContext
+    )
   }
 
   public var canListDomainBlocks: Bool {

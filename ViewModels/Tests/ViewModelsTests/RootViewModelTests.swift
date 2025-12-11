@@ -15,7 +15,8 @@ final class RootViewModelTests: XCTestCase {
     let uuid = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
     let sut = try RootViewModel(
       environment: .mock(uuid: { uuid }),
-      registerForRemoteNotifications: { Empty().setFailureType(to: Error.self).eraseToAnyPublisher() })
+      registerForRemoteNotifications: { Empty().setFailureType(to: Error.self).eraseToAnyPublisher() }
+    )
     let recorder = sut.$navigationViewModel.record()
 
     XCTAssertNil(try wait(for: recorder.next(), timeout: 1))

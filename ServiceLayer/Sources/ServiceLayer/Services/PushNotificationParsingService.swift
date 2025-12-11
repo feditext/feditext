@@ -100,7 +100,8 @@ extension PushNotificationParsingService {
           case .status:
             return String.localizedStringWithFormat(
               NSLocalizedString("notification.status-%@", comment: ""),
-              $0.account.displayName)
+              $0.account.displayName
+            )
           case .poll:
             guard let accountId = try? secrets.getAccountId() else {
               return NSLocalizedString("notification.poll.unknown", comment: "")
@@ -227,17 +228,20 @@ extension PushNotificationParsingService {
       using: SHA256.self,
       salt: auth,
       sharedInfo: HKDFInfo.auth.bytes,
-      outputByteCount: pseudoRandomKeyLength)
+      outputByteCount: pseudoRandomKeyLength
+    )
     let key = HKDF<SHA256>.deriveKey(
       inputKeyMaterial: pseudoRandomKey,
       salt: salt,
       info: keyInfo,
-      outputByteCount: keyLength)
+      outputByteCount: keyLength
+    )
     let nonce = HKDF<SHA256>.deriveKey(
       inputKeyMaterial: pseudoRandomKey,
       salt: salt,
       info: nonceInfo,
-      outputByteCount: nonceLength)
+      outputByteCount: nonceLength
+    )
 
     let sealedBox = try AES.GCM.SealedBox(combined: nonce.withUnsafeBytes(Array.init) + encryptedMessage)
     let decrypted = try AES.GCM.open(sealedBox, using: key)

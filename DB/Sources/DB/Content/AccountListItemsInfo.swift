@@ -13,7 +13,8 @@ extension AccountListItemsInfo {
   static func addingIncludes<T: DerivableRequest>(_ request: T) -> T where T.RowDecoder == AccountList {
     request.including(
       all: AccountAndRelationshipInfo.addingIncludes(AccountList.accounts)
-        .forKey(CodingKeys.accountAndRelationshipInfos))
+        .forKey(CodingKeys.accountAndRelationshipInfos)
+    )
   }
 
   static func request(_ request: QueryInterfaceRequest<AccountList>) -> QueryInterfaceRequest<Self> {

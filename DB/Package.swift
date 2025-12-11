@@ -11,7 +11,8 @@ let package = Package(
   products: [
     .library(
       name: "DB",
-      targets: ["DB"])
+      targets: ["DB"]
+    )
   ],
   dependencies: [
     .package(path: "AppMetadata"),
@@ -31,6 +32,7 @@ let package = Package(
     ),
     .testTarget(
       name: "DBTests",
-      dependencies: ["DB"]),
+      dependencies: ["DB"]
+    ),
   ]
 )

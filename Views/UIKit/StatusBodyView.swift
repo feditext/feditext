@@ -57,7 +57,8 @@ final class StatusBodyView: UIView {
         mutableSpoilerText.insert(
           emojis: viewModel.contentEmojis,
           view: spoilerTextLabel,
-          identityContext: viewModel.identityContext)
+          identityContext: viewModel.identityContext
+        )
         mutableSpoilerText.resizeAttachments(toLineHeight: spoilerTextLabel.font.lineHeight)
       }
       spoilerTextLabel.font = mutableSpoilerFont
@@ -69,7 +70,8 @@ final class StatusBodyView: UIView {
         viewModel.shouldShowContent
           ? NSLocalizedString("status.show-less", comment: "")
           : NSLocalizedString("status.show-more", comment: ""),
-        for: .normal)
+        for: .normal
+      )
       toggleShowContentButton.isHidden =
         (!viewModel.hasSpoiler
           || viewModel.alwaysExpandSpoilers
@@ -127,7 +129,8 @@ final class StatusBodyView: UIView {
 
             quoted.presentDisplayStatus()
             return true
-          })
+          }
+        )
       } else {
         quotedView.isHidden = true
       }
@@ -210,7 +213,8 @@ extension StatusBodyView {
 
     var contentHeight = plainTextContent.height(
       width: width,
-      font: contentFont)
+      font: contentFont
+    )
 
     if status.displayStatus.card != nil {
       contentHeight += .compactSpacing
@@ -218,7 +222,8 @@ extension StatusBodyView {
         width: width,
         identityContext: identityContext,
         status: status,
-        configuration: configuration)
+        configuration: configuration
+      )
     }
 
     if status.displayStatus.poll != nil {
@@ -260,7 +265,8 @@ extension StatusBodyView {
       // Include Show More button height.
       height += NSLocalizedString("status.show-more", comment: "").height(
         width: width,
-        font: .preferredFont(forTextStyle: .headline))
+        font: .preferredFont(forTextStyle: .headline)
+      )
       height += .compactSpacing
     }
 
@@ -278,7 +284,8 @@ extension StatusBodyView {
         width: width,
         identityContext: identityContext,
         status: status,
-        configuration: configuration)
+        configuration: configuration
+      )
     }
 
     return height
@@ -294,7 +301,8 @@ extension StatusBodyView {
       !forceShowContent
     {
       accessibilityAttributedLabel.appendWithSeparator(
-        NSLocalizedString("status.content-warning.accessibility", comment: ""))
+        NSLocalizedString("status.content-warning.accessibility", comment: "")
+      )
 
       let mutableSpoilerText = NSMutableAttributedString(attributedString: spoilerText)
       if let language = viewModel.language {
@@ -362,7 +370,8 @@ extension StatusBodyView {
 
     toggleShowContentButton.addAction(
       UIAction { [weak self] _ in self?.viewModel?.toggleShowContent() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     stackView.addArrangedSubview(toggleShowContentButton)
 
     contentTextView.adjustsFontForContentSizeCategory = true
@@ -406,7 +415,8 @@ extension StatusBodyView {
 
         viewModel.urlSelected(url)
       },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     stackView.addArrangedSubview(cardView)
 
     NSLayoutConstraint.activate([

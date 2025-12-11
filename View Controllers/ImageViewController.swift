@@ -63,7 +63,8 @@ final class ImageViewController: UIViewController {
 
     let doubleTapGestureRecognizer = UITapGestureRecognizer(
       target: self,
-      action: #selector(handleDoubleTap(gestureRecognizer:)))
+      action: #selector(handleDoubleTap(gestureRecognizer:))
+    )
 
     doubleTapGestureRecognizer.numberOfTapsRequired = 2
     scrollView.addGestureRecognizer(doubleTapGestureRecognizer)
@@ -119,10 +120,12 @@ final class ImageViewController: UIViewController {
       descriptionBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
       descriptionTextView.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, multiplier: 1 / 4),
       descriptionTextView.leadingAnchor.constraint(
-        equalTo: descriptionBackgroundView.layoutMarginsGuide.leadingAnchor),
+        equalTo: descriptionBackgroundView.layoutMarginsGuide.leadingAnchor
+      ),
       descriptionTextView.topAnchor.constraint(equalTo: descriptionBackgroundView.topAnchor),
       descriptionTextView.trailingAnchor.constraint(
-        equalTo: descriptionBackgroundView.layoutMarginsGuide.trailingAnchor),
+        equalTo: descriptionBackgroundView.layoutMarginsGuide.trailingAnchor
+      ),
       descriptionTextView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
     ])
 
@@ -196,7 +199,8 @@ final class ImageViewController: UIViewController {
     let textHeight = descriptionTextView.sizeThatFits(
       .init(
         width: descriptionTextView.frame.width,
-        height: .greatestFiniteMagnitude)
+        height: .greatestFiniteMagnitude
+      )
     ).height
     descriptionTextView.isScrollEnabled = textHeight > descriptionTextView.frame.height
   }
@@ -227,7 +231,8 @@ extension ImageViewController {
 
         let activityViewController = UIActivityViewController(
           activityItems: [tempURL],
-          applicationActivities: [])
+          applicationActivities: []
+        )
 
         if UIDevice.current.userInterfaceIdiom == .pad {
           activityViewController.popoverPresentationController?
@@ -245,7 +250,8 @@ extension ImageViewController {
           case .success(let url):
             let activityViewController = UIActivityViewController(
               activityItems: [url],
-              applicationActivities: [])
+              applicationActivities: []
+            )
 
             if UIDevice.current.userInterfaceIdiom == .pad {
               activityViewController.popoverPresentationController?
@@ -328,7 +334,8 @@ extension ImageViewController: UIScrollViewDelegate {
         top: verticalInset,
         left: horizontalInset,
         bottom: verticalInset,
-        right: horizontalInset)
+        right: horizontalInset
+      )
     } else {
       scrollView.contentInset = .zero
     }
@@ -346,7 +353,8 @@ extension ImageViewController {
 
       scrollView.zoom(
         to: CGRect(x: center.x - (width / 2), y: center.y - (height / 2), width: width, height: height),
-        animated: true)
+        animated: true
+      )
     } else {
       scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
     }
@@ -356,7 +364,8 @@ extension ImageViewController {
     let alertController = UIAlertController(
       title: nil,
       message: NSLocalizedString("attachment.unable-to-export-media", comment: ""),
-      preferredStyle: .alert)
+      preferredStyle: .alert
+    )
 
     let okAction = UIAlertAction(
       title: NSLocalizedString("ok", comment: ""),

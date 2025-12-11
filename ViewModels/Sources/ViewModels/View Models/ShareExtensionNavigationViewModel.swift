@@ -31,7 +31,8 @@ extension ShareExtensionNavigationViewModel {
       publisher: identityService.identityPublisher(immediate: false)
         .assignErrorsToAlertItem(to: \.alertItem, on: self),
       service: identityService,
-      environment: environment)
+      environment: environment
+    )
 
     return ComposeStatusViewModel(
       allIdentitiesService: allIdentitiesService,
@@ -42,6 +43,7 @@ extension ShareExtensionNavigationViewModel {
       redraft: nil,
       edit: nil,
       directMessageTo: nil,
-      extensionContext: extensionContext)
+      extensionContext: extensionContext
+    )
   }
 }

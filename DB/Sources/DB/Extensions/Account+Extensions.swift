@@ -47,6 +47,7 @@ extension Account {
       bot: record.bot,
       group: record.group,
       discoverable: record.discoverable,
-      moved: moved)
+      moved: moved
+    )
   }
 }

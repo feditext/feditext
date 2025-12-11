@@ -151,11 +151,13 @@ extension AnnouncementView {
     mutableContent.removeAttribute(.font, range: contentRange)
     mutableContent.addAttributes(
       [.font: contentFont, .foregroundColor: UIColor.label],
-      range: contentRange)
+      range: contentRange
+    )
     mutableContent.insert(
       emojis: viewModel.announcement.emojis,
       view: contentTextView,
-      identityContext: viewModel.identityContext)
+      identityContext: viewModel.identityContext
+    )
     mutableContent.resizeAttachments(toLineHeight: contentFont.lineHeight)
     contentTextView.attributedText = mutableContent
 

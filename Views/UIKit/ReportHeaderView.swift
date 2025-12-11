@@ -121,7 +121,8 @@ extension ReportHeaderView {
       switchLabel.font = .preferredFont(forTextStyle: .headline)
       switchLabel.text = String.localizedStringWithFormat(
         NSLocalizedString("report.forward-%@", comment: ""),
-        viewModel.accountHost)
+        viewModel.accountHost
+      )
       switchLabel.textAlignment = .right
       switchLabel.numberOfLines = 0
 
@@ -132,7 +133,8 @@ extension ReportHeaderView {
       forwardSwitch.setContentCompressionResistancePriority(.required, for: .horizontal)
       forwardSwitch.addAction(
         UIAction { [weak self] _ in self?.viewModel.elements.forward = forwardSwitch.isOn },
-        for: .valueChanged)
+        for: .valueChanged
+      )
 
       NSLayoutConstraint.activate([
         switchStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor)

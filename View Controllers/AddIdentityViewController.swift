@@ -75,7 +75,8 @@ extension AddIdentityViewController: UITextFieldDelegate {
 extension AddIdentityViewController {
   fileprivate static let verticalSpacing: CGFloat = 20
   fileprivate static let whatIsMastodonVideoURL = URL(
-    string: "https://www.youtube.com/embed/IPSbNdBmWKE?playsinline=1")!
+    string: "https://www.youtube.com/embed/IPSbNdBmWKE?playsinline=1"
+  )!
 
   // swiftlint:disable:next function_body_length
   fileprivate func configureViews() {
@@ -106,7 +107,8 @@ extension AddIdentityViewController {
     urlTextField.placeholder = NSLocalizedString("add-identity.instance-url", comment: "")
     urlTextField.addAction(
       UIAction { [weak self] _ in self?.viewModel.urlFieldText = self?.urlTextField.text ?? "" },
-      for: .editingChanged)
+      for: .editingChanged
+    )
     urlTextField.delegate = self
 
     instanceAndButtonsStackView.spacing = .defaultSpacing
@@ -144,7 +146,8 @@ extension AddIdentityViewController {
         self?.urlTextField.resignFirstResponder()
         self?.viewModel.logInTapped()
       },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     joinButton.addAction(UIAction { [weak self] _ in self?.join() }, for: .touchUpInside)
     joinButton.isHiddenStackViewSafe = true
@@ -152,7 +155,8 @@ extension AddIdentityViewController {
     browseButton.setTitle(NSLocalizedString("add-identity.browse", comment: ""), for: .normal)
     browseButton.addAction(
       UIAction { [weak self] _ in self?.viewModel.browseTapped() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     browseButton.isHiddenStackViewSafe = true
 
     whatIsMastodonBackgroundView.backgroundColor = .secondarySystemBackground
@@ -179,10 +183,13 @@ extension AddIdentityViewController {
               self?.urlTextField.text = $1
               self?.urlTextField.becomeFirstResponder()
               self?.dismiss(animated: true)
-            }),
-          animated: true)
+            }
+          ),
+          animated: true
+        )
       },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     whatIsMastodonVideoView.scrollView.isScrollEnabled = false
     whatIsMastodonVideoView.clipsToBounds = true
@@ -220,7 +227,9 @@ extension AddIdentityViewController {
 
   fileprivate func setupConstraints() {
     let instanceImageViewWidthConstraint = instanceImageView.widthAnchor.constraint(
-      equalTo: instanceImageView.heightAnchor, multiplier: 16 / 9)
+      equalTo: instanceImageView.heightAnchor,
+      multiplier: 16 / 9
+    )
     instanceImageViewWidthConstraint.priority = .justBelowMax
 
     NSLayoutConstraint.activate([
@@ -238,19 +247,24 @@ extension AddIdentityViewController {
       instanceImageViewWidthConstraint,
       whatIsMastodonStackView.leadingAnchor.constraint(
         equalTo: whatIsMastodonBackgroundView.leadingAnchor,
-        constant: .defaultSpacing * 2),
+        constant: .defaultSpacing * 2
+      ),
       whatIsMastodonStackView.topAnchor.constraint(
         equalTo: whatIsMastodonBackgroundView.topAnchor,
-        constant: .defaultSpacing * 2),
+        constant: .defaultSpacing * 2
+      ),
       whatIsMastodonStackView.trailingAnchor.constraint(
         equalTo: whatIsMastodonBackgroundView.trailingAnchor,
-        constant: -.defaultSpacing * 2),
+        constant: -.defaultSpacing * 2
+      ),
       whatIsMastodonStackView.bottomAnchor.constraint(
         equalTo: whatIsMastodonBackgroundView.bottomAnchor,
-        constant: -.defaultSpacing * 2),
+        constant: -.defaultSpacing * 2
+      ),
       whatIsMastodonVideoView.widthAnchor.constraint(
         equalTo: whatIsMastodonVideoView.heightAnchor,
-        multiplier: 16 / 9),
+        multiplier: 16 / 9
+      ),
     ])
   }
 

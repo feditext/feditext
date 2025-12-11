@@ -82,7 +82,8 @@ extension CollectionItem {
       return ConversationView.estimatedHeight(
         width: width,
         identityContext: identityContext,
-        conversation: conversation)
+        conversation: conversation
+      )
     case .tag(let tag):
       return TagView.estimatedHeight(width: width, tag: tag)
     case .link:
@@ -123,7 +124,8 @@ extension Account {
     var urls = Set(
       emojis.compactMap {
         (identityContext.appPreferences.animateCustomEmojis ? $0.url : $0.staticUrl).url
-      })
+      }
+    )
 
     if identityContext.appPreferences.animateAvatars == .everywhere {
       if let url = avatar.url {
@@ -146,6 +148,7 @@ extension Status {
       .union(
         displayStatus.emojis.compactMap {
           (identityContext.appPreferences.animateCustomEmojis ? $0.url : $0.staticUrl).url
-        })
+        }
+      )
   }
 }

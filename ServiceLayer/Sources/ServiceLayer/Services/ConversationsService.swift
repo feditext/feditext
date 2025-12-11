@@ -25,7 +25,8 @@ public struct ConversationsService {
     navigationService = NavigationService(
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 }
 

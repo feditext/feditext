@@ -28,7 +28,10 @@ final class CapsuleLabel: UILabel {
           top: .compactSpacing,
           left: .defaultSpacing,
           bottom: .compactSpacing,
-          right: .defaultSpacing)))
+          right: .defaultSpacing
+        )
+      )
+    )
   }
 
   override var intrinsicContentSize: CGSize {

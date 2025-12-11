@@ -86,7 +86,8 @@ extension AutocompleteItemView {
       mutableDisplayName.insert(
         emojis: account.emojis,
         view: primaryLabel,
-        identityContext: autocompleteItemConfiguration.identityContext)
+        identityContext: autocompleteItemConfiguration.identityContext
+      )
       mutableDisplayName.resizeAttachments(toLineHeight: primaryLabel.font.lineHeight)
       primaryLabel.attributedText = mutableDisplayName
       primaryLabel.isHidden = account.displayName.isEmpty

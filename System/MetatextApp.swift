@@ -41,7 +41,8 @@ struct MetatextApp: App {
     .sink {
       NotificationCenter.default.post(
         name: $0 ? Database.suspendNotification : Database.resumeNotification,
-        object: nil)
+        object: nil
+      )
     }
     .store(in: &cancellables)
   }
@@ -52,7 +53,9 @@ struct MetatextApp: App {
       RootView(
         viewModel: try! RootViewModel(
           environment: Self.environment,
-          registerForRemoteNotifications: appDelegate.registerForRemoteNotifications))
+          registerForRemoteNotifications: appDelegate.registerForRemoteNotifications
+        )
+      )
     }
   }
 }
@@ -61,5 +64,6 @@ extension MetatextApp {
   fileprivate static let environment = AppEnvironment.live(
     userNotificationCenter: .current(),
     reduceMotion: { UIAccessibility.isReduceMotionEnabled },
-    autoplayVideos: { UIAccessibility.isVideoAutoplayEnabled })
+    autoplayVideos: { UIAccessibility.isVideoAutoplayEnabled }
+  )
 }

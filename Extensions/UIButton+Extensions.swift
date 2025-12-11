@@ -9,6 +9,7 @@ extension UIButton {
     setAttributedTitle(localizedTitle.countEmphasizedAttributedString(count: count), for: .normal)
     setAttributedTitle(
       localizedTitle.countEmphasizedAttributedString(count: count, highlighted: true),
-      for: .highlighted)
+      for: .highlighted
+    )
   }
 }

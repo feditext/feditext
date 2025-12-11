@@ -16,7 +16,8 @@ final class AnimatedTextAttachment: NSTextAttachment {
       let layoutManager = textContainer.layoutManager,
       let textContainerImageBounds = textContainer.layoutManager?.boundingRect(
         forGlyphRange: NSRange(location: layoutManager.glyphIndexForCharacter(at: charIndex), length: 1),
-        in: textContainer),
+        in: textContainer
+      ),
       textContainerImageBounds != .zero
     {
       self.imageBounds = textContainerImageBounds

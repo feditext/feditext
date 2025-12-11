@@ -20,7 +20,9 @@ struct EditFilterView: View {
             "filter.never-expires",
             isOn: .init(
               get: { viewModel.filter.expiresAt == nil },
-              set: { viewModel.filter.expiresAt = $0 ? nil : viewModel.date }))
+              set: { viewModel.filter.expiresAt = $0 ? nil : viewModel.date }
+            )
+          )
         }
 
         if viewModel.filter.expiresAt != nil {
@@ -36,7 +38,9 @@ struct EditFilterView: View {
             context.localized,
             isOn: .init(
               get: { viewModel.filter.context.contains(context) },
-              set: { _ in viewModel.toggleSelection(context: context) }))
+              set: { _ in viewModel.toggleSelection(context: context) }
+            )
+          )
         }
       }
 
@@ -51,7 +55,8 @@ struct EditFilterView: View {
                   .font(.footnote)
                   .foregroundColor(.secondary)
               }
-            })
+            }
+          )
         }
       }
 
@@ -65,7 +70,8 @@ struct EditFilterView: View {
                 .font(.footnote)
                 .foregroundColor(.secondary)
             }
-          })
+          }
+        )
       }
     }
     .alertItem($viewModel.alertItem)

@@ -10,14 +10,16 @@ public enum FilterEndpoint {
     context: [Filter.Context],
     irreversible: Bool,
     wholeWord: Bool,
-    expiresIn: Date?)
+    expiresIn: Date?
+  )
   case update(
     id: Filter.Id,
     phrase: String,
     context: [Filter.Context],
     irreversible: Bool,
     wholeWord: Bool,
-    expiresIn: Date?)
+    expiresIn: Date?
+  )
 }
 
 extension FilterEndpoint: Endpoint {
@@ -44,14 +46,16 @@ extension FilterEndpoint: Endpoint {
         context: context,
         irreversible: irreversible,
         wholeWord: wholeWord,
-        expiresIn: expiresIn)
+        expiresIn: expiresIn
+      )
     case .update(let id, let phrase, let context, let irreversible, let wholeWord, let expiresIn):
       var params = self.params(
         phrase: phrase,
         context: context,
         irreversible: irreversible,
         wholeWord: wholeWord,
-        expiresIn: expiresIn)
+        expiresIn: expiresIn
+      )
 
       params["id"] = id
 

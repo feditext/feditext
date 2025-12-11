@@ -29,7 +29,8 @@ struct AboutInstanceView: View {
                 dismiss()
                 navigationViewModel.navigateToURL(url)
                 return .handled
-              })
+              }
+            )
         }
       } header: {
         Text(

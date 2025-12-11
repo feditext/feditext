@@ -60,7 +60,8 @@ extension AuthenticationService {
             code: nil,
             username: nil,
             password: nil,
-            redirectURI: redirectURI.absoluteString)
+            redirectURI: redirectURI.absoluteString
+          )
         )
         .flatMap { accessToken -> AnyPublisher<AccessToken, Error> in
           let authenticatedMastodonAPIClient: MastodonAPIClient
@@ -102,7 +103,8 @@ extension AuthenticationService {
     guard
       let queryItems = URLComponents(
         url: oauthCallbackURL,
-        resolvingAgainstBaseURL: true)?.queryItems,
+        resolvingAgainstBaseURL: true
+      )?.queryItems,
       let code = queryItems.first(where: {
         $0.name == OAuth.codeCallbackQueryItemName
       })?.value
@@ -117,14 +119,17 @@ extension AuthenticationService {
         clientName: OAuth.clientName,
         redirectURI: redirectURI.absoluteString,
         scopes: OAuth.scopes,
-        website: AppUrl.website))
+        website: AppUrl.website
+      )
+    )
   }
 
   fileprivate func authorizationURL(appAuthorization: AppAuthorization) throws -> URL {
     guard
       var authorizationURLComponents = URLComponents(
         url: mastodonAPIClient.instanceURL,
-        resolvingAgainstBaseURL: true)
+        resolvingAgainstBaseURL: true
+      )
     else { throw URLError(.badURL) }
 
     authorizationURLComponents.path = "/oauth/authorize"
@@ -149,7 +154,8 @@ extension AuthenticationService {
         webAuthSessionType.publisher(
           url: $0,
           callbackURLScheme: AppUrl.scheme,
-          presentationContextProvider: webAuthSessionContextProvider)
+          presentationContextProvider: webAuthSessionContextProvider
+        )
       }
       .mapError { error -> Error in
         if (error as? WebAuthSessionError)?.code == .canceledLogin {
@@ -169,7 +175,9 @@ extension AuthenticationService {
             code: $0,
             username: nil,
             password: nil,
-            redirectURI: AppUrl.oauthCallback.absoluteString))
+            redirectURI: AppUrl.oauthCallback.absoluteString
+          )
+        )
       }
       .eraseToAnyPublisher()
   }

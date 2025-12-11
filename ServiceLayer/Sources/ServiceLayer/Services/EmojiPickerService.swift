@@ -74,7 +74,8 @@ extension EmojiPickerService {
               .map {
                 PickerEmoji.system(
                   $0.withMaxVersionForSkinToneVariations(Self.maxEmojiVersion),
-                  infrequentlyUsed: false)
+                  infrequentlyUsed: false
+                )
               }
           }
 

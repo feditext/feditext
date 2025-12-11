@@ -10,7 +10,9 @@ final class ConversationView: UIView {
   let unreadIndicator = UIImageView(
     image: UIImage(
       systemName: "circlebadge.fill",
-      withConfiguration: UIImage.SymbolConfiguration(scale: .small)))
+      withConfiguration: UIImage.SymbolConfiguration(scale: .small)
+    )
+  )
   let timeLabel = UILabel()
   let statusBodyView = StatusBodyView()
 
@@ -47,7 +49,8 @@ extension ConversationView {
         width: bodyWidth,
         identityContext: identityContext,
         status: status,
-        configuration: .default)
+        configuration: .default
+      )
   }
 }
 
@@ -133,7 +136,8 @@ extension ConversationView {
     mutableDisplayNames.insert(
       emojis: viewModel.accountViewModels.map(\.emojis).reduce([], +),
       view: displayNamesLabel,
-      identityContext: viewModel.identityContext)
+      identityContext: viewModel.identityContext
+    )
     mutableDisplayNames.resizeAttachments(toLineHeight: displayNamesLabel.font.lineHeight)
 
     unreadIndicator.isHidden = !viewModel.isUnread

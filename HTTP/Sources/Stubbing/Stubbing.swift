@@ -19,7 +19,8 @@ extension Stubbing {
         url: url,
         statusCode: statusCode,
         httpVersion: nil,
-        headerFields: nil)
+        headerFields: nil
+      )
     {
       return .success((response, data))
     }

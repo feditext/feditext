@@ -199,14 +199,16 @@ extension Siren {
             (
               AttributedString(listDecoration, attributes: decorationStyleContainer),
               at: range.lowerBound
-            ))
+            )
+          )
         }
         if let newlines = newlines {
           insertions.append(
             (
               AttributedString(newlines, attributes: decorationStyleContainer),
               at: range.upperBound
-            ))
+            )
+          )
         }
       } else {
         // Ensure that every run has a paragraph style.
@@ -239,7 +241,9 @@ extension Siren {
 
     #if canImport(SwiftUI)
       public static func format(
-        _ attributed: inout AttributedString, textStyle: SwiftUI.Font.TextStyle, baseIndent: CGFloat
+        _ attributed: inout AttributedString,
+        textStyle: SwiftUI.Font.TextStyle,
+        baseIndent: CGFloat
       ) {
         format(&attributed, descriptor: textStyle.descriptor, baseIndent: baseIndent)
       }
@@ -255,7 +259,9 @@ extension Siren {
 
     #if canImport(SwiftUI)
       public static func format(
-        _ attributed: inout AttributedString, textStyle: SwiftUI.Font.TextStyle, baseIndent: CGFloat
+        _ attributed: inout AttributedString,
+        textStyle: SwiftUI.Font.TextStyle,
+        baseIndent: CGFloat
       ) {
         format(&attributed, descriptor: textStyle.descriptor, baseIndent: baseIndent)
       }

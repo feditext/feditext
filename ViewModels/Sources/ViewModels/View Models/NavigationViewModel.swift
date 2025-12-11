@@ -149,7 +149,8 @@ extension NavigationViewModel {
     presentingSecondaryNavigation = false
     presentedComposeStatusViewModel = nil
     navigationsSubject.send(
-      .collection(identityContext.service.navigationService.timelineService(timeline: timeline)))
+      .collection(identityContext.service.navigationService.timelineService(timeline: timeline))
+    )
   }
 
   public func navigateToFollowerRequests() {
@@ -159,7 +160,10 @@ extension NavigationViewModel {
       .collection(
         identityContext.service.service(
           accountList: .followRequests,
-          titleComponents: ["follow-requests"])))
+          titleComponents: ["follow-requests"]
+        )
+      )
+    )
   }
 
   public func navigateToMutedUsers() {
@@ -169,7 +173,10 @@ extension NavigationViewModel {
       .collection(
         identityContext.service.service(
           accountList: .mutes,
-          titleComponents: ["preferences.muted-users"])))
+          titleComponents: ["preferences.muted-users"]
+        )
+      )
+    )
   }
 
   public func navigateToBlockedUsers() {
@@ -179,7 +186,10 @@ extension NavigationViewModel {
       .collection(
         identityContext.service.service(
           accountList: .blocks,
-          titleComponents: ["preferences.blocked-users"])))
+          titleComponents: ["preferences.blocked-users"]
+        )
+      )
+    )
   }
 
   public func navigateToURL(_ url: URL) {
@@ -209,13 +219,15 @@ extension NavigationViewModel {
   public func viewModel(timeline: Timeline) -> CollectionItemsViewModel {
     CollectionItemsViewModel(
       collectionService: identityContext.service.navigationService.timelineService(timeline: timeline),
-      identityContext: identityContext)
+      identityContext: identityContext
+    )
   }
 
   public func exploreViewModel() -> ExploreViewModel {
     let exploreViewModel = ExploreViewModel(
       service: identityContext.service.exploreService(),
-      identityContext: identityContext)
+      identityContext: identityContext
+    )
 
     exploreViewModel.refresh()
 
@@ -227,7 +239,8 @@ extension NavigationViewModel {
   {
     let viewModel = CollectionItemsViewModel(
       collectionService: identityContext.service.notificationsService(excludeTypes: excludeTypes),
-      identityContext: identityContext)
+      identityContext: identityContext
+    )
 
     if excludeTypes.isEmpty {
       viewModel.request(maxId: nil, minId: nil)
@@ -243,7 +256,8 @@ extension NavigationViewModel {
   public func conversationsViewModel() -> CollectionViewModel {
     let conversationsViewModel = CollectionItemsViewModel(
       collectionService: identityContext.service.conversationsService(),
-      identityContext: identityContext)
+      identityContext: identityContext
+    )
 
     conversationsViewModel.request(maxId: nil, minId: nil)
 
@@ -253,6 +267,7 @@ extension NavigationViewModel {
   public func announcementsViewModel() -> CollectionViewModel {
     CollectionItemsViewModel(
       collectionService: identityContext.service.announcementsService(),
-      identityContext: identityContext)
+      identityContext: identityContext
+    )
   }
 }

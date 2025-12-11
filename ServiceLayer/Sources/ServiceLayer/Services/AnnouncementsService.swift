@@ -20,7 +20,8 @@ public struct AnnouncementsService {
     navigationService = NavigationService(
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
     titleLocalizationComponents = Just(["main-navigation.announcements"]).eraseToAnyPublisher()
   }
 }

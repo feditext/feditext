@@ -32,7 +32,8 @@ extension AnnouncementViewModel {
       announcementService.navigationService.lookup(url: url, identityId: identityContext.identity.id)
         .map { .navigation($0) }
         .setFailureType(to: Error.self)
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func dismissIfUnread() {
@@ -41,28 +42,32 @@ extension AnnouncementViewModel {
     eventsSubject.send(
       announcementService.dismiss()
         .map { _ in .ignorableOutput }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func reload() {
     eventsSubject.send(
       Just(.reload(.announcement(announcementService.announcement)))
         .setFailureType(to: Error.self)
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func addReaction(name: String) {
     eventsSubject.send(
       announcementService.addReaction(name: name)
         .map { _ in .ignorableOutput }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func removeReaction(name: String) {
     eventsSubject.send(
       announcementService.removeReaction(name: name)
         .map { _ in .ignorableOutput }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func presentEmojiPicker(sourceViewTag: Int) {
@@ -70,9 +75,11 @@ extension AnnouncementViewModel {
       Just(
         .presentEmojiPicker(
           sourceViewTag: sourceViewTag,
-          selectionAction: { [weak self] in self?.addReaction(name: $0) })
+          selectionAction: { [weak self] in self?.addReaction(name: $0) }
+        )
       )
       .setFailureType(to: Error.self)
-      .eraseToAnyPublisher())
+      .eraseToAnyPublisher()
+    )
   }
 }

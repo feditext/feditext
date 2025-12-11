@@ -25,7 +25,8 @@ extension LiveKeychain: Keychain {
     if status == errSecDuplicateItem {
       status = SecItemUpdate(
         genericPasswordQueryDictionary(account: account, service: service) as CFDictionary,
-        [kSecValueData as String: data] as CFDictionary)
+        [kSecValueData as String: data] as CFDictionary
+      )
     }
 
     if status != errSecSuccess {
@@ -71,7 +72,8 @@ extension LiveKeychain: Keychain {
         kCFAllocatorDefault,
         kSecAttrAccessibleAfterFirstUnlock,
         [],
-        &error)
+        &error
+      )
     else {
       throw error!.takeRetainedValue() as Error
     }

@@ -99,16 +99,20 @@ final class TouchFallthroughTextView: UITextView, EmojiInsertable {
     guard
       let pos = closestPosition(to: point),
       let range = tokenizer.rangeEnclosingPosition(
-        pos, with: .character,
-        inDirection: UITextDirection.layout(.left))
+        pos,
+        with: .character,
+        inDirection: UITextDirection.layout(.left)
+      )
     else { return nil }
 
     let urlAtPointIndex = offset(from: beginningOfDocument, to: range.start)
 
     guard
       let url = attributedText.attribute(
-        .link, at: offset(from: beginningOfDocument, to: range.start),
-        effectiveRange: nil) as? URL
+        .link,
+        at: offset(from: beginningOfDocument, to: range.start),
+        effectiveRange: nil
+      ) as? URL
     else { return nil }
 
     let maxLength = attributedText.length

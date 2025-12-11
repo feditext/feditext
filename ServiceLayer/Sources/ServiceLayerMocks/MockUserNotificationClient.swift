@@ -9,5 +9,6 @@ extension UserNotificationClient {
     requestAuthorization: { _, _ in },
     add: { _, completion in completion?(nil) },
     removeDeliveredNotifications: { _ in },
-    delegateEvents: Empty(completeImmediately: false).eraseToAnyPublisher())
+    delegateEvents: Empty(completeImmediately: false).eraseToAnyPublisher()
+  )
 }

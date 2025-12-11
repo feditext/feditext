@@ -63,6 +63,7 @@ extension AppEnvironment {
       autoplayVideos: autoplayVideos,
       uuid: UUID.init,
       inMemoryContent: false,
-      fixtureDatabase: nil)
+      fixtureDatabase: nil
+    )
   }
 }

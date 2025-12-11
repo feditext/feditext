@@ -80,7 +80,8 @@ extension ContentDatabase {
         ? try Int.fetchOne(
           $0,
           TimelineStatusJoin.filter(TimelineStatusJoin.Columns.timelineId == timeline.id)
-            .select(max(TimelineStatusJoin.Columns.order)))
+            .select(max(TimelineStatusJoin.Columns.order))
+        )
         : nil
 
       for status in statuses {
@@ -310,7 +311,8 @@ extension ContentDatabase {
     databaseWriter.mutatingPublisher {
       let statusIds = try Status.Id.fetchAll(
         $0,
-        StatusRecord.filter(StatusRecord.Columns.accountId == id).select(StatusRecord.Columns.id))
+        StatusRecord.filter(StatusRecord.Columns.accountId == id).select(StatusRecord.Columns.id)
+      )
 
       try TimelineStatusJoin.filter(
         TimelineStatusJoin.Columns.timelineId == Timeline.home.id
@@ -341,7 +343,8 @@ extension ContentDatabase {
           try Int.fetchOne(
             $0,
             AccountListJoin.filter(AccountListJoin.Columns.accountListId == listId)
-              .select(max(AccountListJoin.Columns.order)))
+              .select(max(AccountListJoin.Columns.order))
+          )
           ?? 0
       }
 
@@ -363,7 +366,8 @@ extension ContentDatabase {
         AccountListJoin.Columns.accountId == id
           && AccountListJoin.Columns.accountListId == listId
       )
-      .deleteAll)
+      .deleteAll
+    )
   }
 
   public func remove(suggestion: Account.Id) -> AnyPublisher<Never, Error> {
@@ -560,7 +564,8 @@ extension ContentDatabase {
       let count = try Int.fetchOne(
         $0,
         EmojiUse.filter(EmojiUse.Columns.system == system && EmojiUse.Columns.emoji == emoji)
-          .select(EmojiUse.Columns.count))
+          .select(EmojiUse.Columns.count)
+      )
 
       try EmojiUse(emoji: emoji, system: system, lastUse: Date(), count: (count ?? 0) + 1).save($0)
     }
@@ -839,7 +844,8 @@ extension ContentDatabase {
             let rules = $0.reportInfo?.rules ?? []
 
             return .notification(MastodonNotification(info: $0), rules, configuration)
-          })
+          }
+        )
       ]
     }
     .eraseToAnyPublisher()
@@ -917,7 +923,8 @@ extension ContentDatabase {
       try String.fetchOne(
         $0,
         LastReadIdRecord.filter(LastReadIdRecord.Columns.timelineId == timelineId)
-          .select(LastReadIdRecord.Columns.id))
+          .select(LastReadIdRecord.Columns.id)
+      )
     }
   }
 
@@ -1036,12 +1043,14 @@ extension ContentDatabase {
     var statusIds = try Status.Id.fetchAll(
       db,
       TimelineStatusJoin.select(TimelineStatusJoin.Columns.statusId)
-        .order(TimelineStatusJoin.Columns.statusId.desc))
+        .order(TimelineStatusJoin.Columns.statusId.desc)
+    )
 
     if let lastReadId = try Status.Id.fetchOne(
       db,
       LastReadIdRecord.filter(LastReadIdRecord.Columns.timelineId == Timeline.home.id)
-        .select(LastReadIdRecord.Columns.id))
+        .select(LastReadIdRecord.Columns.id)
+    )
       ?? statusIds.first,
       let index = statusIds.firstIndex(of: lastReadId)
     {
@@ -1054,7 +1063,8 @@ extension ContentDatabase {
         statusIds.contains(StatusRecord.Columns.id)
           && StatusRecord.Columns.quoteId != nil
       )
-      .select(StatusRecord.Columns.quoteId))
+      .select(StatusRecord.Columns.quoteId)
+    )
 
     let reblogStatusIds = try Status.Id.fetchSet(
       db,
@@ -1062,7 +1072,8 @@ extension ContentDatabase {
         statusIds.contains(StatusRecord.Columns.id)
           && StatusRecord.Columns.reblogId != nil
       )
-      .select(StatusRecord.Columns.reblogId))
+      .select(StatusRecord.Columns.reblogId)
+    )
 
     let statusIdsToKeep = Set(statusIds).union(quoteStatusIds).union(reblogStatusIds)
     let allStatusIds = try Status.Id.fetchSet(db, StatusRecord.select(StatusRecord.Columns.id))
@@ -1079,7 +1090,9 @@ extension ContentDatabase {
           accountIdsToKeep.contains(AccountRecord.Columns.id)
             && AccountRecord.Columns.movedId != nil
         )
-        .select(AccountRecord.Columns.movedId)))
+        .select(AccountRecord.Columns.movedId)
+      )
+    )
     let allAccountIds = try Account.Id.fetchSet(db, AccountRecord.select(AccountRecord.Columns.id))
 
     return allAccountIds.subtracting(accountIdsToKeep)

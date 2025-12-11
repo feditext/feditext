@@ -18,13 +18,17 @@ struct UserPreferencesSection: View {
         NavigationLink(
           "preferences.filters",
           destination: FiltersView(
-            viewModel: .init(identityContext: viewModel.identityContext)))
+            viewModel: .init(identityContext: viewModel.identityContext)
+          )
+        )
 
         if viewModel.shouldShowNotificationTypePreferences {
           NavigationLink(
             "preferences.notifications",
             destination: NotificationTypesPreferencesView(
-              viewModel: .init(identityContext: viewModel.identityContext)))
+              viewModel: .init(identityContext: viewModel.identityContext)
+            )
+          )
         }
 
         if viewModel.canListMutedUsers {
@@ -42,12 +46,14 @@ struct UserPreferencesSection: View {
         if viewModel.canListMutedUsers {
           NavigationLink(
             "preferences.blocked-domains",
-            destination: DomainBlocksView(viewModel: viewModel.domainBlocksViewModel()))
+            destination: DomainBlocksView(viewModel: viewModel.domainBlocksViewModel())
+          )
         }
 
         Toggle(
           "preferences.use-preferences-from-server",
-          isOn: $viewModel.preferences.useServerPostingReadingPreferences)
+          isOn: $viewModel.preferences.useServerPostingReadingPreferences
+        )
 
         Group {
           Picker(
@@ -60,7 +66,8 @@ struct UserPreferencesSection: View {
           }
           Toggle(
             "preferences.posting-default-sensitive",
-            isOn: $viewModel.preferences.postingDefaultSensitive)
+            isOn: $viewModel.preferences.postingDefaultSensitive
+          )
           NavigationLink("preferences.posting-default-language") {
             PostingDefaultLanguageView(
               postingDefaultLanguage: $viewModel.preferences.postingDefaultLanguage
@@ -81,11 +88,13 @@ struct UserPreferencesSection: View {
         }
         Toggle(
           "preferences.reading-expand-spoilers",
-          isOn: $viewModel.preferences.readingExpandSpoilers)
+          isOn: $viewModel.preferences.readingExpandSpoilers
+        )
       }
       .disabled(
         viewModel.preferences.useServerPostingReadingPreferences
-          && viewModel.identityContext.identity.authenticated)
+          && viewModel.identityContext.identity.authenticated
+      )
 
       Group {
         Picker("preferences.tint-color", selection: $viewModel.preferences.tintColor) {

@@ -90,7 +90,8 @@ extension Timeline {
             title: title,
             repliesPolicy: record.listRepliesPolicy,
             exclusive: record.listExclusive
-          ))
+          )
+        )
       } else if let tag = record.tag {
         self = .tag(tag)
       } else if let accountId = record.accountId,

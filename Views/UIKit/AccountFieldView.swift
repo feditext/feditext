@@ -84,7 +84,8 @@ final class AccountFieldView: UIView {
         .font: valueFont as Any,
         .foregroundColor: UIColor.label,
       ],
-      range: valueRange)
+      range: valueRange
+    )
     mutableValue.insert(emojis: emojis, view: valueTextView, identityContext: identityContext)
     mutableValue.resizeAttachments(toLineHeight: valueFont.lineHeight)
 
@@ -94,8 +95,10 @@ final class AccountFieldView: UIView {
     checkButton.setImage(
       UIImage(
         systemName: "checkmark",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .small)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(scale: .small)
+      ),
+      for: .normal
+    )
 
     addSubview(checkButton)
     checkButton.translatesAutoresizingMaskIntoConstraints = false
@@ -109,20 +112,25 @@ final class AccountFieldView: UIView {
       checkButton.menu = UIMenu(
         title: String.localizedStringWithFormat(
           NSLocalizedString("account.field.verified-%@", comment: ""),
-          Self.dateFormatter.string(from: verifiedAt)),
+          Self.dateFormatter.string(from: verifiedAt)
+        ),
         options: .displayInline,
-        children: [UIAction(title: NSLocalizedString("ok", comment: "")) { _ in }])
+        children: [UIAction(title: NSLocalizedString("ok", comment: "")) { _ in }]
+      )
     }
 
     let nameLabelBottomConstraint = nameLabel.bottomAnchor.constraint(
       equalTo: bottomAnchor,
-      constant: -.defaultSpacing)
+      constant: -.defaultSpacing
+    )
     let valueTextViewBottomConstraint = valueTextView.bottomAnchor.constraint(
       lessThanOrEqualTo: bottomAnchor,
-      constant: -.defaultSpacing)
+      constant: -.defaultSpacing
+    )
     valueTextViewTrailingConstraint = valueTextView.trailingAnchor.constraint(
       equalTo: trailingAnchor,
-      constant: -.defaultSpacing)
+      constant: -.defaultSpacing
+    )
 
     for constraint in [nameLabelBottomConstraint, valueTextViewBottomConstraint] {
       constraint.priority = .justBelowMax
@@ -139,7 +147,8 @@ final class AccountFieldView: UIView {
       checkButton.leadingAnchor.constraint(equalTo: dividerView.trailingAnchor, constant: .defaultSpacing),
       valueTextView.leadingAnchor.constraint(
         equalTo: verifiedAt == nil ? dividerView.trailingAnchor : checkButton.trailingAnchor,
-        constant: .defaultSpacing),
+        constant: .defaultSpacing
+      ),
       valueTextView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: .defaultSpacing),
       valueTextViewTrailingConstraint!,
       valueTextViewBottomConstraint,
@@ -164,7 +173,9 @@ final class AccountFieldView: UIView {
       accessibilityAttributedLabel.appendWithSeparator(
         String.localizedStringWithFormat(
           NSLocalizedString("account.field.verified-%@", comment: ""),
-          Self.dateFormatter.string(from: verifiedAt)))
+          Self.dateFormatter.string(from: verifiedAt)
+        )
+      )
     }
 
     isAccessibilityElement = true
@@ -182,7 +193,8 @@ final class AccountFieldView: UIView {
         UIAccessibilityCustomAction(
           name: String.localizedStringWithFormat(
             NSLocalizedString("accessibility.activate-link-%@", comment: ""),
-            mutableValue.attributedSubstring(from: range).string)
+            mutableValue.attributedSubstring(from: range).string
+          )
         ) { [weak self] _ in
           guard let valueTextView = self?.valueTextView else { return false }
 
@@ -190,10 +202,12 @@ final class AccountFieldView: UIView {
             valueTextView,
             shouldInteractWith: url,
             in: range,
-            interaction: .invokeDefaultAction)
+            interaction: .invokeDefaultAction
+          )
 
           return true
-        })
+        }
+      )
     }
 
     self.accessibilityAttributedLabel = accessibilityAttributedLabel

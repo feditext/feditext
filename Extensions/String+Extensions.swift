@@ -27,13 +27,15 @@ extension String {
       attributes: [
         .font: UIFont.preferredFont(forTextStyle: .body),
         .foregroundColor: highlighted ? UIColor.tertiaryLabel : UIColor.secondaryLabel,
-      ])
+      ]
+    )
     attributed.addAttributes(
       [
         .font: UIFont.preferredFont(forTextStyle: .headline),
         .foregroundColor: highlighted ? UIColor.secondaryLabel : UIColor.label,
       ],
-      range: countRange)
+      range: countRange
+    )
 
     return attributed
   }

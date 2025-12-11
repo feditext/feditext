@@ -291,7 +291,9 @@ extension CompositionViewModel {
         self?.attachmentViewModels.append(
           AttachmentViewModel(
             attachment: $0,
-            identityContext: viewModel.parentViewModel.identityContext))
+            identityContext: viewModel.parentViewModel.identityContext
+          )
+        )
       }
   }
 
@@ -332,7 +334,8 @@ extension CompositionViewModel {
       let range = textToSelectedRange.range(
         of: emojiOnly ? emojiOnlyAutocompleteQueryRegularExpression : autocompleteQueryRegularExpression,
         options: .regularExpression,
-        locale: .current)
+        locale: .current
+      )
     else { return nil }
 
     return String(textToSelectedRange[range])

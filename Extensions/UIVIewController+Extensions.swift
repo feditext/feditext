@@ -28,7 +28,8 @@ extension UIViewController {
     let alertController = UIAlertController(
       title: alertItem.title,
       message: alertItem.message,
-      preferredStyle: .alert)
+      preferredStyle: .alert
+    )
 
     let copyAction = UIAlertAction(title: copyActionTitle, style: .default) { _ in
       UIPasteboard.general.setItems([copyItems])

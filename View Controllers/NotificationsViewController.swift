@@ -30,19 +30,23 @@ final class NotificationsViewController: UIPageViewController {
     notificationViewControllers = [
       TableViewController(
         viewModel: viewModel.notificationsViewModel(excludeTypes: []),
-        rootViewModel: rootViewModel),
+        rootViewModel: rootViewModel
+      ),
       TableViewController(
         viewModel: viewModel.notificationsViewModel(excludeTypes: excludingAllExceptMentions),
-        rootViewModel: rootViewModel),
+        rootViewModel: rootViewModel
+      ),
       TableViewController(
         viewModel: viewModel.notificationsViewModel(excludeTypes: excludingAllExceptAdmin),
-        rootViewModel: rootViewModel),
+        rootViewModel: rootViewModel
+      ),
     ]
 
     super.init(
       transitionStyle: .scroll,
       navigationOrientation: .horizontal,
-      options: [.interPageSpacing: CGFloat.defaultSpacing])
+      options: [.interPageSpacing: CGFloat.defaultSpacing]
+    )
 
     if let firstViewController = notificationViewControllers.first {
       setViewControllers([firstViewController], direction: .forward, animated: false)
@@ -75,9 +79,11 @@ final class NotificationsViewController: UIPageViewController {
         self.setViewControllers(
           [self.notificationViewControllers[self.segmentedControl.selectedSegmentIndex]],
           direction: self.segmentedControl.selectedSegmentIndex > currentIndex ? .forward : .reverse,
-          animated: !UIAccessibility.isReduceMotionEnabled)
+          animated: !UIAccessibility.isReduceMotionEnabled
+        )
       },
-      for: .valueChanged)
+      for: .valueChanged
+    )
   }
 }
 

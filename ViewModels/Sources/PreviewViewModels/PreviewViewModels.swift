@@ -76,7 +76,8 @@ extension ContentDatabase {
     useHomeTimelineLastReadId: false,
     inMemory: true,
     appGroup: "group.test.example",
-    keychain: MockKeychain.self)
+    keychain: MockKeychain.self
+  )
 }
 
 extension AppEnvironment {
@@ -98,7 +99,8 @@ extension Instance {
 extension RootViewModel {
   public static let preview = try! RootViewModel(
     environment: environment,
-    registerForRemoteNotifications: { Empty().eraseToAnyPublisher() })
+    registerForRemoteNotifications: { Empty().eraseToAnyPublisher() }
+  )
 }
 
 extension IdentityContext {
@@ -111,8 +113,10 @@ extension ReportViewModel {
       account: .preview,
       environment: environment,
       mastodonAPIClient: .preview,
-      contentDatabase: .preview),
-    identityContext: .preview)
+      contentDatabase: .preview
+    ),
+    identityContext: .preview
+  )
 }
 
 extension MuteViewModel {
@@ -121,8 +125,10 @@ extension MuteViewModel {
       account: .preview,
       environment: environment,
       mastodonAPIClient: .preview,
-      contentDatabase: .preview),
-    identityContext: .preview)
+      contentDatabase: .preview
+    ),
+    identityContext: .preview
+  )
 }
 
 extension DomainBlocksViewModel {

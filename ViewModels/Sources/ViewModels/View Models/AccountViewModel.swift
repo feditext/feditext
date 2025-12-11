@@ -121,21 +121,24 @@ extension AccountViewModel {
       accountService.navigationService.lookup(url: url, identityId: identityContext.identity.id)
         .map { CollectionItemEvent.navigation($0) }
         .setFailureType(to: Error.self)
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func followingSelected() {
     eventsSubject.send(
       Just(.navigation(.collection(accountService.followingService())))
         .setFailureType(to: Error.self)
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func followersSelected() {
     eventsSubject.send(
       Just(.navigation(.collection(accountService.followersService())))
         .setFailureType(to: Error.self)
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func familiarFollowersSelected() {
@@ -341,6 +344,7 @@ extension AccountViewModel {
 
           return .accountListEdit(self, event)
         }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 }

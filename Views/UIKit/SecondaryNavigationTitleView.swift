@@ -81,7 +81,8 @@ extension SecondaryNavigationTitleView {
         mutableDisplayName.insert(
           emojis: emojis,
           view: displayNameLabel,
-          identityContext: viewModel.identityContext)
+          identityContext: viewModel.identityContext
+        )
         mutableDisplayName.resizeAttachments(toLineHeight: displayNameLabel.font.lineHeight)
       }
 

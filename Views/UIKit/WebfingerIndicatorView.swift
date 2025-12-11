@@ -17,17 +17,27 @@ final class WebfingerIndicatorView: UIVisualEffectView {
 
     NSLayoutConstraint.activate([
       trailingAnchor.constraint(
-        equalTo: activityIndicatorView.trailingAnchor, constant: .defaultSpacing),
+        equalTo: activityIndicatorView.trailingAnchor,
+        constant: .defaultSpacing
+      ),
       bottomAnchor.constraint(
-        equalTo: activityIndicatorView.bottomAnchor, constant: .defaultSpacing),
+        equalTo: activityIndicatorView.bottomAnchor,
+        constant: .defaultSpacing
+      ),
       activityIndicatorView.topAnchor.constraint(
-        equalTo: topAnchor, constant: .defaultSpacing),
+        equalTo: topAnchor,
+        constant: .defaultSpacing
+      ),
       activityIndicatorView.leadingAnchor.constraint(
-        equalTo: leadingAnchor, constant: .defaultSpacing),
+        equalTo: leadingAnchor,
+        constant: .defaultSpacing
+      ),
       activityIndicatorView.centerXAnchor.constraint(
-        equalTo: contentView.safeAreaLayoutGuide.centerXAnchor),
+        equalTo: contentView.safeAreaLayoutGuide.centerXAnchor
+      ),
       activityIndicatorView.centerYAnchor.constraint(
-        equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
+        equalTo: contentView.safeAreaLayoutGuide.centerYAnchor
+      ),
     ])
 
     isHidden = true

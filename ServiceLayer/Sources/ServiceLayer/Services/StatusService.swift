@@ -168,7 +168,8 @@ extension StatusService {
             environment: environment,
             status: $0,
             mastodonAPIClient: mastodonAPIClient,
-            contentDatabase: contentDatabase) as Self?
+            contentDatabase: contentDatabase
+          ) as Self?
         }
         .replaceError(with: nil)
         .setFailureType(to: Error.self)
@@ -271,7 +272,9 @@ extension StatusService {
           useHomeTimelineLastReadId: true,
           inMemory: environment.inMemoryContent,
           appGroup: AppMetadata.appGroup,
-          keychain: environment.keychain))
+          keychain: environment.keychain
+        )
+      )
     }
     .eraseToAnyPublisher()
   }

@@ -15,20 +15,25 @@ extension AVURLAsset {
     guard let sourceVideoTrack = tracks(withMediaType: .video).first,
       let compositionVideoTrack = composition.addMutableTrack(
         withMediaType: .video,
-        preferredTrackID: kCMPersistentTrackID_Invalid),
+        preferredTrackID: kCMPersistentTrackID_Invalid
+      ),
       case .success = Result(catching: {
         try compositionVideoTrack.insertTimeRange(
           CMTimeRange(start: .zero, duration: duration),
-          of: sourceVideoTrack, at: .zero)
+          of: sourceVideoTrack,
+          at: .zero
+        )
       }),
       let exportSession = AVAssetExportSession(
         asset: composition,
-        presetName: AVAssetExportPresetHighestQuality),
+        presetName: AVAssetExportPresetHighestQuality
+      ),
       exportSession.supportedFileTypes.contains(.mp4),
       case .success = Result(catching: {
         try FileManager.default.createDirectory(
           at: exportDirectory,
-          withIntermediateDirectories: false)
+          withIntermediateDirectories: false
+        )
       })
     else {
       completion(.failure(.exportSetup))

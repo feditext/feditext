@@ -37,11 +37,13 @@ extension ImageCacheConfiguration {
 
 extension ImageCacheConfiguration {
   fileprivate static let cachesDirectoryURL = FileManager.default.containerURL(
-    forSecurityApplicationGroupIdentifier: AppMetadata.appGroup)?
-    .appendingPathComponent("Library")
-    .appendingPathComponent("Caches")
+    forSecurityApplicationGroupIdentifier: AppMetadata.appGroup
+  )?
+  .appendingPathComponent("Library")
+  .appendingPathComponent("Caches")
   fileprivate static let imageCacheDirectoryURL = cachesDirectoryURL?.appendingPathComponent(
-    "com.metabolist.metatext.images")
+    "com.metabolist.metatext.images"
+  )
   fileprivate static let legacyImageCacheDirectoryURL =
     cachesDirectoryURL?.appendingPathComponent("com.onevcat.Kingfisher.ImageCache.Images")
 }

@@ -16,7 +16,8 @@ extension URL {
     let httpsColonUnescaped = pathEscaped.replacingOccurrences(
       of: "https%3A",
       with: "https:",
-      range: pathEscaped.range(of: "https%3A"))
+      range: pathEscaped.range(of: "https%3A")
+    )
 
     self.init(string: httpsColonUnescaped)
   }

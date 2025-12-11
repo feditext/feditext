@@ -137,7 +137,8 @@ extension Secrets {
         case .genericPassword:
           try keychain.deleteGenericPassword(
             account: scopedKey(item: item),
-            service: Self.keychainServiceName)
+            service: Self.keychainServiceName
+          )
         case .key:
           try keychain.deleteKey(applicationTag: scopedKey(item: item))
         }
@@ -231,13 +232,15 @@ extension Secrets {
   public func generatePushKeyAndReturnPublicKey() throws -> Data {
     try keychain.generateKeyAndReturnPublicKey(
       applicationTag: scopedKey(item: .pushKey),
-      attributes: PushKey.attributes)
+      attributes: PushKey.attributes
+    )
   }
 
   public func getPushKey() throws -> Data? {
     try keychain.getPrivateKey(
       applicationTag: scopedKey(item: .pushKey),
-      attributes: PushKey.attributes)
+      attributes: PushKey.attributes
+    )
   }
 
   public func generatePushAuth() throws -> Data {
@@ -268,14 +271,16 @@ extension Secrets {
     try keychain.setGenericPassword(
       data: data.dataStoredInSecrets,
       forAccount: account,
-      service: keychainServiceName)
+      service: keychainServiceName
+    )
   }
 
   private static func get<T: SecretsStorable>(account: String, keychain: Keychain.Type) throws -> T {
     guard
       let data = try keychain.getGenericPassword(
         account: account,
-        service: keychainServiceName)
+        service: keychainServiceName
+      )
     else {
       throw SecretsError.itemAbsent
     }

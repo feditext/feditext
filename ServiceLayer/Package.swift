@@ -11,10 +11,12 @@ let package = Package(
   products: [
     .library(
       name: "ServiceLayer",
-      targets: ["ServiceLayer"]),
+      targets: ["ServiceLayer"]
+    ),
     .library(
       name: "ServiceLayerMocks",
-      targets: ["ServiceLayerMocks"]),
+      targets: ["ServiceLayerMocks"]
+    ),
   ],
   dependencies: [
     .package(url: "https://github.com/groue/CombineExpectations.git", .upToNextMajor(from: "0.7.0")),
@@ -39,16 +41,19 @@ let package = Package(
         "Secrets",
         .product(name: "CodableBloomFilter", package: "codable-bloom-filter"),
       ],
-      resources: [.process("Resources")]),
+      resources: [.process("Resources")]
+    ),
     .target(
       name: "ServiceLayerMocks",
       dependencies: [
         "ServiceLayer",
         .product(name: "MastodonAPIStubs", package: "MastodonAPI"),
         .product(name: "MockKeychain", package: "Keychain"),
-      ]),
+      ]
+    ),
     .testTarget(
       name: "ServiceLayerTests",
-      dependencies: ["CombineExpectations", "ServiceLayerMocks"]),
+      dependencies: ["CombineExpectations", "ServiceLayerMocks"]
+    ),
   ]
 )

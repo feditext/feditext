@@ -93,7 +93,9 @@ extension AutocompleteDataSource {
 
 extension AutocompleteDataSource {
   fileprivate static func combine(
-    query: String, searchViewModel: SearchViewModel, emojiPickerViewModel: EmojiPickerViewModel
+    query: String,
+    searchViewModel: SearchViewModel,
+    emojiPickerViewModel: EmojiPickerViewModel
   ) {
     if query.starts(with: ":") {
       searchViewModel.query = ""

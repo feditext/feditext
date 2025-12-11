@@ -95,7 +95,8 @@ extension RootViewModel {
   public func addIdentityViewModel() -> AddIdentityViewModel {
     AddIdentityViewModel(
       allIdentitiesService: allIdentitiesService,
-      instanceURLService: InstanceURLService(environment: environment))
+      instanceURLService: InstanceURLService(environment: environment)
+    )
   }
 
   public func composeStatusViewModel(
@@ -115,7 +116,8 @@ extension RootViewModel {
       redraft: redraft,
       edit: edit,
       directMessageTo: directMessageTo,
-      extensionContext: nil)
+      extensionContext: nil
+    )
   }
 
   /// Debugging aid: force all views to reload.
@@ -155,7 +157,8 @@ extension RootViewModel {
             self?.identitySelected(
               id: self?.mostRecentlyUsedIdentityId,
               immediate: false,
-              notify: true)
+              notify: true
+            )
           }
         }
 
@@ -172,7 +175,8 @@ extension RootViewModel {
           identity: $0,
           publisher: identityPublisher.eraseToAnyPublisher(),
           service: identityService,
-          environment: self.environment)
+          environment: self.environment
+        )
 
         identityContext.service.updateLastUse()
           .sink { _ in
@@ -255,7 +259,8 @@ extension RootViewModel {
 
     content.body = String.localizedStringWithFormat(
       NSLocalizedString("notification.signed-in-as-%@", comment: ""),
-      identityContext.identity.handle)
+      identityContext.identity.handle
+    )
     content.userInfo[Self.identityChangeNotificationUserInfoKey] = true
 
     let request = UserNotificationService.Request(identifier: UUID().uuidString, content: content, trigger: nil)

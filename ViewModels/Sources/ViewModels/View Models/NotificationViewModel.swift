@@ -72,9 +72,13 @@ extension NotificationViewModel {
         .navigation(
           .profile(
             notificationService.navigationService.profileService(
-              account: notificationService.notification.account)))
+              account: notificationService.notification.account
+            )
+          )
+        )
       )
       .setFailureType(to: Error.self)
-      .eraseToAnyPublisher())
+      .eraseToAnyPublisher()
+    )
   }
 }

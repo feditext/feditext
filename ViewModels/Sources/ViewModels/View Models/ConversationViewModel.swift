@@ -17,7 +17,8 @@ public final class ConversationViewModel: ObservableObject {
       AccountViewModel(
         accountService: conversationService.navigationService.accountService(account: $0),
         identityContext: identityContext,
-        eventsSubject: .init())
+        eventsSubject: .init()
+      )
     }
 
     if let status = conversationService.conversation.lastStatus {

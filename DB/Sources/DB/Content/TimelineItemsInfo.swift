@@ -30,7 +30,8 @@ extension TimelineItemsInfo {
       .including(all: TimelineRecord.loadMores.forKey(CodingKeys.loadMoreRecords))
       .including(
         optional: PinnedStatusesInfo.addingIncludes(TimelineRecord.account)
-          .forKey(CodingKeys.pinnedStatusesInfo))
+          .forKey(CodingKeys.pinnedStatusesInfo)
+      )
   }
 
   static func request(
@@ -118,6 +119,7 @@ extension TimelineItemsInfo.PinnedStatusesInfo {
   static func addingIncludes<T: DerivableRequest>(_ request: T) -> T where T.RowDecoder == AccountRecord {
     request.including(
       all: StatusInfo.addingIncludes(AccountRecord.pinnedStatuses, .account)
-        .forKey(CodingKeys.pinnedStatusInfos))
+        .forKey(CodingKeys.pinnedStatusInfos)
+    )
   }
 }

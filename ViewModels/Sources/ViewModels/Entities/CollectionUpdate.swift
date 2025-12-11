@@ -10,5 +10,6 @@ extension CollectionUpdate {
   static let empty: Self = Self(
     sections: [],
     maintainScrollPositionItemId: nil,
-    shouldAdjustContentInset: false)
+    shouldAdjustContentInset: false
+  )
 }

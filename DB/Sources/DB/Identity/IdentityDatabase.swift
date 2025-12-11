@@ -21,7 +21,8 @@ public struct IdentityDatabase {
     } else {
       let url = try FileManager.default.databaseDirectoryURL(
         name: Secrets.identityDatabaseName(keychain: keychain),
-        appGroup: appGroup)
+        appGroup: appGroup
+      )
 
       databaseWriter = try DatabasePool.withFileCoordinator(url: url, migrator: Self.migrator) {
         try Secrets.databaseKey(identityId: nil, keychain: keychain)
@@ -239,7 +240,8 @@ extension IdentityDatabase {
             IdentityRecord.Columns.authenticated == true
               && IdentityRecord.Columns.pending == false
           )
-          .fetchOne)
+          .fetchOne
+      )
     else { return nil }
 
     return Identity(info: info)

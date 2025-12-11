@@ -36,7 +36,8 @@ struct RegistrationView: View {
       Button("registration.terms-of-service") { presentURL = viewModel.termsOfServiceURL }
       Toggle(
         "registration.agree-to-server-rules-and-terms-of-service",
-        isOn: $viewModel.registration.agreement)
+        isOn: $viewModel.registration.agreement
+      )
       Group {
         if viewModel.registering {
           ProgressView()
@@ -63,7 +64,8 @@ extension RegistrationError: LocalizedError {
     case .passwordConfirmationMismatch:
       return NSLocalizedString(
         "registration.password-confirmation-mismatch",
-        comment: "")
+        comment: ""
+      )
     }
   }
 }
@@ -78,7 +80,9 @@ extension RegistrationError: LocalizedError {
           .addIdentityViewModel()
           .registrationViewModel(
             instance: .preview,
-            url: .previewInstanceURL))
+            url: .previewInstanceURL
+          )
+      )
     }
   }
 #endif

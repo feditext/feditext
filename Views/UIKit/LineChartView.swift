@@ -38,7 +38,8 @@ final class LineChartView: UIView {
       let y = rect.height - CGFloat(value) / max(CGFloat(maxValue), CGFloat(0).nextUp) * rect.height
       let point = CGPoint(
         x: min(max(x, inset), rect.width - inset),
-        y: min(max(y, inset), rect.height - inset))
+        y: min(max(y, inset), rect.height - inset)
+      )
 
       if index > 0 {
         path.addLine(to: point)

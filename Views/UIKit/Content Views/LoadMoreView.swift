@@ -79,7 +79,9 @@ extension LoadMoreView {
       arrowImageView.image = UIImage(
         systemName: "arrow.up",
         withConfiguration: UIImage.SymbolConfiguration(
-          pointSize: UIFont.preferredFont(forTextStyle: .title2).pointSize))
+          pointSize: UIFont.preferredFont(forTextStyle: .title2).pointSize
+        )
+      )
       arrowImageView.contentMode = .scaleAspectFit
       arrowImageView.setContentHuggingPriority(.required, for: .horizontal)
     }

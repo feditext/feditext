@@ -19,7 +19,8 @@ final class ZoomTransitionController: NSObject {
 extension ZoomTransitionController: UIViewControllerTransitioningDelegate {
   func animationController(
     forPresented presented: UIViewController,
-    presenting: UIViewController, source: UIViewController
+    presenting: UIViewController,
+    source: UIViewController
   ) -> UIViewControllerAnimatedTransitioning? {
     presentingAnimator()
   }

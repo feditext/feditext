@@ -59,7 +59,8 @@ extension NotificationView {
         width: bodyWidth,
         identityContext: identityContext,
         status: status,
-        configuration: configuration ?? .default)
+        configuration: configuration ?? .default
+      )
     } else {
       height +=
         UIFont.preferredFont(forTextStyle: .headline).lineHeight
@@ -135,7 +136,8 @@ extension NotificationView {
 
     avatarButton.addAction(
       UIAction { [weak self] _ in self?.notificationConfiguration.viewModel.accountSelected() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     typeLabel.font = .preferredFont(forTextStyle: .headline)
     typeLabel.adjustsFontForContentSizeCategory = true
@@ -188,14 +190,16 @@ extension NotificationView {
         displayName: viewModel.accountViewModel.displayName,
         emojis: viewModel.accountViewModel.emojis,
         label: typeLabel,
-        identityContext: viewModel.identityContext)
+        identityContext: viewModel.identityContext
+      )
       iconImageView.tintColor = nil
     case .followRequest:
       typeLabel.attributedText = "notifications.requested-to-follow-you-%@".localizedBolding(
         displayName: viewModel.accountViewModel.displayName,
         emojis: viewModel.accountViewModel.emojis,
         label: typeLabel,
-        identityContext: viewModel.identityContext)
+        identityContext: viewModel.identityContext
+      )
       iconImageView.tintColor = nil
     case .reblog:
       let stringName: String
@@ -209,7 +213,8 @@ extension NotificationView {
         displayName: viewModel.accountViewModel.displayName,
         emojis: viewModel.accountViewModel.emojis,
         label: typeLabel,
-        identityContext: viewModel.identityContext)
+        identityContext: viewModel.identityContext
+      )
       iconImageView.tintColor = .systemGreen
     case .favourite:
       let stringName: String
@@ -223,21 +228,24 @@ extension NotificationView {
         displayName: viewModel.accountViewModel.displayName,
         emojis: viewModel.accountViewModel.emojis,
         label: typeLabel,
-        identityContext: viewModel.identityContext)
+        identityContext: viewModel.identityContext
+      )
       iconImageView.tintColor = .systemYellow
     case .poll:
       typeLabel.text = NSLocalizedString(
         viewModel.accountViewModel.isSelf
           ? "notifications.your-poll-ended"
           : "notifications.poll-ended",
-        comment: "")
+        comment: ""
+      )
       iconImageView.tintColor = nil
     case .adminSignup:
       typeLabel.attributedText = "notifications.signed-up-%@".localizedBolding(
         displayName: viewModel.accountViewModel.displayName,
         emojis: viewModel.accountViewModel.emojis,
         label: typeLabel,
-        identityContext: viewModel.identityContext)
+        identityContext: viewModel.identityContext
+      )
       iconImageView.tintColor = .systemOrange
     case .adminReport:
       if let statusCount = viewModel.reportViewModel?.report.statusIds?.count, statusCount > 0 {
@@ -269,7 +277,8 @@ extension NotificationView {
         displayName: viewModel.accountViewModel.displayName,
         emojis: viewModel.accountViewModel.emojis,
         label: typeLabel,
-        identityContext: viewModel.identityContext)
+        identityContext: viewModel.identityContext
+      )
       iconImageView.tintColor = nil
     }
 
@@ -291,7 +300,8 @@ extension NotificationView {
       mutableDisplayName.insert(
         emojis: viewModel.accountViewModel.emojis,
         view: displayNameLabel,
-        identityContext: viewModel.identityContext)
+        identityContext: viewModel.identityContext
+      )
       mutableDisplayName.resizeAttachments(toLineHeight: displayNameLabel.font.lineHeight)
       displayNameLabel.attributedText = mutableDisplayName
       accountLabel.text = viewModel.accountViewModel.accountName
@@ -306,7 +316,8 @@ extension NotificationView {
 
     iconImageView.image = UIImage(
       systemName: viewModel.type.systemImageName,
-      withConfiguration: UIImage.SymbolConfiguration(scale: .medium))
+      withConfiguration: UIImage.SymbolConfiguration(scale: .medium)
+    )
 
     let accessibilityAttributedLabel = NSMutableAttributedString(string: "")
 

@@ -15,52 +15,62 @@ struct NotificationTypesPreferencesView: View {
         Toggle(isOn: $viewModel.pushSubscriptionAlerts.follow) {
           Label(
             MastodonNotification.NotificationType.follow.localizedStringKey,
-            systemImage: MastodonNotification.NotificationType.follow.systemImageName)
+            systemImage: MastodonNotification.NotificationType.follow.systemImageName
+          )
         }
         Toggle(isOn: $viewModel.pushSubscriptionAlerts.favourite) {
           Label(
             MastodonNotification.NotificationType.favourite.localizedStringKey,
-            systemImage: MastodonNotification.NotificationType.favourite.systemImageName)
+            systemImage: MastodonNotification.NotificationType.favourite.systemImageName
+          )
         }
         Toggle(isOn: $viewModel.pushSubscriptionAlerts.reblog) {
           Label(
             MastodonNotification.NotificationType.reblog.localizedStringKey,
-            systemImage: MastodonNotification.NotificationType.reblog.systemImageName)
+            systemImage: MastodonNotification.NotificationType.reblog.systemImageName
+          )
         }
         Toggle(isOn: $viewModel.pushSubscriptionAlerts.mention) {
           Label(
             MastodonNotification.NotificationType.mention.localizedStringKey,
-            systemImage: MastodonNotification.NotificationType.mention.systemImageName)
+            systemImage: MastodonNotification.NotificationType.mention.systemImageName
+          )
         }
         Toggle(isOn: $viewModel.pushSubscriptionAlerts.followRequest) {
           Label(
             MastodonNotification.NotificationType.followRequest.localizedStringKey,
-            systemImage: MastodonNotification.NotificationType.followRequest.systemImageName)
+            systemImage: MastodonNotification.NotificationType.followRequest.systemImageName
+          )
         }
         Toggle(isOn: $viewModel.pushSubscriptionAlerts.poll) {
           Label(
             MastodonNotification.NotificationType.poll.localizedStringKey,
-            systemImage: MastodonNotification.NotificationType.poll.systemImageName)
+            systemImage: MastodonNotification.NotificationType.poll.systemImageName
+          )
         }
         Toggle(isOn: $viewModel.pushSubscriptionAlerts.status) {
           Label(
             MastodonNotification.NotificationType.status.localizedStringKey,
-            systemImage: MastodonNotification.NotificationType.status.systemImageName)
+            systemImage: MastodonNotification.NotificationType.status.systemImageName
+          )
         }
         Toggle(isOn: $viewModel.pushSubscriptionAlerts.update) {
           Label(
             MastodonNotification.NotificationType.update.localizedStringKey,
-            systemImage: MastodonNotification.NotificationType.update.systemImageName)
+            systemImage: MastodonNotification.NotificationType.update.systemImageName
+          )
         }
         Toggle(isOn: $viewModel.pushSubscriptionAlerts.adminSignup) {
           Label(
             MastodonNotification.NotificationType.adminSignup.localizedStringKey,
-            systemImage: MastodonNotification.NotificationType.adminSignup.systemImageName)
+            systemImage: MastodonNotification.NotificationType.adminSignup.systemImageName
+          )
         }
         Toggle(isOn: $viewModel.pushSubscriptionAlerts.adminReport) {
           Label(
             MastodonNotification.NotificationType.adminReport.localizedStringKey,
-            systemImage: MastodonNotification.NotificationType.adminReport.systemImageName)
+            systemImage: MastodonNotification.NotificationType.adminReport.systemImageName
+          )
         }
       }
 

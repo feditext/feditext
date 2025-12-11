@@ -101,7 +101,8 @@ extension MediaProcessingService {
       UTType.mp3,
       UTType.wav,
     ]
-    .compactMap(\.preferredMIMEType))
+    .compactMap(\.preferredMIMEType)
+  )
   fileprivate static let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
   fileprivate static let thumbnailOptions =
     [
@@ -126,7 +127,8 @@ extension MediaProcessingService {
               } else {
                 return try Data(contentsOf: url)
               }
-            })
+            }
+          )
         } else {
           promise(.failure(MediaProcessingError.fileURLNotFound))
         }
@@ -150,7 +152,8 @@ extension MediaProcessingService {
                 try data.write(to: url)
 
                 return try imageData(url: url, type: .png)
-              })
+              }
+            )
           } else {
             promise(.failure(MediaProcessingError.imageNotFound))
           }

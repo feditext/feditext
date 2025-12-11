@@ -60,7 +60,8 @@ final class EmojiPickerViewController: UICollectionViewController {
 
     return UIMenu(
       title: NSLocalizedString("emoji.default-skin-tone", comment: ""),
-      children: [clearSkinToneAction] + setSkinToneActions)
+      children: [clearSkinToneAction] + setSkinToneActions
+    )
   }()
 
   init(
@@ -94,7 +95,8 @@ final class EmojiPickerViewController: UICollectionViewController {
         self?.viewModel.query = self?.searchBar.text ?? ""
         self?.collectionView.setContentOffset(.zero, animated: false)
       },
-      for: .editingChanged)
+      for: .editingChanged
+    )
     navigationItem.titleView = searchBar
 
     searchBar.addSubview(presentSearchButton)
@@ -146,7 +148,8 @@ final class EmojiPickerViewController: UICollectionViewController {
       .sink { [weak self] in
         self?.dataSource.apply(
           $0.snapshot(),
-          animatingDifferences: !UIAccessibility.isReduceMotionEnabled)
+          animatingDifferences: !UIAccessibility.isReduceMotionEnabled
+        )
       }
       .store(in: &cancellables)
 
@@ -187,7 +190,8 @@ final class EmojiPickerViewController: UICollectionViewController {
             self?.select(emoji: .system(skinToneVariation, infrequentlyUsed: infrequentlyUsed))
             self?.viewModel.updateUse(emoji: item)
           }
-        })
+        }
+      )
     }
   }
 }
@@ -196,11 +200,13 @@ extension EmojiPickerViewController {
   fileprivate static func layout() -> UICollectionViewLayout {
     let itemSize = NSCollectionLayoutSize(
       widthDimension: .absolute(.minimumButtonDimension),
-      heightDimension: .absolute(.minimumButtonDimension))
+      heightDimension: .absolute(.minimumButtonDimension)
+    )
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     let groupSize = NSCollectionLayoutSize(
       widthDimension: .fractionalWidth(1.0),
-      heightDimension: .estimated(.minimumButtonDimension))
+      heightDimension: .estimated(.minimumButtonDimension)
+    )
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
     group.interItemSpacing = .flexible(.defaultSpacing)
@@ -212,15 +218,18 @@ extension EmojiPickerViewController {
       top: .defaultSpacing,
       leading: .defaultSpacing,
       bottom: .defaultSpacing,
-      trailing: .defaultSpacing)
+      trailing: .defaultSpacing
+    )
 
     let headerSize = NSCollectionLayoutSize(
       widthDimension: .fractionalWidth(1),
-      heightDimension: .estimated(.defaultSpacing))
+      heightDimension: .estimated(.defaultSpacing)
+    )
     let header = NSCollectionLayoutBoundarySupplementaryItem(
       layoutSize: headerSize,
       elementKind: UICollectionView.elementKindSectionHeader,
-      alignment: .top)
+      alignment: .top
+    )
 
     section.boundarySupplementaryItems = [header]
 

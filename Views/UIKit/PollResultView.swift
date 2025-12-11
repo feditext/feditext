@@ -36,7 +36,9 @@ final class PollResultView: UIView {
       let imageView = UIImageView(
         image: UIImage(
           systemName: multipleSelection ? "checkmark.square" : "checkmark.circle",
-          withConfiguration: UIImage.SymbolConfiguration(scale: .medium)))
+          withConfiguration: UIImage.SymbolConfiguration(scale: .medium)
+        )
+      )
 
       imageView.contentMode = .scaleAspectFit
       imageView.setContentHuggingPriority(.required, for: .horizontal)

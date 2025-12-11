@@ -12,7 +12,8 @@ struct AddIdentityView: UIViewControllerRepresentable {
     AddIdentityViewController(
       viewModel: viewModelClosure(),
       rootViewModel: rootViewModel,
-      displayWelcome: displayWelcome)
+      displayWelcome: displayWelcome
+    )
   }
 
   func updateUIViewController(_ uiViewController: AddIdentityViewController, context: Context) {

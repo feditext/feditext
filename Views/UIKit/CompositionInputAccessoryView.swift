@@ -17,7 +17,8 @@ final class CompositionInputAccessoryView: UIView {
   private let charactersBarItem = UIBarButtonItem()
   private let autocompleteCollectionView = UICollectionView(
     frame: .zero,
-    collectionViewLayout: CompositionInputAccessoryView.autocompleteLayout())
+    collectionViewLayout: CompositionInputAccessoryView.autocompleteLayout()
+  )
   private let autocompleteDataSource: AutocompleteDataSource
   private let autocompleteCollectionViewHeightConstraint: NSLayoutConstraint
   private let autocompleteSelectionsSubject = PassthroughSubject<String, Never>()
@@ -33,7 +34,8 @@ final class CompositionInputAccessoryView: UIView {
     autocompleteDataSource = AutocompleteDataSource(
       collectionView: autocompleteCollectionView,
       queryPublisher: autocompleteQueryPublisher,
-      parentViewModel: parentViewModel)
+      parentViewModel: parentViewModel
+    )
     autocompleteCollectionViewHeightConstraint =
       autocompleteCollectionView.heightAnchor.constraint(equalToConstant: .hairline)
     autocompleteSelections = autocompleteSelectionsSubject.eraseToAnyPublisher()
@@ -41,7 +43,9 @@ final class CompositionInputAccessoryView: UIView {
     super.init(
       frame: .init(
         origin: .zero,
-        size: .init(width: UIScreen.main.bounds.width, height: .minimumButtonDimension)))
+        size: .init(width: UIScreen.main.bounds.width, height: .minimumButtonDimension)
+      )
+    )
 
     initialSetup()
   }
@@ -127,19 +131,22 @@ extension CompositionInputAccessoryView {
 
           self.parentViewModel.presentCamera(viewModel: self.viewModel)
         },
-        at: 1)
+        at: 1
+      )
     #endif
 
     let attachmentButton = UIBarButtonItem(
       image: UIImage(systemName: "paperclip"),
-      menu: UIMenu(children: attachmentActions))
+      menu: UIMenu(children: attachmentActions)
+    )
 
     attachmentButton.accessibilityLabel =
       NSLocalizedString("compose.attachments-button.accessibility-label", comment: "")
 
     let pollButton = UIBarButtonItem(
       image: UIImage(systemName: "chart.bar.xaxis"),
-      primaryAction: UIAction { [weak self] _ in self?.viewModel.displayPoll.toggle() })
+      primaryAction: UIAction { [weak self] _ in self?.viewModel.displayPoll.toggle() }
+    )
 
     pollButton.accessibilityLabel = NSLocalizedString("compose.poll-button.accessibility-label", comment: "")
 
@@ -151,7 +158,8 @@ extension CompositionInputAccessoryView {
 
     let contentWarningButton = UIBarButtonItem(
       title: NSLocalizedString("status.content-warning-abbreviation", comment: ""),
-      primaryAction: UIAction { [weak self] _ in self?.viewModel.displayContentWarning.toggle() })
+      primaryAction: UIAction { [weak self] _ in self?.viewModel.displayContentWarning.toggle() }
+    )
 
     viewModel.$displayContentWarning.sink {
       if $0 {
@@ -190,7 +198,8 @@ extension CompositionInputAccessoryView {
         guard let self = self else { return }
 
         self.parentViewModel.presentEmojiPicker(tag: self.tagForInputView)
-      })
+      }
+    )
 
     emojiButton.accessibilityLabel = NSLocalizedString("compose.emoji-button", comment: "")
 
@@ -200,7 +209,8 @@ extension CompositionInputAccessoryView {
         guard let self = self else { return }
 
         self.parentViewModel.insert(after: self.viewModel)
-      })
+      }
+    )
 
     switch parentViewModel.identityContext.appPreferences.statusWord {
     case .toot:
@@ -259,10 +269,12 @@ extension CompositionInputAccessoryView {
           .foregroundColor: $0 < 0 ? UIColor.systemRed : UIColor.label,
           .font: UIFont.monospacedDigitSystemFont(ofSize: UIFont.labelFontSize, weight: .regular),
         ],
-        for: .disabled)
+        for: .disabled
+      )
       charactersBarItem.accessibilityHint = String.localizedStringWithFormat(
         NSLocalizedString("compose.characters-remaining-accessibility-label-%ld", comment: ""),
-        $0)
+        $0
+      )
     }
     .store(in: &cancellables)
 
@@ -287,7 +299,8 @@ extension CompositionInputAccessoryView {
         visibilityButton.menu = self?.visibilityMenu()
         visibilityButton.accessibilityLabel = String.localizedStringWithFormat(
           NSLocalizedString("compose.visibility-button.accessibility-label-%@", comment: ""),
-          $0.title ?? "")
+          $0.title ?? ""
+        )
       }
       .store(in: &cancellables)
 
@@ -362,7 +375,8 @@ extension CompositionInputAccessoryView: UICollectionViewDelegate {
             self?.autocompleteSelectionsSubject.send(skinToneVariation.emoji)
             self?.autocompleteDataSource.updateUse(emoji: emojiItem)
           }
-        })
+        }
+      )
     }
   }
 }
@@ -382,11 +396,13 @@ extension CompositionInputAccessoryView {
       case .emoji:
         let itemSize = NSCollectionLayoutSize(
           widthDimension: .fractionalWidth(1.0),
-          heightDimension: .fractionalHeight(1.0))
+          heightDimension: .fractionalHeight(1.0)
+        )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let groupSize = NSCollectionLayoutSize(
           widthDimension: .absolute(.minimumButtonDimension),
-          heightDimension: .absolute(.minimumButtonDimension))
+          heightDimension: .absolute(.minimumButtonDimension)
+        )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
 
@@ -396,7 +412,8 @@ extension CompositionInputAccessoryView {
           top: .compactSpacing,
           leading: .compactSpacing,
           bottom: .compactSpacing,
-          trailing: .compactSpacing)
+          trailing: .compactSpacing
+        )
 
         return section
       }
@@ -508,7 +525,8 @@ extension CompositionInputAccessoryView {
         ) { [weak self] _ in
           self?.viewModel.language = prefsLanguage.tag
         }
-      })
+      }
+    )
   }
 
   fileprivate func setAutocompleteCollectionViewHeight(_ height: CGFloat) {

@@ -17,6 +17,7 @@ extension AuthenticatedWebViewService {
     environment.webAuthSessionType.publisher(
       url: url,
       callbackURLScheme: nil,
-      presentationContextProvider: webAuthSessionContextProvider)
+      presentationContextProvider: webAuthSessionContextProvider
+    )
   }
 }

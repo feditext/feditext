@@ -57,7 +57,8 @@ final class PollView: UIView {
       }
 
       let accessibilityAttributedLabel = NSMutableAttributedString(
-        string: NSLocalizedString("status.poll.accessibility-label", comment: ""))
+        string: NSLocalizedString("status.poll.accessibility-label", comment: "")
+      )
 
       if !viewModel.isPollExpired, !viewModel.hasVotedInPoll {
         for (index, option) in viewModel.pollOptions.enumerated() {
@@ -66,7 +67,8 @@ final class PollView: UIView {
             language: viewModel.language,
             emojis: viewModel.pollEmojis,
             multipleSelection: viewModel.isPollMultipleSelection,
-            identityContext: viewModel.identityContext)
+            identityContext: viewModel.identityContext
+          )
 
           button.button.addAction(
             UIAction { _ in
@@ -78,7 +80,8 @@ final class PollView: UIView {
                 viewModel.pollOptionSelections = [index]
               }
             },
-            for: .touchUpInside)
+            for: .touchUpInside
+          )
 
           stackView.addArrangedSubview(button)
         }
@@ -91,7 +94,8 @@ final class PollView: UIView {
             selected: viewModel.pollOwnVotes.contains(index),
             multipleSelection: viewModel.isPollMultipleSelection,
             votersCount: viewModel.pollVotersCount,
-            identityContext: viewModel.identityContext)
+            identityContext: viewModel.identityContext
+          )
 
           stackView.addArrangedSubview(resultView)
         }
@@ -102,7 +106,8 @@ final class PollView: UIView {
         var percent: String?
         let indexLabel = String.localizedStringWithFormat(
           NSLocalizedString("status.poll.option-%ld", comment: ""),
-          index + 1)
+          index + 1
+        )
 
         if let optionView = view as? PollOptionButton,
           let attributedTitle = optionView.button.accessibilityAttributedLabel
@@ -113,7 +118,8 @@ final class PollView: UIView {
 
           if viewModel.isPollMultipleSelection {
             optionAccessibilityAttributedLabel.appendWithSeparator(
-              NSLocalizedString("compose.poll.accessibility.multiple-choices-allowed", comment: ""))
+              NSLocalizedString("compose.poll.accessibility.multiple-choices-allowed", comment: "")
+            )
           }
 
           optionAccessibilityAttributedLabel.appendWithSeparator(attributedTitle)
@@ -153,7 +159,8 @@ final class PollView: UIView {
 
       let votesCount = String.localizedStringWithFormat(
         NSLocalizedString("status.poll.participation-count-%ld", comment: ""),
-        viewModel.pollVotersCount)
+        viewModel.pollVotersCount
+      )
 
       votesCountLabel.text = votesCount
       votesCountLabel.isAccessibilityElement = true
@@ -163,7 +170,8 @@ final class PollView: UIView {
       if !viewModel.isPollExpired, let pollTimeLeft = viewModel.pollTimeLeft {
         expiryLabel.text = String.localizedStringWithFormat(
           NSLocalizedString("status.poll.time-left-%@", comment: ""),
-          pollTimeLeft)
+          pollTimeLeft
+        )
         refreshButton.isHidden = false
         accessibilityCustomActions =
           [
@@ -278,7 +286,8 @@ extension PollView {
     bottomStackView.addArrangedSubview(UIView())
 
     let refreshButtonHeightConstraint = refreshButton.heightAnchor.constraint(
-      equalToConstant: .minimumButtonDimension / 2)
+      equalToConstant: .minimumButtonDimension / 2
+    )
 
     refreshButtonHeightConstraint.priority = .justBelowMax
 

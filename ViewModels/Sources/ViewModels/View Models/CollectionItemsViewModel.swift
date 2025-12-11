@@ -211,7 +211,8 @@ public class CollectionItemsViewModel: ObservableObject {
       let viewModel = LoadMoreViewModel(
         loadMoreService: collectionService.navigationService.loadMoreService(loadMore: loadMore),
         eventsSubject: eventsSubject,
-        identityContext: identityContext)
+        identityContext: identityContext
+      )
 
       viewModelCache[item] = viewModel
 
@@ -226,7 +227,8 @@ public class CollectionItemsViewModel: ObservableObject {
         viewModel = AccountViewModel(
           accountService: collectionService.navigationService.accountService(account: account),
           identityContext: identityContext,
-          eventsSubject: eventsSubject)
+          eventsSubject: eventsSubject
+        )
         viewModelCache[item] = viewModel
       }
 
@@ -261,7 +263,8 @@ public class CollectionItemsViewModel: ObservableObject {
           ),
           rules: rules,
           identityContext: identityContext,
-          eventsSubject: eventsSubject)
+          eventsSubject: eventsSubject
+        )
       }
 
       viewModelCache[item] = viewModel
@@ -295,8 +298,10 @@ public class CollectionItemsViewModel: ObservableObject {
 
       let viewModel = ConversationViewModel(
         conversationService: collectionService.navigationService.conversationService(
-          conversation: conversation),
-        identityContext: identityContext)
+          conversation: conversation
+        ),
+        identityContext: identityContext
+      )
 
       viewModelCache[item] = viewModel
 
@@ -331,9 +336,11 @@ public class CollectionItemsViewModel: ObservableObject {
 
       let viewModel = AnnouncementViewModel(
         announcementService: collectionService.navigationService.announcementService(
-          announcement: announcement),
+          announcement: announcement
+        ),
         identityContext: identityContext,
-        eventsSubject: eventsSubject)
+        eventsSubject: eventsSubject
+      )
 
       viewModelCache[item] = viewModel
 
@@ -423,7 +430,10 @@ extension CollectionItemsViewModel: CollectionViewModel {
           .collection(
             collectionService
               .navigationService
-              .contextService(id: status.displayStatus.id))))
+              .contextService(id: status.displayStatus.id)
+          )
+        )
+      )
 
     case .loadMore(let loadMore):
       lastSelectedLoadMore = loadMore
@@ -609,7 +619,8 @@ extension CollectionItemsViewModel {
     eventsSubject.send(
       Just(.compose(directMessageTo: accountViewModel))
         .setFailureType(to: Error.self)
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 }
 
@@ -631,7 +642,8 @@ extension CollectionItemsViewModel {
     self.lastUpdate = .init(
       sections: sections,
       maintainScrollPositionItemId: idForScrollPositionMaintenance(newSections: sections),
-      shouldAdjustContentInset: lastUpdateWasContextParentOnly && items.count > 1)
+      shouldAdjustContentInset: lastUpdateWasContextParentOnly && items.count > 1
+    )
 
     viewModelCache = viewModelCache.filter { itemsSet.contains($0.key) }
 
@@ -717,7 +729,9 @@ extension CollectionItemsViewModel {
   fileprivate func handleToasts(_ error: Error) -> AnyPublisher<Never, Error> {
     if let error = error as? ToastableError, error.toastable {
       var toastPublisher: AnyPublisher<CollectionItemEvent, Error> = AlertItem.handleToasts(
-        error: error, identityContext: identityContext)
+        error: error,
+        identityContext: identityContext
+      )
       if case .notFound = (error as? SpecialCaseError)?.specialCase {
         // Not found errors when paging indicate:
         // - a deleted context root status if we're using a context service

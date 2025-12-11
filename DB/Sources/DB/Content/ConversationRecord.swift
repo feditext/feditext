@@ -22,7 +22,8 @@ extension ConversationRecord {
   static let accounts = hasMany(
     AccountRecord.self,
     through: accountJoins,
-    using: ConversationAccountJoin.account)
+    using: ConversationAccountJoin.account
+  )
 
   init(conversation: Conversation) {
     id = conversation.id

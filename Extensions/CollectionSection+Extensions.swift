@@ -17,7 +17,8 @@ extension Array where Element == CollectionSection {
     for (index, section) in enumerated() {
       let identifier = CollectionSection.Identifier(
         index: index,
-        searchScope: section.searchScope)
+        searchScope: section.searchScope
+      )
       snapshot.appendSections([identifier])
       snapshot.appendItems(section.items, toSection: identifier)
     }

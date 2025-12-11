@@ -23,7 +23,8 @@ final class ExploreViewController: UICollectionViewController {
     tabBarItem = UITabBarItem(
       title: NSLocalizedString("main-navigation.explore", comment: ""),
       image: UIImage(systemName: "magnifyingglass"),
-      selectedImage: nil)
+      selectedImage: nil
+    )
 
     viewModel.$announcementCount
       .sink { [weak self] (_, unread) in
@@ -56,7 +57,8 @@ final class ExploreViewController: UICollectionViewController {
       UIAction { [weak self] _ in
         self?.viewModel.refresh()
       },
-      for: .valueChanged)
+      for: .valueChanged
+    )
 
     navigationItem.title = NSLocalizedString("main-navigation.explore", comment: "")
 
@@ -64,7 +66,8 @@ final class ExploreViewController: UICollectionViewController {
       viewModel: viewModel.searchViewModel,
       rootViewModel: rootViewModel,
       insetBottom: false,
-      parentNavigationController: navigationController)
+      parentNavigationController: navigationController
+    )
 
     let searchController = UISearchController(searchResultsController: searchResultsController)
 
@@ -164,9 +167,11 @@ extension ExploreViewController: NavigationHandling {
       let vc = TableViewController(
         viewModel: CollectionItemsViewModel(
           collectionService: collectionService,
-          identityContext: viewModel.identityContext),
+          identityContext: viewModel.identityContext
+        ),
         rootViewModel: rootViewModel,
-        parentNavigationController: nil)
+        parentNavigationController: nil
+      )
 
       show(vc, sender: self)
       webfingerIndicatorView.stopAnimating()
@@ -174,10 +179,12 @@ extension ExploreViewController: NavigationHandling {
       let vc = ProfileViewController(
         viewModel: ProfileViewModel(
           profileService: profileService,
-          identityContext: viewModel.identityContext),
+          identityContext: viewModel.identityContext
+        ),
         rootViewModel: rootViewModel,
         identityContext: viewModel.identityContext,
-        parentNavigationController: nil)
+        parentNavigationController: nil
+      )
 
       show(vc, sender: self)
       webfingerIndicatorView.stopAnimating()

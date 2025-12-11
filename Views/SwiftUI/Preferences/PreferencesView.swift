@@ -24,7 +24,8 @@ struct PreferencesView: View {
     .alertItem($viewModel.alertItem)
     .onReceive(
       NotificationCenter.default.publisher(
-        for: UIAccessibility.videoAutoplayStatusDidChangeNotification)
+        for: UIAccessibility.videoAutoplayStatusDidChangeNotification
+      )
     ) { _ in
       viewModel.objectWillChange.send()
     }

@@ -11,7 +11,8 @@ class ShareExtensionNavigationViewController: UINavigationController {
   private let environment = AppEnvironment.live(
     userNotificationCenter: .current(),
     reduceMotion: { UIAccessibility.isReduceMotionEnabled },
-    autoplayVideos: { UIAccessibility.isVideoAutoplayEnabled })
+    autoplayVideos: { UIAccessibility.isVideoAutoplayEnabled }
+  )
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -32,6 +33,7 @@ class ShareExtensionNavigationViewController: UINavigationController {
 
     setViewControllers(
       [ComposeStatusViewController(viewModel: newStatusViewModel, rootViewModel: nil)],
-      animated: false)
+      animated: false
+    )
   }
 }

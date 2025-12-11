@@ -20,5 +20,6 @@ extension AccountList {
   static let accounts = hasMany(
     AccountRecord.self,
     through: accountListJoins.order(AccountListJoin.Columns.order),
-    using: AccountListJoin.account)
+    using: AccountListJoin.account
+  )
 }

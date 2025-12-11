@@ -132,7 +132,8 @@ extension StatusView {
         width: bodyWidth,
         identityContext: identityContext,
         status: status,
-        configuration: configuration)
+        configuration: configuration
+      )
       + .compactSpacing
 
     if configuration.isReplyOutOfContext {
@@ -229,7 +230,8 @@ extension StatusView {
     rebloggerButton.translatesAutoresizingMaskIntoConstraints = false
     rebloggerButton.addAction(
       UIAction { [weak self] _ in self?.statusConfiguration.viewModel.rebloggerAccountSelected() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     let rebloggerTouchStartAction = UIAction { [weak self] _ in self?.infoLabel.alpha = 0.75 }
 
@@ -291,13 +293,15 @@ extension StatusView {
         self?.accountLabel.alpha = 1
         self?.statusConfiguration.viewModel.accountSelected()
       },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     nameButton.addAction(
       UIAction { [weak self] _ in
         self?.displayNameLabel.alpha = 0.5
         self?.accountLabel.alpha = 0.5
       },
-      for: .touchDown)
+      for: .touchDown
+    )
 
     let unhighlightAction = UIAction { [weak self] _ in
       self?.displayNameLabel.alpha = 1
@@ -374,7 +378,8 @@ extension StatusView {
 
         viewModel.urlSelected(url)
       },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     contextParentTimeApplicationStackView.addArrangedSubview(applicationButton)
     contextParentTimeApplicationStackView.addArrangedSubview(UIView())
 
@@ -398,19 +403,22 @@ extension StatusView {
     rebloggedByButton.contentHorizontalAlignment = .leading
     rebloggedByButton.addAction(
       UIAction { [weak self] _ in self?.statusConfiguration.viewModel.rebloggedBySelected() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     interactionsStackView.addArrangedSubview(rebloggedByButton)
 
     favoritedByButton.contentHorizontalAlignment = .leading
     favoritedByButton.addAction(
       UIAction { [weak self] _ in self?.statusConfiguration.viewModel.favoritedBySelected() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     interactionsStackView.addArrangedSubview(favoritedByButton)
     interactionsStackView.distribution = .fillEqually
 
     replyButton.addAction(
       UIAction { [weak self] _ in self?.statusConfiguration.viewModel.reply() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     replyButton.accessibilityLabel = Self.replyButtonAccessibilityLabel
 
     reblogButton.addAction(
@@ -421,7 +429,8 @@ extension StatusView {
 
         self.reblog()
       },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     reblogButton.addTarget(self, action: #selector(reblogButtonDoubleTap(sender:event:)), for: .touchDownRepeat)
 
     favoriteButton.addAction(
@@ -432,12 +441,14 @@ extension StatusView {
 
         self.favorite()
       },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     favoriteButton.addTarget(self, action: #selector(favoriteButtonDoubleTap(sender:event:)), for: .touchDownRepeat)
 
     shareButton.addAction(
       UIAction { [weak self] _ in self?.statusConfiguration.viewModel.shareStatus() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     shareButton.accessibilityLabel = Self.shareButtonAccessibilityLabel
 
     menuButton.showsMenuAsPrimaryAction = true
@@ -467,7 +478,8 @@ extension StatusView {
 
     avatarButton.addAction(
       UIAction { [weak self] _ in self?.statusConfiguration.viewModel.accountSelected() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     avatarContainerView.addSubview(rebloggerAvatarImageView)
     rebloggerAvatarImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -547,7 +559,8 @@ extension StatusView {
       nameButton.trailingAnchor.constraint(equalTo: accountLabel.trailingAnchor),
       nameButton.bottomAnchor.constraint(equalTo: accountLabel.bottomAnchor),
       contextParentTimeApplicationStackView.heightAnchor.constraint(
-        greaterThanOrEqualToConstant: .minimumButtonDimension / 2),
+        greaterThanOrEqualToConstant: .minimumButtonDimension / 2
+      ),
       interactionsStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: .minimumButtonDimension),
       rebloggerButton.leadingAnchor.constraint(equalTo: infoLabel.leadingAnchor),
       rebloggerButton.topAnchor.constraint(equalTo: infoLabel.topAnchor),
@@ -604,7 +617,8 @@ extension StatusView {
     avatarImageView.sd_setImage(with: viewModel.avatarURL)
     avatarButton.accessibilityLabel = String.localizedStringWithFormat(
       NSLocalizedString("account.avatar.accessibility-label-%@", comment: ""),
-      viewModel.accountViewModel.displayName)
+      viewModel.accountViewModel.displayName
+    )
 
     sideStackView.isHidden = isContextParent
 
@@ -639,18 +653,21 @@ extension StatusView {
         displayName: viewModel.rebloggedByDisplayName,
         emojis: viewModel.rebloggedByDisplayNameEmojis,
         label: infoLabel,
-        identityContext: viewModel.identityContext)
+        identityContext: viewModel.identityContext
+      )
       let highlightedAttributedTitle = NSMutableAttributedString(attributedString: attributedTitle)
 
       highlightedAttributedTitle.addAttribute(
         .foregroundColor,
         value: UIColor.tertiaryLabel,
-        range: .init(location: 0, length: highlightedAttributedTitle.length))
+        range: .init(location: 0, length: highlightedAttributedTitle.length)
+      )
 
       infoLabel.attributedText = attributedTitle
       infoIcon.image = UIImage(
         systemName: "arrow.2.squarepath",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .small))
+        withConfiguration: UIImage.SymbolConfiguration(scale: .small)
+      )
       infoLabel.isHidden = false
       infoIcon.isHidden = false
       rebloggerButton.isHidden = false
@@ -668,7 +685,8 @@ extension StatusView {
       infoIcon.centerYAnchor.constraint(equalTo: infoLabel.centerYAnchor).isActive = true
       infoIcon.image = UIImage(
         systemName: "pin",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .small))
+        withConfiguration: UIImage.SymbolConfiguration(scale: .small)
+      )
       infoLabel.isHidden = false
       infoIcon.isHidden = false
       rebloggerButton.isHidden = true
@@ -685,7 +703,8 @@ extension StatusView {
     mutableDisplayName.insert(
       emojis: viewModel.accountViewModel.emojis,
       view: displayNameLabel,
-      identityContext: viewModel.identityContext)
+      identityContext: viewModel.identityContext
+    )
     mutableDisplayName.resizeAttachments(toLineHeight: displayNameLabel.font.lineHeight)
     displayNameLabel.attributedText = mutableDisplayName
     accountLabel.text = viewModel.accountName
@@ -767,11 +786,13 @@ extension StatusView {
 
     rebloggedByButton.setAttributedLocalizedTitle(
       localizationKey: "status.reblogs-count-%ld",
-      count: viewModel.reblogsCount)
+      count: viewModel.reblogsCount
+    )
     rebloggedByButton.isHidden = noReblogs
     favoritedByButton.setAttributedLocalizedTitle(
       localizationKey: "status.favorites-count-%ld",
-      count: viewModel.favoritesCount)
+      count: viewModel.favoritesCount
+    )
     favoritedByButton.isHidden = noFavorites
 
     interactionsDividerView.isHidden = noInteractions
@@ -793,7 +814,8 @@ extension StatusView {
     setButtonImages(
       font: isContextParent
         ? .preferredFont(forTextStyle: .title3)
-        : .preferredFont(forTextStyle: .subheadline))
+        : .preferredFont(forTextStyle: .subheadline)
+    )
 
     replyButton.setCountTitle(count: viewModel.repliesCount, isContextParent: isContextParent)
     replyButton.isEnabled = isAuthenticated
@@ -862,7 +884,8 @@ extension StatusView {
           let tag = UUID().hashValue
           self.menuButton.tag = tag
           viewModel.presentEmojiPicker(sourceViewTag: tag)
-        })
+        }
+      )
     }
 
     firstSectionItems.append(
@@ -873,7 +896,8 @@ extension StatusView {
         image: UIImage(systemName: "bookmark")
       ) { _ in
         viewModel.toggleBookmarked()
-      })
+      }
+    )
 
     if viewModel.isMine, let pinned = viewModel.pinned {
       firstSectionItems.append(
@@ -884,7 +908,8 @@ extension StatusView {
           image: UIImage(systemName: "pin")
         ) { _ in
           viewModel.togglePinned()
-        })
+        }
+      )
     }
 
     if viewModel.canViewEditHistory, viewModel.edited {
@@ -894,7 +919,8 @@ extension StatusView {
           image: UIImage(systemName: "calendar.day.timeline.left")
         ) { _ in
           viewModel.presentHistory()
-        })
+        }
+      )
     }
 
     if viewModel.configuration.showFilteredToggled {
@@ -905,7 +931,8 @@ extension StatusView {
           image: UIImage(systemName: "eye.slash")
         ) { _ in
           viewModel.toggleShowFiltered()
-        })
+        }
+      )
     }
 
     sections.append(UIMenu(options: .displayInline, children: firstSectionItems))
@@ -965,7 +992,8 @@ extension StatusView {
                 image: UIImage(systemName: "speaker.wave.2")
               ) { _ in
                 viewModel.accountViewModel.confirmUnmute()
-              })
+              }
+            )
           } else {
             secondSectionItems.append(
               UIAction(
@@ -973,7 +1001,8 @@ extension StatusView {
                 image: UIImage(systemName: "speaker.slash")
               ) { _ in
                 viewModel.accountViewModel.confirmMute()
-              })
+              }
+            )
           }
         }
 
@@ -985,7 +1014,8 @@ extension StatusView {
               attributes: .destructive
             ) { _ in
               viewModel.accountViewModel.confirmUnblock()
-            })
+            }
+          )
         } else {
           secondSectionItems.append(
             UIAction(
@@ -994,7 +1024,8 @@ extension StatusView {
               attributes: .destructive
             ) { _ in
               viewModel.accountViewModel.confirmBlock()
-            })
+            }
+          )
         }
       }
 
@@ -1005,7 +1036,8 @@ extension StatusView {
           attributes: .destructive
         ) { _ in
           viewModel.reportStatus()
-        })
+        }
+      )
 
       sections.append(UIMenu(options: .displayInline, children: secondSectionItems))
 
@@ -1020,7 +1052,8 @@ extension StatusView {
           domainBlockAction = UIAction(
             title: String.localizedStringWithFormat(
               NSLocalizedString("account.domain-unblock-%@", comment: ""),
-              domain),
+              domain
+            ),
             image: UIImage(systemName: "slash.circle"),
             attributes: .destructive
           ) { _ in
@@ -1030,7 +1063,8 @@ extension StatusView {
           domainBlockAction = UIAction(
             title: String.localizedStringWithFormat(
               NSLocalizedString("account.domain-block-%@", comment: ""),
-              domain),
+              domain
+            ),
             image: UIImage(systemName: "slash.circle"),
             attributes: .destructive
           ) { _ in
@@ -1055,7 +1089,8 @@ extension StatusView {
         string: String.localizedStringWithFormat(
           NSLocalizedString("status.filtered.accessibility-label-%@", comment: ""),
           viewModel.filterReason
-        ))
+        )
+      )
     }
 
     let accessibilityAttributedLabel = NSMutableAttributedString(string: "")
@@ -1077,7 +1112,8 @@ extension StatusView {
     }
 
     accessibilityAttributedLabel.appendWithSeparator(
-      bodyView.accessibilityAttributedLabel(forceShowContent: forceShowContent))
+      bodyView.accessibilityAttributedLabel(forceShowContent: forceShowContent)
+    )
 
     if let accessibilityTime = statusConfiguration.viewModel.accessibilityTime {
       accessibilityAttributedLabel.appendWithSeparator(accessibilityTime)
@@ -1087,7 +1123,9 @@ extension StatusView {
       accessibilityAttributedLabel.appendWithSeparator(
         String.localizedStringWithFormat(
           NSLocalizedString("status.replies-count-%ld", comment: ""),
-          statusConfiguration.viewModel.repliesCount))
+          statusConfiguration.viewModel.repliesCount
+        )
+      )
     }
 
     if statusConfiguration.viewModel.identityContext.appPreferences.showReblogAndFavoriteCounts {
@@ -1095,20 +1133,25 @@ extension StatusView {
         accessibilityAttributedLabel.appendWithSeparator(
           String.localizedStringWithFormat(
             NSLocalizedString("status.reblogs-count-%ld", comment: ""),
-            statusConfiguration.viewModel.reblogsCount))
+            statusConfiguration.viewModel.reblogsCount
+          )
+        )
       }
 
       if statusConfiguration.viewModel.favoritesCount > 0 {
         accessibilityAttributedLabel.appendWithSeparator(
           String.localizedStringWithFormat(
             NSLocalizedString("status.favorites-count-%ld", comment: ""),
-            statusConfiguration.viewModel.favoritesCount))
+            statusConfiguration.viewModel.favoritesCount
+          )
+        )
       }
     }
 
     if statusConfiguration.viewModel.configuration.isReplyOutOfContext {
       accessibilityAttributedLabel.appendWithSeparator(
-        NSLocalizedString("status.accessibility.part-of-a-thread", comment: ""))
+        NSLocalizedString("status.accessibility.part-of-a-thread", comment: "")
+      )
     }
 
     return accessibilityAttributedLabel
@@ -1138,30 +1181,41 @@ extension StatusView {
     replyButton.setImage(
       UIImage(
         systemName: "bubble.right",
-        withConfiguration: UIImage.SymbolConfiguration(pointSize: font.pointSize)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(pointSize: font.pointSize)
+      ),
+      for: .normal
+    )
     reblogButton.setImage(
       UIImage(
         systemName: reblogSystemImageName,
         withConfiguration: UIImage.SymbolConfiguration(
           pointSize: font.pointSize,
-          weight: statusConfiguration.viewModel.reblogged ? .bold : .regular)),
-      for: .normal)
+          weight: statusConfiguration.viewModel.reblogged ? .bold : .regular
+        )
+      ),
+      for: .normal
+    )
     favoriteButton.setImage(
       UIImage(
         systemName: statusConfiguration.viewModel.favorited ? "star.fill" : "star",
-        withConfiguration: UIImage.SymbolConfiguration(pointSize: font.pointSize)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(pointSize: font.pointSize)
+      ),
+      for: .normal
+    )
     shareButton.setImage(
       UIImage(
         systemName: "square.and.arrow.up",
-        withConfiguration: UIImage.SymbolConfiguration(pointSize: font.pointSize)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(pointSize: font.pointSize)
+      ),
+      for: .normal
+    )
     menuButton.setImage(
       UIImage(
         systemName: "ellipsis",
-        withConfiguration: UIImage.SymbolConfiguration(pointSize: font.pointSize)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(pointSize: font.pointSize)
+      ),
+      for: .normal
+    )
   }
 
   @objc fileprivate func reblogButtonDoubleTap(sender: UIButton, event: UIEvent) {
@@ -1299,7 +1353,8 @@ extension StatusView {
           viewModel.reply()
 
           return true
-        })
+        }
+      )
     }
 
     if viewModel.canBeReblogged, reblogButton.isEnabled {
@@ -1311,7 +1366,8 @@ extension StatusView {
           self?.reblog()
 
           return true
-        })
+        }
+      )
     }
 
     if favoriteButton.isEnabled {
@@ -1323,7 +1379,8 @@ extension StatusView {
           self?.favorite()
 
           return true
-        })
+        }
+      )
     }
 
     if shareButton.isEnabled {
@@ -1334,43 +1391,50 @@ extension StatusView {
           viewModel.shareStatus()
 
           return true
-        })
+        }
+      )
     }
 
     actions.append(
       UIAccessibilityCustomAction(
         name: NSLocalizedString(
           "status.accessibility.view-author-profile",
-          comment: "")
+          comment: ""
+        )
       ) { [weak self] _ in
         self?.statusConfiguration.viewModel.accountSelected()
 
         return true
-      })
+      }
+    )
 
     if viewModel.isReblog {
       actions.append(
         UIAccessibilityCustomAction(
           name: NSLocalizedString(
             "status.accessibility.view-reblogger-profile",
-            comment: "")
+            comment: ""
+          )
         ) { [weak self] _ in
           self?.statusConfiguration.viewModel.rebloggerAccountSelected()
 
           return true
-        })
+        }
+      )
     }
 
     actions.append(
       UIAccessibilityCustomAction(
         name: NSLocalizedString(
           "accessibility.copy-text",
-          comment: "")
+          comment: ""
+        )
       ) { [weak self] _ in
         UIPasteboard.general.string = self?.bodyView.contentTextView.text
 
         return true
-      })
+      }
+    )
 
     if menuButton.isEnabled {
       actions.append(
@@ -1382,7 +1446,8 @@ extension StatusView {
           viewModel.toggleBookmarked()
 
           return true
-        })
+        }
+      )
 
       if let pinned = viewModel.pinned {
         actions.append(
@@ -1394,7 +1459,8 @@ extension StatusView {
             viewModel.togglePinned()
 
             return true
-          })
+          }
+        )
       }
 
       if viewModel.configuration.showFilteredToggled {
@@ -1406,7 +1472,8 @@ extension StatusView {
             viewModel.toggleShowFiltered()
 
             return true
-          })
+          }
+        )
       }
 
       if viewModel.canToggleMute {
@@ -1419,7 +1486,8 @@ extension StatusView {
             viewModel.toggleMuted()
 
             return true
-          })
+          }
+        )
       }
 
       if viewModel.isMine {
@@ -1450,7 +1518,8 @@ extension StatusView {
                   viewModel.accountViewModel.confirmUnmute()
 
                   return true
-                })
+                }
+              )
             } else {
               actions.append(
                 UIAccessibilityCustomAction(
@@ -1459,7 +1528,8 @@ extension StatusView {
                   viewModel.accountViewModel.confirmMute()
 
                   return true
-                })
+                }
+              )
             }
           }
 
@@ -1471,7 +1541,8 @@ extension StatusView {
                 viewModel.accountViewModel.confirmUnblock()
 
                 return true
-              })
+              }
+            )
           } else {
             actions.append(
               UIAccessibilityCustomAction(
@@ -1480,7 +1551,8 @@ extension StatusView {
                 viewModel.accountViewModel.confirmBlock()
 
                 return true
-              })
+              }
+            )
           }
         }
         actions.append(
@@ -1490,7 +1562,8 @@ extension StatusView {
             viewModel.reportStatus()
 
             return true
-          })
+          }
+        )
 
         if viewModel.accountViewModel.canBlockDomains,
           !viewModel.accountViewModel.isLocal,
@@ -1503,23 +1576,27 @@ extension StatusView {
               UIAccessibilityCustomAction(
                 name: String.localizedStringWithFormat(
                   NSLocalizedString("account.domain-unblock-%@", comment: ""),
-                  domain)
+                  domain
+                )
               ) { _ in
                 viewModel.accountViewModel.confirmDomainUnblock(domain: domain)
 
                 return true
-              })
+              }
+            )
           } else {
             actions.append(
               UIAccessibilityCustomAction(
                 name: String.localizedStringWithFormat(
                   NSLocalizedString("account.domain-block-%@", comment: ""),
-                  domain)
+                  domain
+                )
               ) { _ in
                 viewModel.accountViewModel.confirmDomainBlock(domain: domain)
 
                 return true
-              })
+              }
+            )
           }
         }
       }
@@ -1533,7 +1610,8 @@ extension StatusView {
       radius: .greatestFiniteMagnitude,
       corners: .allCorners,
       borderWidth: 0,
-      borderColor: nil)
+      borderColor: nil
+    )
 
     return UIMenu(
       children: statusConfiguration.viewModel
@@ -1559,7 +1637,8 @@ extension StatusView {
               completion([menuItemAction])
             }
           }
-        })
+        }
+    )
   }
 }
 

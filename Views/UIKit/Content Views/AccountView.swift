@@ -113,7 +113,8 @@ extension AccountView {
         .compactSpacing
         + String(account.note.attrStr.characters).height(
           width: width,
-          font: .preferredFont(forTextStyle: .callout))
+          font: .preferredFont(forTextStyle: .callout)
+        )
     } else if configuration == .followSuggestion, suggestionSource != nil {
       height += .compactSpacing + UIFont.preferredFont(forTextStyle: .footnote).lineHeight
     }
@@ -352,20 +353,25 @@ extension AccountView {
     acceptFollowRequestButton.setImage(
       UIImage(
         systemName: "checkmark.circle",
-        withConfiguration: UIImage.SymbolConfiguration(pointSize: largeTitlePointSize)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(pointSize: largeTitlePointSize)
+      ),
+      for: .normal
+    )
     acceptFollowRequestButton.tintColor = .systemGreen
     acceptFollowRequestButton.setContentHuggingPriority(.required, for: .horizontal)
     acceptFollowRequestButton.addAction(
       UIAction { [weak self] _ in self?.accountConfiguration.viewModel.acceptFollowRequest() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     stackView.addArrangedSubview(rejectFollowRequestButton)
     rejectFollowRequestButton.setImage(
       UIImage(
         systemName: "xmark.circle",
-        withConfiguration: UIImage.SymbolConfiguration(pointSize: largeTitlePointSize)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(pointSize: largeTitlePointSize)
+      ),
+      for: .normal
+    )
     rejectFollowRequestButton.tintColor = .systemRed
     rejectFollowRequestButton.setContentHuggingPriority(.required, for: .horizontal)
     rejectFollowRequestButton.addAction(
@@ -380,7 +386,8 @@ extension AccountView {
           break
         }
       },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     stackView.addArrangedSubview(muteButton)
     muteButton.setTitle(NSLocalizedString("account.mute", comment: ""), for: .normal)
@@ -388,7 +395,8 @@ extension AccountView {
     muteButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
     muteButton.addAction(
       UIAction { [weak self] _ in self?.accountConfiguration.viewModel.confirmMute() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     muteButton.isHidden = true
 
     stackView.addArrangedSubview(unmuteButton)
@@ -397,7 +405,8 @@ extension AccountView {
     unmuteButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
     unmuteButton.addAction(
       UIAction { [weak self] _ in self?.accountConfiguration.viewModel.confirmUnmute() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     unmuteButton.isHidden = true
 
     stackView.addArrangedSubview(blockButton)
@@ -406,7 +415,8 @@ extension AccountView {
     blockButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
     blockButton.addAction(
       UIAction { [weak self] _ in self?.accountConfiguration.viewModel.confirmBlock() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     blockButton.isHidden = true
 
     stackView.addArrangedSubview(unblockButton)
@@ -415,7 +425,8 @@ extension AccountView {
     unblockButton.titleLabel?.font = .preferredFont(forTextStyle: .callout)
     unblockButton.addAction(
       UIAction { [weak self] _ in self?.accountConfiguration.viewModel.confirmUnblock() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     unblockButton.isHidden = true
 
     NSLayoutConstraint.activate([
@@ -449,7 +460,8 @@ extension AccountView {
     mutableDisplayName.insert(
       emojis: viewModel.emojis,
       view: displayNameLabel,
-      identityContext: viewModel.identityContext)
+      identityContext: viewModel.identityContext
+    )
     mutableDisplayName.resizeAttachments(toLineHeight: displayNameLabel.font.lineHeight)
     displayNameLabel.attributedText = mutableDisplayName
 
@@ -499,7 +511,8 @@ extension AccountView {
           .font: noteFont as Any,
           .foregroundColor: UIColor.label,
         ],
-        range: noteRange)
+        range: noteRange
+      )
       mutableNote.insert(emojis: viewModel.emojis, view: noteTextView, identityContext: viewModel.identityContext)
       mutableNote.resizeAttachments(toLineHeight: noteFont.lineHeight)
 
@@ -692,7 +705,8 @@ extension AccountView {
           UIAccessibilityCustomAction(
             name: NSLocalizedString(
               "account.unmute",
-              comment: "")
+              comment: ""
+            )
           ) { [weak self] _ in
             self?.accountConfiguration.viewModel.confirmUnmute()
 
@@ -704,7 +718,8 @@ extension AccountView {
           UIAccessibilityCustomAction(
             name: NSLocalizedString(
               "account.mute",
-              comment: "")
+              comment: ""
+            )
           ) { [weak self] _ in
             self?.accountConfiguration.viewModel.confirmMute()
 
@@ -718,7 +733,8 @@ extension AccountView {
           UIAccessibilityCustomAction(
             name: NSLocalizedString(
               "account.unblock",
-              comment: "")
+              comment: ""
+            )
           ) { [weak self] _ in
             self?.accountConfiguration.viewModel.confirmUnblock()
 
@@ -730,7 +746,8 @@ extension AccountView {
           UIAccessibilityCustomAction(
             name: NSLocalizedString(
               "account.block",
-              comment: "")
+              comment: ""
+            )
           ) { [weak self] _ in
             self?.accountConfiguration.viewModel.confirmBlock()
 

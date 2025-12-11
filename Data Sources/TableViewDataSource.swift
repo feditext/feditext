@@ -18,7 +18,8 @@ final class TableViewDataSource: UITableViewDiffableDataSource<CollectionSection
     super.init(tableView: tableView) { tableView, indexPath, item in
       let cell = tableView.dequeueReusableCell(
         withIdentifier: String(describing: item.cellClass),
-        for: indexPath)
+        for: indexPath
+      )
 
       switch (cell, viewModel.viewModel(indexPath: indexPath)) {
       case (let statusCell as StatusTableViewCell, let statusViewModel as StatusViewModel):

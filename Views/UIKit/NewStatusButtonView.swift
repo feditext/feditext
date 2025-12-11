@@ -33,7 +33,9 @@ extension NewStatusButtonView {
           origin: .zero,
           size: .init(
             width: .newStatusButtonDimension,
-            height: .newStatusButtonDimension))
+            height: .newStatusButtonDimension
+          )
+        )
       )
       .cgPath
     layer.shadowOffset = .zero
@@ -63,8 +65,10 @@ extension NewStatusButtonView {
     button.setImage(
       UIImage(
         systemName: "pencil",
-        withConfiguration: UIImage.SymbolConfiguration(pointSize: .newStatusButtonDimension / 2)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(pointSize: .newStatusButtonDimension / 2)
+      ),
+      for: .normal
+    )
     vibrancyView.contentView.addSubview(button)
 
     NSLayoutConstraint.activate([

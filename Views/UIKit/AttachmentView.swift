@@ -123,7 +123,9 @@ extension AttachmentView {
     let playImageView = UIImageView(
       image: UIImage(
         systemName: "play.circle",
-        withConfiguration: UIImage.SymbolConfiguration(textStyle: .largeTitle)))
+        withConfiguration: UIImage.SymbolConfiguration(textStyle: .largeTitle)
+      )
+    )
 
     playImageView.translatesAutoresizingMaskIntoConstraints = false
     playVibrancyView.translatesAutoresizingMaskIntoConstraints = false
@@ -146,7 +148,8 @@ extension AttachmentView {
     selectionButton.setBackgroundImage(.highlightedButtonBackground, for: .highlighted)
     selectionButton.addAction(
       UIAction { [weak self] _ in self?.selectAttachment() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     selectionButton.accessibilityLabel = NSLocalizedString("compose.attachment.edit", comment: "")
 
     if let description = viewModel.attachment.description, !description.isEmpty {
@@ -196,12 +199,14 @@ extension AttachmentView {
     case .audio:
       playImageView.image = UIImage(
         systemName: "waveform.circle",
-        withConfiguration: UIImage.SymbolConfiguration(textStyle: .largeTitle))
+        withConfiguration: UIImage.SymbolConfiguration(textStyle: .largeTitle)
+      )
       backgroundColor = .secondarySystemBackground
     case .unknown:
       playImageView.image = UIImage(
         systemName: "link",
-        withConfiguration: UIImage.SymbolConfiguration(textStyle: .largeTitle))
+        withConfiguration: UIImage.SymbolConfiguration(textStyle: .largeTitle)
+      )
       backgroundColor = .secondarySystemBackground
     }
 
@@ -223,13 +228,21 @@ extension AttachmentView {
       playView.centerXAnchor.constraint(equalTo: centerXAnchor),
       playView.centerYAnchor.constraint(equalTo: centerYAnchor),
       playView.trailingAnchor.constraint(
-        equalTo: playImageView.trailingAnchor, constant: .compactSpacing),
+        equalTo: playImageView.trailingAnchor,
+        constant: .compactSpacing
+      ),
       playView.bottomAnchor.constraint(
-        equalTo: playImageView.bottomAnchor, constant: .compactSpacing),
+        equalTo: playImageView.bottomAnchor,
+        constant: .compactSpacing
+      ),
       playImageView.topAnchor.constraint(
-        equalTo: playView.topAnchor, constant: .compactSpacing),
+        equalTo: playView.topAnchor,
+        constant: .compactSpacing
+      ),
       playImageView.leadingAnchor.constraint(
-        equalTo: playView.leadingAnchor, constant: .compactSpacing),
+        equalTo: playView.leadingAnchor,
+        constant: .compactSpacing
+      ),
       selectionButton.leadingAnchor.constraint(equalTo: leadingAnchor),
       selectionButton.trailingAnchor.constraint(equalTo: trailingAnchor),
       selectionButton.topAnchor.constraint(equalTo: topAnchor),

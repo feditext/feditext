@@ -32,7 +32,8 @@ class ShareErrorViewController: UIViewController {
 
     navigationItem.leftBarButtonItem = .init(
       systemItem: .close,
-      primaryAction: UIAction { [weak self] _ in self?.extensionContext?.completeRequest(returningItems: nil) })
+      primaryAction: UIAction { [weak self] _ in self?.extensionContext?.completeRequest(returningItems: nil) }
+    )
 
     NSLayoutConstraint.activate([
       label.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),

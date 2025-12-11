@@ -43,7 +43,8 @@ extension EmojiView {
       top: .compactSpacing,
       left: .compactSpacing,
       bottom: .compactSpacing,
-      right: .compactSpacing)
+      right: .compactSpacing
+    )
 
     addSubview(imageView)
     imageView.translatesAutoresizingMaskIntoConstraints = false

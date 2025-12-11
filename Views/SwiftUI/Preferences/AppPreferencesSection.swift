@@ -47,7 +47,8 @@ struct AppPreferencesSection: View {
         }
         NavigationLink(
           "preferences.notifications.display-and-sounds",
-          destination: NotificationPreferencesView(viewModel: viewModel))
+          destination: NotificationPreferencesView(viewModel: viewModel)
+        )
         Picker(
           "preferences.status-word",
           selection: $identityContext.appPreferences.statusWord
@@ -72,23 +73,29 @@ struct AppPreferencesSection: View {
         Group {
           Toggle(
             "preferences.use-media-description-metadata",
-            isOn: $identityContext.appPreferences.useMediaDescriptionMetadata)
+            isOn: $identityContext.appPreferences.useMediaDescriptionMetadata
+          )
           Toggle(
             "preferences.show-reblog-and-favorite-counts",
-            isOn: $identityContext.appPreferences.showReblogAndFavoriteCounts)
+            isOn: $identityContext.appPreferences.showReblogAndFavoriteCounts
+          )
           Toggle(
             "preferences.require-double-tap-to-reblog",
-            isOn: $identityContext.appPreferences.requireDoubleTapToReblog)
+            isOn: $identityContext.appPreferences.requireDoubleTapToReblog
+          )
           Toggle(
             "preferences.require-double-tap-to-favorite",
-            isOn: $identityContext.appPreferences.requireDoubleTapToFavorite)
+            isOn: $identityContext.appPreferences.requireDoubleTapToFavorite
+          )
           Toggle(
             "preferences.links.open-in-default-browser",
-            isOn: $identityContext.appPreferences.openLinksInDefaultBrowser)
+            isOn: $identityContext.appPreferences.openLinksInDefaultBrowser
+          )
           if !identityContext.appPreferences.openLinksInDefaultBrowser {
             Toggle(
               "preferences.links.use-universal-links",
-              isOn: $identityContext.appPreferences.useUniversalLinks)
+              isOn: $identityContext.appPreferences.useUniversalLinks
+            )
           }
         }
       }
@@ -119,24 +126,30 @@ struct AppPreferencesSection: View {
         }
         Toggle(
           "preferences.media.custom-emojis.animate",
-          isOn: $identityContext.appPreferences.animateCustomEmojis)
+          isOn: $identityContext.appPreferences.animateCustomEmojis
+        )
         Toggle(
           "preferences.media.headers.animate",
-          isOn: $identityContext.appPreferences.animateHeaders)
+          isOn: $identityContext.appPreferences.animateHeaders
+        )
         Toggle(
           "preferences.hide-content-warning-button",
-          isOn: $identityContext.appPreferences.hideContentWarningButton)
+          isOn: $identityContext.appPreferences.hideContentWarningButton
+        )
         Toggle(
           "preferences.long-content.fold",
-          isOn: $identityContext.appPreferences.foldLongPosts)
+          isOn: $identityContext.appPreferences.foldLongPosts
+        )
         Toggle(
           "preferences.trailing-hashtags.fold",
-          isOn: $identityContext.appPreferences.foldTrailingHashtags)
+          isOn: $identityContext.appPreferences.foldTrailingHashtags
+        )
       }
       Group {
         Toggle(
           "preferences.visibility-icon-colors",
-          isOn: $identityContext.appPreferences.visibilityIconColors)
+          isOn: $identityContext.appPreferences.visibilityIconColors
+        )
         HStack {
           Text("preferences.visibility-icon-colors.off")
           ForEach(Status.Visibility.allSupportedCases(viewModel.identityContext.apiCapabilities)) { visibility in
@@ -216,7 +229,8 @@ struct AppPreferencesSection: View {
     Section {
       Toggle(
         "preferences.toasts.title",
-        isOn: $identityContext.appPreferences.useToasts)
+        isOn: $identityContext.appPreferences.useToasts
+      )
       Text("preferences.toasts.description")
         .font(.footnote)
     }

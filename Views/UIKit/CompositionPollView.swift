@@ -60,8 +60,10 @@ extension CompositionPollView {
     addChoiceButton.setImage(
       UIImage(
         systemName: "plus",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .medium)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(scale: .medium)
+      ),
+      for: .normal
+    )
     addChoiceButton.setTitle(NSLocalizedString("compose.poll.add-choice", comment: ""), for: .normal)
     addChoiceButton.imageEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: .defaultSpacing)
 
@@ -71,15 +73,18 @@ extension CompositionPollView {
     expiresInButton.setImage(
       UIImage(
         systemName: "clock",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .medium)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(scale: .medium)
+      ),
+      for: .normal
+    )
     expiresInButton.showsMenuAsPrimaryAction = true
     expiresInButton.menu = UIMenu(
       children: CompositionViewModel.PollExpiry.allCases.map { expiry in
         UIAction(title: Self.format(expiry: expiry) ?? "") { [weak self] _ in
           self?.viewModel.pollExpiresIn = expiry
         }
-      })
+      }
+    )
     expiresInButton.imageEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: .defaultSpacing)
 
     let switchStackView = UIStackView()
@@ -104,7 +109,8 @@ extension CompositionPollView {
       UIAction { [weak self] _ in
         self?.viewModel.sensitive = allowMultipleSwitch.isOn
       },
-      for: .valueChanged)
+      for: .valueChanged
+    )
 
     NSLayoutConstraint.activate([
       stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -124,11 +130,13 @@ extension CompositionPollView {
         let optionView = CompositionPollOptionView(
           viewModel: self.viewModel,
           parentViewModel: self.parentViewModel,
-          option: option)
+          option: option
+        )
 
         optionView.textField.placeholder = String.localizedStringWithFormat(
           NSLocalizedString("status.poll.option-%ld", comment: ""),
-          index + 1)
+          index + 1
+        )
         self.stackView.insertArrangedSubview(optionView, at: index)
       }
 

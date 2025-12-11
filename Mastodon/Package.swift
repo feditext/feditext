@@ -11,7 +11,8 @@ let package = Package(
   products: [
     .library(
       name: "Mastodon",
-      targets: ["Mastodon"])
+      targets: ["Mastodon"]
+    )
   ],
   dependencies: [
     .package(path: "AppMetadata"),
@@ -25,9 +26,11 @@ let package = Package(
   targets: [
     .target(
       name: "Mastodon",
-      dependencies: ["AppMetadata", "AppUrls", "Siren", "SwiftSoup"]),
+      dependencies: ["AppMetadata", "AppUrls", "Siren", "SwiftSoup"]
+    ),
     .testTarget(
       name: "MastodonTests",
-      dependencies: ["Mastodon"]),
+      dependencies: ["Mastodon"]
+    ),
   ]
 )

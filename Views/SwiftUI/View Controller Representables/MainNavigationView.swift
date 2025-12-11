@@ -10,7 +10,8 @@ struct MainNavigationView: UIViewControllerRepresentable {
   func makeUIViewController(context: Context) -> MainNavigationViewController {
     MainNavigationViewController(
       viewModel: viewModelClosure(),
-      rootViewModel: rootViewModel)
+      rootViewModel: rootViewModel
+    )
   }
 
   func updateUIViewController(_ uiViewController: MainNavigationViewController, context: Context) {

@@ -58,7 +58,8 @@ final public class EmojiPickerViewModel: ObservableObject {
         let matchingSystemEmojis = Set(
           systemEmojiAnnotationsAndTags.filter {
             $0.key.matches(query: query, locale: locale)
-          }.values)
+          }.values
+        )
 
         emojis = emojis.mapValues {
           $0.filter {
@@ -106,6 +107,7 @@ extension String {
       .folding(options: .diacriticInsensitive, locale: locale)
       .contains(
         query.lowercased(with: locale)
-          .folding(options: .diacriticInsensitive, locale: locale))
+          .folding(options: .diacriticInsensitive, locale: locale)
+      )
   }
 }

@@ -28,10 +28,12 @@ final class PollOptionButton: UIView {
   ) {
     image = UIImage(
       systemName: multipleSelection ? "square" : "circle",
-      withConfiguration: UIImage.SymbolConfiguration(scale: .medium))
+      withConfiguration: UIImage.SymbolConfiguration(scale: .medium)
+    )
     selectedImage = UIImage(
       systemName: multipleSelection ? "checkmark.square" : "checkmark.circle",
-      withConfiguration: UIImage.SymbolConfiguration(scale: .medium))
+      withConfiguration: UIImage.SymbolConfiguration(scale: .medium)
+    )
 
     super.init(frame: .zero)
 

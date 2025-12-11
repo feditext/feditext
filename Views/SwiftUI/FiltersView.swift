@@ -12,7 +12,8 @@ struct FiltersView: View {
       Section {
         NavigationLink(
           destination: EditFilterView(
-            viewModel: .init(filter: .new, identityContext: viewModel.identityContext))
+            viewModel: .init(filter: .new, identityContext: viewModel.identityContext)
+          )
         ) {
           Label("add", systemImage: "plus.circle")
         }
@@ -39,7 +40,8 @@ extension FiltersView {
         ForEach(filters) { filter in
           NavigationLink(
             destination: EditFilterView(
-              viewModel: .init(filter: filter, identityContext: viewModel.identityContext))
+              viewModel: .init(filter: filter, identityContext: viewModel.identityContext)
+            )
           ) {
             HStack {
               Text(filter.phrase)

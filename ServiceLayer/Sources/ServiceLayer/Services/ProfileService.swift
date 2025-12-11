@@ -29,7 +29,8 @@ public struct ProfileService {
       familiarFollowers: familiarFollowers,
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   init(
@@ -45,7 +46,8 @@ public struct ProfileService {
       familiarFollowers: [],
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   private init(
@@ -91,7 +93,8 @@ extension ProfileService {
       timeline: .profile(accountId: id, profileCollection: profileCollection),
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func fetchProfile() -> AnyPublisher<Never, Error> {
@@ -119,7 +122,8 @@ extension ProfileService {
         excludeReplies: true,
         excludeReblogs: true,
         onlyMedia: false,
-        pinned: true)
+        pinned: true
+      )
     )
     .flatMap { contentDatabase.insert(pinnedStatuses: $0, accountId: id) }
     .eraseToAnyPublisher()

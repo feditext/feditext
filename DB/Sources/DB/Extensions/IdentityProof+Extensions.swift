@@ -11,6 +11,7 @@ extension IdentityProof {
       providerUsername: record.providerUsername,
       profileUrl: record.profileUrl,
       proofUrl: record.proofUrl,
-      updatedAt: record.updatedAt)
+      updatedAt: record.updatedAt
+    )
   }
 }

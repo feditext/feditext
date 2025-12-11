@@ -36,7 +36,8 @@ final class ZoomDismissalInteractionController: NSObject {
     transitionView.transform = CGAffineTransform(scaleX: scale, y: scale)
     let newCenter = CGPoint(
       x: anchorPoint.x + translatedPoint.x,
-      y: anchorPoint.y + translatedPoint.y - transitionView.frame.height * (1 - scale) / 2.0)
+      y: anchorPoint.y + translatedPoint.y - transitionView.frame.height * (1 - scale) / 2.0
+    )
     transitionView.center = newCenter
 
     toReferenceView?.isHidden = true

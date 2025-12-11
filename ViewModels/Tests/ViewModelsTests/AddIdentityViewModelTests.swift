@@ -18,7 +18,8 @@ final class AddIdentityViewModelTests: XCTestCase {
     let allIdentitiesService = try AllIdentitiesService(environment: environment)
     let sut = AddIdentityViewModel(
       allIdentitiesService: allIdentitiesService,
-      instanceURLService: InstanceURLService(environment: environment))
+      instanceURLService: InstanceURLService(environment: environment)
+    )
     let addedIdRecorder = allIdentitiesService.identitiesCreated.record()
 
     sut.urlFieldText = "https://mastodon.social"
@@ -33,7 +34,8 @@ final class AddIdentityViewModelTests: XCTestCase {
     let allIdentitiesService = try AllIdentitiesService(environment: environment)
     let sut = AddIdentityViewModel(
       allIdentitiesService: allIdentitiesService,
-      instanceURLService: InstanceURLService(environment: environment))
+      instanceURLService: InstanceURLService(environment: environment)
+    )
     let addedIdRecorder = allIdentitiesService.identitiesCreated.record()
 
     sut.urlFieldText = "mastodon.social"
@@ -46,7 +48,8 @@ final class AddIdentityViewModelTests: XCTestCase {
     let environment = AppEnvironment.mock()
     let sut = AddIdentityViewModel(
       allIdentitiesService: try AllIdentitiesService(environment: environment),
-      instanceURLService: InstanceURLService(environment: environment))
+      instanceURLService: InstanceURLService(environment: environment)
+    )
     let recorder = sut.$alertItem.record()
 
     XCTAssertNil(try wait(for: recorder.next(), timeout: 1))
@@ -63,7 +66,8 @@ final class AddIdentityViewModelTests: XCTestCase {
     let environment = AppEnvironment.mock(webAuthSessionType: CanceledLoginMockWebAuthSession.self)
     let sut = AddIdentityViewModel(
       allIdentitiesService: try AllIdentitiesService(environment: environment),
-      instanceURLService: InstanceURLService(environment: environment))
+      instanceURLService: InstanceURLService(environment: environment)
+    )
     let recorder = sut.$alertItem.record()
 
     XCTAssertNil(try wait(for: recorder.next(), timeout: 1))

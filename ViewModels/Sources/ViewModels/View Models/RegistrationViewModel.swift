@@ -17,7 +17,8 @@ public final class RegistrationViewModel: ObservableObject {
   @Published public var alertItem: AlertItem?
   @Published public var registration = Registration(
     locale: (Locale.preferred ?? Locale.current).languageCodeWithCoercedRegionCodeIfNecessary
-      ?? Locale.fallbackLanguageCode)
+      ?? Locale.fallbackLanguageCode
+  )
   @Published public var passwordConfirmation = ""
   @Published public private(set) var registerDisabled = true
   @Published public private(set) var registering = false

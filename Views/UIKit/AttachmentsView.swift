@@ -66,8 +66,10 @@ final class AttachmentsView: UIView {
           (viewModel.sensitive)
             ? "attachment.sensitive-content"
             : "attachment.media-hidden",
-          comment: ""),
-        for: .normal)
+          comment: ""
+        ),
+        for: .normal
+      )
       hideButtonBackground.isHidden = !viewModel.shouldShowHideAttachmentsButton
 
       if curtain.isHidden {
@@ -86,7 +88,8 @@ final class AttachmentsView: UIView {
         }
 
         var accessibilityAttributedLabel = NSMutableAttributedString(
-          string: type.accessibilityNames(count: viewModel.attachmentViewModels.count))
+          string: type.accessibilityNames(count: viewModel.attachmentViewModels.count)
+        )
 
         for attachmentViewModel in viewModel.attachmentViewModels {
           guard let description = attachmentViewModel.attachment.description,
@@ -202,7 +205,8 @@ extension AttachmentsView {
     hideButton.translatesAutoresizingMaskIntoConstraints = false
     hideButton.setImage(
       UIImage(systemName: "eye.slash", withConfiguration: UIImage.SymbolConfiguration(scale: .medium)),
-      for: .normal)
+      for: .normal
+    )
     addSubview(curtain)
     curtain.translatesAutoresizingMaskIntoConstraints = false
     curtain.contentView.addSubview(curtainButton)
@@ -221,16 +225,20 @@ extension AttachmentsView {
       hideButtonBackground.leadingAnchor.constraint(equalTo: leadingAnchor, constant: .defaultSpacing),
       hideButton.topAnchor.constraint(
         equalTo: hideButtonBackground.contentView.topAnchor,
-        constant: .compactSpacing),
+        constant: .compactSpacing
+      ),
       hideButton.leadingAnchor.constraint(
         equalTo: hideButtonBackground.contentView.leadingAnchor,
-        constant: .compactSpacing),
+        constant: .compactSpacing
+      ),
       hideButtonBackground.contentView.trailingAnchor.constraint(
         equalTo: hideButton.trailingAnchor,
-        constant: .compactSpacing),
+        constant: .compactSpacing
+      ),
       hideButtonBackground.contentView.bottomAnchor.constraint(
         equalTo: hideButton.bottomAnchor,
-        constant: .compactSpacing),
+        constant: .compactSpacing
+      ),
       curtain.topAnchor.constraint(equalTo: topAnchor),
       curtain.leadingAnchor.constraint(equalTo: leadingAnchor),
       curtain.trailingAnchor.constraint(equalTo: trailingAnchor),

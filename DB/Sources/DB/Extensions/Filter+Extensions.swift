@@ -57,7 +57,9 @@ extension Filter {
 
       let filterableContent = statusInfo.filterableContent
       let firstMatch = regex.firstMatch(
-        in: filterableContent, range: .init(location: 0, length: filterableContent.count))
+        in: filterableContent,
+        range: .init(location: 0, length: filterableContent.count)
+      )
       if firstMatch == nil {
         return nil
       }

@@ -42,7 +42,8 @@ extension MarkAttachmentsSensitiveView {
 
         self.viewModel.sensitive = self.sensitiveSwitch.isOn
       },
-      for: .valueChanged)
+      for: .valueChanged
+    )
 
     NSLayoutConstraint.activate([
       label.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),

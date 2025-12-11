@@ -11,6 +11,7 @@ extension FeaturedTag {
       name: record.name,
       url: record.url,
       statusesCount: record.statusesCount,
-      lastStatusAt: record.lastStatusAt)
+      lastStatusAt: record.lastStatusAt
+    )
   }
 }

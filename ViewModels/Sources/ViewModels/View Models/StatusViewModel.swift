@@ -53,7 +53,8 @@ public final class StatusViewModel: AttachmentsRenderingViewModel, ObservableObj
       accountService: statusService.navigationService
         .accountService(account: statusService.status.displayStatus.account),
       identityContext: identityContext,
-      eventsSubject: eventsSubject)
+      eventsSubject: eventsSubject
+    )
     language = statusService.status.displayStatus.language
     content = statusService.status.displayStatus.content.attrStr
     contentEmojis = statusService.status.displayStatus.emojis
@@ -377,21 +378,24 @@ extension StatusViewModel {
     eventsSubject.send(
       statusService.toggleShowContent()
         .map { _ in .ignorableOutput }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func toggleShowAttachments() {
     eventsSubject.send(
       statusService.toggleShowAttachments()
         .map { _ in .ignorableOutput }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func toggleShowFiltered() {
     eventsSubject.send(
       statusService.toggleShowFiltered()
         .map { _ in .ignorableOutput }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func tagSelected(_ id: TagViewModel.ID) {
@@ -428,7 +432,8 @@ extension StatusViewModel {
         statusService.navigationService.lookup(url: url, identityId: identityContext.identity.id)
           .map { .navigation($0) }
           .setFailureType(to: Error.self)
-          .eraseToAnyPublisher())
+          .eraseToAnyPublisher()
+      )
     }
   }
 
@@ -438,10 +443,14 @@ extension StatusViewModel {
         .navigation(
           .profile(
             statusService.navigationService.profileService(
-              account: statusService.status.displayStatus.account)))
+              account: statusService.status.displayStatus.account
+            )
+          )
+        )
       )
       .setFailureType(to: Error.self)
-      .eraseToAnyPublisher())
+      .eraseToAnyPublisher()
+    )
   }
 
   public func rebloggerAccountSelected() {
@@ -450,24 +459,30 @@ extension StatusViewModel {
         .navigation(
           .profile(
             statusService.navigationService.profileService(
-              account: statusService.status.account)))
+              account: statusService.status.account
+            )
+          )
+        )
       )
       .setFailureType(to: Error.self)
-      .eraseToAnyPublisher())
+      .eraseToAnyPublisher()
+    )
   }
 
   public func rebloggedBySelected() {
     eventsSubject.send(
       Just(.navigation(.collection(statusService.rebloggedByService())))
         .setFailureType(to: Error.self)
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func favoritedBySelected() {
     eventsSubject.send(
       Just(.navigation(.collection(statusService.favoritedByService())))
         .setFailureType(to: Error.self)
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func reply(identity: Identity? = nil) {
@@ -491,7 +506,8 @@ extension StatusViewModel {
 
           return CollectionItemEvent.compose(identity: identity, inReplyTo: replyViewModel)
         }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+      )
     } else {
       let replyViewModel = Self(
         statusService: statusService,
@@ -506,7 +522,8 @@ extension StatusViewModel {
       eventsSubject.send(
         Just(.compose(inReplyTo: replyViewModel))
           .setFailureType(to: Error.self)
-          .eraseToAnyPublisher())
+          .eraseToAnyPublisher()
+      )
     }
   }
 
@@ -515,7 +532,8 @@ extension StatusViewModel {
       statusService.toggleReblogged(identityId: identityId)
         .map { _ in .ignorableOutput }
         .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func toggleFavorited(identityId: Identity.Id? = nil) {
@@ -523,7 +541,8 @@ extension StatusViewModel {
       statusService.toggleFavorited(identityId: identityId)
         .map { _ in .ignorableOutput }
         .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func toggleBookmarked() {
@@ -531,7 +550,8 @@ extension StatusViewModel {
       statusService.toggleBookmarked()
         .map { _ in .ignorableOutput }
         .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func togglePinned() {
@@ -540,7 +560,8 @@ extension StatusViewModel {
         .collect()
         .map { _ in .refresh }
         .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public var canToggleMute: Bool { (isMine || mentionsMe) && statusService.canMute }
@@ -550,14 +571,16 @@ extension StatusViewModel {
       statusService.toggleMuted()
         .map { _ in .ignorableOutput }
         .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func confirmDelete(redraft: Bool) {
     eventsSubject.send(
       Just(.confirmDelete(self, redraft: redraft))
         .setFailureType(to: Error.self)
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func delete() {
@@ -566,7 +589,8 @@ extension StatusViewModel {
     eventsSubject.send(
       statusService.delete()
         .map { _ in isContextParent ? .contextParentDeleted : .ignorableOutput }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func deleteAndRedraft() {
@@ -607,26 +631,32 @@ extension StatusViewModel {
         .report(
           ReportViewModel(
             accountService: statusService.navigationService.accountService(
-              account: statusService.status.displayStatus.account),
+              account: statusService.status.displayStatus.account
+            ),
             statusId: statusService.status.displayStatus.id,
-            identityContext: identityContext))
+            identityContext: identityContext
+          )
+        )
       )
       .setFailureType(to: Error.self)
-      .eraseToAnyPublisher())
+      .eraseToAnyPublisher()
+    )
   }
 
   public func vote() {
     eventsSubject.send(
       statusService.vote(selectedOptions: pollOptionSelections)
         .map { _ in .ignorableOutput }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func refreshPoll() {
     eventsSubject.send(
       statusService.refreshPoll()
         .map { _ in .ignorableOutput }
-        .eraseToAnyPublisher())
+        .eraseToAnyPublisher()
+    )
   }
 
   public func presentHistory() {
@@ -714,7 +744,8 @@ extension StatusViewModel {
     return Set(
       followedTags.map { followedTag in
         Tag.normalizeName(followedTag.name)
-      })
+      }
+    )
   }
 
   /// Lightweight tag representation: ID (normalized name) and display text (without `#`).

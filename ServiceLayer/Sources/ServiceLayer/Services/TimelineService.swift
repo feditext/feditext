@@ -45,7 +45,8 @@ public struct TimelineService {
     navigationService = NavigationService(
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
     nextPageMaxId = nextPageMaxIdSubject.eraseToAnyPublisher()
     accountIdsForRelationships = accountIdsForRelationshipsSubject.eraseToAnyPublisher()
     displayFilter = contentDatabase.displayFilterPublisher(timeline)
@@ -92,7 +93,8 @@ extension TimelineService: CollectionService {
 
         accountIdsForRelationshipsSubject.send(
           Set($0.result.map(\.account.id))
-            .union(Set($0.result.compactMap(\.reblog?.account.id))))
+            .union(Set($0.result.compactMap(\.reblog?.account.id)))
+        )
       })
       .flatMap { contentDatabase.insert(statuses: $0.result, timeline: timeline) }
       .eraseToAnyPublisher()

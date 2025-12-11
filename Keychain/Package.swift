@@ -11,21 +11,26 @@ let package = Package(
   products: [
     .library(
       name: "Keychain",
-      targets: ["Keychain"]),
+      targets: ["Keychain"]
+    ),
     .library(
       name: "MockKeychain",
-      targets: ["MockKeychain"]),
+      targets: ["MockKeychain"]
+    ),
   ],
   dependencies: [],
   targets: [
     .target(
       name: "Keychain",
-      dependencies: []),
+      dependencies: []
+    ),
     .target(
       name: "MockKeychain",
-      dependencies: ["Keychain"]),
+      dependencies: ["Keychain"]
+    ),
     .testTarget(
       name: "KeychainTests",
-      dependencies: ["MockKeychain"]),
+      dependencies: ["MockKeychain"]
+    ),
   ]
 )

@@ -64,7 +64,8 @@ extension NewItemsView {
 
     let arrowImage = UIImage(
       systemName: "arrow.up",
-      withConfiguration: UIImage.SymbolConfiguration(weight: .bold))
+      withConfiguration: UIImage.SymbolConfiguration(weight: .bold)
+    )
 
     stackView.addArrangedSubview(UIImageView(image: arrowImage))
     stackView.addArrangedSubview(label)
@@ -101,14 +102,17 @@ extension NewItemsView {
       vibrancyView.bottomAnchor.constraint(equalTo: blurView.contentView.bottomAnchor),
       stackView.leadingAnchor.constraint(
         equalTo: vibrancyView.contentView.leadingAnchor,
-        constant: .defaultSpacing),
+        constant: .defaultSpacing
+      ),
       stackView.topAnchor.constraint(equalTo: vibrancyView.contentView.topAnchor, constant: .defaultSpacing),
       stackView.trailingAnchor.constraint(
         equalTo: vibrancyView.contentView.trailingAnchor,
-        constant: -.defaultSpacing * 2),
+        constant: -.defaultSpacing * 2
+      ),
       stackView.bottomAnchor.constraint(
         equalTo: vibrancyView.contentView.bottomAnchor,
-        constant: -.defaultSpacing),
+        constant: -.defaultSpacing
+      ),
     ])
   }
 }

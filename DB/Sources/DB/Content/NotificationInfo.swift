@@ -22,7 +22,8 @@ extension NotificationInfo {
     )
     .including(
       optional: ReportInfo.addingIncludesForNotificationInfo(NotificationRecord.report)
-        .forKey(CodingKeys.reportInfo))
+        .forKey(CodingKeys.reportInfo)
+    )
   }
 
   static func request(_ request: QueryInterfaceRequest<NotificationRecord>) -> QueryInterfaceRequest<Self> {

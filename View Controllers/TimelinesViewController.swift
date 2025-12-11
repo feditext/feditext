@@ -38,7 +38,8 @@ final class TimelinesViewController: UIPageViewController {
     super.init(
       transitionStyle: .scroll,
       navigationOrientation: .horizontal,
-      options: [.interPageSpacing: CGFloat.defaultSpacing])
+      options: [.interPageSpacing: CGFloat.defaultSpacing]
+    )
 
     if let timelineActionViewModel = timelineViewModels.first?.timelineActionViewModel {
       self.setupTimelineActionBarButtonItem(timelineActionViewModel)
@@ -50,7 +51,8 @@ final class TimelinesViewController: UIPageViewController {
     tabBarItem = UITabBarItem(
       title: NSLocalizedString("main-navigation.timelines", comment: ""),
       image: UIImage(systemName: "newspaper"),
-      selectedImage: nil)
+      selectedImage: nil
+    )
   }
 
   @available(*, unavailable)
@@ -91,7 +93,8 @@ final class TimelinesViewController: UIPageViewController {
           self.setupTimelineActionBarButtonItem(timelineActionViewModel)
         }
       },
-      for: .valueChanged)
+      for: .valueChanged
+    )
   }
 
   private func setupTimelineActionBarButtonItem(_ timelineActionViewModel: TimelineActionViewModel) {

@@ -27,15 +27,18 @@ final class IdentitiesDataSource: UITableViewDiffableDataSource<IdentitiesSectio
 
     tableView.register(
       UITableViewCell.self,
-      forCellReuseIdentifier: String(describing: UITableViewCell.self))
+      forCellReuseIdentifier: String(describing: UITableViewCell.self)
+    )
     tableView.register(
       IdentityTableViewCell.self,
-      forCellReuseIdentifier: String(describing: IdentityTableViewCell.self))
+      forCellReuseIdentifier: String(describing: IdentityTableViewCell.self)
+    )
 
     super.init(tableView: tableView) { tableView, indexPath, item in
       let cell = tableView.dequeueReusableCell(
         withIdentifier: item.cellReuseIdentifier,
-        for: indexPath)
+        for: indexPath
+      )
 
       switch item {
       case .add:

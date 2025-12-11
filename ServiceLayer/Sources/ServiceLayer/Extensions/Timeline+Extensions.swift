@@ -44,7 +44,8 @@ extension Timeline {
         excludeReplies: excludeReplies,
         excludeReblogs: excludeReblogs,
         onlyMedia: onlyMedia,
-        pinned: false)
+        pinned: false
+      )
     case .favorites:
       return .favourites
     case .bookmarks:

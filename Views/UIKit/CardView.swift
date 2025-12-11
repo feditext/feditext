@@ -61,7 +61,8 @@ extension CardView {
           + UIFont.preferredFont(forTextStyle: .subheadline).lineHeight
           + UIFont.preferredFont(forTextStyle: .footnote).lineHeight
           + .defaultSpacing * 2
-          + .compactSpacing * 2)
+          + .compactSpacing * 2
+      )
     } else {
       return 0
     }

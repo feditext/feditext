@@ -18,11 +18,15 @@ final class InstancePickerViewController: UIViewController {
     self.webView = webView
     self.selectionAction = selectionAction
     backButton = UIBarButtonItem(
-      title: nil, image: UIImage(systemName: "chevron.backward"),
-      primaryAction: UIAction { _ in webView.goBack() })
+      title: nil,
+      image: UIImage(systemName: "chevron.backward"),
+      primaryAction: UIAction { _ in webView.goBack() }
+    )
     forwardButton = UIBarButtonItem(
-      title: nil, image: UIImage(systemName: "chevron.forward"),
-      primaryAction: UIAction { _ in webView.goForward() })
+      title: nil,
+      image: UIImage(systemName: "chevron.forward"),
+      primaryAction: UIAction { _ in webView.goForward() }
+    )
 
     super.init(nibName: nil, bundle: nil)
   }
@@ -42,7 +46,8 @@ final class InstancePickerViewController: UIViewController {
 
     navigationItem.leftBarButtonItem = UIBarButtonItem(
       systemItem: .done,
-      primaryAction: UIAction { [weak self] _ in self?.presentingViewController?.dismiss(animated: true) })
+      primaryAction: UIAction { [weak self] _ in self?.presentingViewController?.dismiss(animated: true) }
+    )
     navigationItem.rightBarButtonItems = [forwardButton, backButton]
 
     webView.publisher(for: \.canGoBack)

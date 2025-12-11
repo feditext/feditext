@@ -13,7 +13,8 @@ final class SecondaryNavigationButton: UIBarButtonItem {
 
     let button = UIButton(
       type: .custom,
-      primaryAction: UIAction { _ in viewModel.presentingSecondaryNavigation = true })
+      primaryAction: UIAction { _ in viewModel.presentingSecondaryNavigation = true }
+    )
 
     button.accessibilityLabel = NSLocalizedString("secondary-navigation-button.accessibility-title", comment: "")
     button.imageView?.contentMode = .scaleAspectFill
@@ -31,7 +32,8 @@ final class SecondaryNavigationButton: UIBarButtonItem {
       button.sd_setImage(
         with: $0.image,
         for: .normal,
-        placeholderImage: UIImage(systemName: "line.horizontal.3"))
+        placeholderImage: UIImage(systemName: "line.horizontal.3")
+      )
     }
     .store(in: &cancellables)
 
@@ -39,7 +41,8 @@ final class SecondaryNavigationButton: UIBarButtonItem {
       radius: .greatestFiniteMagnitude,
       corners: .allCorners,
       borderWidth: 0,
-      borderColor: nil)
+      borderColor: nil
+    )
 
     viewModel.$recentIdentities.sink { identities in
       button.menu = UIMenu(
@@ -64,7 +67,8 @@ final class SecondaryNavigationButton: UIBarButtonItem {
               completion([action])
             }
           }
-        })
+        }
+      )
     }
     .store(in: &cancellables)
   }

@@ -45,7 +45,8 @@ final class ProfileViewController: TableViewController {
         {
           self.navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "ellipsis.circle"),
-            menu: self.menu(accountViewModel: accountViewModel, relationship: relationship))
+            menu: self.menu(accountViewModel: accountViewModel, relationship: relationship)
+          )
         }
       }
       .store(in: &cancellables)
@@ -95,7 +96,8 @@ extension ProfileViewController {
             image: UIImage(systemName: "scroll")
           ) { [weak self] _ in
             self?.addRemoveFromLists(accountViewModel: accountViewModel)
-          })
+          }
+        )
       }
 
       if relationship.showingReblogs {
@@ -105,7 +107,8 @@ extension ProfileViewController {
             image: UIImage(systemName: "arrow.2.squarepath")
           ) { _ in
             accountViewModel.confirmHideReblogs()
-          })
+          }
+        )
       } else {
         actions.append(
           UIAction(
@@ -113,7 +116,8 @@ extension ProfileViewController {
             image: UIImage(systemName: "arrow.2.squarepath")
           ) { _ in
             accountViewModel.confirmShowReblogs()
-          })
+          }
+        )
       }
     }
 
@@ -125,7 +129,8 @@ extension ProfileViewController {
             image: UIImage(systemName: "note.text.badge.plus")
           ) { _ in
             accountViewModel.editNote()
-          })
+          }
+        )
       } else {
         actions.append(
           UIAction(
@@ -133,7 +138,8 @@ extension ProfileViewController {
             image: UIImage(systemName: "note.text")
           ) { _ in
             accountViewModel.editNote()
-          })
+          }
+        )
       }
     }
 
@@ -145,7 +151,8 @@ extension ProfileViewController {
             image: UIImage(systemName: "speaker.wave.2")
           ) { _ in
             accountViewModel.confirmUnmute()
-          })
+          }
+        )
       } else {
         actions.append(
           UIAction(
@@ -153,7 +160,8 @@ extension ProfileViewController {
             image: UIImage(systemName: "speaker.slash")
           ) { _ in
             accountViewModel.confirmMute()
-          })
+          }
+        )
       }
     }
 
@@ -165,7 +173,8 @@ extension ProfileViewController {
           attributes: .destructive
         ) { _ in
           accountViewModel.confirmUnblock()
-        })
+        }
+      )
     } else {
       actions.append(
         UIAction(
@@ -174,7 +183,8 @@ extension ProfileViewController {
           attributes: .destructive
         ) { _ in
           accountViewModel.confirmBlock()
-        })
+        }
+      )
     }
 
     actions.append(
@@ -188,7 +198,8 @@ extension ProfileViewController {
         else { return }
 
         self.report(reportViewModel: reportViewModel)
-      })
+      }
+    )
 
     if accountViewModel.canBlockDomains, !accountViewModel.isLocal, let domain = accountViewModel.domain {
       if relationship.domainBlocking {
@@ -196,23 +207,27 @@ extension ProfileViewController {
           UIAction(
             title: String.localizedStringWithFormat(
               NSLocalizedString("account.domain-unblock-%@", comment: ""),
-              domain),
+              domain
+            ),
             image: UIImage(systemName: "slash.circle"),
             attributes: .destructive
           ) { _ in
             accountViewModel.confirmDomainUnblock(domain: domain)
-          })
+          }
+        )
       } else {
         actions.append(
           UIAction(
             title: String.localizedStringWithFormat(
               NSLocalizedString("account.domain-block-%@", comment: ""),
-              domain),
+              domain
+            ),
             image: UIImage(systemName: "slash.circle"),
             attributes: .destructive
           ) { _ in
             accountViewModel.confirmDomainBlock(domain: domain)
-          })
+          }
+        )
       }
     }
 

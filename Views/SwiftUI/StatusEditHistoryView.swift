@@ -67,7 +67,8 @@ public struct StatusEditHistoryView: View {
                     dismiss()
                     viewModel.openURL(url)
                     return .handled
-                  })
+                  }
+                )
             }
             .scenePadding()
           }
@@ -95,7 +96,8 @@ public struct StatusEditHistoryView: View {
                       dismiss()
                       viewModel.openURL(url)
                       return .handled
-                    })
+                    }
+                  )
               }
               .scenePadding()
             }

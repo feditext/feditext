@@ -33,7 +33,8 @@ extension Filter {
     context: [],
     expiresAt: nil,
     irreversible: false,
-    wholeWord: true)
+    wholeWord: true
+  )
 }
 
 extension Filter: Hashable {

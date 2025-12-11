@@ -123,12 +123,14 @@ final class EditAttachmentViewController: UIViewController {
     lowerStackView.addArrangedSubview(detectTextFromPictureButton)
     detectTextFromPictureButton.setTitle(
       NSLocalizedString("attachment.edit.detect-text-from-picture", comment: ""),
-      for: .normal)
+      for: .normal
+    )
     detectTextFromPictureButton.titleLabel?.adjustsFontSizeToFitWidth = true
     detectTextFromPictureButton.titleLabel?.numberOfLines = 0
     detectTextFromPictureButton.addAction(
       UIAction { [weak self] _ in self?.detectTextFromPicture() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     detectTextFromPictureButton.isHidden = viewModel.attachment.type != .image
 
     stackView.addArrangedSubview(detectTextFromPictureProgressView)
@@ -140,7 +142,8 @@ final class EditAttachmentViewController: UIViewController {
       trailingView.leadingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: .defaultSpacing),
       stackView.bottomAnchor.constraint(
         equalTo: view.layoutMarginsGuide.bottomAnchor,
-        constant: -.defaultSpacing),
+        constant: -.defaultSpacing
+      ),
       trailingView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
       trailingView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
       trailingView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -164,7 +167,8 @@ final class EditAttachmentViewController: UIViewController {
       systemItem: .cancel,
       primaryAction: UIAction { [weak self] _ in
         self?.presentingViewController?.dismiss(animated: true)
-      })
+      }
+    )
     let doneButton = UIBarButtonItem(
       systemItem: .done,
       primaryAction: UIAction { [weak self] _ in
@@ -172,7 +176,8 @@ final class EditAttachmentViewController: UIViewController {
 
         self.parentViewModel.update(attachmentViewModel: self.viewModel)
         self.presentingViewController?.dismiss(animated: true)
-      })
+      }
+    )
 
     parent?.navigationItem.leftBarButtonItem = cancelButton
     parent?.navigationItem.rightBarButtonItem = doneButton

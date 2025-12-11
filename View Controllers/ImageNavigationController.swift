@@ -27,7 +27,8 @@ final class ImageNavigationController: UINavigationController {
 
     let panGestureRecognizer = UIPanGestureRecognizer(
       target: self,
-      action: #selector(didPanWith(gestureRecognizer:)))
+      action: #selector(didPanWith(gestureRecognizer:))
+    )
 
     panGestureRecognizer.delegate = self
     view.addGestureRecognizer(panGestureRecognizer)

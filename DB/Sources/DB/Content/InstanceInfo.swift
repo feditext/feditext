@@ -12,7 +12,8 @@ extension InstanceInfo {
   static func addingIncludes<T: DerivableRequest>(_ request: T) -> T where T.RowDecoder == InstanceRecord {
     request.including(
       optional: AccountInfo.addingIncludes(InstanceRecord.contactAccount)
-        .forKey(CodingKeys.contactAccountInfo))
+        .forKey(CodingKeys.contactAccountInfo)
+    )
   }
 
   static func request(_ request: QueryInterfaceRequest<InstanceRecord>) -> QueryInterfaceRequest<Self> {

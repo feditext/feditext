@@ -23,7 +23,9 @@ final class EditThumbnailView: UIView {
     let scopeImageView = UIImageView(
       image: UIImage(
         systemName: "scope",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .medium)))
+        withConfiguration: UIImage.SymbolConfiguration(scale: .medium)
+      )
+    )
 
     circleView.translatesAutoresizingMaskIntoConstraints = false
     vibrancyView.translatesAutoresizingMaskIntoConstraints = false
@@ -42,13 +44,21 @@ final class EditThumbnailView: UIView {
       vibrancyView.trailingAnchor.constraint(equalTo: circleView.trailingAnchor),
       vibrancyView.bottomAnchor.constraint(equalTo: circleView.bottomAnchor),
       circleView.trailingAnchor.constraint(
-        equalTo: scopeImageView.trailingAnchor, constant: .compactSpacing),
+        equalTo: scopeImageView.trailingAnchor,
+        constant: .compactSpacing
+      ),
       circleView.bottomAnchor.constraint(
-        equalTo: scopeImageView.bottomAnchor, constant: .compactSpacing),
+        equalTo: scopeImageView.bottomAnchor,
+        constant: .compactSpacing
+      ),
       scopeImageView.topAnchor.constraint(
-        equalTo: circleView.topAnchor, constant: .compactSpacing),
+        equalTo: circleView.topAnchor,
+        constant: .compactSpacing
+      ),
       scopeImageView.leadingAnchor.constraint(
-        equalTo: circleView.leadingAnchor, constant: .compactSpacing),
+        equalTo: circleView.leadingAnchor,
+        constant: .compactSpacing
+      ),
       circleView.widthAnchor.constraint(equalToConstant: .minimumButtonDimension),
       circleView.heightAnchor.constraint(equalToConstant: .minimumButtonDimension),
     ])
@@ -185,10 +195,12 @@ extension EditThumbnailView {
       promptBackgroundView.topAnchor.constraint(equalTo: topAnchor),
       promptBackgroundView.trailingAnchor.constraint(equalTo: trailingAnchor),
       thumbnailPromptLabel.leadingAnchor.constraint(
-        equalTo: promptBackgroundView.layoutMarginsGuide.leadingAnchor),
+        equalTo: promptBackgroundView.layoutMarginsGuide.leadingAnchor
+      ),
       thumbnailPromptLabel.topAnchor.constraint(equalTo: promptBackgroundView.layoutMarginsGuide.topAnchor),
       thumbnailPromptLabel.trailingAnchor.constraint(
-        equalTo: promptBackgroundView.layoutMarginsGuide.trailingAnchor),
+        equalTo: promptBackgroundView.layoutMarginsGuide.trailingAnchor
+      ),
       thumbnailPromptLabel.bottomAnchor.constraint(equalTo: promptBackgroundView.layoutMarginsGuide.bottomAnchor),
       previewImageView.leadingAnchor.constraint(equalTo: previewImageContainerView.leadingAnchor),
       previewImageView.topAnchor.constraint(equalTo: previewImageContainerView.topAnchor),
@@ -197,10 +209,12 @@ extension EditThumbnailView {
       previewImageContainerView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
       previewImageContainerView.bottomAnchor.constraint(
         equalTo: layoutMarginsGuide.bottomAnchor,
-        constant: -.defaultSpacing),
+        constant: -.defaultSpacing
+      ),
       previewImageContainerView.widthAnchor.constraint(
         equalTo: previewImageContainerView.heightAnchor,
-        multiplier: 16 / 9),
+        multiplier: 16 / 9
+      ),
       previewImageContainerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1 / 8),
     ])
 

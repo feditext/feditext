@@ -63,14 +63,16 @@ final class AccountHeaderView: UIView {
         }
         headerButton.accessibilityLabel = String.localizedStringWithFormat(
           NSLocalizedString("account.header.accessibility-label-%@", comment: ""),
-          accountViewModel.displayName)
+          accountViewModel.displayName
+        )
         avatarImageView.sd_setImage(with: accountViewModel.avatarURL(profile: true))
         if let avatarURL = accountViewModel.avatarURL(profile: true) {
           avatarImageView.tag = avatarURL.hashValue
         }
         avatarButton.accessibilityLabel = String.localizedStringWithFormat(
           NSLocalizedString("account.avatar.accessibility-label-%@", comment: ""),
-          accountViewModel.displayName)
+          accountViewModel.displayName
+        )
 
         let followRelationshipShown: Bool
         if !accountViewModel.isSelf, let relationship = accountViewModel.relationship {
@@ -80,15 +82,19 @@ final class AccountHeaderView: UIView {
           followButton.setTitle(
             NSLocalizedString(
               accountViewModel.isLocked ? "account.request" : "account.follow",
-              comment: ""),
-            for: .normal)
+              comment: ""
+            ),
+            for: .normal
+          )
           followButton.isHidden = relationship.following || relationship.requested
           unfollowButton.isHidden = !(relationship.following || relationship.requested)
           unfollowButton.setTitle(
             NSLocalizedString(
               relationship.requested ? "account.request.cancel" : "account.following",
-              comment: ""),
-            for: .normal)
+              comment: ""
+            ),
+            for: .normal
+          )
 
           if relationship.following, let notifying = relationship.notifying {
             if notifying {
@@ -120,7 +126,8 @@ final class AccountHeaderView: UIView {
           mutableDisplayName.insert(
             emojis: accountViewModel.emojis,
             view: displayNameLabel,
-            identityContext: viewModel.identityContext)
+            identityContext: viewModel.identityContext
+          )
           mutableDisplayName.resizeAttachments(toLineHeight: displayNameLabel.font.lineHeight)
           displayNameLabel.attributedText = mutableDisplayName
         }
@@ -178,10 +185,12 @@ final class AccountHeaderView: UIView {
 
         statusCountLabel.text = String.localizedStringWithFormat(
           statusCountFormat,
-          accountViewModel.statusesCount)
+          accountViewModel.statusesCount
+        )
         joinedLabel.text = String.localizedStringWithFormat(
           NSLocalizedString("account.joined-%@", comment: ""),
-          Self.joinedDateFormatter.string(from: accountViewModel.joined))
+          Self.joinedDateFormatter.string(from: accountViewModel.joined)
+        )
 
         for view in fieldsStackView.arrangedSubviews {
           fieldsStackView.removeArrangedSubview(view)
@@ -194,7 +203,8 @@ final class AccountHeaderView: UIView {
             value: field.value.attrStr,
             verifiedAt: field.verifiedAt,
             emojis: accountViewModel.emojis,
-            identityContext: viewModel.identityContext)
+            identityContext: viewModel.identityContext
+          )
 
           fieldView.valueTextView.delegate = self
 
@@ -219,21 +229,25 @@ final class AccountHeaderView: UIView {
             .font: noteFont as Any,
             .foregroundColor: UIColor.label,
           ],
-          range: noteRange)
+          range: noteRange
+        )
         mutableNote.insert(
           emojis: accountViewModel.emojis,
           view: noteTextView,
-          identityContext: viewModel.identityContext)
+          identityContext: viewModel.identityContext
+        )
         mutableNote.resizeAttachments(toLineHeight: noteFont.lineHeight)
         noteTextView.attributedText = mutableNote
         noteTextView.isHidden = false
 
         followingButton.setAttributedLocalizedTitle(
           localizationKey: "account.following-count-%ld",
-          count: accountViewModel.followingCount)
+          count: accountViewModel.followingCount
+        )
         followersButton.setAttributedLocalizedTitle(
           localizationKey: "account.followers-count-%ld",
-          count: accountViewModel.followersCount)
+          count: accountViewModel.followersCount
+        )
         followStackView.isHidden = false
 
         let hideAccountTypeLabels = !(accountViewModel.isBot || accountViewModel.isGroup)
@@ -380,59 +394,74 @@ extension AccountHeaderView {
     directMessageButton.setImage(
       UIImage(
         systemName: "envelope",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .small)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(scale: .small)
+      ),
+      for: .normal
+    )
     directMessageButton.accessibilityLabel = NSLocalizedString("account.direct-message", comment: "")
     directMessageButton.addAction(
       UIAction { [weak self] _ in self?.viewModel.sendDirectMessage() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     followButton.setImage(
       UIImage(
         systemName: "person.badge.plus",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .small)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(scale: .small)
+      ),
+      for: .normal
+    )
     followButton.isHidden = true
     followButton.titleLabel?.adjustsFontSizeToFitWidth = true
     followButton.addAction(
       UIAction { [weak self] _ in self?.viewModel.accountViewModel?.follow() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     unfollowButton.setImage(
       UIImage(
         systemName: "checkmark",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .small)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(scale: .small)
+      ),
+      for: .normal
+    )
     unfollowButton.setTitle(NSLocalizedString("account.following", comment: ""), for: .normal)
     unfollowButton.isHidden = true
     unfollowButton.titleLabel?.adjustsFontSizeToFitWidth = true
     unfollowButton.addAction(
       UIAction { [weak self] _ in self?.viewModel.accountViewModel?.confirmUnfollow() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     notifyButton.setImage(
       UIImage(
         systemName: "bell",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .medium)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(scale: .medium)
+      ),
+      for: .normal
+    )
     notifyButton.imageView?.contentMode = .scaleAspectFit
     notifyButton.accessibilityLabel = NSLocalizedString("account.notify", comment: "")
     notifyButton.tintColor = .secondaryLabel
     notifyButton.isHidden = true
     notifyButton.addAction(
       UIAction { [weak self] _ in self?.viewModel.accountViewModel?.notify() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     unnotifyButton.setImage(
       UIImage(
         systemName: "bell.fill",
-        withConfiguration: UIImage.SymbolConfiguration(scale: .medium)),
-      for: .normal)
+        withConfiguration: UIImage.SymbolConfiguration(scale: .medium)
+      ),
+      for: .normal
+    )
     unnotifyButton.accessibilityLabel = NSLocalizedString("account.unnotify", comment: "")
     unnotifyButton.isHidden = true
     unnotifyButton.addAction(
       UIAction { [weak self] _ in self?.viewModel.accountViewModel?.unnotify() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
 
     addSubview(baseStackView)
     baseStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -459,7 +488,8 @@ extension AccountHeaderView {
     accountStackView.addArrangedSubview(lockedImageView)
     lockedImageView.image = UIImage(
       systemName: "lock.fill",
-      withConfiguration: UIImage.SymbolConfiguration(scale: .small))
+      withConfiguration: UIImage.SymbolConfiguration(scale: .small)
+    )
     lockedImageView.tintColor = .secondaryLabel
     lockedImageView.contentMode = .scaleAspectFit
 
@@ -489,7 +519,8 @@ extension AccountHeaderView {
     accountTypeStatusCountJoinedStackView.addArrangedSubview(accountTypeBotImageView)
     accountTypeBotImageView.image = UIImage(
       systemName: "cpu.fill",
-      withConfiguration: UIImage.SymbolConfiguration(scale: .small))
+      withConfiguration: UIImage.SymbolConfiguration(scale: .small)
+    )
     accountTypeBotImageView.tintColor = .tertiaryLabel
     accountTypeBotImageView.contentMode = .scaleAspectFit
     accountTypeBotImageView.setContentHuggingPriority(.required, for: .horizontal)
@@ -498,7 +529,8 @@ extension AccountHeaderView {
     accountTypeStatusCountJoinedStackView.addArrangedSubview(accountTypeGroupImageView)
     accountTypeGroupImageView.image = UIImage(
       systemName: "person.3.fill",
-      withConfiguration: UIImage.SymbolConfiguration(scale: .small))
+      withConfiguration: UIImage.SymbolConfiguration(scale: .small)
+    )
     accountTypeGroupImageView.tintColor = .tertiaryLabel
     accountTypeGroupImageView.contentMode = .scaleAspectFit
     accountTypeGroupImageView.setContentHuggingPriority(.required, for: .horizontal)
@@ -608,12 +640,14 @@ extension AccountHeaderView {
 
     followingButton.addAction(
       UIAction { [weak self] _ in self?.viewModel.accountViewModel?.followingSelected() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     followStackView.addArrangedSubview(followingButton)
 
     followersButton.addAction(
       UIAction { [weak self] _ in self?.viewModel.accountViewModel?.followersSelected() },
-      for: .touchUpInside)
+      for: .touchUpInside
+    )
     followStackView.addArrangedSubview(followersButton)
 
     setupSegmentedControl()
@@ -631,7 +665,8 @@ extension AccountHeaderView {
 
     let headerImageAspectRatioConstraint = headerImageView.heightAnchor.constraint(
       equalTo: headerImageView.widthAnchor,
-      multiplier: 1 / 3)
+      multiplier: 1 / 3
+    )
 
     headerImageAspectRatioConstraint.priority = .justBelowMax
 
@@ -663,7 +698,8 @@ extension AccountHeaderView {
       relationshipButtonsStackView.leadingAnchor.constraint(equalTo: avatarBackgroundView.trailingAnchor),
       relationshipButtonsStackView.topAnchor.constraint(
         equalTo: headerImageView.bottomAnchor,
-        constant: .defaultSpacing),
+        constant: .defaultSpacing
+      ),
       relationshipButtonsStackView.trailingAnchor.constraint(equalTo: readableContentGuide.trailingAnchor),
       directMessageButton.widthAnchor.constraint(equalTo: directMessageButton.heightAnchor),
       notifyButton.widthAnchor.constraint(equalTo: notifyButton.heightAnchor),
@@ -706,7 +742,8 @@ extension AccountHeaderView {
           self?.viewModel.request(maxId: nil, minId: nil)
         },
         at: index,
-        animated: false)
+        animated: false
+      )
     }
 
     segmentedControl.selectedSegmentIndex = index

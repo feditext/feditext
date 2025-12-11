@@ -66,9 +66,11 @@ extension NavigationService {
 
   public func contextService(id: Status.Id) -> ContextService {
     ContextService(
-      id: id, environment: environment,
+      id: id,
+      environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func profileService(id: Account.Id) -> ProfileService {
@@ -76,7 +78,8 @@ extension NavigationService {
       id: id,
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func profileService(
@@ -90,7 +93,8 @@ extension NavigationService {
       familiarFollowers: familiarFollowers,
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func statusService(status: Status) -> StatusService {
@@ -98,7 +102,8 @@ extension NavigationService {
       environment: environment,
       status: status,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func accountService(account: Account) -> AccountService {
@@ -106,7 +111,8 @@ extension NavigationService {
       account: account,
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func familiarFollowersService(familiarFollowers: [Account]) -> FixedAccountListService {
@@ -129,7 +135,8 @@ extension NavigationService {
       notification: notification,
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func multiNotificationService(
@@ -154,7 +161,8 @@ extension NavigationService {
       conversation: conversation,
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func announcementService(announcement: Announcement) -> AnnouncementService {
@@ -162,7 +170,8 @@ extension NavigationService {
       announcement: announcement,
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   public func timelineService(timeline: Timeline) -> TimelineService {
@@ -170,7 +179,8 @@ extension NavigationService {
       timeline: timeline,
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
   }
 
   /// Open a report in the web interface.
@@ -343,7 +353,8 @@ extension NavigationService {
           .init(
             query: urlString,
             type: type
-          ))
+          )
+        )
       )
       .handleEvents(
         receiveSubscription: { _ in navigationSubject.send(.webfingerStart) },

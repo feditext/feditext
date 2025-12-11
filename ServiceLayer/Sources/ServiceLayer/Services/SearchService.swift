@@ -40,7 +40,8 @@ public class SearchService: ObservableObject {
     navigationService = NavigationService(
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
-      contentDatabase: contentDatabase)
+      contentDatabase: contentDatabase
+    )
     nextPageMaxId = nextPageMaxIdSubject.eraseToAnyPublisher()
     sections =
       sectionsPublisherSubject

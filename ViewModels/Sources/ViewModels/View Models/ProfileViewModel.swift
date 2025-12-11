@@ -25,7 +25,9 @@ final public class ProfileViewModel {
     collectionViewModel = CurrentValueSubject(
       CollectionItemsViewModel(
         collectionService: profileService.timelineService(profileCollection: .statuses),
-        identityContext: identityContext))
+        identityContext: identityContext
+      )
+    )
 
     let accountEventsSubject = PassthroughSubject<AnyPublisher<CollectionItemEvent, Error>, Never>()
 
@@ -38,7 +40,8 @@ final public class ProfileViewModel {
             .navigationService
             .accountService(account: $0.account),
           identityContext: identityContext,
-          eventsSubject: accountEventsSubject)
+          eventsSubject: accountEventsSubject
+        )
 
         vm.relationship = $0.relationship
         vm.familiarFollowers = $0.familiarFollowers

@@ -10,7 +10,8 @@ struct TableView: UIViewControllerRepresentable {
   func makeUIViewController(context: Context) -> TableViewController {
     TableViewController(
       viewModel: viewModelClosure(),
-      rootViewModel: rootViewModel)
+      rootViewModel: rootViewModel
+    )
   }
 
   func updateUIViewController(_ uiViewController: TableViewController, context: Context) {

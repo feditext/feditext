@@ -15,7 +15,9 @@ extension ConversationInfo {
       .including(all: AccountInfo.addingIncludes(ConversationRecord.accounts).forKey(CodingKeys.accountInfos))
       .including(
         required: StatusInfo.addingIncludes(ConversationRecord.lastStatus, .conversation).forKey(
-          CodingKeys.lastStatusInfo))
+          CodingKeys.lastStatusInfo
+        )
+      )
   }
 
   static func request(_ request: QueryInterfaceRequest<ConversationRecord>) -> QueryInterfaceRequest<Self> {

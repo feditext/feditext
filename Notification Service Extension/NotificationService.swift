@@ -85,7 +85,8 @@ extension NotificationService {
   private static let environment = AppEnvironment.live(
     userNotificationCenter: .current(),
     reduceMotion: { false },
-    autoplayVideos: { true })
+    autoplayVideos: { true }
+  )
 
   fileprivate enum ImageError: Error {
     case dataMissing

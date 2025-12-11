@@ -21,10 +21,12 @@ final class ReportViewController: TableViewController {
 
     navigationItem.title = String.localizedStringWithFormat(
       NSLocalizedString("report.target-%@", comment: ""),
-      viewModel.accountName)
+      viewModel.accountName
+    )
     navigationItem.leftBarButtonItem = UIBarButtonItem(
       systemItem: .cancel,
-      primaryAction: UIAction { [weak self] _ in self?.presentingViewController?.dismiss(animated: true) })
+      primaryAction: UIAction { [weak self] _ in self?.presentingViewController?.dismiss(animated: true) }
+    )
     navigationItem.rightBarButtonItem = reportButton
     reportButton.primaryAction = UIAction(title: NSLocalizedString("report", comment: "")) { [weak self] _ in
       self?.viewModel.report()

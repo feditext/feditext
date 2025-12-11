@@ -11,13 +11,16 @@ let package = Package(
   products: [
     .library(
       name: "MastodonAPI",
-      targets: ["MastodonAPI"]),
+      targets: ["MastodonAPI"]
+    ),
     .library(
       name: "MastodonAPIStubs",
-      targets: ["MastodonAPIStubs"]),
+      targets: ["MastodonAPIStubs"]
+    ),
     .executable(
       name: "MastodonAPITool",
-      targets: ["MastodonAPITool"]),
+      targets: ["MastodonAPITool"]
+    ),
   ],
   dependencies: [
     .package(path: "AppMetadata"),
@@ -30,19 +33,23 @@ let package = Package(
   targets: [
     .target(
       name: "MastodonAPI",
-      dependencies: ["AppMetadata", "CombineInterop", "HTTP", "Mastodon", "Semver"]),
+      dependencies: ["AppMetadata", "CombineInterop", "HTTP", "Mastodon", "Semver"]
+    ),
     .target(
       name: "MastodonAPIStubs",
       dependencies: ["MastodonAPI", .product(name: "Stubbing", package: "HTTP")],
-      resources: [.process("Resources")]),
+      resources: [.process("Resources")]
+    ),
     .testTarget(
       name: "MastodonAPITests",
-      dependencies: ["MastodonAPIStubs"]),
+      dependencies: ["MastodonAPIStubs"]
+    ),
     .executableTarget(
       name: "MastodonAPITool",
       dependencies: [
         "MastodonAPI",
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
-      ]),
+      ]
+    ),
   ]
 )

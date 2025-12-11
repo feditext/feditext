@@ -27,7 +27,8 @@ extension LoadMoreService {
       contentDatabase.insert(
         statuses: $0.result,
         timeline: loadMore.timeline,
-        loadMoreAndDirection: (loadMore, direction))
+        loadMoreAndDirection: (loadMore, direction)
+      )
     }
     .eraseToAnyPublisher()
   }

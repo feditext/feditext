@@ -65,7 +65,8 @@ struct MastodonAPITool: AsyncParsableCommand {
           contentsOf: page.result.compactMap { status in
             let htmlFragment = status.content.raw
             return if htmlFragment.isEmpty { nil } else { htmlFragment }
-          })
+          }
+        )
       }
 
       let encoder = JSONEncoder()
