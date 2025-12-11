@@ -1,6 +1,7 @@
 // Copyright © 2020 Metabolist. All rights reserved.
 
 import Combine
+import DB
 import Foundation
 import ServiceLayer
 
@@ -8,16 +9,33 @@ public final class SearchViewModel: CollectionItemsViewModel {
   @Published public var query = ""
   @Published public var scope = SearchScope.all
 
+  private let purpose: Purpose
   private let searchService: SearchService
   private var cancellables = Set<AnyCancellable>()
 
-  public init(identityContext: IdentityContext) {
+  /// Why are we searching?
+  public enum Purpose {
+    /// Explore tab searches might trigger expensive actions like full-text status search.
+    case exploreTab
+    /// Autocomplete in the composition view expects to get accounts or tags quickly by name while the user is typing.
+    case compositionAutocomplete
+
+    var debounceInterval: TimeInterval {
+      switch self {
+      case .exploreTab: 0.8
+      case .compositionAutocomplete: 0.1
+      }
+    }
+  }
+
+  public init(identityContext: IdentityContext, _ purpose: Purpose) {
+    self.purpose = purpose
     self.searchService = identityContext.service.searchService()
 
     super.init(collectionService: searchService, identityContext: identityContext)
 
     $query.dropFirst()
-      .debounce(for: .seconds(Self.debounceInterval), scheduler: DispatchQueue.global())
+      .debounce(for: .seconds(purpose.debounceInterval), scheduler: DispatchQueue.global())
       .removeDuplicates()
       .combineLatest($scope.removeDuplicates())
       .sink { [weak self] query, scope in
@@ -36,10 +54,6 @@ public final class SearchViewModel: CollectionItemsViewModel {
 
     request(maxId: nextPageMaxId, minId: nil)
   }
-}
-
-extension SearchViewModel {
-  fileprivate static let debounceInterval: TimeInterval = 0.8
 }
 
 extension SearchScope {

@@ -29,7 +29,7 @@ final class AutocompleteDataSource: UICollectionViewDiffableDataSource<Autocompl
     queryPublisher: AnyPublisher<String?, Never>,
     parentViewModel: ComposeStatusViewModel
   ) {
-    searchViewModel = SearchViewModel(identityContext: parentViewModel.identityContext)
+    searchViewModel = SearchViewModel(identityContext: parentViewModel.identityContext, .compositionAutocomplete)
     emojiPickerViewModel = EmojiPickerViewModel(identityContext: parentViewModel.identityContext, queryOnly: true)
 
     let registration = UICollectionView.CellRegistration<AutocompleteItemCollectionViewCell, AutocompleteItem> {
@@ -69,7 +69,7 @@ final class AutocompleteDataSource: UICollectionViewDiffableDataSource<Autocompl
       .sink { [weak self] in
         guard let self = self else { return }
 
-        self.searchViewModel = SearchViewModel(identityContext: $0)
+        self.searchViewModel = SearchViewModel(identityContext: $0, .compositionAutocomplete)
         self.emojiPickerViewModel = EmojiPickerViewModel(identityContext: $0, queryOnly: true)
       }
       .store(in: &cancellables)

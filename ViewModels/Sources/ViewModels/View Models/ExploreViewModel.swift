@@ -26,7 +26,7 @@ public final class ExploreViewModel: ObservableObject {
   init(service: ExploreService, identityContext: IdentityContext) {
     exploreService = service
     self.identityContext = identityContext
-    searchViewModel = SearchViewModel(identityContext: identityContext)
+    searchViewModel = SearchViewModel(identityContext: identityContext, .exploreTab)
     events = eventsSubject.eraseToAnyPublisher()
 
     identityContext.service
