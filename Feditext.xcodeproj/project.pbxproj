@@ -32,6 +32,7 @@
 		946923092BB6116600628836 /* AnnotatedAPIError+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946923082BB6116600628836 /* AnnotatedAPIError+Extensions.swift */; };
 		9469230B2BB611D300628836 /* AnnotatedURLError+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9469230A2BB611D300628836 /* AnnotatedURLError+Extensions.swift */; };
 		9469230D2BB617D500628836 /* EnvironmentValues+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9469230C2BB617D500628836 /* EnvironmentValues+Extensions.swift */; };
+		946E91F12EEA44360082707E /* .swift-format in Resources */ = {isa = PBXBuildFile; fileRef = 946E91F02EEA44360082707E /* .swift-format */; };
 		947B6CEF2A70909300630B24 /* EditDisplayFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947B6CEE2A70909300630B24 /* EditDisplayFilterView.swift */; };
 		947E728F29A9618900155DD2 /* EditNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947E728E29A9618900155DD2 /* EditNoteView.swift */; };
 		947ED41F2A6B1D7700A18AFA /* StatusReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947ED41E2A6B1D7700A18AFA /* StatusReactionsView.swift */; };
@@ -397,6 +398,7 @@
 		946923082BB6116600628836 /* AnnotatedAPIError+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnnotatedAPIError+Extensions.swift"; sourceTree = "<group>"; };
 		9469230A2BB611D300628836 /* AnnotatedURLError+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnnotatedURLError+Extensions.swift"; sourceTree = "<group>"; };
 		9469230C2BB617D500628836 /* EnvironmentValues+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EnvironmentValues+Extensions.swift"; sourceTree = "<group>"; };
+		946E91F02EEA44360082707E /* .swift-format */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".swift-format"; sourceTree = SOURCE_ROOT; };
 		947873BB297E0F9000CACEFE /* Identity.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Identity.xcconfig; sourceTree = "<group>"; };
 		947B6CEE2A70909300630B24 /* EditDisplayFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDisplayFilterView.swift; sourceTree = "<group>"; };
 		947E728E29A9618900155DD2 /* EditNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditNoteView.swift; sourceTree = "<group>"; };
@@ -1044,6 +1046,7 @@
 		D0C7D41D24F76169001EBDBB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				946E91F02EEA44360082707E /* .swift-format */,
 				94D9E1B22BC60B47003C1C18 /* PrivacyInfo.xcprivacy */,
 				D0C7D41F24F76169001EBDBB /* Info.plist */,
 				D0C7D41E24F76169001EBDBB /* Metatext.entitlements */,
@@ -1393,6 +1396,7 @@
 				943CF10F2A731FC30032A0D2 /* AppIconRainbowPaint@3x.png in Resources */,
 				943CF1132A731FC30032A0D2 /* AppIconClassic@3x.png in Resources */,
 				943CF10D2A731FC30032A0D2 /* AppIconTransPaint@3x.png in Resources */,
+				946E91F12EEA44360082707E /* .swift-format in Resources */,
 				943CF10E2A731FC30032A0D2 /* AppIconRainbowPaint@2x.png in Resources */,
 				D9E658662601CF76007C426E /* Localizable.strings in Resources */,
 				943CF1142A731FC30032A0D2 /* AppIconRainbow@2x.png in Resources */,
