@@ -288,7 +288,7 @@ extension Status {
         status
       case .quote(let quote):
         quote.quotedStatus
-      case .shallow(let shallowQuote):
+      case .shallow:
         nil
       }
     }
