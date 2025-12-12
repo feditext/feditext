@@ -6,6 +6,7 @@ import Mastodon
 public protocol CollectionService {
   var sections: AnyPublisher<[CollectionSection], Error> { get }
   var nextPageMaxId: AnyPublisher<String?, Never> { get }
+  /// `CollectionItemsViewModel` will fetch relationship and familiar followers info for any IDs it sees here.
   var accountIdsForRelationships: AnyPublisher<Set<Account.Id>, Never> { get }
   var preferLastPresentIdOverNextPageMaxId: Bool { get }
   var canRefresh: Bool { get }

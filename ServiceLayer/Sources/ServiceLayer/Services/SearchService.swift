@@ -9,6 +9,7 @@ import MastodonAPI
 /// Service for the main search API.
 /// - SeeAlso: ``AccountSearchService``
 public class SearchService: ObservableObject {
+  public let accountIdsForRelationships: AnyPublisher<Set<Account.Id>, Never>
   public let sections: AnyPublisher<[CollectionSection], Error>
   public let navigationService: NavigationService
   public let nextPageMaxId: AnyPublisher<String?, Never>
@@ -31,6 +32,7 @@ public class SearchService: ObservableObject {
 
   private let mastodonAPIClient: MastodonAPIClient
   private let contentDatabase: ContentDatabase
+  private let accountIdsForRelationshipsSubject = PassthroughSubject<Set<Account.Id>, Never>()
   private let nextPageMaxIdSubject = PassthroughSubject<String?, Never>()
   private let sectionsPublisherSubject = PassthroughSubject<AnyPublisher<[CollectionSection], Error>, Error>()
 
@@ -39,6 +41,7 @@ public class SearchService: ObservableObject {
   init(environment: AppEnvironment, mastodonAPIClient: MastodonAPIClient, contentDatabase: ContentDatabase) {
     self.mastodonAPIClient = mastodonAPIClient
     self.contentDatabase = contentDatabase
+    accountIdsForRelationships = accountIdsForRelationshipsSubject.eraseToAnyPublisher()
     navigationService = NavigationService(
       environment: environment,
       mastodonAPIClient: mastodonAPIClient,
@@ -96,18 +99,9 @@ extension SearchService: CollectionService {
 
     try await contentDatabase.insert(results: page).finished
 
-    // TODO: (Vyr) why doesn't this use `CollectionService.accountIdsForRelationships`?
-    let accountIDs = page.accounts.map(\.id)
+    let accountIDs = Set(page.accounts.map(\.id))
     if !accountIDs.isEmpty {
-      let relationships = try await mastodonAPIClient.request(
-        RelationshipsEndpoint.relationships(ids: accountIDs)
-      )
-      try await contentDatabase.insert(relationships: relationships).finished
-
-      let familiarFollowers = try await mastodonAPIClient.request(
-        FamiliarFollowersEndpoint.familiarFollowers(ids: accountIDs)
-      )
-      try await contentDatabase.insert(familiarFollowers: familiarFollowers).finished
+      accountIdsForRelationshipsSubject.send(accountIDs)
     }
 
     let preAppendCount = results.count
