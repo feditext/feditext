@@ -13,9 +13,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>ld</string>
         <key>one</key>
-        <string>%ld persones parlant</string>
+        <string>%ld persona parlant</string>
         <key>other</key>
-        <string>%Id persones parlant</string>
+        <string>%ld persones parlant</string>
       </dict>
     </dict>
     <key>status.poll.participation-count-%ld</key>
@@ -31,7 +31,7 @@
         <key>one</key>
         <string>%ld persona</string>
         <key>other</key>
-        <string>%Id gent</string>
+        <string>%ld persones</string>
       </dict>
     </dict>
     <key>status.reblogs-count-%ld</key>
@@ -47,7 +47,7 @@
         <key>one</key>
         <string>%ld Impuls</string>
         <key>other</key>
-        <string>%Id Impulsos</string>
+        <string>%ld Impulsos</string>
       </dict>
     </dict>
     <key>status.favorites-count-%ld</key>
@@ -109,9 +109,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>ld</string>
         <key>one</key>
-        <string>%ld Toot</string>
+        <string>%ld Tut</string>
         <key>other</key>
-        <string>%ld Toots</string>
+        <string>%ld Tuts</string>
       </dict>
     </dict>
     <key>account.followers-count-%ld</key>
@@ -157,9 +157,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>ld</string>
         <key>one</key>
-        <string>%ld fitxer d'audio</string>
+        <string>%ld fitxer d'àudio</string>
         <key>other</key>
-        <string>%ld fitxers d'audio</string>
+        <string>%ld fitxers d'àudio</string>
       </dict>
     </dict>
     <key>attachment.type.videos-%ld</key>
@@ -189,10 +189,122 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>ld</string>
         <key>one</key>
-        <string>%ld adjunt</string>
+        <string>%ld fitxer adjunt</string>
         <key>other</key>
-        <string>%ld adjunts</string>
+        <string>%ld fitxers adjunts</string>
       </dict>
     </dict>
-  </dict>
+	<key>notifications.accounts-followed-you-%ld</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@accounts@</string>
+		<key>accounts</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>one</key>
+			<string>%ld persona et segueix</string>
+			<key>other</key>
+			<string>%ld persones et segueixen</string>
+		</dict>
+	</dict>
+	<key>notifications.accounts-reblogged-your-status-%ld.post</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@accounts@</string>
+		<key>accounts</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>one</key>
+			<string>%ld persona ha impulsat la teva publicació</string>
+			<key>other</key>
+			<string>%ld persones han impulsat la teva publicació</string>
+		</dict>
+	</dict>
+	<key>notifications.accounts-reblogged-your-status-%ld.toot</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@accounts@</string>
+		<key>accounts</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>one</key>
+			<string>%ld persona ha impulsat el teu tut</string>
+			<key>other</key>
+			<string>%ld persones han impulsat el teu tut</string>
+		</dict>
+	</dict>
+	<key>notifications.accounts-favourited-your-status-%ld.post</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@accounts@</string>
+		<key>accounts</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>one</key>
+			<string>%ld persona ha marcat com a preferit la teva publicació</string>
+			<key>other</key>
+			<string>%ld persones han marcat com a preferit la teva publicació</string>
+		</dict>
+	</dict>
+	<key>notifications.accounts-favourited-your-status-%ld.toot</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@accounts@</string>
+		<key>accounts</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>one</key>
+			<string>%ld persona ha marcat com a preferit el teu tut</string>
+			<key>other</key>
+			<string>%ld persones han marcat com a preferit el teu tut</string>
+		</dict>
+	</dict>
+	<key>notifications.reported-an-account-and-statuses-%@-%ld.post</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%@ reported an account and %#@posts@</string>
+		<key>posts</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>one</key>
+			<string>%ld publicació</string>
+			<key>other</key>
+			<string>%ld publicacions</string>
+		</dict>
+	</dict>
+	<key>notifications.reported-an-account-and-statuses-%@-%ld.toot</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%@ reported an account and %#@toots@</string>
+		<key>toots</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>ld</string>
+			<key>one</key>
+			<string>%ld tut</string>
+			<key>other</key>
+			<string>%ld tuts</string>
+		</dict>
+	</dict>
+</dict>
 </plist>
