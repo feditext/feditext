@@ -68,7 +68,7 @@
 "account.statuses.toot" = "Tuts";
 "account.statuses-and-replies.post" = "Publicacions i respostes";
 "account.statuses-and-replies.toot" = "Tuts i respostes";
-"account.statuses-and-replies.short" = "i resposted";
+"account.statuses-and-replies.short" = "i respostes";
 "account.statuses-and-boosts.post" = "Publicacions i impulsos";
 "account.statuses-and-boosts.toot" = "Tuts i impulsos";
 "account.statuses-and-boosts.short" = "i impulsos";
@@ -107,7 +107,7 @@
 "add-identity.browse" = "Navega";
 "add-identity.instance-not-supported" = "Per oferir una experiència segura a tothom i complir les directrius de revisió de l’App Store, aquesta instància no s’admet.";
 "add-identity.join" = "Vull unir-m’hi";
-"add-identity.prompt" = "Introduïu l’URL de la instància a la qual vols connectar-te:";
+"add-identity.prompt" = "Introdueix l’URL de la instància a la qual vols connectar-te:";
 "add-identity.request-invite" = "Sol·licita";
 "add-identity.unable-to-connect-to-instance" = "No es pot connectar a la instància";
 "add-identity.welcome" = "Et donem la benvinguda a Feditext";
@@ -164,8 +164,8 @@
 "conversation.unread" = "Sense llegir";
 "dismiss" = "Descarta";
 "emoji.custom" = "Personalitzat";
-"emoji.default-skin-tone" = "Color de la pell per defecte";
-"emoji.default-skin-tone-button.accessibility-label" = "Selecciona el color de la pell per defecte";
+"emoji.default-skin-tone" = "Color de pell per defecte";
+"emoji.default-skin-tone-button.accessibility-label" = "Selecciona el color de pell per defecte";
 "emoji.frequently-used" = "D’ús freqüent";
 "emoji.search" = "Cerca emoji";
 "emoji.system-group.smileys-and-emotion" = "Emoticones i emocions";
@@ -335,7 +335,7 @@
 "preferences.notification-policy.follower" = "Seguidors";
 "preferences.notification-policy.none" = "Ningú";
 "preferences.notification-types" = "Tipus de notificacions";
-"preferences.notification-types.follow" = "Seguiment nou";
+"preferences.notification-types.follow" = "Seguir";
 "preferences.notification-types.favourite" = "Marcar com a perferit";
 "preferences.notification-types.follow-request" = "Sol·licituds de seguiment";
 "preferences.notification-types.reblog" = "Impuls";
