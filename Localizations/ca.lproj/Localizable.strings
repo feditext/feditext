@@ -364,7 +364,7 @@
 "preferences.posting-languages.remove" = "Elimina";
 "preferences.posting-languages.selected" = "Idiomes seleccionats";
 "preferences.require-double-tap-to-reblog" = "Cal doble toc per fer impulsos";
-"preferences.require-double-tap-to-preferite" = "Cal doble toc per marcar perferits";
+"preferences.require-double-tap-to-preferite" = "Cal doble toc per marcar com a perferit";
 "preferences.show-reblog-and-favorite-counts" = "Mostra el recompte d’impulsos i preferits";
 "preferences.status-word" = "Paraula d’estat";
 "preferences.trailing-hashtags.fold" = "Desemfasitza visualment les etiquetes finals";
@@ -387,7 +387,7 @@
 "preferences.visibility-icon-colors" = "Coloritza les icones de visibilitat";
 "preferences.visibility-icon-colors.off" = "Desactivat:";
 "preferences.visibility-icon-colors.on" = "Activat:";
-"preferences.hide-content-warning-button" = "Amaga el botó de \"mostra menys\" d’avís de contingut";
+"preferences.hide-content-warning-button" = "Amaga el botó de \"mostra’n menys\" d’avís de contingut";
 "preferences.keyboard-type" = "Teclat amb";
 "preferences.keyboard-type.twitter" = "Coixinet";
 "preferences.keyboard-type.default-text" = "Retorn";
@@ -457,13 +457,13 @@
 "status.accessibility.view-reblogger-profile" = "Mostra el perfil de qui ha impulsat";
 "status.accessibility.part-of-a-thread" = "Part d’una conversa";
 "status.bookmark" = "Posa marcador";
-"status.content-warning-abbreviation" = "AC";
+"status.content-warning-abbreviation" = "Avís";
 "status.content-warning.accessibility" = "Avís de contingut";
 "status.delete" = "Suprimeix";
 "status.delete.confirm.post" = "Segur que vols suprimir aquesta publicació?";
 "status.delete.confirm.toot" = "Segur que vols suprimir aquest tut?";
 "status.delete-and-redraft" = "Suprimeix i redacta de nou";
-"status.delete-and-redraft.confirm.post" = "Segur que vols suprimir aquesta publicació i tornar-la a redactar? Es perdran els preferits i impulsos, i les respostes de la publicació original que quedaran orfes.";
+"status.delete-and-redraft.confirm.post" = "Segur que vols suprimir aquesta publicació i tornar-la a redactar? Es perdran els preferits i impulsos, i les respostes de la publicació original quedaran orfes.";
 "status.delete-and-redraft.confirm.toot" = "Segur que vols suprimir aquest tut i tornar-ho a redactar? Es perdran els preferits i impulsos, i les respostes del tut original que quedaran orfes.";
 "status.edit" = "Edita";
 "status.edited" = "Editat";
@@ -490,9 +490,9 @@
 "status.reblog-button.undo.accessibility-label" = "Desfer l’impuls";
 "status.favorite-button.accessibility-label" = "Marca com a preferit";
 "status.favorite-button.undo.accessibility-label" = "Desfer preferir";
-"status.show-more" = "Mostra més";
+"status.show-more" = "Mostra’n més";
 "status.show-more-all-button.accessibilty-label" = "Mostra’n més per a tots";
-"status.show-less" = "Mostra menys";
+"status.show-less" = "Mostra’n menys";
 "status.show-less-all-button.accessibilty-label" = "Mostra’n manys per a tots";
 "status.show-thread" = "Mostra la conversa";
 "status.spoiler-text-placeholder" = "Avís de contingut";
