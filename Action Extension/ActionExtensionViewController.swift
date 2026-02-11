@@ -9,26 +9,18 @@ import UniformTypeIdentifiers
 /// Should activate for one or more web URLs, but will only do anything with the first..
 class ActionExtensionViewController: UIViewController {
   /// Extensions aren't allowed to call `UIApplication.shared
-  ///  and thus don't have direct access to its `openURL` method.
-  /// `self.extensionContext?.open(URL: URL)` only works for Today extensions.
-  /// As a workaround, we find a parent responder that has an `openURL(_:)` method.
-  /// This will be `UIApplication`. It's cursed, but it uses public APIs and works.
-  /// See <https://liman.io/blog/open-url-share-extension-swiftui>.
+  ///  and thus don't have direct access to its `open` method.
+  /// As a workaround, we find `UIApplication` in the responder chain.
+  /// It's cursed, but it uses public APIs and works.
   private func open(url: URL) {
     var responder: UIResponder? = self as UIResponder
-    let selector = #selector(openURL(_:))
     while responder != nil {
-      if responder!.responds(to: selector) && responder != self {
-        responder!.perform(selector, with: url)
+      if let application = responder as? UIApplication {
+        application.open(url)
         return
       }
       responder = responder?.next
     }
-  }
-
-  /// Only exists so we can create a selector from it.
-  @objc private func openURL(_ url: URL) {
-    return
   }
 
   /// This extension has no actual UI, so we act on extension input items as soon as we load.
