@@ -61,15 +61,21 @@ final class AttachmentsView: UIView {
       aspectRatioConstraint?.isActive = true
 
       curtain.isHidden = viewModel.shouldShowAttachments
-      curtainButton.setTitle(
-        NSLocalizedString(
-          (viewModel.sensitive)
-            ? "attachment.sensitive-content"
-            : "attachment.media-hidden",
-          comment: ""
-        ),
-        for: .normal
-      )
+      if let blurReason = viewModel.blurReason {
+        curtainButton.setImage(UIImage(systemName: "exclamationmark.shield"), for: .normal)
+        curtainButton.setTitle(blurReason, for: .normal)
+      } else {
+        curtainButton.setImage(nil, for: .normal)
+        curtainButton.setTitle(
+          NSLocalizedString(
+            (viewModel.sensitive)
+              ? "attachment.sensitive-content"
+              : "attachment.media-hidden",
+            comment: ""
+          ),
+          for: .normal
+        )
+      }
       hideButtonBackground.isHidden = !viewModel.shouldShowHideAttachmentsButton
 
       if curtain.isHidden {
@@ -91,25 +97,30 @@ final class AttachmentsView: UIView {
           string: type.accessibilityNames(count: viewModel.attachmentViewModels.count)
         )
 
-        for attachmentViewModel in viewModel.attachmentViewModels {
-          guard let description = attachmentViewModel.attachment.description,
-            !description.isEmpty
-          else { continue }
+        if let blurReason = viewModel.blurReason {
+          accessibilityAttributedLabel.appendWithSeparator(NSLocalizedString("status.media-blurred", comment: ""))
+          accessibilityAttributedLabel.appendWithSeparator(blurReason)
+        } else {
+          for attachmentViewModel in viewModel.attachmentViewModels {
+            guard let description = attachmentViewModel.attachment.description,
+              !description.isEmpty
+            else { continue }
 
-          accessibilityAttributedLabel.appendWithSeparator(
-            attachmentViewModel.attachment.type.accessibilityName
-          )
-          if let language = viewModel.language {
             accessibilityAttributedLabel.appendWithSeparator(
-              NSAttributedString(
-                string: description,
-                attributes: [
-                  .accessibilitySpeechLanguage: language
-                ]
-              )
+              attachmentViewModel.attachment.type.accessibilityName
             )
-          } else {
-            accessibilityAttributedLabel.appendWithSeparator(description)
+            if let language = viewModel.language {
+              accessibilityAttributedLabel.appendWithSeparator(
+                NSAttributedString(
+                  string: description,
+                  attributes: [
+                    .accessibilitySpeechLanguage: language
+                  ]
+                )
+              )
+            } else {
+              accessibilityAttributedLabel.appendWithSeparator(description)
+            }
           }
         }
 

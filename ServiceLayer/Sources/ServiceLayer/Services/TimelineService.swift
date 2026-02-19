@@ -32,7 +32,7 @@ public struct TimelineService {
     self.mastodonAPIClient = mastodonAPIClient
     self.contentDatabase = contentDatabase
 
-    let applyV1Filters = !mastodonAPIClient.supportsV2Filters
+    let applyV1Filters = !mastodonAPIClient.apiCapabilities.supportsV2Filters
     if case .home = timeline {
       sections = contentDatabase.cleanHomeTimelinePublisher()
         .collect()

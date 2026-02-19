@@ -8,7 +8,7 @@ struct FilterV2Info: Codable, Hashable, FetchableRecord {
   let filter: FilterV2Record
   let keywords: [FilterV2KeywordRecord]
   let statuses: [FilterV2StatusRecord]
-  
+
   static func addingIncludes<T: DerivableRequest>(_ request: T) -> T where T.RowDecoder == FilterV2Record {
     request
       .including(optional: FilterV2Record.keywords)

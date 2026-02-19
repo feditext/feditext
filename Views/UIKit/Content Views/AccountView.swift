@@ -101,7 +101,7 @@ extension AccountView {
         familiarFollowers
         .prefix(4)
         .map { $0.displayName }
-        .joined(separator: ", ")
+        .joined(separator: .separator)
         .height(
           width: width,
           font: .preferredFont(forTextStyle: .footnote)

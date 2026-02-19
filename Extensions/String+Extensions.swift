@@ -5,10 +5,6 @@ import UIKit
 import ViewModels
 
 extension String {
-  static var separator: Self {
-    (Locale.autoupdatingCurrent.groupingSeparator ?? ",").appending(" ")
-  }
-
   func height(width: CGFloat, font: UIFont) -> CGFloat {
     (self as NSString)
       .boundingRect(

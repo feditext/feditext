@@ -279,7 +279,7 @@ extension IdentityService {
   public func expiredFiltersPublisher() -> AnyPublisher<[Filter], Error> {
     contentDatabase.expiredFiltersPublisher()
   }
-  
+
   public func allFilterV2sPublisher() -> AnyPublisher<[FilterV2], Error> {
     contentDatabase.allFilterV2sPublisher()
   }

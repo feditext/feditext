@@ -532,7 +532,7 @@ extension StatusBodyView {
             tagPair.name
           }
         }
-        .joined(separator: ", ")
+        .joined(separator: .separator)
     )
   }
 

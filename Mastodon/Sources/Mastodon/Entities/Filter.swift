@@ -105,6 +105,7 @@ public struct FilterV2: Codable, Identifiable, Hashable {
   public enum Action: String, Codable, Unknowable {
     case warn
     case hide
+    case blur
     case unknown
 
     public static var unknownCase: Self { .unknown }

@@ -93,23 +93,23 @@ struct SecondaryNavigationView: View {
               }
             }
           }
-          
-          if viewModel.identityContext.apiCapabilities.supportsV2Filters {
-              let filteredStatusesTitle = switch viewModel.identityContext.appPreferences.statusWord {
-                  case .post: "filtered-statuses.post"
-                  case .toot: "filtered-statuses.toot"
-                  }
-              Button {
-                  viewModel.navigateToFilteredStatuses()
-              } label: {
-                  Label {
-                      Text(filteredStatusesTitle).foregroundColor(.primary)
-                  } icon: {
-                      Image(systemName: Timeline.bookmarks.systemImageName)
-                  }
-              }
-          }
 
+          if viewModel.identityContext.apiCapabilities.supportsV2Filters {
+            let filteredStatusesTitle =
+              switch viewModel.identityContext.appPreferences.statusWord {
+              case .post: "filtered-statuses.post"
+              case .toot: "filtered-statuses.toot"
+              }
+            Button {
+              viewModel.navigateToFilteredStatuses()
+            } label: {
+              Label {
+                Text(filteredStatusesTitle).foregroundColor(.primary)
+              } icon: {
+                Image(systemName: Timeline.bookmarks.systemImageName)
+              }
+            }
+          }
 
           if let followRequestCount = viewModel.identityContext.identity.account?.followRequestCount,
             followRequestCount > 0

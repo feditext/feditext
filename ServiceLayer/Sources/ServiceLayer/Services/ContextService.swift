@@ -24,7 +24,7 @@ public struct ContextService {
     self.id = id
     self.mastodonAPIClient = mastodonAPIClient
     self.contentDatabase = contentDatabase
-    let applyV1Filters = !mastodonAPIClient.supportsV2Filters
+    let applyV1Filters = !mastodonAPIClient.apiCapabilities.supportsV2Filters
     sections = contentDatabase.contextPublisher(id: id, applyV1Filters: applyV1Filters)
     navigationService = NavigationService(
       environment: environment,

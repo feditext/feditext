@@ -507,6 +507,7 @@
 "status.interaction.boostable.description" = "May be boosted";
 "status.interaction.replyable.description" = "May be replied to";
 "status.interaction.likeable.description" = "May be faved";
+"status.media-blurred" = "Hidden by filter";
 "status.mute" = "Mute conversation";
 "status.new-items.post" = "New posts";
 "status.new-items.toot" = "New toots";

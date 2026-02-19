@@ -1090,11 +1090,11 @@ extension StatusView {
     -> NSAttributedString
   {
     // Filtered statuses only list the reasons they were filtered.
-    if viewModel.shouldFilter {
+    if viewModel.shouldFilter, let filterReason = viewModel.filterReason {
       return .init(
         string: String.localizedStringWithFormat(
           NSLocalizedString("status.filtered.accessibility-label-%@", comment: ""),
-          viewModel.filterReason
+          filterReason
         )
       )
     }

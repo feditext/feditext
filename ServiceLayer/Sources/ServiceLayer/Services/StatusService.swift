@@ -124,7 +124,7 @@ extension StatusService {
     .flatMap(contentDatabase.insert(status:))
     .eraseToAnyPublisher()
   }
-  
+
   // TODO: (Vyr) implement filter() and unfilter()
   //  filter() should call the add status to filter API on the quick filter
   //  (which should have been created with every filter context)

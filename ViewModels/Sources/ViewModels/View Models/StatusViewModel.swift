@@ -214,7 +214,7 @@ extension StatusViewModel {
   public var shouldShowAttachments: Bool {
     switch identityContext.identity.preferences.readingExpandMedia {
     case .default, .unknown:
-      return !sensitive || configuration.showAttachmentsToggled
+      return (!sensitive && blurReason == nil) || configuration.showAttachmentsToggled
     case .showAll:
       return !configuration.showAttachmentsToggled
     case .hideAll:
@@ -223,7 +223,7 @@ extension StatusViewModel {
   }
 
   public var shouldShowHideAttachmentsButton: Bool {
-    sensitive || identityContext.identity.preferences.readingExpandMedia == .hideAll
+    sensitive || blurReason != nil || identityContext.identity.preferences.readingExpandMedia == .hideAll
   }
 
   /// Return whether a filtered-post warning should be shown in place of the entire post.
@@ -232,8 +232,20 @@ extension StatusViewModel {
   }
 
   /// Concatenated titles of all the filters matched by this status.
-  public var filterReason: String {
-    statusService.status.displayStatus.filtered.map(\.filter.title).joined(separator: ", ")
+  public var filterReason: String? {
+    let filterTitles = statusService.status.displayStatus.filtered
+      .map(\.filter.title)
+    guard !filterTitles.isEmpty else { return nil }
+    return filterTitles.joined(separator: .separator)
+  }
+
+  /// Concatenated titles of all the *blur* filters matched by this status.
+  public var blurReason: String? {
+    let blurFilterTitles = statusService.status.displayStatus.filtered
+      .filter { $0.filter.filterAction == .blur }
+      .map(\.filter.title)
+    guard !blurFilterTitles.isEmpty else { return nil }
+    return blurFilterTitles.joined(separator: .separator)
   }
 
   public var id: Status.Id { statusService.status.displayStatus.id }

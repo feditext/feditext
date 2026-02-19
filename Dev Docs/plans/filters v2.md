@@ -22,7 +22,7 @@ This is a good example of adding a medium-sized feature that requires changes fr
 
 - Mastodon package
   - [x] Add v2 filter structs (in Filter.swift)
-  - [ ] Add `blur` filter action (specific to Mastodon, may not be supported by GoToSocial yet)
+  - [x] Add `blur` filter action (specific to Mastodon, may not be supported by GoToSocial yet)
 - MastodonAPI package
   - [x] Add FiltersV2Endpoint.filters to get all v2 filters
   - [x] Add EmptyEndpoint.deleteFilter, .deleteFilterKeyword, .deleteFilterStatus to delete v2 filters and their components
@@ -99,7 +99,7 @@ This is a good example of adding a medium-sized feature that requires changes fr
       - [ ] delete all filter keyword IDs in deletedFilterKeywordIDs
       - [ ] delete all filter status IDs in deletedFilterStatusIDs
   - AttachmentsRenderingViewModel
-    - [ ] add `blurReason: String?` with default extension implementation `{ nil }`
+    - [x] add `blurReason: String?` with default extension implementation `{ nil }`
   - StatusViewModel
     - [ ] if the parent status is filtered with a `blur` filter action, set `blurReason` to the filter names joined with commas
     - [ ] modify `shouldShowAttachments` to add `blurReason != nil` alongside `!sensitive` as a reason to not show a blurred status's attachments initially 
@@ -123,7 +123,7 @@ This is a good example of adding a medium-sized feature that requires changes fr
         - [ ] toggle for "whole word" mode
     - [ ] Navigation link to a FilteredStatusService in a TableViewController, but with the property that unfiltering a status on this list does not actually unfilter it through the API, it just calls EditFilterV2ViewModel.delete(). See note about extending StatusService to support this.
   - AttachmentsView
-    - [ ] if `viewModel.blurReason` exists, set the title of `curtainButton` to the blur reason, taking priority over other things that would set the title (sensitive content, media hidden)
+    - [x] if `viewModel.blurReason` exists, set the title of `curtainButton` to the blur reason, taking priority over other things that would set the title (sensitive content, media hidden)
 
 # alternate implementation
 

@@ -77,7 +77,7 @@ extension FilterV2Endpoint: Endpoint {
   public var requires: APICapabilityRequirements? {
     FiltersV2Endpoint.filters.requires
   }
-  
+
   public var notFound: EntityNotFound? {
     switch self {
     case .create:

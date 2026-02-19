@@ -26,12 +26,12 @@ public final class FiltersViewModel: ObservableObject {
     identityContext.service.expiredFiltersPublisher()
       .assignErrorsToAlertItem(to: \.alertItem, on: self)
       .assign(to: &$expiredFilters)
-    
+
     identityContext.service.allFilterV2sPublisher()
       .assignErrorsToAlertItem(to: \.alertItem, on: self)
       .assign(to: &$allFilterV2s)
   }
-  
+
   public var supportsV2Filters: Bool {
     identityContext.apiCapabilities.supportsV2Filters
   }
