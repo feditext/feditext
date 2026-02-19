@@ -18,8 +18,17 @@ extension AnnotatedAPIError: DisplayableToastableError {
         return "toast.title.not-found.conversation"
       case .featuredTag:
         return "toast.title.not-found.featured-tag"
-      case .filter:
+      case .filter, .filterV2:
         return "toast.title.not-found.filter"
+      case .filterKeyword:
+        return "toast.title.not-found.filter-keyword"
+      case .filterStatus:
+        switch statusWord {
+        case .post:
+          return "toast.title.not-found.filter-status.post"
+        case .toot:
+          return "toast.title.not-found.filter-status.toot"
+        }
       case .list:
         return "toast.title.not-found.list"
       case .notification:
@@ -57,8 +66,17 @@ extension AnnotatedAPIError: DisplayableToastableError {
         return NSLocalizedString("toast.title.not-found.conversation", comment: "")
       case .featuredTag:
         return NSLocalizedString("toast.title.not-found.featured-tag", comment: "")
-      case .filter:
+      case .filter, .filterV2:
         return NSLocalizedString("toast.title.not-found.filter", comment: "")
+      case .filterKeyword:
+        return NSLocalizedString("toast.title.not-found.filter-keyword", comment: "")
+      case .filterStatus:
+        switch statusWord {
+        case .post:
+          return NSLocalizedString("toast.title.not-found.filter-status.post", comment: "")
+        case .toot:
+          return NSLocalizedString("toast.title.not-found.filter-status.toot", comment: "")
+        }
       case .list:
         return NSLocalizedString("toast.title.not-found.list", comment: "")
       case .notification:

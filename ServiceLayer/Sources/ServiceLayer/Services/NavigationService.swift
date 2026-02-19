@@ -126,6 +126,14 @@ extension NavigationService {
     )
   }
 
+  public func filteredStatusesService() -> FilteredStatusesService {
+    FilteredStatusesService(
+      environment: environment,
+      mastodonAPIClient: mastodonAPIClient,
+      contentDatabase: contentDatabase
+    )
+  }
+
   public func loadMoreService(loadMore: LoadMore) -> LoadMoreService {
     LoadMoreService(loadMore: loadMore, mastodonAPIClient: mastodonAPIClient, contentDatabase: contentDatabase)
   }

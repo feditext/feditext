@@ -6,6 +6,7 @@ import ViewModels
 
 struct FiltersView: View {
   @StateObject var viewModel: FiltersViewModel
+  @ObservedObject var preferencesViewModel: PreferencesViewModel
 
   var body: some View {
     Form {
@@ -20,6 +21,19 @@ struct FiltersView: View {
       }
       section(title: "filters.active", filters: viewModel.activeFilters)
       section(title: "filters.expired", filters: viewModel.expiredFilters)
+
+      // FIXME: move to FilterV2sViewModel
+      if preferencesViewModel.supportsV2Filters {
+        Section {
+          TextField(
+            "preferences.filters.quick-status-filter.name",
+            text: Binding(
+              get: { preferencesViewModel.preferences.quickStatusFilter ?? "" },
+              set: { preferencesViewModel.preferences.quickStatusFilter = $0 == "" ? nil : $0 }
+            )
+          )
+        }
+      }
     }
     .navigationTitle("preferences.filters")
     .toolbar {
@@ -66,7 +80,10 @@ extension FiltersView {
 
   struct FiltersView_Previews: PreviewProvider {
     static var previews: some View {
-      FiltersView(viewModel: .init(identityContext: .preview))
+      FiltersView(
+        viewModel: .init(identityContext: .preview),
+        preferencesViewModel: .init(identityContext: .preview)
+      )
     }
   }
 #endif

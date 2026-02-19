@@ -192,6 +192,14 @@ extension NavigationViewModel {
     )
   }
 
+  public func navigateToFilteredStatuses() {
+    presentingSecondaryNavigation = false
+    presentedComposeStatusViewModel = nil
+    navigationsSubject.send(
+      .collection(identityContext.service.navigationService.filteredStatusesService())
+    )
+  }
+
   public func navigateToURL(_ url: URL) {
     presentingSecondaryNavigation = false
     presentedComposeStatusViewModel = nil

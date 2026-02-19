@@ -226,9 +226,15 @@ extension IdentityService {
   }
 
   public func refreshFilters() -> AnyPublisher<Never, Error> {
-    mastodonAPIClient.request(FiltersEndpoint.filters)
-      .flatMap(contentDatabase.setFilters(_:))
-      .eraseToAnyPublisher()
+    if mastodonAPIClient.apiCapabilities.supportsV2Filters {
+      mastodonAPIClient.request(FiltersV2Endpoint.filters)
+        .flatMap(contentDatabase.setFilterV2s(_:))
+        .eraseToAnyPublisher()
+    } else {
+      mastodonAPIClient.request(FiltersEndpoint.filters)
+        .flatMap(contentDatabase.setFilters(_:))
+        .eraseToAnyPublisher()
+    }
   }
 
   public func createFilter(_ filter: Filter) -> AnyPublisher<Never, Error> {
@@ -273,6 +279,12 @@ extension IdentityService {
   public func expiredFiltersPublisher() -> AnyPublisher<[Filter], Error> {
     contentDatabase.expiredFiltersPublisher()
   }
+  
+  public func allFilterV2sPublisher() -> AnyPublisher<[FilterV2], Error> {
+    contentDatabase.allFilterV2sPublisher()
+  }
+
+  // TODO: (Vyr) fill in filters v2 equivalents of above
 
   public func refreshFollowedTags() -> AnyPublisher<Never, Error> {
     mastodonAPIClient.request(TagsEndpoint.followed)

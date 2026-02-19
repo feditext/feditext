@@ -16,6 +16,4 @@ extension MastodonAPIClient {
 
     return client
   }
-
-  var supportsV2Filters: Bool { FiltersV2Endpoint.filters.canCallWith(apiCapabilities) }
 }

@@ -58,8 +58,18 @@ extension ContentDatabase {
     try FileManager.default.removeItem(at: fileURL(id: id, appGroup: appGroup))
   }
 
+  /// Store a single status not associated with a timeline.
   public func insert(status: Status) -> AnyPublisher<Never, Error> {
-    databaseWriter.mutatingPublisher(updates: { try status.save($0, .single) })
+    insert(statuses: [status])
+  }
+
+  /// Store a batch of statuses not associated with a timeline.
+  func insert(statuses: [Status]) -> AnyPublisher<Never, Error> {
+    databaseWriter.mutatingPublisher(updates: {
+      for status in statuses {
+        try status.save($0, .single)
+      }
+    })
   }
 
   // swiftlint:disable function_body_length
@@ -502,6 +512,33 @@ extension ContentDatabase {
     databaseWriter.mutatingPublisher(updates: Filter.filter(Filter.Columns.id == id).deleteAll)
   }
 
+  public func setFilterV2s(_ filters: [FilterV2]) -> AnyPublisher<Never, Error> {
+    databaseWriter.mutatingPublisher { db in
+      for filter in filters {
+        try FilterV2Record(filter).save(db)
+        for keyword in filter.keywords {
+          try FilterV2KeywordRecord(filterId: filter.id, keyword).save(db)
+        }
+        for status in filter.statuses {
+          try FilterV2StatusRecord(filterId: filter.id, status).save(db)
+        }
+      }
+
+      let filterIDs = filters.map(\.id)
+      let filterKeywordIDs = filters.flatMap(\.keywords).map(\.id)
+      let filterStatusIDs = filters.flatMap(\.statuses).map(\.id)
+      try FilterV2Record
+        .filter(!filterIDs.contains(FilterV2Record.Columns.id))
+        .deleteAll(db)
+      try FilterV2KeywordRecord
+        .filter(!filterKeywordIDs.contains(FilterV2KeywordRecord.Columns.id))
+        .deleteAll(db)
+      try FilterV2StatusRecord
+        .filter(!filterStatusIDs.contains(FilterV2StatusRecord.Columns.id))
+        .deleteAll(db)
+    }
+  }
+
   public func setFollowedTags(_ tags: [FollowedTag]) -> AnyPublisher<Never, Error> {
     databaseWriter.mutatingPublisher {
       for tag in tags {
@@ -716,6 +753,14 @@ extension ContentDatabase {
     ValueObservation.tracking { try Filter.filter(Filter.Columns.expiresAt < Date()).fetchAll($0) }
       .removeDuplicates()
       .publisher(in: databaseWriter)
+      .eraseToAnyPublisher()
+  }
+
+  public func allFilterV2sPublisher() -> AnyPublisher<[FilterV2], Error> {
+    ValueObservation.tracking(FilterV2Info.request(FilterV2Record.all()).fetchAll)
+      .removeDuplicates()
+      .publisher(in: databaseWriter)
+      .map { $0.map(FilterV2.init) }
       .eraseToAnyPublisher()
   }
 

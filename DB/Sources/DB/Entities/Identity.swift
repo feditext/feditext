@@ -64,10 +64,22 @@ extension Identity {
     @DecodableDefault.True public var useServerPostingReadingPreferences
     @DecodableDefault.StatusVisibilityPublic public var postingDefaultVisibility: Status.Visibility
     @DecodableDefault.False public var postingDefaultSensitive
-    public var postingDefaultLanguage: String?
     @DecodableDefault.ExpandMediaDefault public var readingExpandMedia: Mastodon.Preferences.ExpandMedia
     @DecodableDefault.False public var readingExpandSpoilers
+
+    /// Default posting language.
+    /// No server-side counterpart.
+    /// - SeeAlso: ``PrefsLanguage``
+    public var postingDefaultLanguage: String?
+
+    /// Account-specific tint color.
+    /// No server-side counterpart.
     public var tintColor: TintColor?
+
+    /// Name of quick status filter.
+    /// Set based on current locale when the filter is created on demand, but may be changed later.
+    /// No server-side counterpart.
+    public var quickStatusFilter: String?
 
     // swiftlint:disable:next nesting
     public enum TintColor: String, CaseIterable, Identifiable, Codable {

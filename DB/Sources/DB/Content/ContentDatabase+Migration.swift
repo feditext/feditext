@@ -462,6 +462,32 @@ extension ContentDatabase {
       }
     }
 
+    migrator.registerMigration("1.7.4-persistent-v2-filters") { db in
+      try db.create(table: "filterV2Record") { t in
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("title", .text).notNull()
+        t.column("context", .blob).notNull()
+        t.column("expiresAt", .date).notNull()
+        t.column("filterAction", .blob).notNull()
+      }
+
+      try db.create(table: "filterV2KeywordRecord") { t in
+        t.column("filterId", .text).indexed().notNull()
+          .references("filterV2Record", column: "id")
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("keyword", .text).notNull()
+        t.column("wholeWord", .boolean).notNull()
+      }
+
+      try db.create(table: "filterV2StatusRecord") { t in
+        t.column("filterId", .text).indexed().notNull()
+          .references("filterV2Record", column: "id")
+        t.column("id", .text).primaryKey(onConflict: .replace)
+        t.column("statusId", .text).indexed().notNull()
+          .references("statusRecord")
+      }
+    }
+
     return migrator
   }
 }

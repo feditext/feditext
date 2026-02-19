@@ -60,4 +60,6 @@ extension APICapabilities {
     }
     .eraseToAnyPublisher()
   }
+
+  public var supportsV2Filters: Bool { FiltersV2Endpoint.filters.canCallWith(self) }
 }

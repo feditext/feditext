@@ -66,4 +66,10 @@ extension PreferencesViewModel {
   public func domainBlocksViewModel() -> DomainBlocksViewModel {
     DomainBlocksViewModel(service: identityContext.service.domainBlocksService())
   }
+
+  /// If v2 filters are supported, we show updated UI for them and ignore v1 filters,
+  /// which are a partially backwards-compatible projection of v2 filters on backends that support v1 filters.
+  public var supportsV2Filters: Bool {
+    identityContext.apiCapabilities.supportsV2Filters
+  }
 }

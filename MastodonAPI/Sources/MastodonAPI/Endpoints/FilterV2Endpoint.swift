@@ -6,7 +6,7 @@ import Mastodon
 
 // TODO: (Vyr) fill out other filters v2 endpoints
 public enum FilterV2Endpoint {
-  case get(filterID: FilterV2.ID)
+  case get(id: FilterV2.ID)
 
   case create(
     title: String,
@@ -27,8 +27,8 @@ extension FilterV2Endpoint: Endpoint {
 
   public var pathComponentsInContext: [String] {
     switch self {
-    case .get(let filterID):
-      [filterID]
+    case .get(let id):
+      [id]
 
     case .create:
       []
@@ -76,5 +76,15 @@ extension FilterV2Endpoint: Endpoint {
 
   public var requires: APICapabilityRequirements? {
     FiltersV2Endpoint.filters.requires
+  }
+  
+  public var notFound: EntityNotFound? {
+    switch self {
+    case .create:
+      nil
+
+    case .get(let id):
+      .filterV2(id)
+    }
   }
 }

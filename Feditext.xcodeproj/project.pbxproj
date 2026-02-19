@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -634,6 +634,10 @@
 		F168BCBF2966369200306FAF /* Feditext.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Feditext.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		944ED6182F479767004E12E7 /* Dev Docs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Dev Docs"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		94B2C8BB2929617A00087955 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -951,6 +955,7 @@
 				94C733B32C55C61A00BF25FC /* Common */,
 				D0A1F4F5252E7D2A004435BF /* Data Sources */,
 				D085C3BB25008DEC008A6C5E /* DB */,
+				944ED6182F479767004E12E7 /* Dev Docs */,
 				9432DE2429A158460007C2BF /* Docs */,
 				D0C7D46824F76169001EBDBB /* Extensions */,
 				D0666A7924C7745A00F3F04B /* Frameworks */,

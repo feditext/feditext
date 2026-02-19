@@ -311,6 +311,9 @@
 "preferences.blocked-domains" = "Blocked Domains";
 "preferences.blocked-users" = "Blocked Users";
 "preferences.cache.clear.navigation" = "Clear navigation cache";
+"preferences.filters.quick-status-filter.name" = "Quick status filter name";
+"preferences.filters.quick-status-filter.desc" = "Feditext will use a filter with this name for hiding statuses. If it doesn't exist, it will be created when needed.";
+"preferences.filters.quick-status-filter.default-value" = "Feditext Filtered Statuses";
 "preferences.html-parser.picker-title" = "HTML parser (all accounts)";
 "preferences.html-parser.webkit" = "WebKit";
 "preferences.html-parser.siren" = "Siren 🆕";
@@ -426,6 +429,8 @@
 "filter.context.thread" = "Conversations";
 "filter.context.account" = "Profiles";
 "filter.context.unknown" = "Unknown context";
+"filtered-statuses.post" = "Filtered posts";
+"filtered-statuses.toot" = "Filtered toots";
 "more-results.accounts" = "More people";
 "more-results.statuses.post" = "More posts";
 "more-results.statuses.toot" = "More toots";
@@ -565,6 +570,9 @@
 "toast.title.not-found.conversation" = "Conversation not found";
 "toast.title.not-found.featured-tag" = "Featured tag not found";
 "toast.title.not-found.filter" = "Filter not found";
+"toast.title.not-found.filter-keyword" = "Filter keyword not found";
+"toast.title.not-found.filter-status.post" = "Filter post not found";
+"toast.title.not-found.filter-status.toot" = "Filter toot not found";
 "toast.title.not-found.list" = "List not found";
 "toast.title.not-found.notification" = "Notification not found";
 "toast.title.not-found.poll" = "Poll not found";

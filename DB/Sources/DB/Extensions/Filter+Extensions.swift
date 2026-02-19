@@ -87,7 +87,7 @@ extension Array where Element == StatusInfo {
 }
 
 extension Filter.Context? {
-  /// Single statuses don't have a filter context, only those retrieved from bulk APIs.
+  /// Single statuses don't have a filter context, only those retrieved from timeline APIs.
   public static var single: Self { nil }
   /// Search results don't have a filter context.
   public static var search: Self { nil }

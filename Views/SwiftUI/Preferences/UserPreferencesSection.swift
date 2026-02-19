@@ -18,7 +18,8 @@ struct UserPreferencesSection: View {
         NavigationLink(
           "preferences.filters",
           destination: FiltersView(
-            viewModel: .init(identityContext: viewModel.identityContext)
+            viewModel: .init(identityContext: viewModel.identityContext),
+            preferencesViewModel: viewModel
           )
         )
 

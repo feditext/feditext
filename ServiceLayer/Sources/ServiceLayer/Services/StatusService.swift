@@ -124,6 +124,13 @@ extension StatusService {
     .flatMap(contentDatabase.insert(status:))
     .eraseToAnyPublisher()
   }
+  
+  // TODO: (Vyr) implement filter() and unfilter()
+  //  filter() should call the add status to filter API on the quick filter
+  //  (which should have been created with every filter context)
+  //  then refetch the status using timeline APIs for every filter context
+  //  so that we get a .filtered blob we can save using `StatusFiltered.update`.
+  //  This seems inefficient…
 
   public func delete() -> AnyPublisher<Status, Error> {
     mastodonAPIClient.request(StatusEndpoint.delete(id: status.displayStatus.id))

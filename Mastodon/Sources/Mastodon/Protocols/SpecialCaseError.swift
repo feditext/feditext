@@ -48,6 +48,9 @@ public enum EntityNotFound: Sendable, Equatable {
   case conversation(_ id: String)
   case featuredTag(_ id: String)
   case filter(_ id: String)
+  case filterV2(_ id: String)
+  case filterKeyword(_ id: String)
+  case filterStatus(_ id: String)
   case list(_ id: String)
   case notification(_ id: String)
   case poll(_ id: String)
@@ -64,6 +67,9 @@ public enum EntityNotFound: Sendable, Equatable {
       .conversation(let id),
       .featuredTag(let id),
       .filter(let id),
+      .filterV2(let id),
+      .filterKeyword(let id),
+      .filterStatus(let id),
       .list(let id),
       .notification(let id),
       .poll(let id),

@@ -10,6 +10,9 @@ public enum EmptyEndpoint {
   case removeAccountsFromList(id: List.Id, accountIds: Set<Account.Id>)
   case deleteList(id: List.Id)
   case deleteFilter(id: Filter.Id)
+  case deleteFilterV2(id: FilterV2.ID)
+  case deleteFilterKeyword(id: FilterV2.Keyword.ID)
+  case deleteFilterStatus(id: FilterV2.Status.ID)
   /// https://docs.joinmastodon.org/methods/domain_blocks/#block
   case blockDomain(String)
   /// https://docs.joinmastodon.org/methods/domain_blocks/#unblock
@@ -25,13 +28,35 @@ public enum EmptyEndpoint {
 extension EmptyEndpoint: Endpoint {
   public typealias ResultType = [String: String]
 
+  public var apiVersion: String {
+    switch self {
+    case .oauthRevoke,
+      .addAccountsToList,
+      .removeAccountsFromList,
+      .deleteList,
+      .deleteFilter,
+      .blockDomain,
+      .unblockDomain,
+      .dismissAnnouncement,
+      .addAnnouncementReaction,
+      .removeAnnouncementReaction,
+      .removeFollowSuggestion,
+      .removeConversation:
+      "v1"
+    case .deleteFilterV2,
+      .deleteFilterKeyword,
+      .deleteFilterStatus:
+      "v2"
+    }
+  }
+
   public var context: [String] {
     switch self {
     case .oauthRevoke:
       return ["oauth"]
     case .addAccountsToList, .removeAccountsFromList, .deleteList:
       return defaultContext + ["lists"]
-    case .deleteFilter:
+    case .deleteFilter, .deleteFilterV2, .deleteFilterKeyword, .deleteFilterStatus:
       return defaultContext + ["filters"]
     case .blockDomain, .unblockDomain:
       return defaultContext + ["domain_blocks"]
@@ -62,6 +87,12 @@ extension EmptyEndpoint: Endpoint {
       return [id]
     case .removeConversation(let id):
       return [id]
+    case .deleteFilterV2(let id):
+      return [id]
+    case .deleteFilterKeyword(let id):
+      return ["keywords", id]
+    case .deleteFilterStatus(let id):
+      return ["statuses", id]
     }
   }
 
@@ -74,6 +105,9 @@ extension EmptyEndpoint: Endpoint {
     case .removeAccountsFromList,
       .deleteList,
       .deleteFilter,
+      .deleteFilterV2,
+      .deleteFilterKeyword,
+      .deleteFilterStatus,
       .unblockDomain,
       .removeAnnouncementReaction,
       .removeFollowSuggestion,
@@ -92,6 +126,9 @@ extension EmptyEndpoint: Endpoint {
       return ["domain": domain]
     case .deleteList,
       .deleteFilter,
+      .deleteFilterV2,
+      .deleteFilterKeyword,
+      .deleteFilterStatus,
       .dismissAnnouncement,
       .addAnnouncementReaction,
       .removeAnnouncementReaction,
@@ -113,6 +150,10 @@ extension EmptyEndpoint: Endpoint {
       return ListsEndpoint.lists.requires
     case .removeConversation:
       return ConversationsEndpoint.conversations.requires
+    case .deleteFilterV2,
+      .deleteFilterKeyword,
+      .deleteFilterStatus:
+      return FiltersV2Endpoint.filters.requires
     default:
       return nil
     }
@@ -132,6 +173,15 @@ extension EmptyEndpoint: Endpoint {
 
     case .deleteFilter(let id):
       return .filter(id)
+
+    case .deleteFilterV2(let id):
+      return .filterV2(id)
+
+    case .deleteFilterKeyword(let id):
+      return .filterKeyword(id)
+
+    case .deleteFilterStatus(let id):
+      return .filterStatus(id)
 
     case .dismissAnnouncement(let id),
       .addAnnouncementReaction(let id, _),
