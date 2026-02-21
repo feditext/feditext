@@ -709,7 +709,7 @@ extension TableViewController {
       let playerViewController = AVPlayerViewController()
       let player: AVPlayer
 
-      guard let url = attachmentViewModel.attachment.url.url else {
+      guard let url = attachmentViewModel.attachment.url?.url else {
         assertionFailure("Attachment doesn't have a valid URL")
         return
       }

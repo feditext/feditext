@@ -34,7 +34,9 @@ public struct Attachment: Codable {
 
   public let id: Id
   public let type: AttachmentType
-  public let url: UnicodeURL
+  /// May be `nil` if the attachment hasn't been processed yet.
+  /// - SeeAlso: <https://docs.joinmastodon.org/entities/MediaAttachment/#url>
+  public let url: UnicodeURL?
   public let remoteUrl: UnicodeURL?
   public let previewUrl: UnicodeURL?
   public let meta: Meta?

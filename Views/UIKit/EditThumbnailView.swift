@@ -166,7 +166,7 @@ extension EditThumbnailView {
     case .gifv:
       imageView.isHidden = true
 
-      guard let url = viewModel.attachment.url.url else {
+      guard let url = viewModel.attachment.url?.url else {
         assertionFailure("Attachment doesn't have a valid URL")
         return
       }

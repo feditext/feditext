@@ -65,7 +65,7 @@ final class AttachmentView: UIView {
 
 extension AttachmentView {
   func play() {
-    guard let url = viewModel.attachment.url.url else { return }
+    guard let url = viewModel.attachment.url?.url else { return }
 
     let player = PlayerCache.shared.player(url: url)
 

@@ -149,7 +149,7 @@ final class ImageViewController: UIViewController {
         }
 
         imageView.sd_setImage(
-          with: viewModel.attachment.url.url,
+          with: viewModel.attachment.url?.url,
           placeholderImage: placeholderImage
         ) { [weak self] _, error, _, _ in
           if error != nil {
@@ -162,7 +162,7 @@ final class ImageViewController: UIViewController {
         playerView.tag = viewModel.tag
         imageView.isHidden = true
 
-        guard let url = viewModel.attachment.url.url else {
+        guard let url = viewModel.attachment.url?.url else {
           assertionFailure("Attachment doesn't have a valid URL")
           return
         }
@@ -216,7 +216,7 @@ extension ImageViewController {
   }
 
   func presentActivityViewController() {
-    if let imageData = imageView.image?.sd_imageData(), let url = imageURL ?? viewModel?.attachment.url.url {
+    if let imageData = imageView.image?.sd_imageData(), let url = imageURL ?? viewModel?.attachment.url?.url {
       let tempURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         .appendingPathComponent(url.lastPathComponent)
 

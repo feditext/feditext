@@ -52,7 +52,7 @@ final class EditAttachmentViewController: UIViewController {
       let playerViewController = AVPlayerViewController()
       let player: AVPlayer
 
-      guard let url = viewModel.attachment.url.url else {
+      guard let url = viewModel.attachment.url?.url else {
         assertionFailure("Attachment doesn't have a valid URL")
         return
       }
@@ -199,7 +199,7 @@ extension EditAttachmentViewController {
 
   fileprivate func detectTextFromPicture() {
     SDWebImageManager.shared.loadImage(
-      with: viewModel.attachment.url.url,
+      with: viewModel.attachment.url?.url,
       options: [],
       progress: nil
     ) { [weak self] image, _, _, _, _, _ in
