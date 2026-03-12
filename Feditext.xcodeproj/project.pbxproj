@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -634,6 +634,10 @@
 		F168BCBF2966369200306FAF /* Feditext.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Feditext.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		94A231192F63511400E1B644 /* Feature Plans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Feature Plans"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		94B2C8BB2929617A00087955 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -953,6 +957,7 @@
 				D085C3BB25008DEC008A6C5E /* DB */,
 				9432DE2429A158460007C2BF /* Docs */,
 				D0C7D46824F76169001EBDBB /* Extensions */,
+				94A231192F63511400E1B644 /* Feature Plans */,
 				D0666A7924C7745A00F3F04B /* Frameworks */,
 				D0BFDAF524FC7C5300C86618 /* HTTP */,
 				947873BB297E0F9000CACEFE /* Identity.xcconfig */,
