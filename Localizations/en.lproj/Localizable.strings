@@ -577,3 +577,9 @@
 "toot.action" = "Toot";
 "toot.noun" = "Toot";
 "update.action" = "Update";
+"link-menu.generic.title-%@" = "%@";
+"link-menu.generic.open" = "Open";
+"link-menu.generic.copy-link" = "Copy Link";
+"link-menu.hashtag.title-%@" = "#%@";
+"link-menu.hashtag.view-timeline" = "View Timeline";
+

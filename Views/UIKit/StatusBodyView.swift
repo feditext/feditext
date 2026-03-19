@@ -354,6 +354,85 @@ extension StatusBodyView: UITextViewDelegate {
     @unknown default: return false
     }
   }
+
+  /// Customize the text item long press menu to give us some navigation options for URLs.
+  @available(iOS 17.0, *)
+  func textView(
+    _ textView: UITextView,
+    menuConfigurationFor textItem: UITextItem,
+    defaultMenu: UIMenu
+  ) -> UITextItem.MenuConfiguration? {
+    // TODO: (Vyr) On iOS 15 and 16 we'll have to fake this with https://developer.apple.com/documentation/uikit/uicontextmenuinteraction
+
+    guard case .link(let url) = textItem.content else {
+      // We might handle attachments (emoji) or text item tags in the future,
+      // but for now we do nothing for those text item types.
+      return nil
+    }
+
+    switch AppUrl(url: url) {
+    case .search:
+      assertionFailure("AppUrl.search should not be found in status content")
+      return nil
+
+    case .tagTimeline(let name):
+      // Show hashtag menu.
+      var actions = [
+        UIAction(title: .init(localized: "link-menu.hashtag.view-timeline"), image: .init(systemName: "number")) { _ in
+        }
+      ]
+      if let followedTags = viewModel?.followedTags {
+        // Append a follow or unfollow action depending on whether the user already follows this tag.
+        if followedTags.contains(where: { $0.name == name }) {
+          actions.append(
+            UIAction(title: .init(localized: "tag.followed.remove"), image: .init(named: "tag.followed.remove")) { [weak self] _ in
+              self?.viewModel?.unfollowTag(name: name)
+            }
+          )
+        } else {
+          actions.append(
+            UIAction(title: .init(localized: "tag.followed.add"), image: .init(named: "tag.followed.add")) { [weak self] _ in
+              self?.viewModel?.followTag(name: name)
+            }
+          )
+        }
+      }
+      // Otherwise, the backend probably doesn't support followed tags, so we don't need a follow or unfollow action.
+      return .init(
+        // TODO: (Vyr) hashtag-specific preview
+        menu: .init(
+          title: .init(localized: "link-menu.hashtag.title-\(name)"),
+          children: actions
+        )
+      )
+
+    case .mention(let userUrl):
+      // Show profile menu.
+      // TODO: (Vyr) this is tricky because we don't yet load relationships for all of the mentions in a post. We should, though. This involves revising CollectionItem.status.
+      return nil
+      
+    case nil:
+        // Arbitrary URL. Show generic menu.
+        return .init(
+          preview: .default,
+          menu: .init(
+            title: .init(localized: "link-menu.generic.title-\(url.absoluteString)"),
+            children: [
+              UIAction(title: .init(localized: "link-menu.generic.open"), image: .init(systemName: "safari")) { [weak self] _ in
+                self?.viewModel?.urlSelected(url)
+              },
+              UIAction(title: .init(localized: "link-menu.generic.copy-link"), image: .init(systemName: "doc.on.doc")) {
+                _ in
+                UIPasteboard.general.url = url
+              },
+              UIAction(title: .init(localized: "share"), image: .init(systemName: "square.and.arrow.up")) { [weak self] _ in
+                self?.viewModel?.share(url)
+              },
+            ]
+          )
+        )
+    }
+  }
 }
 
 extension StatusBodyView {

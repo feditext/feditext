@@ -623,6 +623,11 @@ extension StatusViewModel {
       let url = URL(string: urlString)
     else { return }
 
+    share(url)
+  }
+
+  /// Share an arbitrary URL from the status (not just the URL of the status itself).
+  public func share(_ url: URL) {
     eventsSubject.send(Just(.share(url)).setFailureType(to: Error.self).eraseToAnyPublisher())
   }
 
@@ -730,6 +735,28 @@ extension StatusViewModel {
     eventsSubject.send(
       statusService
         .removeReaction(name: name)
+        .map { _ in .ignorableOutput }
+        .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
+        .eraseToAnyPublisher()
+    )
+  }
+
+  /// Follow a tag.
+  /// Forwards to the user identity of the account reading the status. 
+  public func followTag(name: String) {
+    eventsSubject.send(
+      identityContext.service.followTag(name: name)
+        .map { _ in .ignorableOutput }
+        .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
+        .eraseToAnyPublisher()
+    )
+  }
+
+  /// Unfollow a tag.
+  /// Forwards to the user identity of the account reading the status.
+  public func unfollowTag(name: String) {
+    eventsSubject.send(
+      identityContext.service.unfollowTag(name: name)
         .map { _ in .ignorableOutput }
         .catch { [weak self] in self?.handleToasts($0) ?? Fail(error: $0).eraseToAnyPublisher() }
         .eraseToAnyPublisher()
