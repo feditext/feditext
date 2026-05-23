@@ -16,7 +16,7 @@ let package = Package(
   ],
   dependencies: [
     .package(path: "Keychain"),
-    .package(name: "Base16", url: "https://github.com/metabolist/base16.git", .upToNextMajor(from: "1.0.0")),
+    .package(name: "Base16", url: "https://github.com/feditext/base16.git", .upToNextMajor(from: "1.0.0")),
   ],
   targets: [
     .target(

@@ -3,7 +3,7 @@
     {
       "identity" : "base16",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/metabolist/base16.git",
+      "location" : "https://github.com/feditext/base16.git",
       "state" : {
         "revision" : "050929070f6ebd996841a14096362df971ce9454",
         "version" : "1.0.0"
@@ -12,7 +12,7 @@
     {
       "identity" : "blurhash",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/metabolist/blurhash.git",
+      "location" : "https://github.com/feditext/blurhash.git",
       "state" : {
         "revision" : "4d86c470d866b2d8989adc5a65b121221e40df54",
         "version" : "1.0.0"
@@ -21,7 +21,7 @@
     {
       "identity" : "codable-bloom-filter",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/metabolist/codable-bloom-filter.git",
+      "location" : "https://github.com/feditext/codable-bloom-filter.git",
       "state" : {
         "revision" : "53f80465056a95253df797f1d8a9199f8b1c0543",
         "version" : "1.0.0"
