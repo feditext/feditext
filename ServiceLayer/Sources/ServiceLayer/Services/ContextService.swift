@@ -42,7 +42,7 @@ extension ContextService: CollectionService {
       .merge(
         with: mastodonAPIClient.request(ContextEndpoint.context(id: id))
           .catch(contentDatabase.catchNotFound)
-          .flatMap { contentDatabase.insert(context: $0, parentId: id) }
+          .flatMap { contentDatabase.insert(context: $0.threadOrdered, parentId: id) }
       )
       .eraseToAnyPublisher()
   }
